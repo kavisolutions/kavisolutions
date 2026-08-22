@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -6,8 +7,14 @@ export default function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 text-center md:flex-row md:justify-between md:text-left">
         <div>
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-sky-500 font-display font-bold text-white">
-              K
+            <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg shadow-glow">
+              <Image
+                src="/logo.svg"
+                alt="Kavi Solutions logo"
+                width={32}
+                height={32}
+                className="h-full w-full"
+              />
             </span>
             <span className="font-display font-semibold tracking-tight">
               Kavi<span className="text-gradient">Solutions</span>

@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const links = [
   { href: "/web", label: "Web" },
@@ -47,7 +48,20 @@ export default function MobileMenu() {
               className="fixed right-0 top-0 z-[70] flex h-full w-72 flex-col gap-2 rounded-l-3xl bg-ink-soft/95 p-6 backdrop-blur-xl md:hidden"
             >
               <div className="mb-4 flex items-center justify-between">
-                <span className="font-display font-semibold">Menu</span>
+                <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5">
+                  <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg shadow-glow">
+                    <Image
+                      src="/logo.svg"
+                      alt="Kavi Solutions logo"
+                      width={32}
+                      height={32}
+                      className="h-full w-full"
+                    />
+                  </span>
+                  <span className="font-display font-semibold tracking-tight">
+                    Kavi<span className="text-gradient">Solutions</span>
+                  </span>
+                </Link>
                 <button
                   onClick={() => setOpen(false)}
                   className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-lg"

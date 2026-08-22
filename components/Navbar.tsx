@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import MobileMenu from "./MobileMenu";
 
 const links = [
@@ -15,9 +16,15 @@ export default function Navbar() {
     <header className="fixed inset-x-0 top-0 z-50">
       <div className="mx-auto mt-4 flex max-w-6xl items-center justify-between gap-3 rounded-2xl glass px-5 py-3 shadow-lift">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-sky-500 font-display text-lg font-bold text-white shadow-glow">
-            K
-            <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse-ring" />
+          <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl shadow-glow">
+            <Image
+              src="/logo.svg"
+              alt="Kavi Solutions logo"
+              width={36}
+              height={36}
+              className="h-full w-full"
+              priority
+            />
           </span>
           <span className="font-display text-lg font-semibold tracking-tight">
             Kavi<span className="text-gradient">Solutions</span>
