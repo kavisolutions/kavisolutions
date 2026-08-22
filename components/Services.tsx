@@ -3,6 +3,7 @@ import { Reveal, RevealItem, RevealStagger } from "./motion";
 const services = [
   {
     id: "web",
+    href: "/web",
     icon: "🌐",
     tag: "Web",
     title: "Web Development",
@@ -12,6 +13,7 @@ const services = [
   },
   {
     id: "mobile",
+    href: "/mobile",
     icon: "📱",
     tag: "Mobile",
     title: "Mobile Apps",
@@ -21,6 +23,7 @@ const services = [
   },
   {
     id: "product",
+    href: "/product",
     icon: "🧩",
     tag: "Product",
     title: "Digital Products",
@@ -30,6 +33,7 @@ const services = [
   },
   {
     id: "marketing",
+    href: "/marketing",
     icon: "📈",
     tag: "Marketing",
     title: "Digital Marketing",
@@ -57,7 +61,7 @@ export default function Services() {
             <RevealItem key={s.id}>
               <a
                 id={s.id}
-                href="#contact"
+                href={s.href}
                 className="group card-sheen relative block overflow-hidden rounded-3xl glass p-8 shadow-lift transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20"
               >
                 <div
@@ -86,6 +90,10 @@ export default function Services() {
                       </li>
                     ))}
                   </ul>
+                  <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-white">
+                    Learn more
+                    <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                  </span>
                 </div>
               </a>
             </RevealItem>

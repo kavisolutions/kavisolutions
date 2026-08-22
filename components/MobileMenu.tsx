@@ -2,15 +2,16 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import Link from "next/link";
 
 const links = [
-  { href: "#web", label: "Web" },
-  { href: "#mobile", label: "Mobile" },
-  { href: "#product", label: "Product" },
-  { href: "#marketing", label: "Marketing" },
-  { href: "#fellowship", label: "Fellowship" },
-  { href: "#team", label: "Team" },
-  { href: "#contact", label: "Contact" },
+  { href: "/web", label: "Web" },
+  { href: "/mobile", label: "Mobile" },
+  { href: "/product", label: "Product" },
+  { href: "/marketing", label: "Marketing" },
+  { href: "/#fellowship", label: "Fellowship" },
+  { href: "/#team", label: "Team" },
+  { href: "/#contact", label: "Contact" },
 ];
 
 export default function MobileMenu() {
@@ -56,17 +57,20 @@ export default function MobileMenu() {
                 </button>
               </div>
               {links.map((l, i) => (
-                <motion.a
+                <motion.div
                   key={l.href}
-                  href={l.href}
-                  onClick={() => setOpen(false)}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.05 * i }}
-                  className="rounded-xl px-4 py-3 text-base font-medium text-mist transition-colors hover:bg-white/5 hover:text-white"
                 >
-                  {l.label}
-                </motion.a>
+                  <Link
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    className="block rounded-xl px-4 py-3 text-base font-medium text-mist transition-colors hover:bg-white/5 hover:text-white"
+                  >
+                    {l.label}
+                  </Link>
+                </motion.div>
               ))}
             </motion.div>
           </>
