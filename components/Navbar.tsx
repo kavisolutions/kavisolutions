@@ -8,7 +8,7 @@ const links = [
   { href: "/product", label: "Product" },
   { href: "/marketing", label: "Marketing" },
   { href: "/fellowship", label: "Fellowship" },
-  { href: "/#team", label: "Team" },
+  { href: "/team", label: "Team" },
 ];
 
 export default function Navbar() {

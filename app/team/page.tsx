@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/lib/auth-context";
+import { supabaseBrowser } from "@/lib/auth-context";
+import { motion } from "framer-motion";
 
 type TeamMember = {
   id: string;
@@ -13,152 +13,32 @@ type TeamMember = {
   gradient: string;
   bio: string;
   image_url: string | null;
-  user_id: string | null;
-  sort_order: number;
 };
 
-const gradients = [
-  "from-violet-500 to-purple-500",
-  "from-sky-500 to-cyan-500",
-  "from-emerald-500 to-teal-500",
-  "from-fuchsia-500 to-pink-500",
-  "from-amber-500 to-orange-500",
-  "from-rose-500 to-red-500",
-  "from-indigo-500 to-blue-500",
-  "from-lime-500 to-green-500",
-];
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
-
-export default function TeamManagementPage() {
-  const { supabase, session, loading: authLoading } = useAuth();
-  const router = useRouter();
+export default function TeamPage() {
   const [team, setTeam] = useState<TeamMember[]>([]);
-  const [myProfile, setMyProfile] = useState<TeamMember | null>(null);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState({
-    name: "",
-    role: "",
-    bio: "",
-    gradient: gradients[0],
-    image_url: null as string | null,
-  });
-  const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [message, setMessage] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!authLoading && !session) {
-      router.push("/login");
-    }
-  }, [session, authLoading, router]);
+    fetch("/api/team")
+      .then((res) => res.json())
+      .then((data) => {
+        setTeam(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
-  useEffect(() => {
-    if (!session) return;
-
-    const fetchData = async () => {
-      const res = await fetch("/api/team");
-      const data = await res.json();
-      setTeam(data);
-
-      const profile = data.find((m: TeamMember) => m.user_id === session.user.id);
-      if (profile) {
-        setMyProfile(profile);
-        setForm({
-          name: profile.name,
-          role: profile.role,
-          bio: profile.bio,
-          gradient: profile.gradient,
-          image_url: profile.image_url,
-        });
-      }
-      setLoading(false);
-    };
-
-    fetchData();
-  }, [session]);
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !session) return;
-
-    setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("token", session.access_token);
-
-    const res = await fetch("/api/upload", { method: "POST", body: formData });
-    const data = await res.json();
-
-    if (data.url) {
-      setForm((prev) => ({ ...prev, image_url: data.url }));
-      // Auto-save the image_url to the profile
-      if (myProfile) {
-        await fetch("/api/team", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: myProfile.id,
-            ...form,
-            image_url: data.url,
-            initials: getInitials(form.name),
-          }),
-        });
-        const res = await fetch("/api/team");
-        const allData = await res.json();
-        setTeam(allData);
-        const profile = allData.find((m: TeamMember) => m.user_id === session?.user.id);
-        if (profile) setMyProfile(profile);
-      }
-      setMessage("Photo uploaded and saved!");
-    } else {
-      setMessage(data.error || "Upload failed");
-    }
-    setUploading(false);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!myProfile) return;
-
-    setSaving(true);
-    setMessage("");
-
-    await fetch("/api/team", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: myProfile.id,
-        ...form,
-        initials: getInitials(form.name),
-      }),
+  const handleGoogleLogin = async () => {
+    await supabaseBrowser.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin + "/team",
+      },
     });
-
-    setMessage("Profile updated!");
-    setSaving(false);
-
-    // Refresh profile data
-    const res = await fetch("/api/team");
-    const data = await res.json();
-    setTeam(data);
-    const profile = data.find((m: TeamMember) => m.user_id === session?.user.id);
-    if (profile) setMyProfile(profile);
   };
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
-  };
-
-  if (authLoading || loading) {
+  if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-ink text-white">
         Loading...
@@ -166,163 +46,95 @@ export default function TeamManagementPage() {
     );
   }
 
-  if (!session) return null;
-
   return (
-    <div className="min-h-screen bg-ink px-6 py-12 text-white">
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <Link href="/" className="text-sm text-mist hover:text-white">
-              ← Back to site
-            </Link>
-            <h1 className="mt-2 font-display text-3xl font-bold">My Profile</h1>
-            <p className="mt-1 text-sm text-mist">
-              Signed in as <span className="text-white">{session.user.email}</span>
-            </p>
-          </div>
+    <div className="min-h-screen bg-ink px-6 py-16 text-white">
+      <div className="mx-auto max-w-5xl">
+        {/* Header */}
+        <div className="mb-12 text-center">
+          <Link href="/" className="mb-6 inline-block">
+            <span className="font-display text-2xl font-semibold tracking-tight">
+              Kavi<span className="text-gradient">Solutions</span>
+            </span>
+          </Link>
+          <h1 className="mt-4 font-display text-4xl font-bold sm:text-5xl">
+            Meet the <span className="text-gradient">Team</span>
+          </h1>
+          <p className="mx-auto mt-4 max-w-lg text-mist">
+            The people behind Kavi Solutions — a small, senior team obsessed with craft.
+          </p>
+        </div>
+
+        {/* Google sign-in */}
+        <div className="mb-10 text-center">
           <button
-            onClick={handleSignOut}
-            className="rounded-lg bg-white/5 px-4 py-2 text-sm text-mist transition-colors hover:bg-white/10 hover:text-white"
+            onClick={handleGoogleLogin}
+            className="inline-flex items-center gap-3 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-gray-800 shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl"
           >
-            Sign out
+            <svg className="h-5 w-5" viewBox="0 0 24 24">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335"
+              />
+            </svg>
+            Continue with Google
           </button>
         </div>
 
-        {!myProfile ? (
-          <div className="rounded-2xl glass p-8 text-center shadow-lift">
-            <p className="text-mist">
-              Your account is not linked to a team profile yet.
-              <br />
-              Contact the admin to set up your profile.
-            </p>
-          </div>
-        ) : (
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-4 rounded-2xl glass p-6 shadow-lift"
-          >
-            {/* Image upload */}
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                {form.image_url ? (
-                  <img
-                    src={form.image_url}
-                    alt="Preview"
-                    className="h-20 w-20 rounded-2xl object-cover"
-                  />
-                ) : (
-                  <div
-                    className={`flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br ${form.gradient} font-display text-2xl font-bold text-white`}
-                  >
-                    {form.name ? getInitials(form.name) : "?"}
-                  </div>
-                )}
-              </div>
-              <div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploading}
-                  className="rounded-lg bg-white/5 px-4 py-2 text-sm text-mist transition-colors hover:bg-white/10 hover:text-white disabled:opacity-50"
-                >
-                  {uploading ? "Uploading..." : form.image_url ? "Change photo" : "Upload photo"}
-                </button>
-                {form.image_url && (
-                  <button
-                    type="button"
-                    onClick={() => setForm((prev) => ({ ...prev, image_url: null }))}
-                    className="ml-2 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400 transition-colors hover:bg-red-500/20"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-xs font-medium text-mist">Name</label>
-                <input
-                  required
-                  placeholder="Your name"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none transition-colors placeholder:text-fog focus:border-violet-400/60"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-medium text-mist">Role</label>
-                <input
-                  required
-                  placeholder="Your role"
-                  value={form.role}
-                  onChange={(e) => setForm({ ...form, role: e.target.value })}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none transition-colors placeholder:text-fog focus:border-violet-400/60"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="mb-1 block text-xs font-medium text-mist">Bio</label>
-              <textarea
-                required
-                placeholder="Tell us about yourself..."
-                rows={3}
-                value={form.bio}
-                onChange={(e) => setForm({ ...form, bio: e.target.value })}
-                className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none transition-colors placeholder:text-fog focus:border-violet-400/60"
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-xs font-medium text-mist">
-                Avatar gradient (used when no photo uploaded)
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {gradients.map((g) => (
-                  <button
-                    key={g}
-                    type="button"
-                    onClick={() => setForm({ ...form, gradient: g })}
-                    className={`h-10 w-10 rounded-xl bg-gradient-to-br ${g} transition-all ${
-                      form.gradient === g
-                        ? "ring-2 ring-white ring-offset-2 ring-offset-ink scale-110"
-                        : "opacity-60 hover:opacity-100"
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {message && (
-              <p
-                className={`rounded-lg px-4 py-2 text-sm ${
-                  message.includes("failed") || message.includes("error")
-                    ? "bg-red-500/10 text-red-400"
-                    : "bg-emerald-500/10 text-emerald-400"
-                }`}
-              >
-                {message}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={saving}
-              className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 py-3.5 text-sm font-semibold text-white shadow-glow transition-all hover:scale-[1.02] disabled:opacity-60"
+        {/* Team grid */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {team.map((m, i) => (
+            <motion.div
+              key={m.id}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="group relative h-full overflow-hidden rounded-3xl glass p-6 text-center shadow-lift transition-all duration-300 hover:-translate-y-2 hover:shadow-glow"
             >
-              {saving ? "Saving..." : "Save changes"}
-            </button>
-          </form>
-        )}
+              <div className="relative mx-auto mb-5 h-28 w-28">
+                {m.image_url ? (
+                  <>
+                    <div
+                      className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${m.gradient} opacity-60 blur-lg transition-all duration-500 group-hover:opacity-90 group-hover:blur-xl`}
+                    />
+                    <img
+                      src={m.image_url}
+                      alt={m.name}
+                      className="relative h-28 w-28 rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${m.gradient} opacity-60 blur-lg transition-all duration-500 group-hover:opacity-90 group-hover:blur-xl`}
+                    />
+                    <div
+                      className={`relative flex h-28 w-28 items-center justify-center rounded-2xl bg-gradient-to-br ${m.gradient} font-display text-3xl font-bold text-white transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3`}
+                    >
+                      {m.initials}
+                    </div>
+                  </>
+                )}
+              </div>
+              <h3 className="font-display text-lg font-semibold">{m.name}</h3>
+              <p className="mt-1 text-xs font-medium uppercase tracking-widest text-gradient">
+                {m.role}
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-mist">{m.bio}</p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   );
