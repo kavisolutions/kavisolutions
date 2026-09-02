@@ -10,9 +10,10 @@ const links = [
   { href: "/mobile", label: "Mobile" },
   { href: "/product", label: "Product" },
   { href: "/marketing", label: "Marketing" },
-  { href: "/#fellowship", label: "Fellowship" },
+  { href: "/fellowship", label: "Fellowship" },
   { href: "/#team", label: "Team" },
   { href: "/#contact", label: "Contact" },
+  { href: "/team", label: "Team Admin" },
 ];
 
 export default function MobileMenu() {

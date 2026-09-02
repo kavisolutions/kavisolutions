@@ -7,7 +7,7 @@ const links = [
   { href: "/mobile", label: "Mobile" },
   { href: "/product", label: "Product" },
   { href: "/marketing", label: "Marketing" },
-  { href: "/#fellowship", label: "Fellowship" },
+  { href: "/fellowship", label: "Fellowship" },
   { href: "/#team", label: "Team" },
 ];
 

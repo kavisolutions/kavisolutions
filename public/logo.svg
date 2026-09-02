@@ -1,25 +1,74 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
   <defs>
-    <linearGradient id="kaviGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#8b5cf6"/>
+    <linearGradient id="kGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="50%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="kGrad2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1d4ed8"/>
       <stop offset="100%" stop-color="#0ea5e9"/>
     </linearGradient>
+    <linearGradient id="pixelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="pixelGlow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
-  <rect x="2" y="2" width="60" height="60" rx="16" fill="#0b0f17"/>
-  <path
-    d="M20 16 L20 48 M20 31 L33 16 M20 31 L20 31"
-    stroke="url(#kaviGrad)"
-    stroke-width="5.5"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    fill="none"
-  />
-  <path
-    d="M33 31 L47 48"
-    stroke="url(#kaviGrad)"
-    stroke-width="5.5"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    fill="none"
-  />
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="64" fill="#06060f"/>
+
+  <!-- Subtle radial glow behind K -->
+  <circle cx="220" cy="220" r="180" fill="url(#kGrad)" opacity="0.06"/>
+
+  <!-- Main K letterform - left vertical stroke -->
+  <path d="M120 110 L120 370" stroke="url(#kGrad)" stroke-width="38" stroke-linecap="round"/>
+
+  <!-- K upper diagonal -->
+  <path d="M120 240 L280 110" stroke="url(#kGrad)" stroke-width="38" stroke-linecap="round"/>
+
+  <!-- K lower diagonal -->
+  <path d="M120 240 L290 370" stroke="url(#kGrad2)" stroke-width="38" stroke-linecap="round"/>
+
+  <!-- Pixel scatter - top right area -->
+  <g filter="url(#pixelGlow)">
+    <rect x="300" y="90" width="18" height="18" rx="3" fill="#06b6d4" opacity="0.9" transform="rotate(15 309 99)"/>
+    <rect x="330" y="110" width="14" height="14" rx="3" fill="#8b5cf6" opacity="0.8"/>
+    <rect x="310" y="130" width="12" height="12" rx="2" fill="#2563eb" opacity="0.7"/>
+    <rect x="350" y="85" width="10" height="10" rx="2" fill="#06b6d4" opacity="0.6" transform="rotate(30 355 90)"/>
+    <rect x="295" y="65" width="8" height="8" rx="2" fill="#8b5cf6" opacity="0.5"/>
+    <rect x="365" y="105" width="16" height="16" rx="3" fill="#2563eb" opacity="0.6" transform="rotate(-10 373 113)"/>
+    <rect x="340" y="60" width="7" height="7" rx="1" fill="#06b6d4" opacity="0.4"/>
+    <rect x="280" y="80" width="10" height="10" rx="2" fill="#8b5cf6" opacity="0.35"/>
+    <rect x="375" y="75" width="12" height="12" rx="2" fill="#06b6d4" opacity="0.45" transform="rotate(45 381 81)"/>
+    <rect x="320" y="145" width="8" height="8" rx="2" fill="#06b6d4" opacity="0.3"/>
+    <rect x="355" y="130" width="6" height="6" rx="1" fill="#8b5cf6" opacity="0.35"/>
+    <rect x="270" y="105" width="9" height="9" rx="2" fill="#2563eb" opacity="0.25"/>
+  </g>
+
+  <!-- KAVI text -->
+  <text x="256" y="415" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-size="62" font-weight="700" letter-spacing="18" fill="white">KAVI</text>
+
+  <!-- Decorative line -->
+  <line x1="145" y1="435" x2="367" y2="435" stroke="url(#kGrad)" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- SOLUTIONS text -->
+  <text x="256" y="458" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-size="20" font-weight="400" letter-spacing="10" fill="#06b6d4" opacity="0.9">SOLUTIONS</text>
+
+  <!-- Tagline -->
+  <text x="256" y="485" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-size="13" font-weight="300" letter-spacing="3" fill="#64748b">Build  •  Innovate  •  Grow</text>
 </svg>

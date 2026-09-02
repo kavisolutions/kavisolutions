@@ -76,7 +76,7 @@ export default function Fellowship() {
 
         <Reveal className="mt-12 text-center">
           <a
-            href="#contact"
+            href="/fellowship"
             className="group inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-sky-500 px-7 py-3.5 text-sm font-semibold text-white shadow-glow transition-all hover:scale-105"
           >
             Apply for the fellowship

@@ -16,31 +16,44 @@ export default function Icon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#0b0f17",
-          borderRadius: 32,
-          boxShadow: "inset 0 0 0 2px rgba(139,92,246,0.35)",
+          background: "#06060f",
+          borderRadius: 24,
         }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="92"
-          height="92"
-          viewBox="0 0 64 64"
+          width="96"
+          height="96"
+          viewBox="0 0 32 32"
         >
           <defs>
-            <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#8b5cf6" />
-              <stop offset="100%" stopColor="#0ea5e9" />
+            <linearGradient id="kGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#2563eb" />
+              <stop offset="50%" stopColor="#06b6d4" />
+              <stop offset="100%" stopColor="#8b5cf6" />
             </linearGradient>
           </defs>
           <path
-            d="M20 16 L20 48 M20 31 L33 16 M33 31 L47 48"
-            stroke="url(#g)"
-            strokeWidth="5.5"
+            d="M9 6 L9 26"
+            stroke="url(#kGrad)"
+            strokeWidth="4"
             strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
           />
+          <path
+            d="M9 16 L21 6"
+            stroke="url(#kGrad)"
+            strokeWidth="4"
+            strokeLinecap="round"
+          />
+          <path
+            d="M9 16 L22 26"
+            stroke="url(#kGrad)"
+            strokeWidth="4"
+            strokeLinecap="round"
+          />
+          <rect x="23" y="5" width="3" height="3" rx="0.5" fill="#06b6d4" opacity="0.9" />
+          <rect x="25" y="9" width="2" height="2" rx="0.5" fill="#8b5cf6" opacity="0.7" />
+          <rect x="24" y="3" width="2" height="2" rx="0.5" fill="#2563eb" opacity="0.5" />
         </svg>
       </div>
     ),
