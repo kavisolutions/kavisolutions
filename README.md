@@ -27,6 +27,33 @@ npm run build
 npm start
 ```
 
+## Auto-deploy on merge to `main`
+
+Every push (including merged PRs) to `main` triggers
+`.github/workflows/deploy.yml`, which SSHes into the VPS and runs
+`deploy/deploy.sh` there. The workflow can also be run manually from the
+Actions tab (`workflow_dispatch`).
+
+On the VPS the deploy does:
+
+1. `git fetch` + `git reset --hard origin/main` (GitHub `main` is the source of truth)
+2. `npm ci` (falls back to `npm install`)
+3. `npm run build`
+4. `pm2 startOrReload ecosystem.config.js` + `pm2 save`
+5. a health check against `http://127.0.0.1:3111/`
+
+Ignored files (`.env.local`, `node_modules`, `.next`) are preserved.
+
+**One-time setup (already done):** a dedicated deploy keypair is authorized on
+the VPS and its private key is stored as the `DEPLOY_SSH_KEY` GitHub Actions
+secret. To rotate it:
+
+```bash
+ssh-keygen -t ed25519 -N "" -C "gha-kavi-solutions-deploy" -f ~/.ssh/gha_kavi
+ssh root@161.97.169.66 "echo '$(cat ~/.ssh/gha_kavi.pub)' >> ~/.ssh/authorized_keys"
+gh secret set DEPLOY_SSH_KEY -R kavisolutions/kavisolutions < ~/.ssh/gha_kavi
+```
+
 ## Deploy to VPS (Nginx + PM2)
 
 Files in `deploy/`:

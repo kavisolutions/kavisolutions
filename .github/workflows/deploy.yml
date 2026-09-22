@@ -1,0 +1,32 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H 161.97.169.66 >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Sync sources to main and deploy
+        run: |
+          ssh -o IdentitiesOnly=yes root@161.97.169.66 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          cd /var/www/kavi-solutions
+          git fetch --prune origin main
+          git clean -fd
+          git reset --hard origin/main
+          bash deploy/deploy.sh --no-pull
+          REMOTE
