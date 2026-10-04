@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useAuth, supabaseBrowser } from "@/lib/auth-context";
+import { type FolioTeam } from "@/lib/folio-team";
 import { motion } from "framer-motion";
 
 type TeamMember = {
@@ -252,6 +253,16 @@ export default function TeamPage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
 
+  const [folio, setFolio] = useState<FolioTeam | null>(null);
+  const [folioState, setFolioState] = useState<"loading" | "ready" | "unconfigured" | "error">("loading");
+  const [folioError, setFolioError] = useState("");
+  const [showConnect, setShowConnect] = useState(false);
+  const [folioToken, setFolioToken] = useState("");
+  const [folioSlug, setFolioSlug] = useState("");
+  const [connectError, setConnectError] = useState("");
+  const [connecting, setConnecting] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
+
   useEffect(() => {
     fetch("/api/team")
       .then((res) => res.json())
@@ -261,6 +272,89 @@ export default function TeamPage() {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    fetch("/api/folio-team")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.configured) {
+          setFolioState("unconfigured");
+          return;
+        }
+        if (data.team) {
+          setFolio(data.team);
+          setFolioState("ready");
+          return;
+        }
+        setFolioError(data.error || "Could not load the folio team");
+        setFolioState("error");
+      })
+      .catch(() => {
+        setFolioError("Could not load the folio team");
+        setFolioState("error");
+      });
+  }, []);
+
+  const handleFolioConnect = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (connecting) return;
+
+    setConnecting(true);
+    setConnectError("");
+
+    const { data: { session: currentSession } } = await supabaseBrowser.auth.getSession();
+
+    const res = await fetch("/api/folio-team", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${currentSession?.access_token ?? ""}`,
+      },
+      body: JSON.stringify({ token: folioToken, slug: folioSlug }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setConnectError(data.error || "Failed to connect");
+      setConnecting(false);
+      return;
+    }
+
+    setFolio(data.team);
+    setFolioState("ready");
+    setShowConnect(false);
+    setFolioToken("");
+    setFolioSlug("");
+    setConnecting(false);
+  };
+
+  const handleFolioDisconnect = async () => {
+    if (disconnecting) return;
+
+    setDisconnecting(true);
+    setConnectError("");
+
+    const { data: { session: currentSession } } = await supabaseBrowser.auth.getSession();
+
+    const res = await fetch("/api/folio-team", {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${currentSession?.access_token ?? ""}` },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setConnectError(data.error || "Failed to disconnect");
+      setDisconnecting(false);
+      return;
+    }
+
+    setFolio(null);
+    setFolioState("unconfigured");
+    setShowConnect(false);
+    setDisconnecting(false);
+  };
 
   const handleGoogleLogin = async () => {
     await supabaseBrowser.auth.signInWithOAuth({
@@ -419,6 +513,181 @@ export default function TeamPage() {
             </motion.div>
           ))}
         </div>
+
+        {/* Folio team */}
+        <section className="mt-24">
+          <div className="mb-10 text-center">
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">
+              Our <span className="text-gradient">Folio</span> Team
+            </h2>
+            <p className="mx-auto mt-3 max-w-lg text-mist">
+              Live team data from our folio portfolio — members, shared projects, and the public team page.
+            </p>
+          </div>
+
+          {folioState === "loading" && (
+            <p className="text-center text-sm text-mist">Loading folio team...</p>
+          )}
+
+          {folioState === "unconfigured" && (
+            <p className="text-center text-sm text-mist">Folio team is not connected yet.</p>
+          )}
+
+          {folioState === "error" && (
+            <p className="text-center text-sm text-red-400">{folioError}</p>
+          )}
+
+          {folio && (
+            <div>
+              <div className="mb-8 flex flex-wrap items-center justify-center gap-4">
+                <div className="rounded-2xl glass px-6 py-4 text-center">
+                  <p className="font-display text-2xl font-bold">{folio.projectsCount}</p>
+                  <p className="text-xs uppercase tracking-widest text-mist">Shared projects</p>
+                </div>
+                <div className="rounded-2xl glass px-6 py-4 text-center">
+                  <p className="font-display text-2xl font-bold">{folio.memberCount}</p>
+                  <p className="text-xs uppercase tracking-widest text-mist">Members</p>
+                </div>
+                <a
+                  href={folio.portfolioUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-2xl bg-gradient-to-r from-violet-600 to-sky-500 px-6 py-4 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02]"
+                >
+                  Open team portfolio →
+                </a>
+              </div>
+
+              {(folio.tagline || folio.description) && (
+                <p className="mx-auto mb-8 max-w-2xl text-center text-mist">
+                  {folio.tagline || folio.description}
+                </p>
+              )}
+
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {folio.members.map((member, i) => {
+                  const gradient = gradients[i % gradients.length];
+                  const initials = getInitials(member.name || member.username || "?");
+
+                  return (
+                    <motion.div
+                      key={member.id || member.username}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: i * 0.1 }}
+                      className="group relative h-full overflow-hidden rounded-3xl glass p-6 text-center shadow-lift transition-all duration-300 hover:-translate-y-2 hover:shadow-glow"
+                    >
+                      <div className="relative mx-auto mb-5 h-24 w-24">
+                        {member.photo ? (
+                          <>
+                            <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${gradient} opacity-60 blur-lg transition-all duration-500 group-hover:opacity-90`} />
+                            <img
+                              src={member.photo}
+                              alt={member.name}
+                              className="relative h-24 w-24 rounded-2xl object-cover"
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${gradient} opacity-60 blur-lg transition-all duration-500 group-hover:opacity-90`} />
+                            <div className={`relative flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br ${gradient} font-display text-2xl font-bold text-white`}>
+                              {initials}
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-center gap-2">
+                        <h3 className="font-display text-lg font-semibold">{member.name}</h3>
+                        {member.role === "owner" && (
+                          <span className="rounded-full bg-amber-400/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-300">
+                            Owner
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-1 text-xs font-medium uppercase tracking-widest text-gradient">
+                        {member.jobRole || "Team member"}
+                      </p>
+                      {member.profileUrl ? (
+                        <a
+                          href={member.profileUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-4 inline-block text-xs text-mist underline-offset-4 transition-colors hover:text-white hover:underline"
+                        >
+                          View portfolio
+                        </a>
+                      ) : (
+                        <p className="mt-4 text-xs text-fog">Private portfolio</p>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {session && (
+            <div className="mt-10 text-center">
+              <button
+                onClick={() => {
+                  setShowConnect((v) => !v);
+                  setConnectError("");
+                }}
+                className="rounded-xl bg-white/5 px-4 py-2 text-xs text-mist transition-colors hover:bg-white/10 hover:text-white"
+              >
+                {showConnect ? "Close" : folio ? "Change folio connection" : "Connect folio team (admin)"}
+              </button>
+
+              {showConnect && (
+                <form onSubmit={handleFolioConnect} className="mx-auto mt-5 max-w-md space-y-3 text-left">
+                  <input
+                    value={folioToken}
+                    onChange={(e) => setFolioToken(e.target.value)}
+                    placeholder="folio_... API token"
+                    autoComplete="off"
+                    spellCheck={false}
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none transition-colors placeholder:text-fog focus:border-violet-400/60"
+                  />
+                  <input
+                    value={folioSlug}
+                    onChange={(e) => setFolioSlug(e.target.value)}
+                    placeholder="Team slug (e.g. ast)"
+                    autoComplete="off"
+                    spellCheck={false}
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none transition-colors placeholder:text-fog focus:border-violet-400/60"
+                  />
+
+                  {connectError && <p className="text-xs text-red-400">{connectError}</p>}
+
+                  <div className="flex gap-3">
+                    <button
+                      type="submit"
+                      disabled={connecting}
+                      className="flex-1 rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 py-3 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02] disabled:opacity-60"
+                    >
+                      {connecting ? "Connecting..." : "Connect"}
+                    </button>
+                    {folio && (
+                      <button
+                        type="button"
+                        onClick={handleFolioDisconnect}
+                        disabled={disconnecting}
+                        className="rounded-xl bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-400 transition-colors hover:bg-red-500/20 disabled:opacity-60"
+                      >
+                        {disconnecting ? "Removing..." : "Disconnect"}
+                      </button>
+                    )}
+                  </div>
+
+                  <p className="text-xs text-mist">
+                    Create a token in folio under Settings → API tokens. The token owner must be a member of the team.
+                  </p>
+                </form>
+              )}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
