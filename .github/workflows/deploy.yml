@@ -28,5 +28,6 @@ jobs:
           git fetch --prune origin main
           git clean -fd
           git reset --hard origin/main
+          rm -rf .next/types .next/dev
           bash deploy/deploy.sh --no-pull
           REMOTE
