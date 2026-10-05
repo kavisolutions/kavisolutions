@@ -11,6 +11,7 @@ export type FolioTeamMember = {
   name: string
   photo: string | null
   role: "owner" | "member"
+  title: string | null
   jobRole: string | null
   type: string
   profileUrl: string | null
@@ -69,6 +70,7 @@ export const normalizeFolioTeam = (value: unknown): FolioTeam | null => {
           name: asString(member.name) || asString(member.username),
           photo: asString(member.photo) || null,
           role: member.role === "owner" ? ("owner" as const) : ("member" as const),
+          title: asString(member.title) || null,
           jobRole: asString(member.jobRole) || null,
           type: asString(member.type) || "user",
           profileUrl: asString(member.profileUrl) || null,

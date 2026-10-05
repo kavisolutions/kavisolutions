@@ -83,6 +83,7 @@ describe("normalizeFolioTeam", () => {
         name: "Teja",
         photo: null,
         role: "owner",
+        title: "CEO",
         jobRole: "Developer",
         type: "user",
         profileUrl: "https://portfoli.store/u/teja",
@@ -99,7 +100,9 @@ describe("normalizeFolioTeam", () => {
     expect(team?.projectsCount).toBe(5);
     expect(team?.members).toHaveLength(2);
     expect(team?.members[0].role).toBe("owner");
+    expect(team?.members[0].title).toBe("CEO");
     expect(team?.members[1].name).toBe("ghost");
+    expect(team?.members[1].title).toBeNull();
     expect(team?.members[1].profileUrl).toBeNull();
     expect(team?.members[1].jobRole).toBeNull();
   });

@@ -243,7 +243,7 @@ export default function TeamPage() {
                       {member.name}
                     </h3>
                     <p className="mx-auto mt-1.5 max-w-[14rem] text-[11px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-gradient">
-                      {member.jobRole || "Team member"}
+                      {member.title || member.jobRole || "Team member"}
                     </p>
                     <div className="mt-auto pt-4">
                       {member.profileUrl ? (
