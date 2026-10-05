@@ -211,7 +211,7 @@ export default function TeamPage() {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: i * 0.1 }}
-                    className="group relative h-full overflow-hidden rounded-3xl glass p-6 text-center shadow-lift transition-all duration-300 hover:-translate-y-2 hover:shadow-glow"
+                    className="group relative flex h-full flex-col overflow-hidden rounded-3xl glass p-6 text-center shadow-lift transition-all duration-300 hover:-translate-y-2 hover:shadow-glow"
                   >
                     <div className="relative mx-auto mb-5 h-28 w-28">
                       {member.photo ? (
@@ -239,29 +239,26 @@ export default function TeamPage() {
                       )}
                     </div>
 
-                    <div className="flex items-center justify-center gap-2">
-                      <h3 className="font-display text-lg font-semibold">{member.name}</h3>
-                      {member.role === "owner" && (
-                        <span className="rounded-full bg-amber-400/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-300">
-                          Owner
-                        </span>
-                      )}
-                    </div>
-                    <p className="mt-1 text-xs font-medium uppercase tracking-widest text-gradient">
+                    <h3 className="font-display text-lg font-semibold leading-snug">
+                      {member.name}
+                    </h3>
+                    <p className="mx-auto mt-1.5 max-w-[14rem] text-[11px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-gradient">
                       {member.jobRole || "Team member"}
                     </p>
-                    {member.profileUrl ? (
-                      <a
-                        href={member.profileUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mt-4 inline-block text-xs text-mist underline-offset-4 transition-colors hover:text-white hover:underline"
-                      >
-                        View portfolio
-                      </a>
-                    ) : (
-                      <p className="mt-4 text-xs text-fog">Private portfolio</p>
-                    )}
+                    <div className="mt-auto pt-4">
+                      {member.profileUrl ? (
+                        <a
+                          href={member.profileUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-block text-xs text-mist underline-offset-4 transition-colors hover:text-white hover:underline"
+                        >
+                          View portfolio
+                        </a>
+                      ) : (
+                        <p className="text-xs text-fog">Private portfolio</p>
+                      )}
+                    </div>
                   </motion.div>
                 );
               })}
