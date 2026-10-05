@@ -256,6 +256,7 @@ export default function TeamPage() {
   const [folio, setFolio] = useState<FolioTeam | null>(null);
   const [folioState, setFolioState] = useState<"loading" | "ready" | "unconfigured" | "error">("loading");
   const [folioError, setFolioError] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showConnect, setShowConnect] = useState(false);
   const [folioToken, setFolioToken] = useState("");
   const [folioSlug, setFolioSlug] = useState("");
@@ -274,9 +275,14 @@ export default function TeamPage() {
   }, []);
 
   useEffect(() => {
-    fetch("/api/folio-team")
+    const headers: Record<string, string> = {};
+    if (session?.access_token) headers.Authorization = `Bearer ${session.access_token}`;
+
+    fetch("/api/folio-team", { headers })
       .then((res) => res.json())
       .then((data) => {
+        setIsAdmin(Boolean(data.isAdmin));
+
         if (!data.configured) {
           setFolioState("unconfigured");
           return;
@@ -293,7 +299,7 @@ export default function TeamPage() {
         setFolioError("Could not load the folio team");
         setFolioState("error");
       });
-  }, []);
+  }, [session?.access_token]);
 
   const handleFolioConnect = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -627,7 +633,7 @@ export default function TeamPage() {
             </div>
           )}
 
-          {session && (
+          {isAdmin && (
             <div className="mt-10 text-center">
               <button
                 onClick={() => {

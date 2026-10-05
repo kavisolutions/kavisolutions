@@ -5,9 +5,11 @@ import {
   DEFAULT_FOLIO_API_URL,
   FOLIO_SETTING_KEYS,
   type FolioTeam,
+  isAdminEmail,
   isValidFolioToken,
   normalizeFolioTeam,
   normalizeTeamSlug,
+  parseAdminEmails,
 } from "@/lib/folio-team";
 
 type FolioFetchResult =
@@ -22,6 +24,8 @@ type FolioApiResponse = {
 
 const CACHE_TTL_MS = 60_000;
 let cache: { at: number; team: FolioTeam } | null = null;
+
+const adminEmails = parseAdminEmails(process.env.ADMIN_EMAILS);
 
 async function fetchFolioTeam(token: string, slug: string): Promise<FolioFetchResult> {
   const url = buildFolioApiUrl(process.env.FOLIO_API_URL || DEFAULT_FOLIO_API_URL, slug);
@@ -84,32 +88,35 @@ async function getSignedInUser(request: NextRequest) {
   return data.user ?? null;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const user = await getSignedInUser(request);
+    const isAdmin = isAdminEmail(user?.email, adminEmails);
     const { token, slug } = await readSettings();
 
     if (!token || !slug) {
-      return NextResponse.json({ configured: false, team: null });
+      return NextResponse.json({ configured: false, team: null, isAdmin });
     }
 
     if (cache && Date.now() - cache.at < CACHE_TTL_MS) {
-      return NextResponse.json({ configured: true, team: cache.team });
+      return NextResponse.json({ configured: true, team: cache.team, isAdmin });
     }
 
     const result = await fetchFolioTeam(token, slug);
 
     if (!result.ok) {
-      return NextResponse.json({ configured: true, team: null, error: result.error });
+      return NextResponse.json({ configured: true, team: null, error: result.error, isAdmin });
     }
 
     cache = { at: Date.now(), team: result.team };
 
-    return NextResponse.json({ configured: true, team: result.team });
+    return NextResponse.json({ configured: true, team: result.team, isAdmin });
   } catch (error) {
     return NextResponse.json(
       {
         configured: false,
         team: null,
+        isAdmin: false,
         error: error instanceof Error ? error.message : "Failed to read settings",
       },
       { status: 500 },
@@ -122,6 +129,13 @@ export async function POST(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json({ error: "Sign in to connect a folio team" }, { status: 401 });
+  }
+
+  if (!isAdminEmail(user.email, adminEmails)) {
+    return NextResponse.json(
+      { error: "Only admins can manage the folio team connection" },
+      { status: 403 },
+    );
   }
 
   const body = await request.json().catch(() => null);
@@ -168,6 +182,13 @@ export async function DELETE(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json({ error: "Sign in to disconnect the folio team" }, { status: 401 });
+  }
+
+  if (!isAdminEmail(user.email, adminEmails)) {
+    return NextResponse.json(
+      { error: "Only admins can manage the folio team connection" },
+      { status: 403 },
+    );
   }
 
   const supabase = getSupabase();

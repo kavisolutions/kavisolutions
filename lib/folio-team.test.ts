@@ -1,5 +1,37 @@
 import { describe, expect, it } from "vitest";
-import { buildFolioApiUrl, isValidFolioToken, normalizeFolioTeam, normalizeTeamSlug } from "./folio-team";
+import {
+  buildFolioApiUrl,
+  isAdminEmail,
+  isValidFolioToken,
+  normalizeFolioTeam,
+  normalizeTeamSlug,
+  parseAdminEmails,
+} from "./folio-team";
+
+describe("parseAdminEmails", () => {
+  it("parses comma-separated lists", () => {
+    expect(parseAdminEmails(" A@B.com , c@d.com ")).toEqual(["a@b.com", "c@d.com"]);
+  });
+
+  it("returns an empty list when unset", () => {
+    expect(parseAdminEmails(undefined)).toEqual([]);
+    expect(parseAdminEmails("")).toEqual([]);
+  });
+});
+
+describe("isAdminEmail", () => {
+  const admins = ["kavitha@kavisolutions.in", "tejasimma36@gmail.com"];
+
+  it("matches case-insensitively", () => {
+    expect(isAdminEmail("Kavitha@KaviSolutions.in", admins)).toBe(true);
+  });
+
+  it("rejects non-admins and missing emails", () => {
+    expect(isAdminEmail("someone@else.com", admins)).toBe(false);
+    expect(isAdminEmail(null, admins)).toBe(false);
+    expect(isAdminEmail("kavitha@kavisolutions.in", [])).toBe(false);
+  });
+});
 
 describe("isValidFolioToken", () => {
   it("accepts folio_ tokens with 64 hex characters", () => {

@@ -33,6 +33,17 @@ export const isValidFolioToken = (value: string) => /^folio_[a-f0-9]{64}$/i.test
 
 export const normalizeTeamSlug = (value: string) => value.trim().toLowerCase()
 
+export const parseAdminEmails = (value: string | undefined | null): string[] =>
+  (value || "")
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean)
+
+export const isAdminEmail = (email: string | null | undefined, allowlist: string[]): boolean => {
+  if (!email) return false
+  return allowlist.includes(email.trim().toLowerCase())
+}
+
 export const buildFolioApiUrl = (baseUrl: string, slug?: string) => {
   const base = baseUrl.replace(/\/+$/, "")
   return slug ? `${base}/api/team?slug=${encodeURIComponent(slug)}` : `${base}/api/team`
