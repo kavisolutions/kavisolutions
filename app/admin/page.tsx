@@ -111,13 +111,6 @@ export default function AdminPage() {
     void initialize(Boolean(session));
   }, [authLoading, session, initialize]);
 
-  const handleGoogleLogin = async () => {
-    await supabaseBrowser.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: window.location.origin + "/admin" },
-    });
-  };
-
   const saveMember = async () => {
     if (!draft || savingMember) return;
     setSavingMember(true);
@@ -278,12 +271,12 @@ export default function AdminPage() {
         <div className="w-full max-w-md rounded-3xl glass p-8 text-center">
           <h1 className="mb-2 font-display text-2xl font-bold">Admin Panel</h1>
           <p className="mb-6 text-sm text-mist">Sign in with an admin account to continue.</p>
-          <button
-            onClick={handleGoogleLogin}
-            className="w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-gray-800 transition-all hover:scale-[1.02]"
+          <Link
+            href="/login?next=/admin"
+            className="block w-full rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-4 py-3 text-sm font-semibold text-white shadow-glow transition-all hover:scale-[1.02]"
           >
-            Continue with Google
-          </button>
+            Login
+          </Link>
           <Link href="/team" className="mt-4 block text-xs text-mist hover:text-white">
             ← Back to team page
           </Link>

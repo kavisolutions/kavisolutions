@@ -47,15 +47,6 @@ export default function TeamPage() {
       });
   }, [session?.access_token]);
 
-  const handleGoogleLogin = async () => {
-    await supabaseBrowser.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: window.location.origin + "/team",
-      },
-    });
-  };
-
   const handleSignOut = async () => {
     await supabaseBrowser.auth.signOut();
   };
@@ -191,12 +182,12 @@ export default function TeamPage() {
 
         <div className="mt-10 text-center">
           {!session ? (
-            <button
-              onClick={handleGoogleLogin}
-              className="inline-flex items-center gap-3 rounded-xl bg-white/5 px-5 py-3 text-sm font-semibold text-mist transition-all hover:bg-white/10 hover:text-white"
+            <Link
+              href="/login?next=/team"
+              className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-5 py-3 text-sm font-semibold text-white shadow-glow transition-all hover:scale-[1.02]"
             >
-              Sign in with Google
-            </button>
+              Login
+            </Link>
           ) : (
             <div className="flex flex-col items-center gap-2">
               <p className="text-xs text-mist">

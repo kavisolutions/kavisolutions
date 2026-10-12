@@ -14,6 +14,7 @@ const links = [
   { href: "/#team", label: "Team" },
   { href: "/#contact", label: "Contact" },
   { href: "/team", label: "Team Admin" },
+  { href: "/login", label: "Login" },
 ];
 
 export default function MobileMenu() {
@@ -39,14 +40,14 @@ export default function MobileMenu() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setOpen(false)}
-              className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-[60] bg-[#000000b3] md:hidden"
             />
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 26, stiffness: 260 }}
-              className="fixed right-0 top-0 z-[70] flex h-full w-72 flex-col gap-2 rounded-l-3xl bg-ink-soft/95 p-6 backdrop-blur-xl md:hidden"
+              className="fixed right-0 top-0 z-[70] flex h-full w-72 flex-col gap-1 overflow-y-auto rounded-l-3xl border-l border-white/10 bg-[#0b0b14] p-6 shadow-2xl md:hidden"
             >
               <div className="mb-4 flex items-center justify-between">
                 <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5">
