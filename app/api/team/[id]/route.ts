@@ -53,9 +53,7 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
     }
 
     if (body?.role !== undefined) {
-      const role = sanitizeText(body.role, 120);
-      if (!role) return NextResponse.json({ error: "Role cannot be empty" }, { status: 400 });
-      patch.role = role;
+      patch.role = sanitizeText(body.role, 120);
     }
 
     if (body?.bio !== undefined) patch.bio = sanitizeText(body.bio, 2000);

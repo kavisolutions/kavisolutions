@@ -125,8 +125,8 @@ export async function POST(request: NextRequest) {
     const loginEmail = sanitizeText(body?.email, 254).toLowerCase();
     const loginPassword = typeof body?.password === "string" ? body.password : "";
 
-    if (!name || !role) {
-      return NextResponse.json({ error: "Name and role are required" }, { status: 400 });
+    if (!name) {
+      return NextResponse.json({ error: "Name is required" }, { status: 400 });
     }
 
     const supabase = getSupabase();

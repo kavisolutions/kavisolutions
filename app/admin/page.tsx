@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { supabaseBrowser, useAuth } from "@/lib/auth-context";
-import { getInitials, TEAM_GRADIENTS, type TeamMember } from "@/lib/team";
+import { getInitials, TEAM_GRADIENTS, TEAM_ROLES, type TeamMember } from "@/lib/team";
 
 type AdminEntry = { email: string; source: "env" | "db" };
 
@@ -389,12 +389,25 @@ export default function AdminPage() {
                     value={draft.name}
                     onChange={(e) => setDraft({ ...draft, name: e.target.value })}
                   />
-                  <input
+                  <select
                     className={inputClass}
-                    placeholder="Role (e.g. Founder)"
                     value={draft.role}
                     onChange={(e) => setDraft({ ...draft, role: e.target.value })}
-                  />
+                  >
+                    <option value="" className="bg-ink">
+                      No role yet
+                    </option>
+                    {TEAM_ROLES.map((role) => (
+                      <option key={role} value={role} className="bg-ink">
+                        {role}
+                      </option>
+                    ))}
+                    {draft.role && !(TEAM_ROLES as readonly string[]).includes(draft.role) && (
+                      <option value={draft.role} className="bg-ink">
+                        {draft.role}
+                      </option>
+                    )}
+                  </select>
                   <select
                     className={inputClass}
                     value={draft.gradient}

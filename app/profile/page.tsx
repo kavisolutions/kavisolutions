@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { supabaseBrowser, useAuth } from "@/lib/auth-context";
-import { TEAM_GRADIENTS } from "@/lib/team";
+import { TEAM_GRADIENTS, TEAM_ROLES } from "@/lib/team";
 
 type MeResponse = {
   user: { id: string; email: string } | null;
@@ -223,12 +223,25 @@ export default function ProfilePage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-            <input
+            <select
               className={inputClass}
-              placeholder="Role"
               value={role}
               onChange={(e) => setRole(e.target.value)}
-            />
+            >
+              <option value="" className="bg-ink">
+                No role yet
+              </option>
+              {TEAM_ROLES.map((option) => (
+                <option key={option} value={option} className="bg-ink">
+                  {option}
+                </option>
+              ))}
+              {role && !(TEAM_ROLES as readonly string[]).includes(role) && (
+                <option value={role} className="bg-ink">
+                  {role}
+                </option>
+              )}
+            </select>
             <input
               className={inputClass}
               placeholder="Portfolio URL (optional)"

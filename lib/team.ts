@@ -15,6 +15,8 @@ export const TEAM_GRADIENTS = [
   "from-lime-500 to-green-500",
 ] as const
 
+export const TEAM_ROLES = ["Volunteer", "Intern", "Fellow", "Mentor", "Partner"] as const
+
 export const DEFAULT_TEAM_GRADIENT = TEAM_GRADIENTS[0]
 
 export type TeamMemberRow = {
