@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 import { getRequestAuth } from "@/lib/server-auth";
+import { readOrgOptions } from "@/app/api/team/route";
 import { normalizeGradient, type TeamMemberRow } from "@/lib/team";
 
 export async function GET(request: NextRequest) {
   const { user, isAdmin } = await getRequestAuth(request);
 
   if (!user) {
-    return NextResponse.json({ user: null, isAdmin: false, member: null });
+    return NextResponse.json({ user: null, isAdmin: false, member: null, roles: [], teams: [] });
   }
 
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from("team")
-    .select("*")
+    .select("*, team:teams(name)")
     .eq("user_id", user.id)
     .maybeSingle();
 
@@ -22,10 +23,13 @@ export async function GET(request: NextRequest) {
   }
 
   const row = (data as TeamMemberRow | null) ?? null;
+  const options = await readOrgOptions(supabase);
 
   return NextResponse.json({
     user: { id: user.id, email: user.email ?? "" },
     isAdmin,
+    roles: options.roles,
+    teams: options.teams,
     member: row
       ? {
           id: row.id,
@@ -36,6 +40,8 @@ export async function GET(request: NextRequest) {
           profileUrl: row.profile_url,
           gradient: normalizeGradient(row.gradient),
           sortOrder: row.sort_order,
+          teamId: row.team_id ?? null,
+          teamName: row.team?.name ?? null,
         }
       : null,
   });

@@ -23,7 +23,7 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
     const supabase = getSupabase();
     const { data: existing, error: readError } = await supabase
       .from("team")
-      .select("*")
+      .select("*, team:teams(name)")
       .eq("id", id)
       .maybeSingle();
 
@@ -68,11 +68,20 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
       patch.sort_order = Number(body.sortOrder);
     }
 
+    if (isAdmin && body?.teamId !== undefined) {
+      patch.team_id = sanitizeText(body.teamId, 60) || null;
+    }
+
     if (Object.keys(patch).length === 0) {
       return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
     }
 
-    const { data, error } = await supabase.from("team").update(patch).eq("id", id).select("*").single();
+    const { data, error } = await supabase
+      .from("team")
+      .update(patch)
+      .eq("id", id)
+      .select("*, team:teams(name)")
+      .single();
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

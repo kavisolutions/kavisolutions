@@ -3,11 +3,14 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { supabaseBrowser, useAuth } from "@/lib/auth-context";
-import { TEAM_GRADIENTS, TEAM_ROLES } from "@/lib/team";
+import GradientPicker from "@/components/GradientPicker";
+import type { OrgRole, OrgTeam } from "@/lib/team";
 
 type MeResponse = {
   user: { id: string; email: string } | null;
   isAdmin: boolean;
+  roles: OrgRole[];
+  teams: OrgTeam[];
   member: {
     id: string;
     name: string;
@@ -16,6 +19,8 @@ type MeResponse = {
     imageUrl: string | null;
     profileUrl: string | null;
     gradient: string;
+    teamId: string | null;
+    teamName: string | null;
   } | null;
 };
 
@@ -37,7 +42,7 @@ export default function ProfilePage() {
   const [role, setRole] = useState("");
   const [bio, setBio] = useState("");
   const [profileUrl, setProfileUrl] = useState("");
-  const [gradient, setGradient] = useState<string>(TEAM_GRADIENTS[0]);
+  const [gradient, setGradient] = useState<string>("from-violet-500 to-purple-500");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -231,12 +236,12 @@ export default function ProfilePage() {
               <option value="" className="bg-ink">
                 No role yet
               </option>
-              {TEAM_ROLES.map((option) => (
-                <option key={option} value={option} className="bg-ink">
-                  {option}
+              {(me?.roles ?? []).map((option) => (
+                <option key={option.id} value={option.name} className="bg-ink">
+                  {option.name}
                 </option>
               ))}
-              {role && !(TEAM_ROLES as readonly string[]).includes(role) && (
+              {role && !(me?.roles ?? []).some((option) => option.name === role) && (
                 <option value={role} className="bg-ink">
                   {role}
                 </option>
@@ -248,17 +253,15 @@ export default function ProfilePage() {
               value={profileUrl}
               onChange={(e) => setProfileUrl(e.target.value)}
             />
-            <select
-              className={inputClass}
-              value={gradient}
-              onChange={(e) => setGradient(e.target.value)}
-            >
-              {TEAM_GRADIENTS.map((option) => (
-                <option key={option} value={option} className="bg-ink">
-                  {option.replace("from-", "").replace(" to-", " → ")}
-                </option>
-              ))}
-            </select>
+            {me?.member?.teamName && (
+              <p className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-mist">
+                Team: <span className="font-semibold text-white">{me.member.teamName}</span>
+              </p>
+            )}
+            <div>
+              <p className="mb-2 text-xs uppercase tracking-widest text-mist">Card colour</p>
+              <GradientPicker value={gradient} onChange={setGradient} />
+            </div>
             <textarea
               className={inputClass}
               rows={4}

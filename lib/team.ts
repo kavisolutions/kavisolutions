@@ -15,9 +15,27 @@ export const TEAM_GRADIENTS = [
   "from-lime-500 to-green-500",
 ] as const
 
-export const TEAM_ROLES = ["Volunteer", "Intern", "Fellow", "Mentor", "Partner"] as const
-
 export const DEFAULT_TEAM_GRADIENT = TEAM_GRADIENTS[0]
+
+export type OrgRole = {
+  id: string
+  name: string
+  sortOrder: number
+}
+
+export type OrgTeam = {
+  id: string
+  name: string
+  sortOrder: number
+}
+
+export const slugify = (value: string) =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 50)
 
 export type TeamMemberRow = {
   id: string
@@ -30,6 +48,8 @@ export type TeamMemberRow = {
   user_id: string | null
   sort_order: number
   profile_url: string | null
+  team_id?: string | null
+  team?: { name: string } | null
   created_at?: string
   updated_at?: string
 }
@@ -44,6 +64,8 @@ export type TeamMember = {
   imageUrl: string | null
   profileUrl: string | null
   sortOrder: number
+  teamId: string | null
+  teamName: string | null
 }
 
 export type TeamSettings = {
@@ -93,4 +115,6 @@ export const toTeamMember = (row: TeamMemberRow): TeamMember => ({
   imageUrl: row.image_url,
   profileUrl: row.profile_url,
   sortOrder: row.sort_order,
+  teamId: row.team_id ?? null,
+  teamName: row.team?.name ?? null,
 })

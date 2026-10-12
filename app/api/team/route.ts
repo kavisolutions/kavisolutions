@@ -5,7 +5,6 @@ import {
   getInitials,
   normalizeGradient,
   sanitizeText,
-  TEAM_SETTING_KEYS,
   toTeamMember,
   type TeamMemberRow,
 } from "@/lib/team";
@@ -15,20 +14,39 @@ export async function readTeamSettings(supabase: SupabaseClient) {
   const { data, error } = await supabase
     .from("app_settings")
     .select("key, value")
-    .in("key", [
-      TEAM_SETTING_KEYS.tagline,
-      TEAM_SETTING_KEYS.description,
-      TEAM_SETTING_KEYS.contactEmail,
-    ]);
+    .in("key", ["team_tagline", "team_description", "contact_email"]);
 
   if (error) throw new Error(error.message);
 
   const map = new Map((data ?? []).map((row) => [row.key, row.value ?? ""]));
 
   return {
-    tagline: map.get(TEAM_SETTING_KEYS.tagline) || "",
-    description: map.get(TEAM_SETTING_KEYS.description) || "",
-    contactEmail: map.get(TEAM_SETTING_KEYS.contactEmail) || "",
+    tagline: map.get("team_tagline") || "",
+    description: map.get("team_description") || "",
+    contactEmail: map.get("contact_email") || "",
+  };
+}
+
+export async function readOrgOptions(supabase: SupabaseClient) {
+  const [rolesRes, teamsRes] = await Promise.all([
+    supabase.from("roles").select("id, name, sort_order").order("sort_order"),
+    supabase.from("teams").select("id, name, sort_order").order("sort_order"),
+  ]);
+
+  if (rolesRes.error) throw new Error(rolesRes.error.message);
+  if (teamsRes.error) throw new Error(teamsRes.error.message);
+
+  return {
+    roles: (rolesRes.data ?? []).map((row) => ({
+      id: String(row.id),
+      name: String(row.name),
+      sortOrder: row.sort_order ?? 0,
+    })),
+    teams: (teamsRes.data ?? []).map((row) => ({
+      id: String(row.id),
+      name: String(row.name),
+      sortOrder: row.sort_order ?? 0,
+    })),
   };
 }
 
@@ -54,13 +72,15 @@ export async function GET(request: NextRequest) {
 
     const { user, isAdmin } = await getRequestAuth(request);
 
-    const membersQuery = supabase
+    if (mineOnly && !user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const { data: rows, error } = await supabase
       .from("team")
-      .select("*")
+      .select("*, team:teams(name)")
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
-
-    const { data: rows, error } = await membersQuery;
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -69,14 +89,15 @@ export async function GET(request: NextRequest) {
     const rowsList = (rows ?? []) as TeamMemberRow[];
     const member = user ? rowsList.find((row) => row.user_id === user.id) ?? null : null;
 
-    if (mineOnly && !user) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
-
-    const settings = await readTeamSettings(supabase);
+    const [settings, options] = await Promise.all([
+      readTeamSettings(supabase),
+      readOrgOptions(supabase),
+    ]);
 
     return NextResponse.json({
       members: rowsList.map(toTeamMember),
+      roles: options.roles,
+      teams: options.teams,
       settings: { tagline: settings.tagline, description: settings.description },
       isAdmin,
       member: member
@@ -89,6 +110,8 @@ export async function GET(request: NextRequest) {
             profileUrl: member.profile_url,
             gradient: normalizeGradient(member.gradient),
             sortOrder: member.sort_order,
+            teamId: member.team_id ?? null,
+            teamName: member.team?.name ?? null,
           }
         : null,
       user: user ? { id: user.id, email: user.email ?? "" } : null,
@@ -122,6 +145,7 @@ export async function POST(request: NextRequest) {
     const imageUrl = sanitizeText(body?.imageUrl, 1000) || null;
     const gradient = normalizeGradient(body?.gradient);
     const sortOrder = Number.isFinite(Number(body?.sortOrder)) ? Number(body.sortOrder) : 0;
+    const teamId = sanitizeText(body?.teamId, 60) || null;
     const loginEmail = sanitizeText(body?.email, 254).toLowerCase();
     const loginPassword = typeof body?.password === "string" ? body.password : "";
 
@@ -171,15 +195,19 @@ export async function POST(request: NextRequest) {
         profile_url: profileUrl,
         sort_order: sortOrder,
         user_id: userId,
+        team_id: teamId,
       })
-      .select("*")
+      .select("*, team:teams(name)")
       .single();
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ member: toTeamMember(data as TeamMemberRow), linkedEmail: loginEmail || null });
+    return NextResponse.json({
+      member: toTeamMember(data as TeamMemberRow),
+      linkedEmail: loginEmail || null,
+    });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to create member" },
