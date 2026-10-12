@@ -1,5 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { getSupabase } from "@/lib/supabase";
+import { TEAM_SETTING_KEYS } from "@/lib/team";
+
+async function resolveContactEmail(): Promise<string> {
+  try {
+    const supabase = getSupabase();
+    const { data } = await supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key", TEAM_SETTING_KEYS.contactEmail)
+      .maybeSingle();
+
+    const value = typeof data?.value === "string" ? data.value.trim() : "";
+    if (value) return value;
+  } catch {
+    // fall through to env vars
+  }
+
+  return process.env.CONTACT_EMAIL || process.env.SMTP_USER || "";
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,7 +39,7 @@ export async function POST(req: NextRequest) {
 
     await transporter.sendMail({
       from: `"Kavi Solutions Website" <${process.env.SMTP_USER}>`,
-      to: process.env.CONTACT_EMAIL || process.env.SMTP_USER,
+      to: await resolveContactEmail(),
       replyTo: email,
       subject: `New Contact Form — ${service || "General Inquiry"}`,
       html: `

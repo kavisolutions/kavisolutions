@@ -3,39 +3,19 @@
 import { useEffect, useState } from "react";
 import { SectionHeading } from "./SectionHeading";
 import { RevealItem, RevealStagger } from "./motion";
-import { type FolioTeam } from "@/lib/folio-team";
-
-const gradients = [
-  "from-violet-500 to-purple-500",
-  "from-sky-500 to-cyan-500",
-  "from-emerald-500 to-teal-500",
-  "from-fuchsia-500 to-pink-500",
-  "from-amber-500 to-orange-500",
-  "from-rose-500 to-red-500",
-  "from-indigo-500 to-blue-500",
-  "from-lime-500 to-green-500",
-];
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
+import { getInitials, type TeamMember } from "@/lib/team";
 
 export default function Team() {
-  const [team, setTeam] = useState<FolioTeam | null>(null);
+  const [members, setMembers] = useState<TeamMember[]>([]);
 
   useEffect(() => {
-    fetch("/api/folio-team")
+    fetch("/api/team")
       .then((res) => res.json())
-      .then((data) => setTeam(data.configured && data.team ? data.team : null))
+      .then((data) => setMembers(Array.isArray(data.members) ? data.members : []))
       .catch(console.error);
   }, []);
 
-  if (!team || team.members.length === 0) {
+  if (members.length === 0) {
     return null;
   }
 
@@ -49,29 +29,25 @@ export default function Team() {
               The people behind <span className="text-gradient">the magic</span>
             </>
           }
-          subtitle={
-            team.tagline ||
-            team.description ||
-            "A small, senior team obsessed with craft. We sweat the details so you don't have to."
-          }
+          subtitle="A small, senior team obsessed with craft. We sweat the details so you don't have to."
         />
 
         <RevealStagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {team.members.map((member, i) => {
-            const gradient = gradients[i % gradients.length];
-            const initials = getInitials(member.name || member.username || "?");
+          {members.map((member) => {
+            const gradient = member.gradient;
+            const initials = member.initials || getInitials(member.name || "?");
 
             return (
-              <RevealItem key={member.id || member.username}>
+              <RevealItem key={member.id}>
                 <div className="group relative flex h-full flex-col overflow-hidden rounded-3xl glass p-6 text-center shadow-lift transition-all duration-300 hover:-translate-y-2 hover:shadow-glow">
                   <div className="relative mx-auto mb-5 h-24 w-24">
-                    {member.photo ? (
+                    {member.imageUrl ? (
                       <>
                         <div
                           className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${gradient} opacity-60 blur-lg transition-all duration-500 group-hover:opacity-90 group-hover:blur-xl`}
                         />
                         <img
-                          src={member.photo}
+                          src={member.imageUrl}
                           alt={member.name}
                           className="relative h-24 w-24 rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3"
                         />
@@ -94,7 +70,7 @@ export default function Team() {
                     {member.name}
                   </h3>
                   <p className="mx-auto mt-1.5 max-w-[14rem] text-[11px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-gradient">
-                    {member.title || member.jobRole || "Team member"}
+                    {member.role || "Team member"}
                   </p>
                   <div className="mt-auto pt-3">
                     {member.profileUrl && (
