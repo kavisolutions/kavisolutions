@@ -180,15 +180,8 @@ export default function TeamPage() {
           </div>
         )}
 
-        <div className="mt-10 text-center">
-          {!session ? (
-            <Link
-              href="/login?next=/team"
-              className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-5 py-3 text-sm font-semibold text-white shadow-glow transition-all hover:scale-[1.02]"
-            >
-              Login
-            </Link>
-          ) : (
+        {session && (
+          <div className="mt-10 text-center">
             <div className="flex flex-col items-center gap-2">
               <p className="text-xs text-mist">
                 Signed in as <span className="text-white">{session.user.email}</span>
@@ -200,8 +193,8 @@ export default function TeamPage() {
                 Sign out
               </button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

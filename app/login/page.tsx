@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { supabaseBrowser } from "@/lib/auth-context";
+import { supabaseBrowser, useAuth } from "@/lib/auth-context";
 
 const inputClass =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-fog focus:border-violet-400/60";
@@ -16,18 +17,49 @@ const GoogleIcon = () => (
   </svg>
 );
 
-function getNextPath(fallback: string) {
-  if (typeof window === "undefined") return fallback;
+function getNextPath(): string | null {
+  if (typeof window === "undefined") return null;
   const next = new URLSearchParams(window.location.search).get("next");
-  return next && next.startsWith("/") ? next : fallback;
+  return next && next.startsWith("/") ? next : null;
 }
 
 export default function LoginPage() {
+  const { session, loading: authLoading } = useAuth();
+  const router = useRouter();
+  const redirecting = useRef(false);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+
+  const goToDestination = useCallback(
+    async (accessToken: string | undefined) => {
+      const next = getNextPath();
+      if (next) {
+        router.push(next);
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/me", {
+          headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+        });
+        const data = await res.json();
+        router.push(data?.isAdmin ? "/admin" : "/team");
+      } catch {
+        router.push("/team");
+      }
+    },
+    [router],
+  );
+
+  useEffect(() => {
+    if (authLoading || !session || redirecting.current) return;
+    redirecting.current = true;
+    void goToDestination(session.access_token);
+  }, [authLoading, session, goToDestination]);
 
   const handleCredentialsLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +68,7 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const { error: signInError } = await supabaseBrowser.auth.signInWithPassword({
+    const { data: signInData, error: signInError } = await supabaseBrowser.auth.signInWithPassword({
       email: email.trim(),
       password,
     });
@@ -51,7 +83,8 @@ export default function LoginPage() {
       return;
     }
 
-    window.location.assign(getNextPath("/team"));
+    redirecting.current = true;
+    await goToDestination(signInData.session?.access_token);
   };
 
   const handleGoogleLogin = async () => {
@@ -59,10 +92,11 @@ export default function LoginPage() {
     setGoogleLoading(true);
     setError("");
 
+    const next = getNextPath();
     const { error: oauthError } = await supabaseBrowser.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: window.location.origin + getNextPath("/team"),
+        redirectTo: window.location.origin + "/login" + (next ? `?next=${encodeURIComponent(next)}` : ""),
       },
     });
 

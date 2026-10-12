@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,14 +12,22 @@ const links = [
   { href: "/product", label: "Product" },
   { href: "/marketing", label: "Marketing" },
   { href: "/fellowship", label: "Fellowship" },
-  { href: "/#team", label: "Team" },
+  { href: "/team", label: "Team" },
   { href: "/#contact", label: "Contact" },
-  { href: "/team", label: "Team Admin" },
   { href: "/login", label: "Login" },
 ];
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [open]);
 
   const menu = (
     <AnimatePresence>
