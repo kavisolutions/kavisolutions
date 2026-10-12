@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
+import NavAuth from "./NavAuth";
 
 const links = [
   { href: "/web", label: "Web" },
@@ -14,7 +15,6 @@ const links = [
   { href: "/fellowship", label: "Fellowship" },
   { href: "/team", label: "Team" },
   { href: "/#contact", label: "Contact" },
-  { href: "/login", label: "Login" },
 ];
 
 export default function MobileMenu() {
@@ -86,6 +86,15 @@ export default function MobileMenu() {
                 </Link>
               </motion.div>
             ))}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.05 * links.length }}
+              className="mt-2 border-t border-white/10 pt-3"
+              onClick={() => setOpen(false)}
+            >
+              <NavAuth variant="menu" />
+            </motion.div>
           </motion.div>
         </>
       )}

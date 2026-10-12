@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import MobileMenu from "./MobileMenu";
+import NavAuth from "./NavAuth";
 
 const links = [
   { href: "/web", label: "Web" },
@@ -44,12 +45,7 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-2 sm:flex">
-          <Link
-            href="/login"
-            className="rounded-xl bg-white/5 px-4 py-2 text-sm font-semibold text-mist transition-colors hover:bg-white/10 hover:text-white"
-          >
-            Login
-          </Link>
+          <NavAuth />
           <Link
             href="/#contact"
             className="rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-4 py-2 text-sm font-semibold text-white shadow-glow transition-transform hover:scale-105"
