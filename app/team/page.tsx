@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useAuth, supabaseBrowser } from "@/lib/auth-context";
+import { useAuth } from "@/lib/auth-context";
 import { getInitials, type TeamMember } from "@/lib/team";
 import { motion } from "framer-motion";
 
@@ -46,10 +46,6 @@ export default function TeamPage() {
         setState("error");
       });
   }, [session?.access_token]);
-
-  const handleSignOut = async () => {
-    await supabaseBrowser.auth.signOut();
-  };
 
   if (state === "loading" || authLoading) {
     return (
@@ -176,22 +172,6 @@ export default function TeamPage() {
                   </motion.div>
                 );
               })}
-            </div>
-          </div>
-        )}
-
-        {session && (
-          <div className="mt-10 text-center">
-            <div className="flex flex-col items-center gap-2">
-              <p className="text-xs text-mist">
-                Signed in as <span className="text-white">{session.user.email}</span>
-              </p>
-              <button
-                onClick={handleSignOut}
-                className="rounded-lg bg-white/5 px-4 py-2 text-xs text-mist transition-colors hover:bg-white/10 hover:text-white"
-              >
-                Sign out
-              </button>
             </div>
           </div>
         )}
