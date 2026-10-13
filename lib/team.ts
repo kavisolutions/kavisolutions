@@ -121,3 +121,57 @@ export const toTeamMember = (row: TeamMemberRow): TeamMember => ({
   teamId: row.team_id ?? null,
   teamName: row.team?.name ?? null,
 })
+
+export type ProjectRow = {
+  id: string;
+  name: string;
+  description: string | null;
+  live_link: string | null;
+  live_link_type: string | null;
+  project_types: string[];
+  skills: string[];
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export type Project = {
+  id: string;
+  name: string;
+  description: string;
+  liveLink: string;
+  liveLinkType: "app" | "web" | "both";
+  projectTypes: string[];
+  skills: string[];
+  sortOrder: number;
+}
+
+export const ALLOWED_LIVE_LINK_TYPES = ["app", "web", "both"] as const
+export const ALLOWED_PROJECT_TYPES = ["App", "Web"] as const
+export const COMMON_SKILLS = [
+  "Next.js",
+  "React",
+  "TypeScript",
+  "Node.js",
+  "Tailwind CSS",
+  "PostgreSQL",
+  "Supabase",
+  "Firebase",
+  "AWS",
+  "Docker",
+  "GraphQL",
+  "REST API",
+  "Swift",
+  "Kotlin",
+  "Flutter",
+  "React Native",
+  "Expo",
+  "Python",
+  "Go",
+  "Redis",
+  "Prisma",
+  "Drizzle",
+  "Stripe",
+  "Auth.js",
+  "Vercel",
+] as const

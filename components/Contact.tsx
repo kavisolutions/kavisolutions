@@ -30,6 +30,7 @@ export default function Contact() {
       if (!res.ok) throw new Error("Failed to send");
 
       setSent(true);
+      setForm({ name: "", email: "", phone: "", service: "Web development", message: "" });
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {

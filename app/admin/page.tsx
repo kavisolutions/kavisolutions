@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { supabaseBrowser, useAuth } from "@/lib/auth-context";
 import GradientPicker from "@/components/GradientPicker";
-import { getInitials, type OrgRole, type OrgTeam, type TeamMember } from "@/lib/team";
+import { getInitials, type OrgRole, type OrgTeam, type TeamMember, type Project, COMMON_SKILLS } from "@/lib/team";
 
 type AdminEntry = { email: string; source: "env" | "db" };
 
@@ -37,6 +37,27 @@ const emptyDraft = (gradient: string): MemberDraft => ({
   password: "",
 });
 
+type ProjectDraft = {
+  id?: string;
+  name: string;
+  description: string;
+  liveLink: string;
+  liveLinkType: "app" | "web" | "both";
+  projectTypes: string[];
+  skills: string[];
+  sortOrder: number;
+};
+
+const emptyProjectDraft = (): ProjectDraft => ({
+  name: "",
+  description: "",
+  liveLink: "",
+  liveLinkType: "web",
+  projectTypes: [],
+  skills: [],
+  sortOrder: 0,
+});
+
 const inputClass =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition-colors placeholder:text-fog focus:border-violet-400/60";
 
@@ -44,6 +65,7 @@ const sections = [
   { key: "team", label: "Team" },
   { key: "roles", label: "Roles" },
   { key: "teams", label: "Teams" },
+  { key: "projects", label: "Projects" },
   { key: "admins", label: "Admins" },
   { key: "settings", label: "Settings" },
 ] as const;
@@ -70,10 +92,15 @@ export default function AdminPage() {
   const [description, setDescription] = useState("");
   const [contactEmail, setContactEmail] = useState("");
 
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [projectDraft, setProjectDraft] = useState<ProjectDraft | null>(null);
+
   const [draft, setDraft] = useState<MemberDraft | null>(null);
   const [savingMember, setSavingMember] = useState(false);
+  const [savingProject, setSavingProject] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [formError, setFormError] = useState("");
+  const [projectFormError, setProjectFormError] = useState("");
 
   const [newRoleName, setNewRoleName] = useState("");
   const [editingRoleId, setEditingRoleId] = useState<string | null>(null);
@@ -91,10 +118,11 @@ export default function AdminPage() {
   const loadAll = useCallback(async () => {
     const headers = await authHeaders();
 
-    const [teamRes, adminsRes, settingsRes] = await Promise.all([
+    const [teamRes, adminsRes, settingsRes, projectsRes] = await Promise.all([
       fetch("/api/team", { headers }),
       fetch("/api/admins", { headers }),
       fetch("/api/settings", { headers }),
+      fetch("/api/projects", { headers }),
     ]);
 
     if (teamRes.status === 401 || adminsRes.status === 401) {
@@ -110,12 +138,14 @@ export default function AdminPage() {
     const teamData = await teamRes.json();
     const adminsData = await adminsRes.json();
     const settingsData = await settingsRes.json().catch(() => null);
+    const projectsData = await projectsRes.json().catch(() => null);
 
     setIsAdmin(true);
     setMembers(teamData.members ?? []);
     setRoles(teamData.roles ?? []);
     setOrgTeams(teamData.teams ?? []);
     setAdmins(adminsData.admins ?? []);
+    setProjects(projectsData?.projects ?? []);
     setTagline(settingsData?.settings?.tagline ?? "");
     setDescription(settingsData?.settings?.description ?? "");
     setContactEmail(settingsData?.settings?.contactEmail ?? "");
@@ -191,6 +221,60 @@ export default function AdminPage() {
     setNotice(isEdit ? "Member updated" : "Member added");
     setDraft(null);
     setSavingMember(false);
+    await loadAll();
+  };
+
+  const saveProject = async () => {
+    if (!projectDraft || savingProject) return;
+    setSavingProject(true);
+    setProjectFormError("");
+
+    const headers = await authHeaders();
+    const isEdit = Boolean(projectDraft.id);
+
+    const res = await fetch(isEdit ? `/api/projects/${projectDraft.id}` : "/api/projects", {
+      method: isEdit ? "PATCH" : "POST",
+      headers: { ...headers, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: projectDraft.name,
+        description: projectDraft.description,
+        liveLink: projectDraft.liveLink,
+        liveLinkType: projectDraft.liveLinkType,
+        projectTypes: projectDraft.projectTypes,
+        skills: projectDraft.skills,
+        sortOrder: projectDraft.sortOrder,
+        ...(isEdit ? { id: projectDraft.id } : {}),
+      }),
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      setProjectFormError(data?.error || "Failed to save project");
+      setSavingProject(false);
+      return;
+    }
+
+    setNotice(isEdit ? "Project updated" : "Project added");
+    setProjectDraft(null);
+    setSavingProject(false);
+    await loadAll();
+  };
+
+  const deleteProject = async (project: Project) => {
+    if (!window.confirm(`Delete project "${project.name}"?`)) return;
+    setActionError("");
+
+    const headers = await authHeaders();
+    const res = await fetch(`/api/projects?id=${project.id}`, { method: "DELETE", headers });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      setActionError(data?.error || "Failed to delete project");
+      return;
+    }
+
+    setNotice(`Project "${project.name}" deleted`);
     await loadAll();
   };
 
@@ -981,8 +1065,251 @@ export default function AdminPage() {
                       )}
                     </div>
                   ))}
-                  {orgTeams.length === 0 && (
-                    <p className="px-6 py-8 text-center text-sm text-mist">No teams yet.</p>
+{orgTeams.length === 0 && (
+                      <p className="px-6 py-8 text-center text-sm text-mist">No teams yet.</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+            {section === "projects" && (
+              <div className="space-y-4">
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => {
+                      setProjectDraft(emptyProjectDraft());
+                      setProjectFormError("");
+                    }}
+                    className="rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-4 py-2 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02]"
+                  >
+                    + Add project
+                  </button>
+                </div>
+
+                {projectDraft && (
+                  <div className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto bg-[#000000b3] p-4 py-10">
+                    <div className="w-full max-w-3xl rounded-3xl border border-white/10 bg-[#0b0b14] p-6 shadow-2xl">
+                      <div className="mb-5 flex items-center justify-between">
+                        <h2 className="font-display text-lg font-semibold">
+                          {projectDraft.id ? "Edit project" : "New project"}
+                        </h2>
+                        <button
+                          onClick={() => setProjectDraft(null)}
+                          className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-lg text-mist transition-colors hover:bg-white/10 hover:text-white"
+                          aria-label="Close"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <input
+                          className={inputClass}
+                          placeholder="Project name"
+                          value={projectDraft.name}
+                          onChange={(e) => setProjectDraft({ ...projectDraft, name: e.target.value })}
+                        />
+                        <select
+                          className={inputClass}
+                          value={projectDraft.liveLinkType}
+                          onChange={(e) => setProjectDraft({ ...projectDraft, liveLinkType: e.target.value as "app" | "web" | "both" })}
+                        >
+                          <option value="app" className="bg-ink">App</option>
+                          <option value="web" className="bg-ink">Web</option>
+                          <option value="both" className="bg-ink">Both</option>
+                        </select>
+                        <input
+                          className={inputClass}
+                          placeholder="Live link (optional)"
+                          value={projectDraft.liveLink}
+                          onChange={(e) => setProjectDraft({ ...projectDraft, liveLink: e.target.value })}
+                        />
+                        <input
+                          className={inputClass}
+                          placeholder="Sort order (lower shows first)"
+                          type="number"
+                          value={projectDraft.sortOrder}
+                          onChange={(e) => setProjectDraft({ ...projectDraft, sortOrder: Number(e.target.value) })}
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <p className="mb-2 text-xs uppercase tracking-widest text-mist">
+                          Description
+                        </p>
+                        <textarea
+                          className={inputClass}
+                          placeholder="Project description"
+                          rows={3}
+                          value={projectDraft.description}
+                          onChange={(e) => setProjectDraft({ ...projectDraft, description: e.target.value })}
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <p className="mb-2 text-xs uppercase tracking-widest text-mist">
+                          Project types (multi-select)
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {["App", "Web"].map((type) => (
+                            <label
+                              key={type}
+                              className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm cursor-pointer transition-colors ${
+                                projectDraft.projectTypes.includes(type)
+                                  ? "bg-violet-500/20 border border-violet-500/40 text-violet-300"
+                                  : "bg-white/5 border border-white/10 text-mist hover:bg-white/10 hover:text-white"
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={projectDraft.projectTypes.includes(type)}
+                                onChange={(e) =>
+                                  setProjectDraft({
+                                    ...projectDraft,
+                                    projectTypes: e.target.checked
+                                      ? [...projectDraft.projectTypes, type]
+                                      : projectDraft.projectTypes.filter((t) => t !== type),
+                                  })
+                                }
+                                className="w-4 h-4 rounded border-white/20 text-violet-500 focus:ring-violet-500"
+                              />
+                              {type}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <p className="mb-2 text-xs uppercase tracking-widest text-mist">
+                          Skills
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {COMMON_SKILLS.map((skill) => (
+                            <label
+                              key={skill}
+                              className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm cursor-pointer transition-colors ${
+                                projectDraft.skills.includes(skill)
+                                  ? "bg-sky-500/20 border border-sky-500/40 text-sky-300"
+                                  : "bg-white/5 border border-white/10 text-mist hover:bg-white/10 hover:text-white"
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={projectDraft.skills.includes(skill)}
+                                onChange={(e) =>
+                                  setProjectDraft({
+                                    ...projectDraft,
+                                    skills: e.target.checked
+                                      ? [...projectDraft.skills, skill]
+                                      : projectDraft.skills.filter((s) => s !== skill),
+                                  })
+                                }
+                                className="w-4 h-4 rounded border-white/20 text-sky-500 focus:ring-sky-500"
+                              />
+                              {skill}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                      {projectFormError && <p className="mt-3 text-sm text-red-400">{projectFormError}</p>}
+
+                      <div className="mt-4 flex gap-3">
+                        <button
+                          onClick={saveProject}
+                          disabled={savingProject}
+                          className="rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-5 py-2.5 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02] disabled:opacity-60"
+                        >
+                          {savingProject ? "Saving..." : "Save"}
+                        </button>
+                        <button
+                          onClick={() => setProjectDraft(null)}
+                          className="rounded-xl bg-white/5 px-5 py-2.5 text-sm font-semibold text-mist transition-colors hover:bg-white/10 hover:text-white"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="overflow-hidden rounded-3xl glass">
+                  <div className="hidden grid-cols-[2fr_1fr_1fr_0.5fr_auto] gap-3 border-b border-white/10 px-6 py-3 text-xs uppercase tracking-widest text-fog sm:grid">
+                    <span>Project</span>
+                    <span>Types</span>
+                    <span>Live link</span>
+                    <span>Order</span>
+                    <span />
+                  </div>
+                  {projects.map((project) => (
+                    <div
+                      key={project.id}
+                      className="grid grid-cols-1 gap-3 border-b border-white/5 px-6 py-4 last:border-b-0 sm:grid-cols-[2fr_1fr_1fr_0.5fr_auto] sm:items-center"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 font-display text-xs font-bold shrink-0">
+                          🚀
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-semibold truncate">{project.name}</p>
+                          {project.description && (
+                            <p className="text-sm text-mist truncate max-w-xs">{project.description}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {project.projectTypes.map((type) => (
+                          <span
+                            key={type}
+                            className="inline-block rounded-lg bg-sky-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sky-300"
+                          >
+                            {type}
+                          </span>
+                        ))}
+                        {project.projectTypes.length === 0 && (
+                          <span className="text-[10px] text-fog">No types</span>
+                        )}
+                      </div>
+                      <div>
+                        {project.liveLink ? (
+                          <a
+                            href={project.liveLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-sm text-sky-400 hover:text-sky-300 truncate max-w-xs"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                            {project.liveLinkType === "both" ? "App & Web" : project.liveLinkType === "app" ? "App" : "Web"}
+                          </a>
+                        ) : (
+                          <span className="text-xs text-fog">No link</span>
+                        )}
+                      </div>
+                      <span className="text-xs text-mist">{project.sortOrder}</span>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() =>
+                            setProjectDraft({
+                              id: project.id,
+                              name: project.name,
+                              description: project.description,
+                              liveLink: project.liveLink,
+                              liveLinkType: project.liveLinkType,
+                              projectTypes: project.projectTypes,
+                              skills: project.skills,
+                              sortOrder: project.sortOrder,
+                            })
+                          }
+                          className="rounded-lg bg-white/5 px-3 py-1.5 text-xs text-mist transition-colors hover:bg-white/10 hover:text-white"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => deleteProject(project)}
+                          className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-400 transition-colors hover:bg-red-500/20"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {projects.length === 0 && (
+                    <p className="px-6 py-8 text-center text-sm text-mist">No projects yet.</p>
                   )}
                 </div>
               </div>
