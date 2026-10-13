@@ -86,6 +86,7 @@ export default function AdminPage() {
   const [newAdminEmail, setNewAdminEmail] = useState("");
   const [notice, setNotice] = useState("");
   const [actionError, setActionError] = useState("");
+  const [preview, setPreview] = useState<string | null>(null);
 
   const loadAll = useCallback(async () => {
     const headers = await authHeaders();
@@ -614,19 +615,58 @@ export default function AdminPage() {
                         value={draft.sortOrder}
                         onChange={(e) => setDraft({ ...draft, sortOrder: Number(e.target.value) })}
                       />
-                      <label className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm">
-                        <span className="text-mist">{uploading ? "Uploading..." : "Photo"}</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="text-xs"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) uploadImage(file);
-                          }}
-                        />
-                        {draft.imageUrl && <span className="text-xs text-emerald-300">set</span>}
-                      </label>
+                      <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5">
+                        {draft.imageUrl ? (
+                          <button
+                            type="button"
+                            onClick={() => setPreview(draft.imageUrl)}
+                            className="shrink-0"
+                            title="Preview photo"
+                          >
+                            <img
+                              src={draft.imageUrl}
+                              alt="Member photo"
+                              className="h-12 w-12 rounded-xl object-cover ring-1 ring-white/20 transition-transform hover:scale-105"
+                            />
+                          </button>
+                        ) : (
+                          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/5 text-[10px] text-fog">
+                            no photo
+                          </span>
+                        )}
+                        <div className="flex min-w-0 flex-col gap-1">
+                          <label className="cursor-pointer text-xs font-semibold text-mist transition-colors hover:text-white">
+                            {uploading ? "Uploading..." : draft.imageUrl ? "Change photo" : "Upload photo"}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) uploadImage(file);
+                              }}
+                            />
+                          </label>
+                          {draft.imageUrl && (
+                            <div className="flex gap-3 text-[11px]">
+                              <button
+                                type="button"
+                                onClick={() => setPreview(draft.imageUrl)}
+                                className="text-sky-300 hover:text-sky-200"
+                              >
+                                Preview
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setDraft({ ...draft, imageUrl: "" })}
+                                className="text-red-400 hover:text-red-300"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                       <div className="sm:col-span-2">
                         <p className="mb-2 text-xs uppercase tracking-widest text-mist">
                           Card colour
@@ -698,11 +738,18 @@ export default function AdminPage() {
                     >
                       <div className="flex items-center gap-3">
                         {member.imageUrl ? (
-                          <img
-                            src={member.imageUrl}
-                            alt={member.name}
-                            className="h-10 w-10 rounded-xl object-cover"
-                          />
+                          <button
+                            type="button"
+                            onClick={() => setPreview(member.imageUrl)}
+                            className="shrink-0"
+                            title="Preview photo"
+                          >
+                            <img
+                              src={member.imageUrl}
+                              alt={member.name}
+                              className="h-10 w-10 rounded-xl object-cover ring-1 ring-white/10 transition-transform hover:scale-105"
+                            />
+                          </button>
                         ) : (
                           <div
                             className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${member.gradient} font-display text-xs font-bold`}
@@ -1033,6 +1080,27 @@ export default function AdminPage() {
             )}
           </div>
         </div>
+
+        {preview && (
+          <div
+            className="fixed inset-0 z-[90] flex items-center justify-center bg-[#000000e0] p-6"
+            onClick={() => setPreview(null)}
+          >
+            <div className="flex max-h-full max-w-3xl flex-col items-center gap-4">
+              <img
+                src={preview}
+                alt="Photo preview"
+                className="max-h-[80vh] max-w-full rounded-2xl object-contain shadow-2xl"
+              />
+              <button
+                onClick={() => setPreview(null)}
+                className="rounded-xl bg-white/10 px-5 py-2 text-sm font-semibold text-mist transition-colors hover:bg-white/20 hover:text-white"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -155,6 +155,13 @@ export default function TeamPage() {
                     <p className="mx-auto mt-1.5 max-w-[14rem] text-[11px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-gradient">
                       {member.role || "Team member"}
                     </p>
+                    {member.teamName && (
+                      <p className="mx-auto mt-1.5">
+                        <span className="inline-block rounded-lg bg-sky-500/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-sky-300">
+                          {member.teamName}
+                        </span>
+                      </p>
+                    )}
                     {member.bio && (
                       <p className="mt-3 text-xs leading-relaxed text-mist">{member.bio}</p>
                     )}
