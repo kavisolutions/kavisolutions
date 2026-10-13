@@ -108,6 +108,7 @@ export async function GET(request: NextRequest) {
             bio: member.bio,
             imageUrl: member.image_url,
             profileUrl: member.profile_url,
+            linkedinUrl: member.linkedin_url ?? null,
             gradient: normalizeGradient(member.gradient),
             sortOrder: member.sort_order,
             teamId: member.team_id ?? null,
@@ -142,6 +143,7 @@ export async function POST(request: NextRequest) {
     const role = sanitizeText(body?.role, 120);
     const bio = sanitizeText(body?.bio, 2000);
     const profileUrl = sanitizeText(body?.profileUrl, 500) || null;
+    const linkedinUrl = sanitizeText(body?.linkedinUrl, 500) || null;
     const imageUrl = sanitizeText(body?.imageUrl, 1000) || null;
     const gradient = normalizeGradient(body?.gradient);
     const sortOrder = Number.isFinite(Number(body?.sortOrder)) ? Number(body.sortOrder) : 0;
@@ -193,6 +195,7 @@ export async function POST(request: NextRequest) {
         gradient,
         image_url: imageUrl,
         profile_url: profileUrl,
+        linkedin_url: linkedinUrl,
         sort_order: sortOrder,
         user_id: userId,
         team_id: teamId,

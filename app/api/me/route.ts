@@ -38,6 +38,7 @@ export async function GET(request: NextRequest) {
           bio: row.bio,
           imageUrl: row.image_url,
           profileUrl: row.profile_url,
+          linkedinUrl: row.linkedin_url ?? null,
           gradient: normalizeGradient(row.gradient),
           sortOrder: row.sort_order,
           teamId: row.team_id ?? null,

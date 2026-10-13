@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { getInitials, type TeamMember } from "@/lib/team";
+import LinkedInIcon from "@/components/LinkedInIcon";
 import { motion } from "framer-motion";
 
 type TeamResponse = {
@@ -157,7 +158,18 @@ export default function TeamPage() {
                     {member.bio && (
                       <p className="mt-3 text-xs leading-relaxed text-mist">{member.bio}</p>
                     )}
-                    <div className="mt-auto pt-4">
+                    <div className="mt-auto flex items-center justify-center gap-3 pt-4">
+                      {member.linkedinUrl && (
+                        <a
+                          href={member.linkedinUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label={`${member.name} on LinkedIn`}
+                          className="text-mist transition-colors hover:text-sky-300"
+                        >
+                          <LinkedInIcon className="h-4 w-4" />
+                        </a>
+                      )}
                       {member.profileUrl ? (
                         <a
                           href={member.profileUrl}

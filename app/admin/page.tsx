@@ -15,6 +15,7 @@ type MemberDraft = {
   teamId: string;
   bio: string;
   profileUrl: string;
+  linkedinUrl: string;
   gradient: string;
   sortOrder: number;
   imageUrl: string;
@@ -28,6 +29,7 @@ const emptyDraft = (gradient: string): MemberDraft => ({
   teamId: "",
   bio: "",
   profileUrl: "",
+  linkedinUrl: "",
   gradient,
   sortOrder: 0,
   imageUrl: "",
@@ -143,6 +145,15 @@ export default function AdminPage() {
     return () => clearTimeout(timeout);
   }, [notice]);
 
+  useEffect(() => {
+    if (!draft) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [draft]);
+
   const saveMember = async () => {
     if (!draft || savingMember) return;
     setSavingMember(true);
@@ -160,6 +171,7 @@ export default function AdminPage() {
         teamId: draft.teamId || null,
         bio: draft.bio,
         profileUrl: draft.profileUrl,
+        linkedinUrl: draft.linkedinUrl,
         gradient: draft.gradient,
         sortOrder: draft.sortOrder,
         imageUrl: draft.imageUrl,
@@ -529,10 +541,20 @@ export default function AdminPage() {
                 </div>
 
                 {draft && (
-                  <div className="rounded-3xl glass p-6">
-                    <h2 className="mb-4 font-display text-lg font-semibold">
-                      {draft.id ? "Edit member" : "New member"}
-                    </h2>
+                  <div className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto bg-[#000000b3] p-4 py-10">
+                    <div className="w-full max-w-2xl rounded-3xl border border-white/10 bg-[#0b0b14] p-6 shadow-2xl">
+                      <div className="mb-5 flex items-center justify-between">
+                        <h2 className="font-display text-lg font-semibold">
+                          {draft.id ? "Edit member" : "New member"}
+                        </h2>
+                        <button
+                          onClick={() => setDraft(null)}
+                          className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-lg text-mist transition-colors hover:bg-white/10 hover:text-white"
+                          aria-label="Close"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     <div className="grid gap-3 sm:grid-cols-2">
                       <input
                         className={inputClass}
@@ -578,6 +600,12 @@ export default function AdminPage() {
                         placeholder="Portfolio URL (optional)"
                         value={draft.profileUrl}
                         onChange={(e) => setDraft({ ...draft, profileUrl: e.target.value })}
+                      />
+                      <input
+                        className={inputClass}
+                        placeholder="LinkedIn URL (optional)"
+                        value={draft.linkedinUrl}
+                        onChange={(e) => setDraft({ ...draft, linkedinUrl: e.target.value })}
                       />
                       <input
                         className={inputClass}
@@ -651,6 +679,7 @@ export default function AdminPage() {
                         Cancel
                       </button>
                     </div>
+                    </div>
                   </div>
                 )}
 
@@ -682,6 +711,16 @@ export default function AdminPage() {
                           </div>
                         )}
                         <span className="font-semibold">{member.name}</span>
+                        {member.linkedinUrl && (
+                          <span className="rounded bg-[#0a66c2]/25 px-1.5 py-0.5 text-[10px] font-bold text-sky-300">
+                            in
+                          </span>
+                        )}
+                        {member.profileUrl && (
+                          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-bold text-mist">
+                            portfolio
+                          </span>
+                        )}
                       </div>
                       <div>
                         {member.role ? (
@@ -712,6 +751,7 @@ export default function AdminPage() {
                               teamId: member.teamId ?? "",
                               bio: member.bio,
                               profileUrl: member.profileUrl ?? "",
+                              linkedinUrl: member.linkedinUrl ?? "",
                               gradient: member.gradient,
                               sortOrder: member.sortOrder,
                               imageUrl: member.imageUrl ?? "",

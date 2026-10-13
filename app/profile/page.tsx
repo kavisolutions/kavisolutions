@@ -18,6 +18,7 @@ type MeResponse = {
     bio: string;
     imageUrl: string | null;
     profileUrl: string | null;
+    linkedinUrl: string | null;
     gradient: string;
     teamId: string | null;
     teamName: string | null;
@@ -42,6 +43,7 @@ export default function ProfilePage() {
   const [role, setRole] = useState("");
   const [bio, setBio] = useState("");
   const [profileUrl, setProfileUrl] = useState("");
+  const [linkedinUrl, setLinkedinUrl] = useState("");
   const [gradient, setGradient] = useState<string>("from-violet-500 to-purple-500");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -60,6 +62,7 @@ export default function ProfilePage() {
       setRole(data.member.role);
       setBio(data.member.bio ?? "");
       setProfileUrl(data.member.profileUrl ?? "");
+      setLinkedinUrl(data.member.linkedinUrl ?? "");
       setGradient(data.member.gradient);
       setImageUrl(data.member.imageUrl);
     }
@@ -119,7 +122,7 @@ export default function ProfilePage() {
     const res = await fetch(`/api/team/${me.member.id}`, {
       method: "PATCH",
       headers: { ...headers, "Content-Type": "application/json" },
-      body: JSON.stringify({ name, role, bio, profileUrl, gradient, imageUrl }),
+      body: JSON.stringify({ name, role, bio, profileUrl, linkedinUrl, gradient, imageUrl }),
     });
 
     const data = await res.json().catch(() => null);
@@ -252,6 +255,12 @@ export default function ProfilePage() {
               placeholder="Portfolio URL (optional)"
               value={profileUrl}
               onChange={(e) => setProfileUrl(e.target.value)}
+            />
+            <input
+              className={inputClass}
+              placeholder="LinkedIn URL (optional)"
+              value={linkedinUrl}
+              onChange={(e) => setLinkedinUrl(e.target.value)}
             />
             {me?.member?.teamName && (
               <p className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-mist">

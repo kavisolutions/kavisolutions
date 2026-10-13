@@ -64,6 +64,10 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
       patch.profile_url = sanitizeText(body.profileUrl, 500) || null;
     }
 
+    if (body?.linkedinUrl !== undefined) {
+      patch.linkedin_url = sanitizeText(body.linkedinUrl, 500) || null;
+    }
+
     if (isAdmin && body?.sortOrder !== undefined && Number.isFinite(Number(body.sortOrder))) {
       patch.sort_order = Number(body.sortOrder);
     }

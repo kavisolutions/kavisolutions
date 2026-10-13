@@ -48,6 +48,7 @@ export type TeamMemberRow = {
   user_id: string | null
   sort_order: number
   profile_url: string | null
+  linkedin_url?: string | null
   team_id?: string | null
   team?: { name: string } | null
   created_at?: string
@@ -63,6 +64,7 @@ export type TeamMember = {
   bio: string
   imageUrl: string | null
   profileUrl: string | null
+  linkedinUrl: string | null
   sortOrder: number
   teamId: string | null
   teamName: string | null
@@ -114,6 +116,7 @@ export const toTeamMember = (row: TeamMemberRow): TeamMember => ({
   bio: row.bio,
   imageUrl: row.image_url,
   profileUrl: row.profile_url,
+  linkedinUrl: row.linkedin_url ?? null,
   sortOrder: row.sort_order,
   teamId: row.team_id ?? null,
   teamName: row.team?.name ?? null,

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { SectionHeading } from "./SectionHeading";
 import { RevealItem, RevealStagger } from "./motion";
+import LinkedInIcon from "./LinkedInIcon";
 import { getInitials, type TeamMember } from "@/lib/team";
 
 export default function Team() {
@@ -72,7 +73,18 @@ export default function Team() {
                   <p className="mx-auto mt-1.5 max-w-[14rem] text-[11px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-gradient">
                     {member.role || "Team member"}
                   </p>
-                  <div className="mt-auto pt-3">
+                  <div className="mt-auto flex items-center justify-center gap-3 pt-3">
+                    {member.linkedinUrl && (
+                      <a
+                        href={member.linkedinUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`${member.name} on LinkedIn`}
+                        className="text-mist transition-colors hover:text-sky-300"
+                      >
+                        <LinkedInIcon className="h-4 w-4" />
+                      </a>
+                    )}
                     {member.profileUrl && (
                       <a
                         href={member.profileUrl}
