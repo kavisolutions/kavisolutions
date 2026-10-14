@@ -106,6 +106,14 @@ export default function LoginPage() {
     }
   };
 
+  if (authLoading || session) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-ink text-white">
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-ink px-6 py-16">
       <div className="w-full max-w-md text-center">

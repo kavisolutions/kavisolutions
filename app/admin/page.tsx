@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { supabaseBrowser, useAuth } from "@/lib/auth-context";
 import GradientPicker from "@/components/GradientPicker";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getInitials, type OrgRole, type OrgTeam, type TeamMember, type Project, COMMON_SKILLS } from "@/lib/team";
 
 type AdminEntry = { email: string; source: "env" | "db" };
@@ -43,7 +44,6 @@ type ProjectDraft = {
   description: string;
   appLink: string;
   webLink: string;
-  liveLinkType: "app" | "web" | "both";
   projectTypes: string[];
   skills: string[];
   sortOrder: number;
@@ -54,7 +54,6 @@ const emptyProjectDraft = (): ProjectDraft => ({
   description: "",
   appLink: "",
   webLink: "",
-  liveLinkType: "web",
   projectTypes: [],
   skills: [],
   sortOrder: 0,
@@ -117,6 +116,11 @@ export default function AdminPage() {
   const [notice, setNotice] = useState("");
   const [actionError, setActionError] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
+
+  const pdHasApp = projectDraft?.projectTypes.includes("App") ?? false;
+  const pdHasWeb = projectDraft?.projectTypes.includes("Web") ?? false;
+  const pdLinkType: "app" | "web" | "both" =
+    pdHasApp && pdHasWeb ? "both" : pdHasApp ? "app" : "web";
 
   const loadAll = useCallback(async () => {
     const headers = await authHeaders();
@@ -188,6 +192,22 @@ export default function AdminPage() {
     };
   }, [draft, projectDraft]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const s = params.get("section");
+    if (s && sections.some((item) => item.key === s)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync initial tab from URL before paint
+      setSection(s as SectionKey);
+    }
+  }, []);
+
+  const selectSection = (key: SectionKey) => {
+    setSection(key);
+    const url = new URL(window.location.href);
+    url.searchParams.set("section", key);
+    window.history.replaceState(null, "", url.toString());
+  };
+
   const saveMember = async () => {
     if (!draft || savingMember) return;
     setSavingMember(true);
@@ -235,6 +255,10 @@ export default function AdminPage() {
     const headers = await authHeaders();
     const isEdit = Boolean(projectDraft.id);
 
+    const hasApp = projectDraft.projectTypes.includes("App");
+    const hasWeb = projectDraft.projectTypes.includes("Web");
+    const liveLinkType = hasApp && hasWeb ? "both" : hasApp ? "app" : "web";
+
     const res = await fetch(isEdit ? `/api/projects/${projectDraft.id}` : "/api/projects", {
       method: isEdit ? "PATCH" : "POST",
       headers: { ...headers, "Content-Type": "application/json" },
@@ -243,7 +267,7 @@ export default function AdminPage() {
         description: projectDraft.description,
         appLink: projectDraft.appLink,
         webLink: projectDraft.webLink,
-        liveLinkType: projectDraft.liveLinkType,
+        liveLinkType,
         projectTypes: projectDraft.projectTypes,
         skills: projectDraft.skills,
         sortOrder: projectDraft.sortOrder,
@@ -591,7 +615,7 @@ export default function AdminPage() {
             {sections.map((item) => (
               <button
                 key={item.key}
-                onClick={() => setSection(item.key)}
+                onClick={() => selectSection(item.key)}
                 className={`whitespace-nowrap rounded-xl px-4 py-2.5 text-left text-sm font-semibold transition-colors ${
                   section === item.key
                     ? "bg-gradient-to-r from-violet-600 to-sky-500 shadow-glow"
@@ -651,39 +675,43 @@ export default function AdminPage() {
                         value={draft.name}
                         onChange={(e) => setDraft({ ...draft, name: e.target.value })}
                       />
-                      <select
-                        className={inputClass}
+                      <Select
                         value={draft.role}
-                        onChange={(e) => setDraft({ ...draft, role: e.target.value })}
+                        onValueChange={(value) => setDraft({ ...draft, role: value })}
                       >
-                        <option value="" className="bg-ink">
-                          No role yet
-                        </option>
-                        {roles.map((role) => (
-                          <option key={role.id} value={role.name} className="bg-ink">
-                            {role.name}
-                          </option>
-                        ))}
-                        {draft.role && !roles.some((r) => r.name === draft.role) && (
-                          <option value={draft.role} className="bg-ink">
-                            {draft.role}
-                          </option>
-                        )}
-                      </select>
-                      <select
-                        className={inputClass}
-                        value={draft.teamId}
-                        onChange={(e) => setDraft({ ...draft, teamId: e.target.value })}
+                        <SelectTrigger aria-label="Role">
+                          <SelectValue placeholder="No role yet" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="__none__">No role yet</SelectItem>
+                          {roles.map((role) => (
+                            <SelectItem key={role.id} value={role.name}>
+                              {role.name}
+                            </SelectItem>
+                          ))}
+                          {draft.role && !roles.some((r) => r.name === draft.role) && (
+                            <SelectItem value={draft.role}>{draft.role}</SelectItem>
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <Select
+                        value={draft.teamId || "__none__"}
+                        onValueChange={(value) =>
+                          setDraft({ ...draft, teamId: value === "__none__" ? "" : value })
+                        }
                       >
-                        <option value="" className="bg-ink">
-                          No team
-                        </option>
-                        {orgTeams.map((team) => (
-                          <option key={team.id} value={team.id} className="bg-ink">
-                            {team.name}
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger aria-label="Team">
+                          <SelectValue placeholder="No team" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="__none__">No team</SelectItem>
+                          {orgTeams.map((team) => (
+                            <SelectItem key={team.id} value={team.id}>
+                              {team.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <input
                         className={inputClass}
                         placeholder="Portfolio URL (optional)"
@@ -1132,26 +1160,32 @@ export default function AdminPage() {
 
                           <div className="space-y-3">
                             <div>
-                              <label className="mb-1.5 block text-xs uppercase tracking-widest text-mist">Link type</label>
-                              <div className="inline-flex rounded-xl bg-white/5 p-1">
-                                {([
-                                  { value: "app", label: "App" },
-                                  { value: "web", label: "Web" },
-                                  { value: "both", label: "Both" },
-                                ] as const).map((opt) => (
-                                  <button
-                                    key={opt.value}
-                                    type="button"
-                                    onClick={() => setProjectDraft({ ...projectDraft, liveLinkType: opt.value })}
-                                    className={`rounded-lg px-4 py-1.5 text-sm font-semibold transition-colors ${
-                                      projectDraft.liveLinkType === opt.value
-                                        ? "bg-gradient-to-r from-violet-600 to-sky-500 text-white shadow-glow"
-                                        : "text-mist hover:text-white"
-                                    }`}
-                                  >
-                                    {opt.label}
-                                  </button>
-                                ))}
+                              <label className="mb-1.5 block text-xs uppercase tracking-widest text-mist">Project types</label>
+                              <div className="flex flex-wrap gap-2">
+                                {["App", "Web"].map((type) => {
+                                  const active = projectDraft.projectTypes.includes(type);
+                                  return (
+                                    <button
+                                      key={type}
+                                      type="button"
+                                      onClick={() =>
+                                        setProjectDraft({
+                                          ...projectDraft,
+                                          projectTypes: active
+                                            ? projectDraft.projectTypes.filter((t) => t !== type)
+                                            : [...projectDraft.projectTypes, type],
+                                        })
+                                      }
+                                      className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${
+                                        active
+                                          ? "border-violet-500/40 bg-violet-500/20 text-violet-300"
+                                          : "border-white/10 bg-white/5 text-mist hover:bg-white/10 hover:text-white"
+                                      }`}
+                                    >
+                                      {type}
+                                    </button>
+                                  );
+                                })}
                               </div>
                             </div>
 
@@ -1171,13 +1205,13 @@ export default function AdminPage() {
                           <p className="mb-1.5 text-xs uppercase tracking-widest text-mist">
                             Links
                             <span className="ml-2 normal-case tracking-normal text-fog">
-                              {projectDraft.liveLinkType === "both"
+                              {pdLinkType === "both"
                                 ? "both required"
-                                : `${projectDraft.liveLinkType} link required`}
+                                : `${pdLinkType} link required`}
                             </span>
                           </p>
                           <div className="grid gap-3 sm:grid-cols-2">
-                            {(projectDraft.liveLinkType === "app" || projectDraft.liveLinkType === "both") && (
+                            {(pdLinkType === "app" || pdLinkType === "both") && (
                               <input
                                 className={inputClass}
                                 placeholder="App link URL"
@@ -1185,7 +1219,7 @@ export default function AdminPage() {
                                 onChange={(e) => setProjectDraft({ ...projectDraft, appLink: e.target.value })}
                               />
                             )}
-                            {(projectDraft.liveLinkType === "web" || projectDraft.liveLinkType === "both") && (
+                            {(pdLinkType === "web" || pdLinkType === "both") && (
                               <input
                                 className={inputClass}
                                 placeholder="Web link URL"
@@ -1193,36 +1227,6 @@ export default function AdminPage() {
                                 onChange={(e) => setProjectDraft({ ...projectDraft, webLink: e.target.value })}
                               />
                             )}
-                          </div>
-                        </div>
-
-                        <div>
-                          <p className="mb-1.5 text-xs uppercase tracking-widest text-mist">Project types</p>
-                          <div className="flex flex-wrap gap-2">
-                            {["App", "Web"].map((type) => {
-                              const active = projectDraft.projectTypes.includes(type);
-                              return (
-                                <button
-                                  key={type}
-                                  type="button"
-                                  onClick={() =>
-                                    setProjectDraft({
-                                      ...projectDraft,
-                                      projectTypes: active
-                                        ? projectDraft.projectTypes.filter((t) => t !== type)
-                                        : [...projectDraft.projectTypes, type],
-                                    })
-                                  }
-                                  className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${
-                                    active
-                                      ? "border-violet-500/40 bg-violet-500/20 text-violet-300"
-                                      : "border-white/10 bg-white/5 text-mist hover:bg-white/10 hover:text-white"
-                                  }`}
-                                >
-                                  {type}
-                                </button>
-                              );
-                            })}
                           </div>
                         </div>
 
@@ -1389,7 +1393,6 @@ export default function AdminPage() {
                               description: project.description,
                               appLink: project.appLink,
                               webLink: project.webLink,
-                              liveLinkType: project.liveLinkType,
                               projectTypes: project.projectTypes,
                               skills: project.skills,
                               sortOrder: project.sortOrder,
