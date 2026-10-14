@@ -47,6 +47,13 @@ npm ci || npm install
 echo "==> Building production bundle"
 npm run build
 
+if [ "${SKIP_DB_MIGRATIONS:-0}" != "1" ]; then
+  echo "==> Applying pending DB migrations"
+  bash "${APP_DIR}/deploy/db-deploy.sh"
+else
+  echo "==> Skipping DB migrations (SKIP_DB_MIGRATIONS=1)"
+fi
+
 echo "==> Ensuring PM2 is available"
 if ! command -v pm2 >/dev/null 2>&1; then
   echo "Installing PM2 globally..."
