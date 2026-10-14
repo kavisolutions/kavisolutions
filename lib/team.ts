@@ -126,7 +126,8 @@ export type ProjectRow = {
   id: string;
   name: string;
   description: string | null;
-  live_link: string | null;
+  app_link: string | null;
+  web_link: string | null;
   live_link_type: string | null;
   project_types: string[];
   skills: string[];
@@ -139,7 +140,8 @@ export type Project = {
   id: string;
   name: string;
   description: string;
-  liveLink: string;
+  appLink: string;
+  webLink: string;
   liveLinkType: "app" | "web" | "both";
   projectTypes: string[];
   skills: string[];

@@ -41,7 +41,8 @@ type ProjectDraft = {
   id?: string;
   name: string;
   description: string;
-  liveLink: string;
+  appLink: string;
+  webLink: string;
   liveLinkType: "app" | "web" | "both";
   projectTypes: string[];
   skills: string[];
@@ -51,7 +52,8 @@ type ProjectDraft = {
 const emptyProjectDraft = (): ProjectDraft => ({
   name: "",
   description: "",
-  liveLink: "",
+  appLink: "",
+  webLink: "",
   liveLinkType: "web",
   projectTypes: [],
   skills: [],
@@ -94,6 +96,7 @@ export default function AdminPage() {
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectDraft, setProjectDraft] = useState<ProjectDraft | null>(null);
+  const [newSkill, setNewSkill] = useState("");
 
   const [draft, setDraft] = useState<MemberDraft | null>(null);
   const [savingMember, setSavingMember] = useState(false);
@@ -177,13 +180,13 @@ export default function AdminPage() {
   }, [notice]);
 
   useEffect(() => {
-    if (!draft) return;
+    if (!draft && !projectDraft) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previous;
     };
-  }, [draft]);
+  }, [draft, projectDraft]);
 
   const saveMember = async () => {
     if (!draft || savingMember) return;
@@ -238,7 +241,8 @@ export default function AdminPage() {
       body: JSON.stringify({
         name: projectDraft.name,
         description: projectDraft.description,
-        liveLink: projectDraft.liveLink,
+        appLink: projectDraft.appLink,
+        webLink: projectDraft.webLink,
         liveLinkType: projectDraft.liveLinkType,
         projectTypes: projectDraft.projectTypes,
         skills: projectDraft.skills,
@@ -1079,6 +1083,7 @@ export default function AdminPage() {
                     onClick={() => {
                       setProjectDraft(emptyProjectDraft());
                       setProjectFormError("");
+                      setNewSkill("");
                     }}
                     className="rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-4 py-2 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02]"
                   >
@@ -1101,115 +1106,196 @@ export default function AdminPage() {
                           ✕
                         </button>
                       </div>
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        <input
-                          className={inputClass}
-                          placeholder="Project name"
-                          value={projectDraft.name}
-                          onChange={(e) => setProjectDraft({ ...projectDraft, name: e.target.value })}
-                        />
-                        <select
-                          className={inputClass}
-                          value={projectDraft.liveLinkType}
-                          onChange={(e) => setProjectDraft({ ...projectDraft, liveLinkType: e.target.value as "app" | "web" | "both" })}
-                        >
-                          <option value="app" className="bg-ink">App</option>
-                          <option value="web" className="bg-ink">Web</option>
-                          <option value="both" className="bg-ink">Both</option>
-                        </select>
-                        <input
-                          className={inputClass}
-                          placeholder="Live link (optional)"
-                          value={projectDraft.liveLink}
-                          onChange={(e) => setProjectDraft({ ...projectDraft, liveLink: e.target.value })}
-                        />
-                        <input
-                          className={inputClass}
-                          placeholder="Sort order (lower shows first)"
-                          type="number"
-                          value={projectDraft.sortOrder}
-                          onChange={(e) => setProjectDraft({ ...projectDraft, sortOrder: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div className="sm:col-span-2">
-                        <p className="mb-2 text-xs uppercase tracking-widest text-mist">
-                          Description
-                        </p>
-                        <textarea
-                          className={inputClass}
-                          placeholder="Project description"
-                          rows={3}
-                          value={projectDraft.description}
-                          onChange={(e) => setProjectDraft({ ...projectDraft, description: e.target.value })}
-                        />
-                      </div>
-                      <div className="sm:col-span-2">
-                        <p className="mb-2 text-xs uppercase tracking-widest text-mist">
-                          Project types (multi-select)
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {["App", "Web"].map((type) => (
-                            <label
-                              key={type}
-                              className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm cursor-pointer transition-colors ${
-                                projectDraft.projectTypes.includes(type)
-                                  ? "bg-violet-500/20 border border-violet-500/40 text-violet-300"
-                                  : "bg-white/5 border border-white/10 text-mist hover:bg-white/10 hover:text-white"
-                              }`}
-                            >
+
+                      <div className="space-y-5">
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          <div className="sm:col-span-2">
+                            <label className="mb-1.5 block text-xs uppercase tracking-widest text-mist">Name</label>
+                            <input
+                              className={inputClass}
+                              placeholder="Project name"
+                              value={projectDraft.name}
+                              onChange={(e) => setProjectDraft({ ...projectDraft, name: e.target.value })}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="mb-1.5 block text-xs uppercase tracking-widest text-mist">Description</label>
+                            <textarea
+                              className={inputClass}
+                              placeholder="What this project does"
+                              rows={3}
+                              value={projectDraft.description}
+                              onChange={(e) => setProjectDraft({ ...projectDraft, description: e.target.value })}
+                            />
+                          </div>
+
+                          <div className="space-y-3">
+                            <div>
+                              <label className="mb-1.5 block text-xs uppercase tracking-widest text-mist">Link type</label>
+                              <div className="inline-flex rounded-xl bg-white/5 p-1">
+                                {([
+                                  { value: "app", label: "App" },
+                                  { value: "web", label: "Web" },
+                                  { value: "both", label: "Both" },
+                                ] as const).map((opt) => (
+                                  <button
+                                    key={opt.value}
+                                    type="button"
+                                    onClick={() => setProjectDraft({ ...projectDraft, liveLinkType: opt.value })}
+                                    className={`rounded-lg px-4 py-1.5 text-sm font-semibold transition-colors ${
+                                      projectDraft.liveLinkType === opt.value
+                                        ? "bg-gradient-to-r from-violet-600 to-sky-500 text-white shadow-glow"
+                                        : "text-mist hover:text-white"
+                                    }`}
+                                  >
+                                    {opt.label}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="mb-1.5 block text-xs uppercase tracking-widest text-mist">Sort order</label>
                               <input
-                                type="checkbox"
-                                checked={projectDraft.projectTypes.includes(type)}
-                                onChange={(e) =>
-                                  setProjectDraft({
-                                    ...projectDraft,
-                                    projectTypes: e.target.checked
-                                      ? [...projectDraft.projectTypes, type]
-                                      : projectDraft.projectTypes.filter((t) => t !== type),
-                                  })
-                                }
-                                className="w-4 h-4 rounded border-white/20 text-violet-500 focus:ring-violet-500"
+                                className={inputClass}
+                                type="number"
+                                value={projectDraft.sortOrder}
+                                onChange={(e) => setProjectDraft({ ...projectDraft, sortOrder: Number(e.target.value) })}
                               />
-                              {type}
-                            </label>
-                          ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <p className="mb-1.5 text-xs uppercase tracking-widest text-mist">
+                            Links
+                            <span className="ml-2 normal-case tracking-normal text-fog">
+                              {projectDraft.liveLinkType === "both"
+                                ? "both required"
+                                : `${projectDraft.liveLinkType} link required`}
+                            </span>
+                          </p>
+                          <div className="grid gap-3 sm:grid-cols-2">
+                            {(projectDraft.liveLinkType === "app" || projectDraft.liveLinkType === "both") && (
+                              <input
+                                className={inputClass}
+                                placeholder="App link URL"
+                                value={projectDraft.appLink}
+                                onChange={(e) => setProjectDraft({ ...projectDraft, appLink: e.target.value })}
+                              />
+                            )}
+                            {(projectDraft.liveLinkType === "web" || projectDraft.liveLinkType === "both") && (
+                              <input
+                                className={inputClass}
+                                placeholder="Web link URL"
+                                value={projectDraft.webLink}
+                                onChange={(e) => setProjectDraft({ ...projectDraft, webLink: e.target.value })}
+                              />
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <p className="mb-1.5 text-xs uppercase tracking-widest text-mist">Project types</p>
+                          <div className="flex flex-wrap gap-2">
+                            {["App", "Web"].map((type) => {
+                              const active = projectDraft.projectTypes.includes(type);
+                              return (
+                                <button
+                                  key={type}
+                                  type="button"
+                                  onClick={() =>
+                                    setProjectDraft({
+                                      ...projectDraft,
+                                      projectTypes: active
+                                        ? projectDraft.projectTypes.filter((t) => t !== type)
+                                        : [...projectDraft.projectTypes, type],
+                                    })
+                                  }
+                                  className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${
+                                    active
+                                      ? "border-violet-500/40 bg-violet-500/20 text-violet-300"
+                                      : "border-white/10 bg-white/5 text-mist hover:bg-white/10 hover:text-white"
+                                  }`}
+                                >
+                                  {type}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        <div>
+                          <p className="mb-1.5 text-xs uppercase tracking-widest text-mist">Skills</p>
+                          <div className="mb-2.5 flex gap-2">
+                            <input
+                              className={inputClass}
+                              placeholder="Add a custom skill…"
+                              value={newSkill}
+                              onChange={(e) => setNewSkill(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key !== "Enter") return;
+                                e.preventDefault();
+                                const value = newSkill.trim();
+                                if (!value) return;
+                                setNewSkill("");
+                                setProjectDraft(
+                                  projectDraft.skills.includes(value)
+                                    ? projectDraft
+                                    : { ...projectDraft, skills: [...projectDraft.skills, value] },
+                                );
+                              }}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const value = newSkill.trim();
+                                if (!value) return;
+                                setNewSkill("");
+                                setProjectDraft(
+                                  projectDraft.skills.includes(value)
+                                    ? projectDraft
+                                    : { ...projectDraft, skills: [...projectDraft.skills, value] },
+                                );
+                              }}
+                              className="shrink-0 rounded-xl bg-white/5 px-4 text-sm font-semibold text-mist transition-colors hover:bg-white/10 hover:text-white"
+                            >
+                              Add
+                            </button>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {Array.from(new Set([...COMMON_SKILLS, ...projectDraft.skills])).map((skill) => {
+                              const active = projectDraft.skills.includes(skill);
+                              return (
+                                <button
+                                  key={skill}
+                                  type="button"
+                                  onClick={() =>
+                                    setProjectDraft({
+                                      ...projectDraft,
+                                      skills: active
+                                        ? projectDraft.skills.filter((s) => s !== skill)
+                                        : [...projectDraft.skills, skill],
+                                    })
+                                  }
+                                  className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${
+                                    active
+                                      ? "border-sky-500/40 bg-sky-500/20 text-sky-300"
+                                      : "border-white/10 bg-white/5 text-mist hover:bg-white/10 hover:text-white"
+                                  }`}
+                                >
+                                  {skill}
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
-                      <div className="sm:col-span-2">
-                        <p className="mb-2 text-xs uppercase tracking-widest text-mist">
-                          Skills
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {COMMON_SKILLS.map((skill) => (
-                            <label
-                              key={skill}
-                              className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm cursor-pointer transition-colors ${
-                                projectDraft.skills.includes(skill)
-                                  ? "bg-sky-500/20 border border-sky-500/40 text-sky-300"
-                                  : "bg-white/5 border border-white/10 text-mist hover:bg-white/10 hover:text-white"
-                              }`}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={projectDraft.skills.includes(skill)}
-                                onChange={(e) =>
-                                  setProjectDraft({
-                                    ...projectDraft,
-                                    skills: e.target.checked
-                                      ? [...projectDraft.skills, skill]
-                                      : projectDraft.skills.filter((s) => s !== skill),
-                                  })
-                                }
-                                className="w-4 h-4 rounded border-white/20 text-sky-500 focus:ring-sky-500"
-                              />
-                              {skill}
-                            </label>
-                          ))}
-                        </div>
-                      </div>
+
                       {projectFormError && <p className="mt-3 text-sm text-red-400">{projectFormError}</p>}
 
-                      <div className="mt-4 flex gap-3">
+                      <div className="mt-5 flex gap-3">
                         <button
                           onClick={saveProject}
                           disabled={savingProject}
@@ -1229,17 +1315,17 @@ export default function AdminPage() {
                 )}
 
                 <div className="overflow-hidden rounded-3xl glass">
-                  <div className="hidden grid-cols-[2fr_1fr_1fr_0.5fr_auto] gap-3 border-b border-white/10 px-6 py-3 text-xs uppercase tracking-widest text-fog sm:grid">
+                  <div className="hidden grid-cols-[2fr_1fr_1.4fr_0.5fr_auto] gap-3 border-b border-white/10 px-6 py-3 text-xs uppercase tracking-widest text-fog sm:grid">
                     <span>Project</span>
                     <span>Types</span>
-                    <span>Live link</span>
+                    <span>Links</span>
                     <span>Order</span>
                     <span />
                   </div>
                   {projects.map((project) => (
                     <div
                       key={project.id}
-                      className="grid grid-cols-1 gap-3 border-b border-white/5 px-6 py-4 last:border-b-0 sm:grid-cols-[2fr_1fr_1fr_0.5fr_auto] sm:items-center"
+                      className="grid grid-cols-1 gap-3 border-b border-white/5 px-6 py-4 last:border-b-0 sm:grid-cols-[2fr_1fr_1.4fr_0.5fr_auto] sm:items-center"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 font-display text-xs font-bold shrink-0">
@@ -1265,36 +1351,50 @@ export default function AdminPage() {
                           <span className="text-[10px] text-fog">No types</span>
                         )}
                       </div>
-                      <div>
-                        {project.liveLink ? (
+                      <div className="flex flex-col gap-1 text-xs">
+                        {project.appLink && (
                           <a
-                            href={project.liveLink}
+                            href={project.appLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-sm text-sky-400 hover:text-sky-300 truncate max-w-xs"
+                            className="inline-flex items-center gap-1 text-sky-400 hover:text-sky-300 truncate max-w-[14rem]"
                           >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                            {project.liveLinkType === "both" ? "App & Web" : project.liveLinkType === "app" ? "App" : "Web"}
+                            <span className="rounded bg-white/10 px-1 py-0.5 text-[9px] font-bold uppercase text-mist">App</span>
+                            <span className="truncate">{project.appLink}</span>
                           </a>
-                        ) : (
-                          <span className="text-xs text-fog">No link</span>
+                        )}
+                        {project.webLink && (
+                          <a
+                            href={project.webLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-sky-400 hover:text-sky-300 truncate max-w-[14rem]"
+                          >
+                            <span className="rounded bg-white/10 px-1 py-0.5 text-[9px] font-bold uppercase text-mist">Web</span>
+                            <span className="truncate">{project.webLink}</span>
+                          </a>
+                        )}
+                        {!project.appLink && !project.webLink && (
+                          <span className="text-fog">No link</span>
                         )}
                       </div>
                       <span className="text-xs text-mist">{project.sortOrder}</span>
                       <div className="flex gap-2">
                         <button
-                          onClick={() =>
+                          onClick={() => {
+                            setNewSkill("");
                             setProjectDraft({
                               id: project.id,
                               name: project.name,
                               description: project.description,
-                              liveLink: project.liveLink,
+                              appLink: project.appLink,
+                              webLink: project.webLink,
                               liveLinkType: project.liveLinkType,
                               projectTypes: project.projectTypes,
                               skills: project.skills,
                               sortOrder: project.sortOrder,
-                            })
-                          }
+                            });
+                          }}
                           className="rounded-lg bg-white/5 px-3 py-1.5 text-xs text-mist transition-colors hover:bg-white/10 hover:text-white"
                         >
                           Edit
