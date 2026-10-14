@@ -70,9 +70,11 @@ export default function Team() {
                   <h3 className="font-display text-lg font-semibold leading-snug">
                     {member.name}
                   </h3>
-                  <p className="mx-auto mt-1.5 max-w-[14rem] text-[11px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-gradient">
-                    {member.role || "Team member"}
-                  </p>
+                  {member.role && (
+                    <p className="mx-auto mt-1.5 max-w-[14rem] text-[11px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-gradient">
+                      {member.role}
+                    </p>
+                  )}
                   <div className="mt-auto flex items-center justify-center gap-3 pt-3">
                     {member.linkedinUrl && (
                       <a
