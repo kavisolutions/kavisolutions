@@ -35,3 +35,11 @@ Frontend:
 - Admin logins with email/password: existing users keep legacy passwords (bcrypt); others must use password reset
 - SMTP_PASS set; contact form verified 201
 - GitHub Actions deploy still targets 161.97.169.66 — must be repointed or disabled
+
+## Update (2026-11-09, later)
+
+- Repository is now a single monorepo: Next.js at the root, NestJS in `api/`
+- Server checkout: `/var/www/kavi-solutions` (git clone of kavisolutions/kavisolutions)
+- CI deploys both apps via `deploy/deploy.sh` to 129.225.126.53
+- Runtime env files on the server: `/var/www/kavi-solutions/.env.production`,
+  `/var/www/kavi-solutions/api/.env` (preserved across deploys)

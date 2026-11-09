@@ -115,3 +115,11 @@ Files in `deploy/`:
    ```
 
 Update the `server_name` and cert paths in `deploy/nginx.conf` to match your actual domain.
+### CI/CD details
+
+- Push to `main` runs `.github/workflows/deploy.yml`
+- SSH target comes from repo variables `DEPLOY_HOST` / `DEPLOY_USER`
+  (currently `129.225.126.53` / `ubuntu`), key from the `DEPLOY_SSH_KEY` secret
+- The workflow resets the checkout to `origin/main` while preserving runtime
+  `.env` files (`.env.production`, `api/.env`) and then runs
+  `deploy/deploy.sh --no-pull`, which builds and reloads both PM2 apps
