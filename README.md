@@ -2,6 +2,14 @@
 
 A premium one-page agency website for **Kavi Solutions**, built with **Next.js 16**, **Tailwind CSS 4** and **Framer Motion**. Dark, animated and production-ready.
 
+The repository contains both apps:
+
+- **root** — the Next.js 16 marketing site (public pages, login, admin panel)
+- **`api/`** — the NestJS backend (PostgreSQL + Drizzle, Better Auth, MinIO uploads)
+
+The frontend keeps calling `/api/*` on its own origin; Next.js proxies those
+requests to the backend via the `BACKEND_URL` rewrite in `next.config.ts`.
+
 ## Sections
 
 1. **Web** — web development services
@@ -13,12 +21,24 @@ A premium one-page agency website for **Kavi Solutions**, built with **Next.js 1
 
 ## Local development
 
+Run the backend first (see `api/README.md`), then:
+
 ```bash
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open http://localhost:3000. `.env.local` must contain `BACKEND_URL`
+(default `http://localhost:3200`). If `BACKEND_URL` is unset there is no proxy and
+`/api/*` returns 404 — that is intentional so a misconfigured production build
+fails loudly instead of silently hitting the wrong origin.
+
+### Auth
+
+Auth is **Better Auth** (email/password + Google OAuth) served by the backend at
+`/api/auth/*`. The session cookie is first-party because of the same-origin
+proxy. Admin access is decided by `user.role = "admin"` or the `ADMIN_EMAILS`
+allowlist on the backend; the UI only reflects it.
 
 ## Production build
 
@@ -41,6 +61,13 @@ On the VPS the deploy does:
 3. `npm run build`
 4. `pm2 startOrReload ecosystem.config.js` + `pm2 save`
 5. a health check against `http://127.0.0.1:3111/`
+
+`deploy/deploy.sh` deploys **both** apps: it installs, migrates (`api/npm run
+db:migrate`), builds and reloads `kavi-solutions-be` (:3200) and then the Next.js
+site `kavi-solutions` (:3111). Next.js rewrites are baked in at build time, so
+`BACKEND_URL` must be set for the build and the running process; the script
+exports it (default `http://127.0.0.1:3200`) and `ecosystem.config.js` passes it
+to PM2. Database migrations live in `api/src/db/drizzle/migrations`.
 
 Ignored files (`.env.local`, `node_modules`, `.next`) are preserved.
 

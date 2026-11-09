@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { supabaseBrowser, useAuth } from "@/lib/auth-context";
+import { authClient, useAuth } from "@/lib/auth-context";
 
 const inputClass =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-fog focus:border-violet-400/60";
@@ -34,31 +34,26 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  const goToDestination = useCallback(
-    async (accessToken: string | undefined) => {
-      const next = getNextPath();
-      if (next) {
-        router.push(next);
-        return;
-      }
+  const goToDestination = useCallback(async () => {
+    const next = getNextPath();
+    if (next) {
+      router.push(next);
+      return;
+    }
 
-      try {
-        const res = await fetch("/api/me", {
-          headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
-        });
-        const data = await res.json();
-        router.push(data?.isAdmin ? "/admin" : "/team");
-      } catch {
-        router.push("/team");
-      }
-    },
-    [router],
-  );
+    try {
+      const res = await fetch("/api/me", { credentials: "include" });
+      const data = await res.json();
+      router.push(data?.isAdmin ? "/admin" : "/team");
+    } catch {
+      router.push("/team");
+    }
+  }, [router]);
 
   useEffect(() => {
     if (authLoading || !session || redirecting.current) return;
     redirecting.current = true;
-    void goToDestination(session.access_token);
+    void goToDestination();
   }, [authLoading, session, goToDestination]);
 
   const handleCredentialsLogin = async (e: React.FormEvent) => {
@@ -68,23 +63,23 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const { data: signInData, error: signInError } = await supabaseBrowser.auth.signInWithPassword({
+    const { error: signInError } = await authClient.signIn.email({
       email: email.trim(),
       password,
     });
 
     if (signInError) {
       setError(
-        signInError.message === "Invalid login credentials"
+        /invalid/i.test(signInError.message ?? "")
           ? "Invalid email or password"
-          : signInError.message,
+          : signInError.message ?? "Could not sign in",
       );
       setLoading(false);
       return;
     }
 
     redirecting.current = true;
-    await goToDestination(signInData.session?.access_token);
+    await goToDestination();
   };
 
   const handleGoogleLogin = async () => {
@@ -93,15 +88,14 @@ export default function LoginPage() {
     setError("");
 
     const next = getNextPath();
-    const { error: oauthError } = await supabaseBrowser.auth.signInWithOAuth({
+    const { error: oauthError } = await authClient.signIn.social({
       provider: "google",
-      options: {
-        redirectTo: window.location.origin + "/login" + (next ? `?next=${encodeURIComponent(next)}` : ""),
-      },
+      callbackURL:
+        window.location.origin + "/login" + (next ? `?next=${encodeURIComponent(next)}` : ""),
     });
 
     if (oauthError) {
-      setError(oauthError.message);
+      setError(oauthError.message ?? "Google sign-in is not available");
       setGoogleLoading(false);
     }
   };

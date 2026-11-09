@@ -25,10 +25,7 @@ export default function TeamPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const headers: Record<string, string> = {};
-    if (session?.access_token) headers.Authorization = `Bearer ${session.access_token}`;
-
-    fetch("/api/team", { headers })
+    fetch("/api/team", { credentials: "include" })
       .then((res) => res.json())
       .then((data: TeamResponse & { error?: string }) => {
         if (data.error) {
@@ -46,7 +43,7 @@ export default function TeamPage() {
         setError("Could not load the team");
         setState("error");
       });
-  }, [session?.access_token]);
+  }, [session?.user?.id]);
 
   if (state === "loading" || authLoading) {
     return (

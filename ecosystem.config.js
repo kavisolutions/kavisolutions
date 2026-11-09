@@ -4,6 +4,10 @@
  * Runs the Next.js production server on port 3111 (820f) - chosen to avoid
  * clashing with other apps already on this VPS (e.g. Agrinp on 3000).
  *
+ * API requests are proxied to the NestJS backend (api/, PM2 app name
+ * "kavi-solutions-be") via the BACKEND_URL rewrite in next.config.ts. That app
+ * has its own ecosystem file at api/ecosystem.config.js and runs on port 3200.
+ *
  * NOTE: PM2 does NOT expand shell-style "${VAR}" inside config files, so the
  * port is specified literally here. If you change it, update BOTH:
  *   1. this file (PORT + args), and
@@ -24,6 +28,7 @@ module.exports = {
       env: {
         NODE_ENV: "production",
         PORT: "3111",
+        BACKEND_URL: "http://127.0.0.1:3200",
       },
     },
   ],

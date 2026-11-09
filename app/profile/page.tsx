@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { supabaseBrowser, useAuth } from "@/lib/auth-context";
+import { authClient, useAuth } from "@/lib/auth-context";
 import GradientPicker from "@/components/GradientPicker";
 import type { OrgRole, OrgTeam } from "@/lib/team";
 
@@ -28,12 +28,6 @@ type MeResponse = {
 const inputClass =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition-colors placeholder:text-fog focus:border-violet-400/60";
 
-async function authHeaders(): Promise<Record<string, string>> {
-  const { data } = await supabaseBrowser.auth.getSession();
-  const token = data.session?.access_token;
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
-
 export default function ProfilePage() {
   const { session, loading: authLoading } = useAuth();
 
@@ -52,8 +46,7 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
-    const headers = await authHeaders();
-    const res = await fetch("/api/me", { headers });
+    const res = await fetch("/api/me", { credentials: "include" });
     const data: MeResponse = await res.json();
     setMe(data);
 
@@ -94,12 +87,14 @@ export default function ProfilePage() {
     setUploading(true);
     setError("");
 
-    const { data } = await supabaseBrowser.auth.getSession();
     const form = new FormData();
     form.append("file", file);
-    form.append("token", data.session?.access_token ?? "");
 
-    const res = await fetch("/api/upload", { method: "POST", body: form });
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: form,
+      credentials: "include",
+    });
     const body = await res.json().catch(() => null);
 
     if (!res.ok) {
@@ -118,10 +113,10 @@ export default function ProfilePage() {
     setError("");
     setMessage("");
 
-    const headers = await authHeaders();
     const res = await fetch(`/api/team/${me.member.id}`, {
       method: "PATCH",
-      headers: { ...headers, "Content-Type": "application/json" },
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, role, bio, profileUrl, linkedinUrl, gradient, imageUrl }),
     });
 
@@ -298,7 +293,7 @@ export default function ProfilePage() {
               View team page
             </Link>
             <button
-              onClick={() => supabaseBrowser.auth.signOut()}
+              onClick={() => authClient.signOut()}
               className="ml-auto rounded-xl bg-white/5 px-5 py-2.5 text-sm font-semibold text-mist transition-colors hover:bg-white/10 hover:text-white"
             >
               Sign out

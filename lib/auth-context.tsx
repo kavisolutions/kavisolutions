@@ -1,44 +1,51 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { createClient, type Session, type SupabaseClient } from "@supabase/supabase-js";
+import { createContext, useContext, type ReactNode } from "react";
+import { createAuthClient } from "better-auth/react";
+import { adminClient } from "better-auth/client/plugins";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+/**
+ * Auth calls go to the same origin (`/api/auth/*`) and are proxied to the
+ * NestJS backend by the `BACKEND_URL` rewrite in next.config.ts, so the session
+ * cookie stays first-party.
+ */
+export const authClient = createAuthClient({
+  plugins: [adminClient()],
+  fetchOptions: {
+    credentials: "include",
+  },
+});
 
-export const supabaseBrowser = createClient(supabaseUrl, supabaseAnonKey);
+export type AuthUser = {
+  id: string;
+  email: string;
+  name?: string;
+  role?: string | null;
+};
+
+export type AuthSession = {
+  user: AuthUser;
+} | null;
 
 type AuthContextType = {
-  supabase: SupabaseClient;
-  session: Session | null;
+  session: AuthSession;
   loading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType>({
-  supabase: supabaseBrowser,
   session: null,
   loading: true,
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, isPending } = authClient.useSession();
 
-  useEffect(() => {
-    supabaseBrowser.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
-
-    const { data: { subscription } } = supabaseBrowser.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const session: AuthSession = data?.user
+    ? { user: data.user as unknown as AuthUser }
+    : null;
 
   return (
-    <AuthContext.Provider value={{ supabase: supabaseBrowser, session, loading }}>
+    <AuthContext.Provider value={{ session, loading: isPending }}>
       {children}
     </AuthContext.Provider>
   );

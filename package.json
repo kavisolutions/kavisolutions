@@ -7,11 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "lint:all": "npm run lint && npm --prefix api run lint",
+    "build:all": "npm --prefix api run build && npm run build",
+    "test:all": "npm test && npm --prefix api test"
   },
   "dependencies": {
     "@radix-ui/react-select": "^2.4.1",
-    "@supabase/supabase-js": "^2.112.4",
+    "better-auth": "^1.7.18",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^13.1.1",

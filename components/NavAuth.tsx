@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { supabaseBrowser, useAuth } from "@/lib/auth-context";
+import { authClient, useAuth } from "@/lib/auth-context";
 
 type Me = { isAdmin: boolean; member: { id: string } | null };
 
@@ -13,13 +13,8 @@ export default function NavAuth({ variant = "desktop" }: { variant?: "desktop" |
   const [me, setMe] = useState<Me | null>(null);
 
   const load = useCallback(async () => {
-    const { data } = await supabaseBrowser.auth.getSession();
-    const token = data.session?.access_token ?? "";
-
     try {
-      const res = await fetch("/api/me", {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
+      const res = await fetch("/api/me", { credentials: "include" });
       setMe(await res.json());
     } catch {
       setMe({ isAdmin: false, member: null });
@@ -41,7 +36,10 @@ export default function NavAuth({ variant = "desktop" }: { variant?: "desktop" |
   }, [loading, session, initialize]);
 
   const handleSignOut = async () => {
-    await supabaseBrowser.auth.signOut();
+    await authClient.signOut();
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("kavi_bearer_token");
+    }
     router.push("/");
     router.refresh();
   };

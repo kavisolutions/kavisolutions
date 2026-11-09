@@ -1,17 +1,44 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { supabaseBrowser, useAuth } from "@/lib/auth-context";
+import { authClient, useAuth } from "@/lib/auth-context";
 import GradientPicker from "@/components/GradientPicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getInitials, type OrgRole, type OrgTeam, type TeamMember, type Project, COMMON_SKILLS } from "@/lib/team";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Users, BriefcaseBusiness, Layers3, ShieldCheck, Settings2, FolderKanban, Plus, ExternalLink, LogOut, Search, Pencil, Trash2 } from "lucide-react";
+import {
+  Users,
+  BriefcaseBusiness,
+  Layers3,
+  ShieldCheck,
+  Settings2,
+  FolderKanban,
+  Plus,
+  ExternalLink,
+  LogOut,
+  Search,
+  Pencil,
+  Trash2,
+  Sun,
+  Moon,
+  X,
+  AlertCircle,
+  CheckCircle2,
+  ChevronRight,
+  Menu,
+  Globe,
+  Link2,
+  Shield,
+  Loader2,
+  Upload,
+  User,
+} from "lucide-react";
 
 type AdminEntry = { email: string; source: "env" | "db" };
 
@@ -65,34 +92,39 @@ const emptyProjectDraft = (): ProjectDraft => ({
   sortOrder: 0,
 });
 
-const inputClass =
-  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-shadow placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring";
-
 const sections = [
-  { key: "team", label: "Team members", icon: Users, description: "Manage your public team directory" },
-  { key: "roles", label: "Roles", icon: BriefcaseBusiness, description: "Define titles and responsibilities" },
-  { key: "teams", label: "Teams", icon: Layers3, description: "Organize people into teams" },
-  { key: "projects", label: "Projects", icon: FolderKanban, description: "Manage featured work and links" },
-  { key: "admins", label: "Administrators", icon: ShieldCheck, description: "Control workspace access" },
-  { key: "settings", label: "Settings", icon: Settings2, description: "Update company profile details" },
+  { key: "team", label: "Team members", icon: Users, description: "Manage your public team directory and member profiles" },
+  { key: "roles", label: "Roles", icon: BriefcaseBusiness, description: "Define titles and job responsibilities" },
+  { key: "teams", label: "Teams", icon: Layers3, description: "Organize people into functional teams and departments" },
+  { key: "projects", label: "Projects", icon: FolderKanban, description: "Manage featured work, tech stacks, and live links" },
+  { key: "admins", label: "Administrators", icon: ShieldCheck, description: "Control workspace access and administrative privileges" },
+  { key: "settings", label: "Settings", icon: Settings2, description: "Update company profile and public page metadata" },
 ] as const;
 
 type SectionKey = (typeof sections)[number]["key"];
 
-async function authHeaders(): Promise<Record<string, string>> {
-  const { data } = await supabaseBrowser.auth.getSession();
-  const token = data.session?.access_token;
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
+const withCookies = (extra: RequestInit = {}): RequestInit => ({
+  credentials: "include",
+  ...extra,
+});
 
 export default function AdminPage() {
   const { session, loading: authLoading } = useAuth();
 
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [section, setSection] = useState<SectionKey>("team");
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window === "undefined") return "dark";
+    const stored = window.localStorage.getItem("kavi-admin-theme");
+    return stored === "light" ? "light" : "dark";
+  });
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [memberQuery, setMemberQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [teamFilter, setTeamFilter] = useState("all");
+
   const [roles, setRoles] = useState<OrgRole[]>([]);
   const [orgTeams, setOrgTeams] = useState<OrgTeam[]>([]);
   const [admins, setAdmins] = useState<AdminEntry[]>([]);
@@ -124,30 +156,26 @@ export default function AdminPage() {
   const [actionError, setActionError] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
 
-  const pdHasApp = projectDraft?.projectTypes.includes("App") ?? false;
-  const pdHasWeb = projectDraft?.projectTypes.includes("Web") ?? false;
-  const pdLinkType: "app" | "web" | "both" =
-    pdHasApp && pdHasWeb ? "both" : pdHasApp ? "app" : "web";
-  const filteredMembers = members.filter((member) =>
-    `${member.name} ${member.role} ${member.teamName ?? ""}`.toLowerCase().includes(memberQuery.trim().toLowerCase()),
-  );
+  const filteredMembers = useMemo(() => {
+    return members.filter((member) => {
+      const matchesQuery = `${member.name} ${member.role} ${member.teamName ?? ""}`
+        .toLowerCase()
+        .includes(memberQuery.trim().toLowerCase());
+      const matchesRole = roleFilter === "all" || (roleFilter === "__unassigned__" ? !member.role : member.role === roleFilter);
+      const matchesTeam = teamFilter === "all" || (teamFilter === "__unassigned__" ? !member.teamId : member.teamId === teamFilter);
+      return matchesQuery && matchesRole && matchesTeam;
+    });
+  }, [members, memberQuery, roleFilter, teamFilter]);
 
   const loadAll = useCallback(async () => {
-    const headers = await authHeaders();
-
     const [teamRes, adminsRes, settingsRes, projectsRes] = await Promise.all([
-      fetch("/api/team", { headers }),
-      fetch("/api/admins", { headers }),
-      fetch("/api/settings", { headers }),
-      fetch("/api/projects", { headers }),
+      fetch("/api/team", withCookies()),
+      fetch("/api/admins", withCookies()),
+      fetch("/api/settings", withCookies()),
+      fetch("/api/projects", withCookies()),
     ]);
 
-    if (teamRes.status === 401 || adminsRes.status === 401) {
-      setIsAdmin(false);
-      return;
-    }
-
-    if (adminsRes.status === 403) {
+    if (teamRes.status === 401 || adminsRes.status === 401 || adminsRes.status === 403) {
       setIsAdmin(false);
       return;
     }
@@ -171,7 +199,6 @@ export default function AdminPage() {
   const initialize = useCallback(
     async (hasSession: boolean) => {
       if (!hasSession) return;
-
       try {
         await loadAll();
       } catch {
@@ -188,19 +215,29 @@ export default function AdminPage() {
   }, [authLoading, session, initialize]);
 
   useEffect(() => {
+    window.localStorage.setItem("kavi-admin-theme", theme);
+    document.documentElement.dataset.theme = theme;
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
+
+  useEffect(() => {
     if (!notice) return;
-    const timeout = setTimeout(() => setNotice(""), 3000);
+    const timeout = setTimeout(() => setNotice(""), 3500);
     return () => clearTimeout(timeout);
   }, [notice]);
 
   useEffect(() => {
-    if (!draft && !projectDraft) return;
+    if (!draft && !projectDraft && !preview) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previous;
     };
-  }, [draft, projectDraft]);
+  }, [draft, projectDraft, preview]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -213,6 +250,7 @@ export default function AdminPage() {
 
   const selectSection = (key: SectionKey) => {
     setSection(key);
+    setMobileNavOpen(false);
     const url = new URL(window.location.href);
     url.searchParams.set("section", key);
     window.history.replaceState(null, "", url.toString());
@@ -223,12 +261,12 @@ export default function AdminPage() {
     setSavingMember(true);
     setFormError("");
 
-    const headers = await authHeaders();
     const isEdit = Boolean(draft.id);
 
     const res = await fetch(isEdit ? `/api/team/${draft.id}` : "/api/team", {
       method: isEdit ? "PATCH" : "POST",
-      headers: { ...headers, "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({
         name: draft.name,
         role: draft.role,
@@ -251,7 +289,7 @@ export default function AdminPage() {
       return;
     }
 
-    setNotice(isEdit ? "Member updated" : "Member added");
+    setNotice(isEdit ? "Team member updated successfully" : "New member added to team");
     setDraft(null);
     setSavingMember(false);
     await loadAll();
@@ -262,7 +300,6 @@ export default function AdminPage() {
     setSavingProject(true);
     setProjectFormError("");
 
-    const headers = await authHeaders();
     const isEdit = Boolean(projectDraft.id);
 
     const hasApp = projectDraft.projectTypes.includes("App");
@@ -271,7 +308,8 @@ export default function AdminPage() {
 
     const res = await fetch(isEdit ? `/api/projects/${projectDraft.id}` : "/api/projects", {
       method: isEdit ? "PATCH" : "POST",
-      headers: { ...headers, "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({
         name: projectDraft.name,
         description: projectDraft.description,
@@ -293,7 +331,7 @@ export default function AdminPage() {
       return;
     }
 
-    setNotice(isEdit ? "Project updated" : "Project added");
+    setNotice(isEdit ? "Project updated successfully" : "New project added successfully");
     setProjectDraft(null);
     setSavingProject(false);
     await loadAll();
@@ -303,8 +341,7 @@ export default function AdminPage() {
     if (!window.confirm(`Delete project "${project.name}"?`)) return;
     setActionError("");
 
-    const headers = await authHeaders();
-    const res = await fetch(`/api/projects?id=${project.id}`, { method: "DELETE", headers });
+    const res = await fetch(`/api/projects?id=${project.id}`, { method: "DELETE", credentials: "include" });
 
     if (!res.ok) {
       const data = await res.json().catch(() => null);
@@ -317,11 +354,10 @@ export default function AdminPage() {
   };
 
   const deleteMember = async (member: TeamMember) => {
-    if (!window.confirm(`Remove ${member.name} from the team?`)) return;
+    if (!window.confirm(`Remove ${member.name} from the team directory?`)) return;
     setActionError("");
 
-    const headers = await authHeaders();
-    const res = await fetch(`/api/team/${member.id}`, { method: "DELETE", headers });
+    const res = await fetch(`/api/team/${member.id}`, { method: "DELETE", credentials: "include" });
 
     if (!res.ok) {
       const data = await res.json().catch(() => null);
@@ -329,7 +365,7 @@ export default function AdminPage() {
       return;
     }
 
-    setNotice(`${member.name} removed`);
+    setNotice(`${member.name} removed from team`);
     await loadAll();
   };
 
@@ -338,12 +374,14 @@ export default function AdminPage() {
     setUploading(true);
     setFormError("");
 
-    const { data } = await supabaseBrowser.auth.getSession();
     const form = new FormData();
     form.append("file", file);
-    form.append("token", data.session?.access_token ?? "");
 
-    const res = await fetch("/api/upload", { method: "POST", body: form });
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: form,
+      credentials: "include",
+    });
     const body = await res.json().catch(() => null);
 
     if (!res.ok) {
@@ -360,11 +398,11 @@ export default function AdminPage() {
     if (!newRoleName.trim()) return;
     setActionError("");
 
-    const headers = await authHeaders();
     const res = await fetch("/api/roles", {
       method: "POST",
-      headers: { ...headers, "Content-Type": "application/json" },
-      body: JSON.stringify({ name: newRoleName }),
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ name: newRoleName.trim() }),
     });
     const data = await res.json().catch(() => null);
 
@@ -374,7 +412,7 @@ export default function AdminPage() {
     }
 
     setNewRoleName("");
-    setNotice("Role added");
+    setNotice("Role created successfully");
     await loadAll();
   };
 
@@ -382,11 +420,11 @@ export default function AdminPage() {
     if (!editingRoleName.trim()) return;
     setActionError("");
 
-    const headers = await authHeaders();
     const res = await fetch(`/api/roles/${role.id}`, {
       method: "PATCH",
-      headers: { ...headers, "Content-Type": "application/json" },
-      body: JSON.stringify({ name: editingRoleName }),
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ name: editingRoleName.trim() }),
     });
     const data = await res.json().catch(() => null);
 
@@ -396,16 +434,15 @@ export default function AdminPage() {
     }
 
     setEditingRoleId(null);
-    setNotice("Role renamed");
+    setNotice("Role updated");
     await loadAll();
   };
 
   const deleteRole = async (role: OrgRole) => {
-    if (!window.confirm(`Delete role "${role.name}"? Members with this role will have it cleared.`)) return;
+    if (!window.confirm(`Delete role "${role.name}"? Members with this role will be set to unassigned.`)) return;
     setActionError("");
 
-    const headers = await authHeaders();
-    const res = await fetch(`/api/roles/${role.id}`, { method: "DELETE", headers });
+    const res = await fetch(`/api/roles/${role.id}`, { method: "DELETE", credentials: "include" });
     const data = await res.json().catch(() => null);
 
     if (!res.ok) {
@@ -421,11 +458,11 @@ export default function AdminPage() {
     if (!newTeamName.trim()) return;
     setActionError("");
 
-    const headers = await authHeaders();
     const res = await fetch("/api/teams", {
       method: "POST",
-      headers: { ...headers, "Content-Type": "application/json" },
-      body: JSON.stringify({ name: newTeamName }),
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ name: newTeamName.trim() }),
     });
     const data = await res.json().catch(() => null);
 
@@ -435,7 +472,7 @@ export default function AdminPage() {
     }
 
     setNewTeamName("");
-    setNotice("Team added");
+    setNotice("Team created successfully");
     await loadAll();
   };
 
@@ -443,11 +480,11 @@ export default function AdminPage() {
     if (!editingTeamName.trim()) return;
     setActionError("");
 
-    const headers = await authHeaders();
     const res = await fetch(`/api/teams/${team.id}`, {
       method: "PATCH",
-      headers: { ...headers, "Content-Type": "application/json" },
-      body: JSON.stringify({ name: editingTeamName }),
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ name: editingTeamName.trim() }),
     });
     const data = await res.json().catch(() => null);
 
@@ -457,16 +494,15 @@ export default function AdminPage() {
     }
 
     setEditingTeamId(null);
-    setNotice("Team renamed");
+    setNotice("Team updated");
     await loadAll();
   };
 
   const deleteOrgTeam = async (team: OrgTeam) => {
-    if (!window.confirm(`Delete team "${team.name}"? Members will be unassigned.`)) return;
+    if (!window.confirm(`Delete team "${team.name}"? Members will be set to no team.`)) return;
     setActionError("");
 
-    const headers = await authHeaders();
-    const res = await fetch(`/api/teams/${team.id}`, { method: "DELETE", headers });
+    const res = await fetch(`/api/teams/${team.id}`, { method: "DELETE", credentials: "include" });
     const data = await res.json().catch(() => null);
 
     if (!res.ok) {
@@ -482,11 +518,11 @@ export default function AdminPage() {
     if (!newAdminEmail.trim()) return;
     setActionError("");
 
-    const headers = await authHeaders();
     const res = await fetch("/api/admins", {
       method: "POST",
-      headers: { ...headers, "Content-Type": "application/json" },
-      body: JSON.stringify({ email: newAdminEmail }),
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email: newAdminEmail.trim() }),
     });
 
     const data = await res.json().catch(() => null);
@@ -497,18 +533,17 @@ export default function AdminPage() {
     }
 
     setNewAdminEmail("");
-    setNotice("Admin added");
+    setNotice("Administrator access granted");
     await loadAll();
   };
 
   const removeAdmin = async (email: string) => {
-    if (!window.confirm(`Remove admin ${email}?`)) return;
+    if (!window.confirm(`Remove admin privileges for ${email}?`)) return;
     setActionError("");
 
-    const headers = await authHeaders();
     const res = await fetch(`/api/admins?email=${encodeURIComponent(email)}`, {
       method: "DELETE",
-      headers,
+      credentials: "include",
     });
 
     const data = await res.json().catch(() => null);
@@ -518,16 +553,16 @@ export default function AdminPage() {
       return;
     }
 
-    setNotice("Admin removed");
+    setNotice("Administrator removed");
     await loadAll();
   };
 
   const saveSettings = async () => {
     setActionError("");
-    const headers = await authHeaders();
     const res = await fetch("/api/settings", {
       method: "PUT",
-      headers: { ...headers, "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ tagline, description, contactEmail }),
     });
 
@@ -538,408 +573,727 @@ export default function AdminPage() {
       return;
     }
 
-    setNotice("Settings saved");
+    setNotice("Settings saved successfully");
   };
 
-  if (authLoading) {
+  if (authLoading || isAdmin === null) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-ink text-white">
-        Loading...
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground">
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </div>
+          <p className="text-sm font-medium text-muted-foreground">Loading workspace…</p>
+        </div>
       </div>
     );
   }
 
   if (!session) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-ink px-6 text-white">
-        <div className="w-full max-w-md rounded-3xl glass p-8 text-center">
-          <h1 className="mb-2 font-display text-2xl font-bold">Admin Panel</h1>
-          <p className="mb-6 text-sm text-mist">Sign in with an admin account to continue.</p>
-          <Link
-            href="/login?next=/admin"
-            className="block w-full rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-4 py-3 text-sm font-semibold text-white shadow-glow transition-all hover:scale-[1.02]"
-          >
-            Login
-          </Link>
-          <Link href="/team" className="mt-4 block text-xs text-mist hover:text-white">
-            ← Back to team page
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (isAdmin === null) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-ink text-white">
-        Loading...
+      <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12 text-foreground">
+        <Card className="w-full max-w-md border-border bg-card shadow-xl">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md">
+              <span className="font-bold text-lg">K</span>
+            </div>
+            <CardTitle className="text-2xl font-bold">Admin Portal</CardTitle>
+            <CardDescription>Sign in with an authorised administrator account to access this workspace.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Link
+              href="/login?next=/admin"
+              className={`${buttonVariants({ variant: "default", size: "lg" })} w-full font-semibold shadow-sm`}
+            >
+              Sign In to Continue
+            </Link>
+            <div className="text-center">
+              <Link href="/team" className="text-xs text-muted-foreground transition-colors hover:text-foreground">
+                ← Return to public team page
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   if (!isAdmin) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-ink px-6 text-white">
-        <div className="w-full max-w-md rounded-3xl glass p-8 text-center">
-          <h1 className="mb-2 font-display text-2xl font-bold">Not authorised</h1>
-          <p className="mb-6 text-sm text-mist">
-            {session.user.email} is not an admin for this site.
-          </p>
-          <Link href="/team" className="text-xs text-mist hover:text-white">
-            ← Back to team page
-          </Link>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12 text-foreground">
+        <Card className="w-full max-w-md border-border bg-card text-center shadow-xl">
+          <CardHeader>
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
+              <Shield className="h-6 w-6" />
+            </div>
+            <CardTitle className="text-xl font-bold">Access Denied</CardTitle>
+            <CardDescription>
+              <strong className="text-foreground">{session.user.email}</strong> is not listed as an administrator for Kavi Solutions.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button variant="outline" className="w-full" onClick={() => authClient.signOut()}>
+              <LogOut className="h-4 w-4" /> Sign out
+            </Button>
+            <Link href="/team" className="inline-block text-xs text-muted-foreground hover:text-foreground">
+              ← Return to public team page
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   const activeSection = sections.find((item) => item.key === section) ?? sections[0];
+  const userInitial = (session.user.email?.[0] ?? "A").toUpperCase();
 
   return (
-    <div id="admin-app" className="admin-app min-h-screen">
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-[248px] flex-col border-r border-slate-200 bg-white lg:flex">
-        <div className="flex h-[72px] items-center gap-3 border-b border-slate-200 px-5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-700 text-sm font-bold text-white">K</span>
-          <div className="leading-tight">
-            <Link href="/" className="font-semibold tracking-tight text-slate-900">Kavi Solutions</Link>
-            <p className="mt-0.5 text-[11px] text-slate-500">Company workspace</p>
-          </div>
+    <div id="admin-app" data-theme={theme} className={`admin-app min-h-screen bg-background text-foreground ${theme === "dark" ? "dark" : ""}`}>
+      {/* Mobile Drawer Backdrop */}
+      {mobileNavOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
+          onClick={() => setMobileNavOpen(false)}
+        />
+      )}
+
+      {/* Sidebar Navigation */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-border bg-card transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+          mobileNavOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {/* Workspace Brand Header */}
+        <div className="flex h-16 items-center justify-between border-b border-border px-5">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-500 font-bold text-white shadow-sm shadow-blue-500/25 transition-transform group-hover:scale-105">
+              <span>K</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold tracking-tight text-foreground leading-none">Kavi Solutions</span>
+              <span className="mt-1 flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                Admin Console
+              </span>
+            </div>
+          </Link>
+          <button
+            onClick={() => setMobileNavOpen(false)}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden"
+            aria-label="Close navigation"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
-        <p className="px-5 pb-2 pt-6 text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400">Workspace</p>
-        <nav className="flex flex-col gap-1 px-3">
-          {sections.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => selectSection(item.key)}
-              aria-current={section === item.key ? "page" : undefined}
-              className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm font-medium transition-colors ${
-                section === item.key
-                  ? "bg-blue-50 text-blue-800"
-                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
-              }`}
+
+        {/* Navigation Links */}
+        <div className="flex-1 overflow-y-auto px-3 py-4">
+          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
+            Workspace
+          </p>
+          <nav className="flex flex-col gap-1">
+            {sections.map((item) => {
+              const isActive = section === item.key;
+              const count =
+                item.key === "team"
+                  ? members.length
+                  : item.key === "roles"
+                  ? roles.length
+                  : item.key === "teams"
+                  ? orgTeams.length
+                  : item.key === "projects"
+                  ? projects.length
+                  : item.key === "admins"
+                  ? admins.length
+                  : null;
+
+              return (
+                <button
+                  key={item.key}
+                  onClick={() => selectSection(item.key)}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`group flex items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-all ${
+                    isActive
+                      ? "bg-primary/10 text-primary border border-primary/20 shadow-xs"
+                      : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <item.icon className={`h-4 w-4 transition-colors ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`} />
+                    <span>{item.label}</span>
+                  </div>
+                  {count !== null && (
+                    <span
+                      className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold tabular-nums ${
+                        isActive
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground group-hover:text-foreground"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* User Account / Footer */}
+        <div className="border-t border-border p-3">
+          <div className="flex items-center justify-between rounded-xl bg-muted/40 p-2.5">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-xs font-bold text-white shadow-xs">
+                {userInitial}
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-xs font-semibold text-foreground" title={session.user.email ?? ""}>
+                  {session.user.email}
+                </p>
+                <p className="text-[10px] text-muted-foreground">Administrator</p>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+              title="Sign out"
+              onClick={() => authClient.signOut()}
             >
-              <item.icon className="h-4 w-4" />{item.label}
-            </button>
-          ))}
-        </nav>
-        <div className="mt-auto border-t border-slate-200 p-4">
-          <p className="mb-3 truncate text-xs text-slate-500" title={session.user.email ?? ""}>{session.user.email}</p>
-          <Button variant="outline" className="w-full justify-start" onClick={() => supabaseBrowser.auth.signOut()}>
-            <LogOut className="h-4 w-4" /> Sign out
-          </Button>
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </aside>
 
-      <div className="min-h-screen lg:pl-[248px]">
-        <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 px-4 shadow-sm backdrop-blur sm:px-6">
-          <div className="mx-auto flex h-[64px] max-w-[1440px] items-center justify-between gap-4">
+      {/* Main Content Area */}
+      <div className="min-h-screen lg:pl-64">
+        {/* Top Sticky Header */}
+        <header className="sticky top-0 z-40 border-b border-border bg-card/85 px-4 backdrop-blur-md sm:px-8">
+          <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4">
+            {/* Mobile Header Elements */}
             <div className="flex items-center gap-3 lg:hidden">
-              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-700 text-xs font-bold text-white">K</span>
-              <span className="text-sm font-semibold text-slate-900">Kavi Solutions</span>
-            </div>
-            <div className="hidden text-xs text-slate-500 lg:block">Kavi Solutions <span className="px-1 text-slate-300">/</span> Administration</div>
-            <div className="ml-auto flex items-center gap-2">
-              <Link href="/team" className={`${buttonVariants({ variant: "outline", size: "sm" })} hidden sm:inline-flex`}>
-                View team page <ExternalLink className="h-3.5 w-3.5" />
-              </Link>
-              <Button variant="ghost" size="sm" className="lg:hidden" onClick={() => supabaseBrowser.auth.signOut()}>
-                <LogOut className="h-4 w-4" /><span className="hidden sm:inline">Sign out</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 text-muted-foreground hover:text-foreground"
+                onClick={() => setMobileNavOpen(true)}
+                aria-label="Open navigation"
+              >
+                <Menu className="h-5 w-5" />
               </Button>
+              <div className="flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary font-bold text-xs text-primary-foreground">
+                  K
+                </div>
+                <span className="text-sm font-semibold tracking-tight text-foreground">Kavi Solutions</span>
+              </div>
+            </div>
+
+            {/* Desktop Breadcrumbs */}
+            <div className="hidden items-center gap-2 text-xs font-medium text-muted-foreground lg:flex">
+              <Link href="/" className="hover:text-foreground transition-colors">Kavi Solutions</Link>
+              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
+              <span>Workspace</span>
+              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
+              <span className="text-foreground font-semibold">{activeSection.label}</span>
+            </div>
+
+            {/* Right Header Actions */}
+            <div className="ml-auto flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-9 w-9 border-border bg-card text-foreground shadow-xs hover:bg-muted"
+                aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+                title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              >
+                {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+              </Button>
+
+              <Link
+                href="/team"
+                className={`${buttonVariants({ variant: "outline", size: "sm" })} hidden sm:inline-flex gap-1.5 border-border bg-card text-foreground shadow-xs hover:bg-muted`}
+              >
+                <span>Live team page</span>
+                <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+              </Link>
             </div>
           </div>
         </header>
 
-        <main className="mx-auto max-w-[1280px] px-4 pb-12 pt-8 sm:px-8">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Workspace / Administration</p>
-            <h1 className="text-[28px] font-semibold tracking-tight text-slate-950">{activeSection.label}</h1>
-            <p className="mt-1.5 text-sm text-slate-500">{activeSection.description}.</p>
-          </div>
-          <div className="flex items-center gap-3">
-            {section === "team" && <Badge variant="outline" className="rounded-full border-slate-200 bg-white px-3 py-1 text-slate-600">{members.length} {members.length === 1 ? "member" : "members"}</Badge>}
-            {section !== "team" && <Badge variant="outline" className="rounded-full border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700">Workspace active</Badge>}
-            {section === "team" && (
-              <Button onClick={() => { setDraft(emptyDraft(members[0]?.gradient ?? "from-violet-500 to-purple-500")); setFormError(""); }}>
-                <Plus className="h-4 w-4" /> Add member
-              </Button>
-            )}
-          </div>
-        </div>
-
-        <nav aria-label="Workspace sections" className="mb-5 flex gap-1 overflow-x-auto rounded-lg border border-slate-200 bg-white p-2 shadow-sm lg:hidden">
-            {sections.map((item) => (
-              <button
-                key={item.key}
-                onClick={() => selectSection(item.key)}
-                aria-current={section === item.key ? "page" : undefined}
-                className={`flex min-w-fit items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
-                  section === item.key
-                    ? "bg-blue-50 text-blue-800"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
-                }`}
-              >
-                <item.icon className="h-4 w-4" />{item.label}
-              </button>
-            ))}
-        </nav>
-
-          <div className="min-w-0">
-            {notice && (
-              <p className="mb-4 rounded-xl bg-emerald-500/10 px-4 py-2 text-sm text-emerald-300">
-                {notice}
+        {/* Page Main Content */}
+        <main className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-8">
+          {/* Section Heading & Primary CTA */}
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-primary">
+                Workspace / Administration
               </p>
-            )}
-            {actionError && (
-              <p className="mb-4 rounded-xl bg-red-500/10 px-4 py-2 text-sm text-red-300">
-                {actionError}
+              <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                {activeSection.label}
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {activeSection.description}
               </p>
-            )}
+            </div>
 
-            {section === "team" && (
-              <div className="space-y-4">
-                {draft && (
-                  <div className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto bg-[#000000b3] p-4 py-10">
-                    <div className="w-full max-w-2xl rounded-3xl border border-white/10 bg-[#0b0b14] p-6 shadow-2xl">
-                      <div className="mb-5 flex items-center justify-between">
-                        <h2 className="font-display text-lg font-semibold">
-                          {draft.id ? "Edit member" : "New member"}
+            <div className="flex items-center gap-2.5">
+              {section === "team" && (
+                <>
+                  <Badge variant="outline" className="h-8 rounded-full border-border bg-muted/50 px-3 text-xs font-semibold text-foreground">
+                    {members.length} {members.length === 1 ? "member" : "members"}
+                  </Badge>
+                  <Button
+                    onClick={() => {
+                      setDraft(emptyDraft(members[0]?.gradient ?? "from-violet-500 to-purple-500"));
+                      setFormError("");
+                    }}
+                    className="shadow-sm font-semibold"
+                  >
+                    <Plus className="h-4 w-4 mr-1.5" /> Add member
+                  </Button>
+                </>
+              )}
+
+              {section === "projects" && (
+                <>
+                  <Badge variant="outline" className="h-8 rounded-full border-border bg-muted/50 px-3 text-xs font-semibold text-foreground">
+                    {projects.length} {projects.length === 1 ? "project" : "projects"}
+                  </Badge>
+                  <Button
+                    onClick={() => {
+                      setProjectDraft(emptyProjectDraft());
+                      setProjectFormError("");
+                      setNewSkill("");
+                    }}
+                    className="shadow-sm font-semibold"
+                  >
+                    <Plus className="h-4 w-4 mr-1.5" /> Add project
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Feedback Notices */}
+          {notice && (
+            <div className="mb-6 flex items-center gap-2.5 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+              <CheckCircle2 className="h-4 w-4 shrink-0" />
+              <span>{notice}</span>
+            </div>
+          )}
+
+          {actionError && (
+            <div className="mb-6 flex items-center gap-2.5 rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              <span>{actionError}</span>
+            </div>
+          )}
+
+          {/* SECTION: TEAM MEMBERS */}
+          {section === "team" && (
+            <div className="space-y-4">
+              {/* Member Edit / Add Modal */}
+              {draft && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+                  <div className="relative my-8 w-full max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-2xl sm:p-8">
+                    <div className="mb-6 flex items-center justify-between border-b border-border pb-4">
+                      <div>
+                        <h2 className="text-lg font-bold text-foreground">
+                          {draft.id ? "Edit Team Member" : "Add New Team Member"}
                         </h2>
-                        <button
-                          onClick={() => setDraft(null)}
-                          className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-lg text-mist transition-colors hover:bg-white/10 hover:text-white"
-                          aria-label="Close"
-                        >
-                          ✕
-                        </button>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {draft.id ? "Update member profile, team assignment and public visibility." : "Add a team member to showcase on the public website."}
+                        </p>
                       </div>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <Input
-                        className={inputClass}
-                        placeholder="Name"
-                        value={draft.name}
-                        onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-                      />
-                      <Select
-                        value={draft.role}
-                        onValueChange={(value) => setDraft({ ...draft, role: value })}
+                      <button
+                        onClick={() => setDraft(null)}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        aria-label="Close modal"
                       >
-                        <SelectTrigger aria-label="Role">
-                          <SelectValue placeholder="No role yet" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="__none__">No role yet</SelectItem>
-                          {roles.map((role) => (
-                            <SelectItem key={role.id} value={role.name}>
-                              {role.name}
-                            </SelectItem>
-                          ))}
-                          {draft.role && !roles.some((r) => r.name === draft.role) && (
-                            <SelectItem value={draft.role}>{draft.role}</SelectItem>
-                          )}
-                        </SelectContent>
-                      </Select>
-                      <Select
-                        value={draft.teamId || "__none__"}
-                        onValueChange={(value) =>
-                          setDraft({ ...draft, teamId: value === "__none__" ? "" : value })
-                        }
-                      >
-                        <SelectTrigger aria-label="Team">
-                          <SelectValue placeholder="No team" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="__none__">No team</SelectItem>
-                          {orgTeams.map((team) => (
-                            <SelectItem key={team.id} value={team.id}>
-                              {team.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        className={inputClass}
-                        placeholder="Portfolio URL (optional)"
-                        value={draft.profileUrl}
-                        onChange={(e) => setDraft({ ...draft, profileUrl: e.target.value })}
-                      />
-                      <Input
-                        className={inputClass}
-                        placeholder="LinkedIn URL (optional)"
-                        value={draft.linkedinUrl}
-                        onChange={(e) => setDraft({ ...draft, linkedinUrl: e.target.value })}
-                      />
-                      <Input
-                        className={inputClass}
-                        placeholder="Sort order (lower shows first)"
-                        type="number"
-                        value={draft.sortOrder}
-                        onChange={(e) => setDraft({ ...draft, sortOrder: Number(e.target.value) })}
-                      />
-                      <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5">
-                        {draft.imageUrl ? (
-                          <button
-                            type="button"
-                            onClick={() => setPreview(draft.imageUrl)}
-                            className="shrink-0"
-                            title="Preview photo"
-                          >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="sm:col-span-2">
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Full Name *</label>
+                        <Input
+                          placeholder="e.g. Sireesha Busani"
+                          value={draft.name}
+                          onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Role / Title</label>
+                        <Select
+                          value={draft.role || "__none__"}
+                          onValueChange={(value) => setDraft({ ...draft, role: value === "__none__" ? "" : value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="__none__">No role assigned</SelectItem>
+                            {roles.map((role) => (
+                              <SelectItem key={role.id} value={role.name}>
+                                {role.name}
+                              </SelectItem>
+                            ))}
+                            {draft.role && !roles.some((r) => r.name === draft.role) && (
+                              <SelectItem value={draft.role}>{draft.role}</SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Team / Department</label>
+                        <Select
+                          value={draft.teamId || "__none__"}
+                          onValueChange={(value) =>
+                            setDraft({ ...draft, teamId: value === "__none__" ? "" : value })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select team" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="__none__">No team assigned</SelectItem>
+                            {orgTeams.map((team) => (
+                              <SelectItem key={team.id} value={team.id}>
+                                {team.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Sort Order</label>
+                        <Input
+                          type="number"
+                          placeholder="0"
+                          value={draft.sortOrder}
+                          onChange={(e) => setDraft({ ...draft, sortOrder: Number(e.target.value) })}
+                        />
+                        <p className="mt-1 text-[11px] text-muted-foreground">Lower numbers appear first.</p>
+                      </div>
+
+                      {/* Photo Upload & Preview Card */}
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Profile Photo</label>
+                        <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/30 p-2.5">
+                          {draft.imageUrl ? (
                             <img
                               src={draft.imageUrl}
                               alt="Member photo"
-                              className="h-12 w-12 rounded-xl object-cover ring-1 ring-white/20 transition-transform hover:scale-105"
+                              className="h-11 w-11 rounded-full object-cover ring-2 ring-border"
                             />
-                          </button>
-                        ) : (
-                          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/5 text-[10px] text-fog">
-                            no photo
-                          </span>
-                        )}
-                        <div className="flex min-w-0 flex-col gap-1">
-                          <label className="cursor-pointer text-xs font-semibold text-mist transition-colors hover:text-white">
-                            {uploading ? "Uploading..." : draft.imageUrl ? "Change photo" : "Upload photo"}
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) uploadImage(file);
-                              }}
-                            />
-                          </label>
-                          {draft.imageUrl && (
-                            <div className="flex gap-3 text-[11px]">
-                              <button
-                                type="button"
-                                onClick={() => setPreview(draft.imageUrl)}
-                                className="text-sky-300 hover:text-sky-200"
-                              >
-                                Preview
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setDraft({ ...draft, imageUrl: "" })}
-                                className="text-red-400 hover:text-red-300"
-                              >
-                                Remove
-                              </button>
+                          ) : (
+                            <div className={`flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-tr ${draft.gradient || "from-blue-600 to-indigo-600"} text-xs font-bold text-white shadow-xs`}>
+                              {draft.name ? getInitials(draft.name) : <User className="h-5 w-5" />}
                             </div>
                           )}
+                          <div className="flex flex-col gap-1 min-w-0">
+                            <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-primary hover:underline">
+                              <Upload className="h-3 w-3" />
+                              {uploading ? "Uploading..." : draft.imageUrl ? "Change photo" : "Upload photo"}
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) uploadImage(file);
+                                }}
+                              />
+                            </label>
+                            {draft.imageUrl && (
+                              <div className="flex items-center gap-2 text-[11px]">
+                                <button
+                                  type="button"
+                                  onClick={() => setPreview(draft.imageUrl)}
+                                  className="text-muted-foreground hover:text-foreground"
+                                >
+                                  Preview
+                                </button>
+                                <span className="text-muted-foreground/40">·</span>
+                                <button
+                                  type="button"
+                                  onClick={() => setDraft({ ...draft, imageUrl: "" })}
+                                  className="text-destructive hover:underline"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Portfolio URL</label>
+                        <Input
+                          placeholder="https://..."
+                          value={draft.profileUrl}
+                          onChange={(e) => setDraft({ ...draft, profileUrl: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">LinkedIn URL</label>
+                        <Input
+                          placeholder="https://linkedin.com/in/..."
+                          value={draft.linkedinUrl}
+                          onChange={(e) => setDraft({ ...draft, linkedinUrl: e.target.value })}
+                        />
+                      </div>
+
                       <div className="sm:col-span-2">
-                        <p className="mb-2 text-xs uppercase tracking-widest text-mist">
-                          Card colour
-                        </p>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Avatar Card Colour Theme</label>
                         <GradientPicker
                           value={draft.gradient}
                           onChange={(gradient) => setDraft({ ...draft, gradient })}
                         />
                       </div>
-                      <textarea
-                        className={`${inputClass} sm:col-span-2`}
-                        placeholder="Short bio"
-                        rows={3}
-                        value={draft.bio}
-                        onChange={(e) => setDraft({ ...draft, bio: e.target.value })}
-                      />
+
+                      <div className="sm:col-span-2">
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Bio / About</label>
+                        <textarea
+                          className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          placeholder="Brief biography or description of their role and passions..."
+                          rows={3}
+                          value={draft.bio}
+                          onChange={(e) => setDraft({ ...draft, bio: e.target.value })}
+                        />
+                      </div>
+
                       {!draft.id && (
                         <>
-                          <Input
-                            className={inputClass}
-                            placeholder="Login email (optional — links/creates an account)"
-                            value={draft.email}
-                            onChange={(e) => setDraft({ ...draft, email: e.target.value })}
-                          />
-                          <Input
-                            className={inputClass}
-                            placeholder="Login password (min 8 chars for new account)"
-                            type="password"
-                            value={draft.password}
-                            onChange={(e) => setDraft({ ...draft, password: e.target.value })}
-                          />
+                          <div>
+                            <label className="mb-1.5 block text-xs font-semibold text-foreground">Login Email (optional)</label>
+                            <Input
+                              placeholder="colleague@kavisolutions.in"
+                              value={draft.email}
+                              onChange={(e) => setDraft({ ...draft, email: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="mb-1.5 block text-xs font-semibold text-foreground">Login Password (optional)</label>
+                            <Input
+                              type="password"
+                              placeholder="Minimum 8 characters"
+                              value={draft.password}
+                              onChange={(e) => setDraft({ ...draft, password: e.target.value })}
+                            />
+                          </div>
                         </>
                       )}
                     </div>
 
-                    {formError && <p className="mt-3 text-sm text-red-400">{formError}</p>}
+                    {formError && (
+                      <div className="mt-4 flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive">
+                        <AlertCircle className="h-4 w-4 shrink-0" />
+                        <span>{formError}</span>
+                      </div>
+                    )}
 
-                    <div className="mt-4 flex gap-3">
-                      <button
-                        onClick={saveMember}
-                        disabled={savingMember}
-                        className="rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-5 py-2.5 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02] disabled:opacity-60"
-                      >
-                        {savingMember ? "Saving..." : "Save"}
-                      </button>
-                      <button
-                        onClick={() => setDraft(null)}
-                        className="rounded-xl bg-white/5 px-5 py-2.5 text-sm font-semibold text-mist transition-colors hover:bg-white/10 hover:text-white"
-                      >
+                    <div className="mt-6 flex items-center justify-end gap-3 border-t border-border pt-4">
+                      <Button variant="outline" onClick={() => setDraft(null)}>
                         Cancel
-                      </button>
-                    </div>
+                      </Button>
+                      <Button onClick={saveMember} disabled={savingMember || uploading} className="font-semibold">
+                        {savingMember ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving…
+                          </>
+                        ) : (
+                          "Save Member"
+                        )}
+                      </Button>
                     </div>
                   </div>
-                )}
+                </div>
+              )}
 
-                <Card className="overflow-hidden rounded-xl border-slate-200 bg-white shadow-sm">
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-5">
-                    <div className="relative w-full max-w-sm">
-                      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                      <Input
-                        value={memberQuery}
-                        onChange={(event) => setMemberQuery(event.target.value)}
-                        placeholder="Search members, roles, or teams"
-                        aria-label="Search team members"
-                        className="h-9 border-slate-200 bg-white pl-9 text-sm shadow-none focus-visible:ring-blue-200"
-                      />
-                    </div>
-                    <span className="text-xs text-slate-500">Showing {filteredMembers.length} of {members.length}</span>
+              {/* Members Table Card */}
+              <Card className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+                {/* Search & Filter Toolbar */}
+                <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="relative w-full max-w-md">
+                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      value={memberQuery}
+                      onChange={(e) => setMemberQuery(e.target.value)}
+                      placeholder="Search members, roles, or teams…"
+                      aria-label="Search team members"
+                      className="h-9.5 pl-9 pr-8 text-sm"
+                    />
+                    {memberQuery && (
+                      <button
+                        onClick={() => setMemberQuery("")}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    )}
                   </div>
-                  <Table>
-                    <TableHeader className="bg-slate-50/80">
-                      <TableRow className="border-slate-200 hover:bg-transparent">
-                        <TableHead className="w-[38%] pl-5">Member</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Team</TableHead>
-                        <TableHead className="w-20">Order</TableHead>
-                        <TableHead className="w-[150px] pr-5 text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredMembers.map((member) => (
-                        <TableRow key={member.id} className="border-slate-100 hover:bg-slate-50/70">
-                          <TableCell className="pl-5">
-                            <div className="flex min-w-[210px] items-center gap-3">
-                              {member.imageUrl ? (
-                                <button type="button" onClick={() => setPreview(member.imageUrl)} className="shrink-0" title={`Preview ${member.name}'s photo`}>
-                                  <img src={member.imageUrl} alt={member.name} className="h-9 w-9 rounded-full border border-slate-200 object-cover" />
-                                </button>
-                              ) : (
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-semibold text-slate-600 ring-1 ring-slate-200">
-                                  {member.initials || getInitials(member.name)}
-                                </div>
-                              )}
-                              <div className="min-w-0">
-                                <p className="truncate font-medium text-slate-900">{member.name}</p>
-                                {(member.linkedinUrl || member.profileUrl) && (
-                                  <p className="mt-0.5 text-xs text-slate-500">{[member.linkedinUrl && "LinkedIn", member.profileUrl && "Portfolio"].filter(Boolean).join(" · ")}</p>
-                                )}
+
+                  <div className="flex items-center gap-2">
+                    <Select value={roleFilter} onValueChange={setRoleFilter}>
+                      <SelectTrigger className="h-9 w-[130px] sm:w-[150px] text-xs">
+                        <SelectValue placeholder="All roles" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All roles</SelectItem>
+                        <SelectItem value="__unassigned__">Unassigned</SelectItem>
+                        {roles.map((r) => (
+                          <SelectItem key={r.id} value={r.name}>
+                            {r.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Select value={teamFilter} onValueChange={setTeamFilter}>
+                      <SelectTrigger className="h-9 w-[130px] sm:w-[150px] text-xs">
+                        <SelectValue placeholder="All teams" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All teams</SelectItem>
+                        <SelectItem value="__unassigned__">No team</SelectItem>
+                        {orgTeams.map((t) => (
+                          <SelectItem key={t.id} value={t.id}>
+                            {t.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <span className="text-xs text-muted-foreground whitespace-nowrap pl-1">
+                      {filteredMembers.length} of {members.length}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Table Content */}
+                <Table>
+                  <TableHeader className="bg-muted/40">
+                    <TableRow className="border-border hover:bg-transparent">
+                      <TableHead className="w-[38%] pl-5 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Member</TableHead>
+                      <TableHead className="font-semibold text-xs uppercase tracking-wider text-muted-foreground">Role</TableHead>
+                      <TableHead className="font-semibold text-xs uppercase tracking-wider text-muted-foreground">Team</TableHead>
+                      <TableHead className="w-20 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Order</TableHead>
+                      <TableHead className="w-[140px] pr-5 text-right font-semibold text-xs uppercase tracking-wider text-muted-foreground">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredMembers.map((member) => (
+                      <TableRow key={member.id} className="border-border hover:bg-muted/30 transition-colors">
+                        <TableCell className="pl-5 py-3.5">
+                          <div className="flex min-w-[210px] items-center gap-3">
+                            {member.imageUrl ? (
+                              <button
+                                type="button"
+                                onClick={() => setPreview(member.imageUrl)}
+                                className="relative shrink-0 group"
+                                title={`Preview ${member.name}'s photo`}
+                              >
+                                <img
+                                  src={member.imageUrl}
+                                  alt={member.name}
+                                  className="h-10 w-10 rounded-full object-cover ring-2 ring-border shadow-xs transition-transform group-hover:scale-105"
+                                />
+                              </button>
+                            ) : (
+                              <div
+                                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr ${
+                                  member.gradient || "from-blue-600 to-indigo-600"
+                                } text-xs font-bold text-white shadow-xs ring-2 ring-border`}
+                              >
+                                {member.initials || getInitials(member.name)}
                               </div>
+                            )}
+                            <div className="min-w-0">
+                              <p className="truncate font-semibold text-foreground text-sm leading-snug">
+                                {member.name}
+                              </p>
+                              {(member.linkedinUrl || member.profileUrl) ? (
+                                <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+                                  {member.linkedinUrl && (
+                                    <a
+                                      href={member.linkedinUrl}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="inline-flex items-center gap-1 hover:text-primary transition-colors"
+                                    >
+                                      <Link2 className="h-3 w-3" />
+                                      <span>LinkedIn</span>
+                                    </a>
+                                  )}
+                                  {member.linkedinUrl && member.profileUrl && <span>·</span>}
+                                  {member.profileUrl && (
+                                    <a
+                                      href={member.profileUrl}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="inline-flex items-center gap-1 hover:text-primary transition-colors"
+                                    >
+                                      <Globe className="h-3 w-3" />
+                                      <span>Portfolio</span>
+                                    </a>
+                                  )}
+                                </div>
+                              ) : (
+                                <span className="text-[11px] text-muted-foreground/60">No links added</span>
+                              )}
                             </div>
-                          </TableCell>
-                          <TableCell className="whitespace-nowrap text-slate-600">{member.role || <span className="text-slate-400">Not assigned</span>}</TableCell>
-                          <TableCell className="whitespace-nowrap text-slate-600">{member.teamName || <span className="text-slate-400">Not assigned</span>}</TableCell>
-                          <TableCell className="tabular-nums text-slate-500">{member.sortOrder}</TableCell>
-                          <TableCell className="pr-5">
-                            <div className="flex justify-end gap-1">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                aria-label={`Edit ${member.name}`}
-                                onClick={() => setDraft({
+                          </div>
+                        </TableCell>
+
+                        <TableCell className="whitespace-nowrap py-3.5">
+                          {member.role ? (
+                            <span className="inline-flex items-center rounded-full border border-blue-500/25 bg-blue-500/10 px-2.5 py-0.5 text-xs font-medium text-blue-600 dark:text-blue-400">
+                              {member.role}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-md border border-dashed border-border bg-muted/40 px-2 py-0.5 text-xs text-muted-foreground/70">
+                              Unassigned
+                            </span>
+                          )}
+                        </TableCell>
+
+                        <TableCell className="whitespace-nowrap py-3.5">
+                          {member.teamName ? (
+                            <span className="inline-flex items-center rounded-full border border-purple-500/25 bg-purple-500/10 px-2.5 py-0.5 text-xs font-medium text-purple-600 dark:text-purple-400">
+                              {member.teamName}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-md border border-dashed border-border bg-muted/40 px-2 py-0.5 text-xs text-muted-foreground/70">
+                              No team
+                            </span>
+                          )}
+                        </TableCell>
+
+                        <TableCell className="py-3.5">
+                          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded bg-muted/60 px-1.5 font-mono text-xs font-medium text-foreground">
+                            {member.sortOrder}
+                          </span>
+                        </TableCell>
+
+                        <TableCell className="pr-5 py-3.5 text-right">
+                          <div className="flex justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                              aria-label={`Edit ${member.name}`}
+                              onClick={() =>
+                                setDraft({
                                   id: member.id,
                                   name: member.name,
                                   role: member.role,
@@ -952,625 +1306,747 @@ export default function AdminPage() {
                                   imageUrl: member.imageUrl ?? "",
                                   email: "",
                                   password: "",
-                                })}
-                                className="h-8 px-2.5 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                                })
+                              }
+                            >
+                              <Pencil className="h-3.5 w-3.5 mr-1" />
+                              <span>Edit</span>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2.5 text-xs font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                              aria-label={`Remove ${member.name}`}
+                              onClick={() => deleteMember(member)}
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-1" />
+                              <span>Remove</span>
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+
+                    {filteredMembers.length === 0 && (
+                      <TableRow className="hover:bg-transparent">
+                        <TableCell colSpan={5} className="h-36 text-center text-sm text-muted-foreground">
+                          <div className="flex flex-col items-center justify-center gap-2">
+                            <Search className="h-6 w-6 text-muted-foreground/40" />
+                            <p className="font-medium text-foreground">No team members match your criteria</p>
+                            <p className="text-xs text-muted-foreground">Try clearing your search query or filters.</p>
+                            {(memberQuery || roleFilter !== "all" || teamFilter !== "all") && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="mt-2"
+                                onClick={() => {
+                                  setMemberQuery("");
+                                  setRoleFilter("all");
+                                  setTeamFilter("all");
+                                }}
                               >
-                                <Pencil className="h-3.5 w-3.5" /><span>Edit</span>
+                                Clear all filters
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </Card>
+            </div>
+          )}
+
+          {/* SECTION: ROLES */}
+          {section === "roles" && (
+            <div className="space-y-6">
+              {/* Add Role Card */}
+              <Card className="rounded-xl border border-border bg-card shadow-xs">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-bold">Add Role</CardTitle>
+                  <CardDescription>Define role titles and responsibilities for your organisation.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Input
+                      placeholder="Role title (e.g. Senior Frontend Engineer, Advisor)"
+                      value={newRoleName}
+                      onChange={(e) => setNewRoleName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          addRole();
+                        }
+                      }}
+                      className="max-w-md"
+                    />
+                    <Button onClick={addRole} disabled={!newRoleName.trim()} className="font-semibold">
+                      <Plus className="h-4 w-4 mr-1.5" /> Add role
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Roles Table */}
+              <Card className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+                <div className="border-b border-border px-5 py-3.5 bg-muted/30">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Available Roles ({roles.length})
+                  </span>
+                </div>
+                <div className="divide-y divide-border">
+                  {roles.map((role) => {
+                    const memberCount = members.filter((m) => m.role === role.name).length;
+                    const isEditing = editingRoleId === role.id;
+
+                    return (
+                      <div key={role.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 hover:bg-muted/30 transition-colors">
+                        {isEditing ? (
+                          <div className="flex items-center gap-2 flex-1 max-w-md">
+                            <Input
+                              value={editingRoleName}
+                              onChange={(e) => setEditingRoleName(e.target.value)}
+                              className="h-8 text-sm"
+                              autoFocus
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") renameRole(role);
+                                if (e.key === "Escape") setEditingRoleId(null);
+                              }}
+                            />
+                            <Button size="sm" className="h-8 px-3" onClick={() => renameRole(role)}>
+                              Save
+                            </Button>
+                            <Button size="sm" variant="outline" className="h-8 px-3" onClick={() => setEditingRoleId(null)}>
+                              Cancel
+                            </Button>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="flex items-center gap-3">
+                              <span className="inline-flex items-center rounded-full border border-blue-500/25 bg-blue-500/10 px-3 py-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                                {role.name}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {memberCount} {memberCount === 1 ? "member" : "members"}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground hover:bg-muted"
+                                onClick={() => {
+                                  setEditingRoleId(role.id);
+                                  setEditingRoleName(role.name);
+                                }}
+                              >
+                                <Pencil className="h-3.5 w-3.5 mr-1" /> Rename
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                aria-label={`Remove ${member.name}`}
-                                onClick={() => deleteMember(member)}
-                                className="h-8 px-2.5 text-slate-500 hover:bg-red-50 hover:text-red-700"
+                                className="h-8 px-2.5 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                onClick={() => deleteRole(role)}
                               >
-                                <Trash2 className="h-3.5 w-3.5" /><span>Remove</span>
+                                <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete
                               </Button>
                             </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      {filteredMembers.length === 0 && (
-                        <TableRow className="hover:bg-transparent">
-                          <TableCell colSpan={5} className="h-28 text-center text-sm text-slate-500">
-                            {memberQuery ? "No members match your search." : "No team members yet."}
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </Card>
-              </div>
-            )}
-
-            {section === "roles" && (
-              <div className="space-y-4">
-                <div className="rounded-3xl glass p-6">
-                  <h2 className="mb-4 font-display text-lg font-semibold">Add role</h2>
-                  <div className="flex gap-3">
-                    <Input
-                      className={inputClass}
-                      placeholder="Role name (e.g. Advisor)"
-                      value={newRoleName}
-                      onChange={(e) => setNewRoleName(e.target.value)}
-                    />
-                    <button
-                      onClick={addRole}
-                      className="rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-5 py-2.5 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02]"
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-
-                <div className="overflow-hidden rounded-3xl glass">
-                  {roles.map((role) => (
-                    <div
-                      key={role.id}
-                      className="flex flex-wrap items-center gap-3 border-b border-white/5 px-6 py-4 last:border-b-0"
-                    >
-                      {editingRoleId === role.id ? (
-                        <>
-                          <Input
-                            className={`${inputClass} max-w-xs`}
-                            value={editingRoleName}
-                            onChange={(e) => setEditingRoleName(e.target.value)}
-                          />
-                          <button
-                            onClick={() => renameRole(role)}
-                            className="rounded-lg bg-gradient-to-r from-violet-600 to-sky-500 px-3 py-1.5 text-xs font-semibold"
-                          >
-                            Save
-                          </button>
-                          <button
-                            onClick={() => setEditingRoleId(null)}
-                            className="rounded-lg bg-white/5 px-3 py-1.5 text-xs text-mist hover:bg-white/10"
-                          >
-                            Cancel
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <span className="inline-block rounded-lg bg-violet-500/15 px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-violet-300">
-                            {role.name}
-                          </span>
-                          <span className="text-xs text-fog">id: {role.id}</span>
-                          <div className="ml-auto flex gap-2">
-                            <button
-                              onClick={() => {
-                                setEditingRoleId(role.id);
-                                setEditingRoleName(role.name);
-                              }}
-                              className="rounded-lg bg-white/5 px-3 py-1.5 text-xs text-mist transition-colors hover:bg-white/10 hover:text-white"
-                            >
-                              Rename
-                            </button>
-                            <button
-                              onClick={() => deleteRole(role)}
-                              className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-400 transition-colors hover:bg-red-500/20"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  ))}
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
                   {roles.length === 0 && (
-                    <p className="px-6 py-8 text-center text-sm text-mist">No roles yet.</p>
+                    <div className="px-5 py-8 text-center text-sm text-muted-foreground">
+                      No roles defined yet. Add your first role above.
+                    </div>
                   )}
                 </div>
-              </div>
-            )}
+              </Card>
+            </div>
+          )}
 
-            {section === "teams" && (
-              <div className="space-y-4">
-                <div className="rounded-3xl glass p-6">
-                  <h2 className="mb-4 font-display text-lg font-semibold">Add team</h2>
-                  <div className="flex gap-3">
+          {/* SECTION: TEAMS */}
+          {section === "teams" && (
+            <div className="space-y-6">
+              {/* Add Team Card */}
+              <Card className="rounded-xl border border-border bg-card shadow-xs">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-bold">Add Team</CardTitle>
+                  <CardDescription>Organise team members into functional squads or departments.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <Input
-                      className={inputClass}
-                      placeholder="Team name (e.g. Design Team)"
+                      placeholder="Team name (e.g. Design & Creative, Full-Stack Engineering)"
                       value={newTeamName}
                       onChange={(e) => setNewTeamName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          addOrgTeam();
+                        }
+                      }}
+                      className="max-w-md"
                     />
-                    <button
-                      onClick={addOrgTeam}
-                      className="rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-5 py-2.5 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02]"
-                    >
-                      Add
-                    </button>
+                    <Button onClick={addOrgTeam} disabled={!newTeamName.trim()} className="font-semibold">
+                      <Plus className="h-4 w-4 mr-1.5" /> Add team
+                    </Button>
                   </div>
-                </div>
+                </CardContent>
+              </Card>
 
-                <div className="overflow-hidden rounded-3xl glass">
-                  {orgTeams.map((team) => (
-                    <div
-                      key={team.id}
-                      className="flex flex-wrap items-center gap-3 border-b border-white/5 px-6 py-4 last:border-b-0"
-                    >
-                      {editingTeamId === team.id ? (
-                        <>
-                          <Input
-                            className={`${inputClass} max-w-xs`}
-                            value={editingTeamName}
-                            onChange={(e) => setEditingTeamName(e.target.value)}
-                          />
-                          <button
-                            onClick={() => renameOrgTeam(team)}
-                            className="rounded-lg bg-gradient-to-r from-violet-600 to-sky-500 px-3 py-1.5 text-xs font-semibold"
-                          >
-                            Save
-                          </button>
-                          <button
-                            onClick={() => setEditingTeamId(null)}
-                            className="rounded-lg bg-white/5 px-3 py-1.5 text-xs text-mist hover:bg-white/10"
-                          >
-                            Cancel
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <span className="inline-block rounded-lg bg-sky-500/15 px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-sky-300">
-                            {team.name}
-                          </span>
-                          <span className="text-xs text-fog">
-                            {members.filter((m) => m.teamId === team.id).length} members
-                          </span>
-                          <div className="ml-auto flex gap-2">
-                            <button
-                              onClick={() => {
-                                setEditingTeamId(team.id);
-                                setEditingTeamName(team.name);
+              {/* Teams List */}
+              <Card className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+                <div className="border-b border-border px-5 py-3.5 bg-muted/30">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Available Teams ({orgTeams.length})
+                  </span>
+                </div>
+                <div className="divide-y divide-border">
+                  {orgTeams.map((team) => {
+                    const memberCount = members.filter((m) => m.teamId === team.id).length;
+                    const isEditing = editingTeamId === team.id;
+
+                    return (
+                      <div key={team.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 hover:bg-muted/30 transition-colors">
+                        {isEditing ? (
+                          <div className="flex items-center gap-2 flex-1 max-w-md">
+                            <Input
+                              value={editingTeamName}
+                              onChange={(e) => setEditingTeamName(e.target.value)}
+                              className="h-8 text-sm"
+                              autoFocus
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") renameOrgTeam(team);
+                                if (e.key === "Escape") setEditingTeamId(null);
                               }}
-                              className="rounded-lg bg-white/5 px-3 py-1.5 text-xs text-mist transition-colors hover:bg-white/10 hover:text-white"
-                            >
-                              Rename
-                            </button>
-                            <button
-                              onClick={() => deleteOrgTeam(team)}
-                              className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-400 transition-colors hover:bg-red-500/20"
-                            >
-                              Delete
-                            </button>
+                            />
+                            <Button size="sm" className="h-8 px-3" onClick={() => renameOrgTeam(team)}>
+                              Save
+                            </Button>
+                            <Button size="sm" variant="outline" className="h-8 px-3" onClick={() => setEditingTeamId(null)}>
+                              Cancel
+                            </Button>
                           </div>
-                        </>
-                      )}
+                        ) : (
+                          <>
+                            <div className="flex items-center gap-3">
+                              <span className="inline-flex items-center rounded-full border border-purple-500/25 bg-purple-500/10 px-3 py-1 text-xs font-semibold text-purple-600 dark:text-purple-400">
+                                {team.name}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {memberCount} {memberCount === 1 ? "member" : "members"}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground hover:bg-muted"
+                                onClick={() => {
+                                  setEditingTeamId(team.id);
+                                  setEditingTeamName(team.name);
+                                }}
+                              >
+                                <Pencil className="h-3.5 w-3.5 mr-1" /> Rename
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 px-2.5 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                onClick={() => deleteOrgTeam(team)}
+                              >
+                                <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {orgTeams.length === 0 && (
+                    <div className="px-5 py-8 text-center text-sm text-muted-foreground">
+                      No teams defined yet. Add your first team above.
                     </div>
-                  ))}
-{orgTeams.length === 0 && (
-                      <p className="px-6 py-8 text-center text-sm text-mist">No teams yet.</p>
-                    )}
-                  </div>
+                  )}
                 </div>
-              )}
+              </Card>
+            </div>
+          )}
 
-            {section === "projects" && (
-              <div className="space-y-4">
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => {
-                      setProjectDraft(emptyProjectDraft());
-                      setProjectFormError("");
-                      setNewSkill("");
-                    }}
-                    className="rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-4 py-2 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02]"
-                  >
-                    + Add project
-                  </button>
-                </div>
-
-                {projectDraft && (
-                  <div className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto bg-[#000000b3] p-4 py-10">
-                    <div className="w-full max-w-3xl rounded-3xl border border-white/10 bg-[#0b0b14] p-6 shadow-2xl">
-                      <div className="mb-5 flex items-center justify-between">
-                        <h2 className="font-display text-lg font-semibold">
-                          {projectDraft.id ? "Edit project" : "New project"}
+          {/* SECTION: PROJECTS */}
+          {section === "projects" && (
+            <div className="space-y-4">
+              {/* Project Modal */}
+              {projectDraft && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+                  <div className="relative my-8 w-full max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-2xl sm:p-8">
+                    <div className="mb-6 flex items-center justify-between border-b border-border pb-4">
+                      <div>
+                        <h2 className="text-lg font-bold text-foreground">
+                          {projectDraft.id ? "Edit Project" : "Add New Project"}
                         </h2>
-                        <button
-                          onClick={() => setProjectDraft(null)}
-                          className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-lg text-mist transition-colors hover:bg-white/10 hover:text-white"
-                          aria-label="Close"
-                        >
-                          ✕
-                        </button>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Featured work showcase for the public portfolio.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setProjectDraft(null)}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Project Name *</label>
+                        <Input
+                          placeholder="e.g. NextGen FinTech Platform"
+                          value={projectDraft.name}
+                          onChange={(e) => setProjectDraft({ ...projectDraft, name: e.target.value })}
+                        />
                       </div>
 
-                      <div className="space-y-5">
-                        <div className="grid gap-3 sm:grid-cols-2">
-                          <div className="sm:col-span-2">
-                            <label className="mb-1.5 block text-xs uppercase tracking-widest text-mist">Name</label>
-                            <Input
-                              className={inputClass}
-                              placeholder="Project name"
-                              value={projectDraft.name}
-                              onChange={(e) => setProjectDraft({ ...projectDraft, name: e.target.value })}
-                            />
-                          </div>
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Description</label>
+                        <textarea
+                          className="flex min-h-[70px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          placeholder="Describe what the product does and key outcomes achieved..."
+                          rows={3}
+                          value={projectDraft.description}
+                          onChange={(e) => setProjectDraft({ ...projectDraft, description: e.target.value })}
+                        />
+                      </div>
 
-                          <div>
-                            <label className="mb-1.5 block text-xs uppercase tracking-widest text-mist">Description</label>
-                            <textarea
-                              className={inputClass}
-                              placeholder="What this project does"
-                              rows={3}
-                              value={projectDraft.description}
-                              onChange={(e) => setProjectDraft({ ...projectDraft, description: e.target.value })}
-                            />
-                          </div>
-
-                          <div className="space-y-3">
-                            <div>
-                              <label className="mb-1.5 block text-xs uppercase tracking-widest text-mist">Project types</label>
-                              <div className="flex flex-wrap gap-2">
-                                {["App", "Web"].map((type) => {
-                                  const active = projectDraft.projectTypes.includes(type);
-                                  return (
-                                    <button
-                                      key={type}
-                                      type="button"
-                                      onClick={() =>
-                                        setProjectDraft({
-                                          ...projectDraft,
-                                          projectTypes: active
-                                            ? projectDraft.projectTypes.filter((t) => t !== type)
-                                            : [...projectDraft.projectTypes, type],
-                                        })
-                                      }
-                                      className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${
-                                        active
-                                          ? "border-violet-500/40 bg-violet-500/20 text-violet-300"
-                                          : "border-white/10 bg-white/5 text-mist hover:bg-white/10 hover:text-white"
-                                      }`}
-                                    >
-                                      {type}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-
-                            <div>
-                              <label className="mb-1.5 block text-xs uppercase tracking-widest text-mist">Sort order</label>
-                              <Input
-                                className={inputClass}
-                                type="number"
-                                value={projectDraft.sortOrder}
-                                onChange={(e) => setProjectDraft({ ...projectDraft, sortOrder: Number(e.target.value) })}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
+                      <div className="grid gap-4 sm:grid-cols-2">
                         <div>
-                          <p className="mb-1.5 text-xs uppercase tracking-widest text-mist">
-                            Links
-                            <span className="ml-2 normal-case tracking-normal text-fog">
-                              {pdLinkType === "both"
-                                ? "both required"
-                                : `${pdLinkType} link required`}
-                            </span>
-                          </p>
-                          <div className="grid gap-3 sm:grid-cols-2">
-                            {(pdLinkType === "app" || pdLinkType === "both") && (
-                              <Input
-                                className={inputClass}
-                                placeholder="App link URL"
-                                value={projectDraft.appLink}
-                                onChange={(e) => setProjectDraft({ ...projectDraft, appLink: e.target.value })}
-                              />
-                            )}
-                            {(pdLinkType === "web" || pdLinkType === "both") && (
-                              <Input
-                                className={inputClass}
-                                placeholder="Web link URL"
-                                value={projectDraft.webLink}
-                                onChange={(e) => setProjectDraft({ ...projectDraft, webLink: e.target.value })}
-                              />
-                            )}
-                          </div>
-                        </div>
-
-                        <div>
-                          <p className="mb-1.5 text-xs uppercase tracking-widest text-mist">Skills</p>
-                          <div className="mb-2.5 flex gap-2">
-                            <Input
-                              className={inputClass}
-                              placeholder="Add a custom skill…"
-                              value={newSkill}
-                              onChange={(e) => setNewSkill(e.target.value)}
-                              onKeyDown={(e) => {
-                                if (e.key !== "Enter") return;
-                                e.preventDefault();
-                                const value = newSkill.trim();
-                                if (!value) return;
-                                setNewSkill("");
-                                setProjectDraft(
-                                  projectDraft.skills.includes(value)
-                                    ? projectDraft
-                                    : { ...projectDraft, skills: [...projectDraft.skills, value] },
-                                );
-                              }}
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const value = newSkill.trim();
-                                if (!value) return;
-                                setNewSkill("");
-                                setProjectDraft(
-                                  projectDraft.skills.includes(value)
-                                    ? projectDraft
-                                    : { ...projectDraft, skills: [...projectDraft.skills, value] },
-                                );
-                              }}
-                              className="shrink-0 rounded-xl bg-white/5 px-4 text-sm font-semibold text-mist transition-colors hover:bg-white/10 hover:text-white"
-                            >
-                              Add
-                            </button>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {Array.from(new Set([...COMMON_SKILLS, ...projectDraft.skills])).map((skill) => {
-                              const active = projectDraft.skills.includes(skill);
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">Project Types</label>
+                          <div className="flex gap-2">
+                            {["App", "Web"].map((type) => {
+                              const active = projectDraft.projectTypes.includes(type);
                               return (
                                 <button
-                                  key={skill}
+                                  key={type}
                                   type="button"
                                   onClick={() =>
                                     setProjectDraft({
                                       ...projectDraft,
-                                      skills: active
-                                        ? projectDraft.skills.filter((s) => s !== skill)
-                                        : [...projectDraft.skills, skill],
+                                      projectTypes: active
+                                        ? projectDraft.projectTypes.filter((t) => t !== type)
+                                        : [...projectDraft.projectTypes, type],
                                     })
                                   }
-                                  className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${
+                                  className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
                                     active
-                                      ? "border-sky-500/40 bg-sky-500/20 text-sky-300"
-                                      : "border-white/10 bg-white/5 text-mist hover:bg-white/10 hover:text-white"
+                                      ? "border-primary bg-primary/10 text-primary"
+                                      : "border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
                                   }`}
                                 >
-                                  {skill}
+                                  {type}
                                 </button>
                               );
                             })}
                           </div>
                         </div>
-                      </div>
 
-                      {projectFormError && <p className="mt-3 text-sm text-red-400">{projectFormError}</p>}
-
-                      <div className="mt-5 flex gap-3">
-                        <button
-                          onClick={saveProject}
-                          disabled={savingProject}
-                          className="rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-5 py-2.5 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02] disabled:opacity-60"
-                        >
-                          {savingProject ? "Saving..." : "Save"}
-                        </button>
-                        <button
-                          onClick={() => setProjectDraft(null)}
-                          className="rounded-xl bg-white/5 px-5 py-2.5 text-sm font-semibold text-mist transition-colors hover:bg-white/10 hover:text-white"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <div className="overflow-hidden rounded-3xl glass">
-                  <div className="hidden grid-cols-[2fr_1fr_1.4fr_0.5fr_auto] gap-3 border-b border-white/10 px-6 py-3 text-xs uppercase tracking-widest text-fog sm:grid">
-                    <span>Project</span>
-                    <span>Types</span>
-                    <span>Links</span>
-                    <span>Order</span>
-                    <span />
-                  </div>
-                  {projects.map((project) => (
-                    <div
-                      key={project.id}
-                      className="grid grid-cols-1 gap-3 border-b border-white/5 px-6 py-4 last:border-b-0 sm:grid-cols-[2fr_1fr_1.4fr_0.5fr_auto] sm:items-center"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 font-display text-xs font-bold shrink-0">
-                          🚀
-                        </div>
-                        <div className="min-w-0">
-                          <p className="font-semibold truncate">{project.name}</p>
-                          {project.description && (
-                            <p className="text-sm text-mist truncate max-w-xs">{project.description}</p>
-                          )}
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">Sort Order</label>
+                          <Input
+                            type="number"
+                            value={projectDraft.sortOrder}
+                            onChange={(e) => setProjectDraft({ ...projectDraft, sortOrder: Number(e.target.value) })}
+                          />
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-1">
-                        {project.projectTypes.map((type) => (
-                          <span
-                            key={type}
-                            className="inline-block rounded-lg bg-sky-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sky-300"
-                          >
-                            {type}
-                          </span>
-                        ))}
-                        {project.projectTypes.length === 0 && (
-                          <span className="text-[10px] text-fog">No types</span>
-                        )}
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">App Link URL</label>
+                          <Input
+                            placeholder="https://apps.apple.com/..."
+                            value={projectDraft.appLink}
+                            onChange={(e) => setProjectDraft({ ...projectDraft, appLink: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">Web Link URL</label>
+                          <Input
+                            placeholder="https://mywebsite.com"
+                            value={projectDraft.webLink}
+                            onChange={(e) => setProjectDraft({ ...projectDraft, webLink: e.target.value })}
+                          />
+                        </div>
                       </div>
-                      <div className="flex flex-col gap-1 text-xs">
-                        {project.appLink && (
-                          <a
-                            href={project.appLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-sky-400 hover:text-sky-300 truncate max-w-[14rem]"
+
+                      {/* Skills Tags */}
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Technologies & Skills</label>
+                        <div className="mb-2.5 flex gap-2">
+                          <Input
+                            placeholder="Add a technology or skill…"
+                            value={newSkill}
+                            onChange={(e) => setNewSkill(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key !== "Enter") return;
+                              e.preventDefault();
+                              const val = newSkill.trim();
+                              if (!val) return;
+                              setNewSkill("");
+                              setProjectDraft(
+                                projectDraft.skills.includes(val)
+                                  ? projectDraft
+                                  : { ...projectDraft, skills: [...projectDraft.skills, val] },
+                              );
+                            }}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                              const val = newSkill.trim();
+                              if (!val) return;
+                              setNewSkill("");
+                              setProjectDraft(
+                                projectDraft.skills.includes(val)
+                                  ? projectDraft
+                                  : { ...projectDraft, skills: [...projectDraft.skills, val] },
+                              );
+                            }}
                           >
-                            <span className="rounded bg-white/10 px-1 py-0.5 text-[9px] font-bold uppercase text-mist">App</span>
-                            <span className="truncate">{project.appLink}</span>
-                          </a>
-                        )}
-                        {project.webLink && (
-                          <a
-                            href={project.webLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-sky-400 hover:text-sky-300 truncate max-w-[14rem]"
-                          >
-                            <span className="rounded bg-white/10 px-1 py-0.5 text-[9px] font-bold uppercase text-mist">Web</span>
-                            <span className="truncate">{project.webLink}</span>
-                          </a>
-                        )}
-                        {!project.appLink && !project.webLink && (
-                          <span className="text-fog">No link</span>
-                        )}
-                      </div>
-                      <span className="text-xs text-mist">{project.sortOrder}</span>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setNewSkill("");
-                            setProjectDraft({
-                              id: project.id,
-                              name: project.name,
-                              description: project.description,
-                              appLink: project.appLink,
-                              webLink: project.webLink,
-                              projectTypes: project.projectTypes,
-                              skills: project.skills,
-                              sortOrder: project.sortOrder,
-                            });
-                          }}
-                          className="rounded-lg bg-white/5 px-3 py-1.5 text-xs text-mist transition-colors hover:bg-white/10 hover:text-white"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => deleteProject(project)}
-                          className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-400 transition-colors hover:bg-red-500/20"
-                        >
-                          Remove
-                        </button>
+                            Add
+                          </Button>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {Array.from(new Set([...COMMON_SKILLS, ...projectDraft.skills])).map((skill) => {
+                            const active = projectDraft.skills.includes(skill);
+                            return (
+                              <button
+                                key={skill}
+                                type="button"
+                                onClick={() =>
+                                  setProjectDraft({
+                                    ...projectDraft,
+                                    skills: active
+                                      ? projectDraft.skills.filter((s) => s !== skill)
+                                      : [...projectDraft.skills, skill],
+                                  })
+                                }
+                                className={`rounded-md border px-2.5 py-1 text-xs transition-colors ${
+                                  active
+                                    ? "border-primary/40 bg-primary/10 text-primary font-semibold"
+                                    : "border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
+                                }`}
+                              >
+                                {skill}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
-                  ))}
-                  {projects.length === 0 && (
-                    <p className="px-6 py-8 text-center text-sm text-mist">No projects yet.</p>
-                  )}
+
+                    {projectFormError && (
+                      <div className="mt-4 flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive">
+                        <AlertCircle className="h-4 w-4 shrink-0" />
+                        <span>{projectFormError}</span>
+                      </div>
+                    )}
+
+                    <div className="mt-6 flex items-center justify-end gap-3 border-t border-border pt-4">
+                      <Button variant="outline" onClick={() => setProjectDraft(null)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={saveProject} disabled={savingProject} className="font-semibold">
+                        {savingProject ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                        Save Project
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {section === "admins" && (
-              <div className="space-y-4">
-                <div className="rounded-3xl glass p-6">
-                  <h2 className="mb-4 font-display text-lg font-semibold">Add admin</h2>
-                  <div className="flex gap-3">
+              {/* Projects Table Card */}
+              <Card className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+                <Table>
+                  <TableHeader className="bg-muted/40">
+                    <TableRow className="border-border hover:bg-transparent">
+                      <TableHead className="w-[35%] pl-5 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Project</TableHead>
+                      <TableHead className="font-semibold text-xs uppercase tracking-wider text-muted-foreground">Types</TableHead>
+                      <TableHead className="font-semibold text-xs uppercase tracking-wider text-muted-foreground">Links</TableHead>
+                      <TableHead className="w-20 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Order</TableHead>
+                      <TableHead className="w-[140px] pr-5 text-right font-semibold text-xs uppercase tracking-wider text-muted-foreground">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {projects.map((project) => (
+                      <TableRow key={project.id} className="border-border hover:bg-muted/30 transition-colors">
+                        <TableCell className="pl-5 py-3.5">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 font-bold text-white shadow-xs">
+                              🚀
+                            </div>
+                            <div className="min-w-0">
+                              <p className="truncate font-semibold text-foreground text-sm">{project.name}</p>
+                              {project.description && (
+                                <p className="truncate text-xs text-muted-foreground max-w-sm">{project.description}</p>
+                              )}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-3.5">
+                          <div className="flex flex-wrap gap-1">
+                            {project.projectTypes.map((type) => (
+                              <span
+                                key={type}
+                                className="inline-flex rounded-full border border-sky-500/25 bg-sky-500/10 px-2 py-0.5 text-[10px] font-semibold text-sky-600 dark:text-sky-400"
+                              >
+                                {type}
+                              </span>
+                            ))}
+                            {project.projectTypes.length === 0 && (
+                              <span className="text-xs text-muted-foreground/60">No types</span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-3.5">
+                          <div className="flex flex-col gap-1 text-xs">
+                            {project.appLink && (
+                              <a
+                                href={project.appLink}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1.5 text-primary hover:underline truncate max-w-xs"
+                              >
+                                <span className="rounded bg-muted px-1 py-0.5 text-[9px] font-bold uppercase text-muted-foreground">App</span>
+                                <span className="truncate">{project.appLink}</span>
+                              </a>
+                            )}
+                            {project.webLink && (
+                              <a
+                                href={project.webLink}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1.5 text-primary hover:underline truncate max-w-xs"
+                              >
+                                <span className="rounded bg-muted px-1 py-0.5 text-[9px] font-bold uppercase text-muted-foreground">Web</span>
+                                <span className="truncate">{project.webLink}</span>
+                              </a>
+                            )}
+                            {!project.appLink && !project.webLink && (
+                              <span className="text-xs text-muted-foreground/60">No links</span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-3.5">
+                          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded bg-muted/60 px-1.5 font-mono text-xs font-medium text-foreground">
+                            {project.sortOrder}
+                          </span>
+                        </TableCell>
+                        <TableCell className="pr-5 py-3.5 text-right">
+                          <div className="flex justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                              onClick={() => {
+                                setNewSkill("");
+                                setProjectDraft({
+                                  id: project.id,
+                                  name: project.name,
+                                  description: project.description,
+                                  appLink: project.appLink,
+                                  webLink: project.webLink,
+                                  projectTypes: project.projectTypes,
+                                  skills: project.skills,
+                                  sortOrder: project.sortOrder,
+                                });
+                              }}
+                            >
+                              <Pencil className="h-3.5 w-3.5 mr-1" /> Edit
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2.5 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                              onClick={() => deleteProject(project)}
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-1" /> Remove
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {projects.length === 0 && (
+                      <TableRow className="hover:bg-transparent">
+                        <TableCell colSpan={5} className="h-32 text-center text-sm text-muted-foreground">
+                          No featured projects added yet. Click &ldquo;+ Add project&rdquo; to create one.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </Card>
+            </div>
+          )}
+
+          {/* SECTION: ADMINISTRATORS */}
+          {section === "admins" && (
+            <div className="space-y-6">
+              {/* Add Admin Card */}
+              <Card className="rounded-xl border border-border bg-card shadow-xs">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-bold">Grant Administrator Privileges</CardTitle>
+                  <CardDescription>
+                    Administrators have full capabilities to add, edit and delete team members, roles, teams, and site settings.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <Input
-                      className={inputClass}
-                      placeholder="email@example.com"
+                      type="email"
+                      placeholder="admin.colleague@kavisolutions.in"
                       value={newAdminEmail}
                       onChange={(e) => setNewAdminEmail(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          addAdmin();
+                        }
+                      }}
+                      className="max-w-md"
                     />
-                    <button
-                      onClick={addAdmin}
-                      className="rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-5 py-2.5 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02]"
-                    >
-                      Add
-                    </button>
+                    <Button onClick={addAdmin} disabled={!newAdminEmail.trim()} className="font-semibold">
+                      <Plus className="h-4 w-4 mr-1.5" /> Grant Access
+                    </Button>
                   </div>
-                  <p className="mt-3 text-xs text-mist">
-                    Admins can manage the team, roles, teams, settings and other admins. The person
-                    signs in with Google or email+password using this email.
-                  </p>
-                </div>
+                </CardContent>
+              </Card>
 
-                <div className="overflow-hidden rounded-3xl glass">
+              {/* Admins Table */}
+              <Card className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+                <div className="border-b border-border px-5 py-3.5 bg-muted/30">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Current Administrators ({admins.length})
+                  </span>
+                </div>
+                <div className="divide-y divide-border">
                   {admins.map((admin) => (
-                    <div
-                      key={admin.email}
-                      className="flex items-center justify-between gap-4 border-b border-white/5 px-6 py-4 last:border-b-0"
-                    >
-                      <div>
-                        <p className="text-sm font-semibold">{admin.email}</p>
-                        <p className="text-xs text-mist">
-                          {admin.source === "env" ? "configured on the server" : "added from panel"}
-                        </p>
+                    <div key={admin.email} className="flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-muted/30 transition-colors">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                          <ShieldCheck className="h-4 w-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-foreground">{admin.email}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {admin.source === "env" ? "Configured in server environment" : "Added via administration console"}
+                          </p>
+                        </div>
                       </div>
-                      {admin.source === "db" && (
-                        <button
-                          onClick={() => removeAdmin(admin.email)}
-                          className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-400 transition-colors hover:bg-red-500/20"
-                        >
-                          Remove
-                        </button>
-                      )}
+
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className={`text-xs ${admin.source === "env" ? "border-blue-500/30 text-blue-500" : "border-border text-muted-foreground"}`}>
+                          {admin.source === "env" ? "System" : "Database"}
+                        </Badge>
+                        {admin.source === "db" && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 px-2.5 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                            onClick={() => removeAdmin(admin.email)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5 mr-1" /> Remove
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
-
-            {section === "settings" && (
-              <div className="rounded-3xl glass p-6">
-                <h2 className="mb-4 font-display text-lg font-semibold">Application settings</h2>
-                <div className="space-y-3">
-                  <label className="block text-xs uppercase tracking-widest text-mist">
-                    Team page tagline
-                    <Input
-                      className={`${inputClass} mt-2`}
-                      value={tagline}
-                      onChange={(e) => setTagline(e.target.value)}
-                      placeholder="Shown under the team page heading"
-                    />
-                  </label>
-                  <label className="block text-xs uppercase tracking-widest text-mist">
-                    Team page description
-                    <textarea
-                      className={`${inputClass} mt-2`}
-                      rows={3}
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                    />
-                  </label>
-                  <label className="block text-xs uppercase tracking-widest text-mist">
-                    Contact form email
-                    <Input
-                      className={`${inputClass} mt-2`}
-                      value={contactEmail}
-                      onChange={(e) => setContactEmail(e.target.value)}
-                      placeholder="Where contact form messages are sent"
-                    />
-                  </label>
-                </div>
-                <button
-                  onClick={saveSettings}
-                  className="mt-5 rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-5 py-2.5 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02]"
-                >
-                  Save settings
-                </button>
-              </div>
-            )}
-          </div>
-
-        {preview && (
-          <div
-            className="fixed inset-0 z-[90] flex items-center justify-center bg-[#000000e0] p-6"
-            onClick={() => setPreview(null)}
-          >
-            <div className="flex max-h-full max-w-3xl flex-col items-center gap-4">
-              <img
-                src={preview}
-                alt="Photo preview"
-                className="max-h-[80vh] max-w-full rounded-2xl object-contain shadow-2xl"
-              />
-              <button
-                onClick={() => setPreview(null)}
-                className="rounded-xl bg-white/10 px-5 py-2 text-sm font-semibold text-mist transition-colors hover:bg-white/20 hover:text-white"
-              >
-                Close
-              </button>
+              </Card>
             </div>
-          </div>
-        )}
+          )}
+
+          {/* SECTION: SETTINGS */}
+          {section === "settings" && (
+            <Card className="rounded-xl border border-border bg-card shadow-xs">
+              <CardHeader>
+                <CardTitle className="text-lg font-bold">Workspace & Directory Settings</CardTitle>
+                <CardDescription>
+                  Configure public metadata and destination email addresses for the Kavi Solutions website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 max-w-2xl">
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                    Team Page Tagline
+                  </label>
+                  <Input
+                    value={tagline}
+                    onChange={(e) => setTagline(e.target.value)}
+                    placeholder="e.g. The people behind the magic"
+                  />
+                  <p className="mt-1 text-[11px] text-muted-foreground">Displayed right under the team hero section title.</p>
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                    Team Page Description
+                  </label>
+                  <textarea
+                    className="flex min-h-[90px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    rows={3}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="A small, senior team obsessed with craft. We sweat the details so you don't have to."
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                    Contact Form Inquiries Email
+                  </label>
+                  <Input
+                    type="email"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    placeholder="contact@kavisolutions.in"
+                  />
+                  <p className="mt-1 text-[11px] text-muted-foreground">Recipient for customer inquiries submitted through the contact form.</p>
+                </div>
+
+                <div className="pt-2">
+                  <Button onClick={saveSettings} className="font-semibold">
+                    Save Changes
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Photo Lightbox Preview */}
+          {preview && (
+            <div
+              className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+              onClick={() => setPreview(null)}
+            >
+              <div
+                className="relative flex max-h-[85vh] max-w-xl flex-col items-center gap-4"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img
+                  src={preview}
+                  alt="Full preview"
+                  className="max-h-[75vh] w-auto rounded-2xl border border-white/20 object-contain shadow-2xl"
+                />
+                <Button variant="secondary" onClick={() => setPreview(null)}>
+                  Close Preview
+                </Button>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>

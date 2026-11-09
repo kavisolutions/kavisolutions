@@ -1,92 +1,92 @@
 #!/usr/bin/env bash
 #
-# Deploy Kavi Solutions to your VPS.
+# Deploy Kavi Solutions (Next.js site + NestJS API) on the app server.
 #
-# This runs ON the VPS inside the cloned project directory. It is safe to run
-# alongside other apps on the same server: it uses its own PM2 app name and a
-# dedicated port (3111) so it never touches another application's files, ports
-# or process names.
+# Runs ON the server inside the cloned repository. The repo root is the Next.js
+# frontend; the NestJS backend lives in ./api and runs as a second PM2 app.
 #
 # Usage:
-#   ./deploy/deploy.sh              # pull latest main, then install + build + reload
+#   ./deploy/deploy.sh              # pull latest main, install/build/reload both apps
 #   ./deploy/deploy.sh --no-pull    # deploy what is already on disk (used by CI)
-#   PORT=3200 ./deploy/deploy.sh    # pick a different free port
 #
 set -euo pipefail
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PORT="${PORT:-3111}"
-APP_NAME="kavi-solutions"
+API_DIR="${APP_DIR}/api"
+FE_PORT="${PORT:-3111}"
+BE_PORT="${API_PORT:-3200}"
+FE_APP="kavi-solutions"
+BE_APP="kavi-solutions-be"
 BRANCH="${BRANCH:-main}"
 PULL=1
 [ "${1:-}" = "--no-pull" ] && PULL=0
 
 cd "${APP_DIR}"
 
-# --- Pre-flight: make sure our port is free, or already held by our node app ---
-if command -v ss >/dev/null 2>&1; then
-  OWNER="$(ss -ltnp 2>/dev/null | grep "[:.]${PORT} " || true)"
-  if [ -n "${OWNER}" ] && ! echo "${OWNER}" | grep -Eq "node|next"; then
-    echo "ERROR: port ${PORT} is already used by another app:"
-    echo "${OWNER}"
-    echo "Pick a free port, e.g.  PORT=3200 ./deploy/deploy.sh"
-    exit 1
-  fi
-fi
-
-echo "==> Deploying ${APP_NAME} on port ${PORT} (app dir: ${APP_DIR})"
-
 if [ "${PULL}" = "1" ]; then
   echo "==> Pulling latest ${BRANCH}"
   git pull --ff-only origin "${BRANCH}"
 fi
 
-echo "==> Installing dependencies"
-npm ci || npm install
-
-echo "==> Building production bundle"
-npm run build
-
-if [ "${SKIP_DB_MIGRATIONS:-0}" != "1" ]; then
-  echo "==> Applying pending DB migrations"
-  bash "${APP_DIR}/deploy/db-deploy.sh"
-else
-  echo "==> Skipping DB migrations (SKIP_DB_MIGRATIONS=1)"
-fi
-
-echo "==> Ensuring PM2 is available"
 if ! command -v pm2 >/dev/null 2>&1; then
-  echo "Installing PM2 globally..."
+  echo "==> Installing PM2"
   npm install -g pm2
 fi
 
-echo "==> Starting / reloading ${APP_NAME} with PM2"
-PORT="${PORT}" pm2 startOrReload ecosystem.config.js --update-env
+# ---------------------------------------------------------------- backend ----
+echo "==> [api] Installing dependencies"
+cd "${API_DIR}"
+npm ci || npm install
+
+echo "==> [api] Applying DB migrations"
+npm run db:migrate
+
+echo "==> [api] Building"
+npm run build
+
+echo "==> [api] Reloading ${BE_APP} on port ${BE_PORT}"
+PORT="${BE_PORT}" pm2 startOrReload ecosystem.config.js --update-env
 pm2 save
 
-echo "==> Health check"
-for i in $(seq 1 15); do
-  if curl -fsS -o /dev/null "http://127.0.0.1:${PORT}/" 2>/dev/null; then
-    echo "    OK — app is responding on port ${PORT}"
+# --------------------------------------------------------------- frontend ----
+echo "==> [web] Installing dependencies"
+cd "${APP_DIR}"
+npm ci || npm install
+
+echo "==> [web] Building production bundle"
+# Rewrites in next.config.ts are baked in at build time; the API origin must be
+# present here as well as in the running PM2 process.
+export BACKEND_URL="${BACKEND_URL:-http://127.0.0.1:${BE_PORT}}"
+npm run build
+
+echo "==> [web] Reloading ${FE_APP} on port ${FE_PORT}"
+PORT="${FE_PORT}" pm2 startOrReload ecosystem.config.js --update-env
+pm2 save
+
+# -------------------------------------------------------------- health ------
+echo "==> Health checks"
+for attempt in $(seq 1 15); do
+  if curl -fsS -o /dev/null "http://127.0.0.1:${BE_PORT}/api/health" 2>/dev/null; then
+    echo "    api OK (:${BE_PORT})"
     break
   fi
-  if [ "${i}" = "15" ]; then
-    echo "ERROR: app did not respond on port ${PORT}."
-    echo "       Check: pm2 logs ${APP_NAME}"
+  if [ "${attempt}" = "15" ]; then
+    echo "ERROR: API did not respond on port ${BE_PORT}. Check: pm2 logs ${BE_APP}"
     exit 1
   fi
   sleep 2
 done
 
-echo ""
+for attempt in $(seq 1 15); do
+  if curl -fsS -o /dev/null "http://127.0.0.1:${FE_PORT}/" 2>/dev/null; then
+    echo "    web OK (:${FE_PORT})"
+    break
+  fi
+  if [ "${attempt}" = "15" ]; then
+    echo "ERROR: web app did not respond on port ${FE_PORT}. Check: pm2 logs ${FE_APP}"
+    exit 1
+  fi
+  sleep 2
+done
+
 echo "==> Done."
-echo "    Check: pm2 status ${APP_NAME}"
-echo "    Logs:  pm2 logs ${APP_NAME}"
-echo "    Local test (optional): curl -I http://127.0.0.1:${PORT}"
-echo ""
-echo "==> Next: configure nginx (once) if not already done:"
-echo "    sudo cp deploy/nginx.conf /etc/nginx/sites-available/kavisolutions"
-echo "    sudo ln -sf /etc/nginx/sites-available/kavisolutions /etc/nginx/sites-enabled/"
-echo "    sudo nginx -t && sudo systemctl reload nginx"
-echo "==> Then enable HTTPS (once DNS resolves):"
-echo "    sudo certbot --nginx -d kavisolutions.in -d www.kavisolutions.in"

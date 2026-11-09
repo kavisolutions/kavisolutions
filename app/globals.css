@@ -1,13 +1,15 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+
 :root {
-  --background: 0 0% 100%;
+  --background: 210 40% 98%;
   --foreground: 222.2 47.4% 11.2%;
   --card: 0 0% 100%;
   --card-foreground: 222.2 47.4% 11.2%;
   --popover: 0 0% 100%;
   --popover-foreground: 222.2 47.4% 11.2%;
-  --primary: 221 83% 53%;
+  --primary: 221.2 83.2% 53.3%;
   --primary-foreground: 210 40% 98%;
   --secondary: 210 40% 96.1%;
   --secondary-foreground: 222.2 47.4% 11.2%;
@@ -15,12 +17,35 @@
   --muted-foreground: 215.4 16.3% 46.9%;
   --accent: 210 40% 96.1%;
   --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 72% 51%;
+  --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 88%;
-  --ring: 221 83% 53%;
-  --radius: 0.5rem;
+  --ring: 221.2 83.2% 53.3%;
+  --radius: 0.625rem;
+}
+
+:root[data-theme="dark"],
+.dark {
+  --background: 222 47% 7%;
+  --foreground: 210 40% 98%;
+  --card: 222 40% 11%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222 40% 11%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 217.2 32.6% 16%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 15%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 18%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 50.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 18%;
+  --input: 217.2 32.6% 22%;
+  --ring: 217.2 91.2% 59.8%;
 }
 
 @theme inline {
@@ -105,14 +130,18 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b0b14;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #526680;
+  background: rgba(150, 160, 180, 0.25);
   border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 160, 180, 0.4);
 }
 
 .text-gradient {
@@ -154,7 +183,7 @@ body {
     0 18px 42px -24px rgba(0, 0, 0, 0.62);
 }
 
-/* Keep primary actions consistent across public pages and account screens. */
+/* Primary buttons fallback for any remaining legacy gradient classes */
 [class*="bg-gradient-to-r from-violet-600 to-sky-500"],
 [class*="bg-gradient-to-br from-violet-600 to-sky-500"] {
   background-image: none;
@@ -165,56 +194,14 @@ body {
   background-color: #1849a9;
 }
 
-/* Admin surfaces use a restrained, light operations dashboard palette. */
+/* Modern admin application container */
 .admin-app {
   min-height: 100vh;
-  color: #172033;
-  background: #f4f6fa;
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
 }
-.admin-app .glass {
-  background: #fff;
-  border-color: #e5e9f0;
-  backdrop-filter: none;
-  box-shadow: 0 1px 2px rgb(16 24 40 / 4%), 0 8px 24px rgb(16 24 40 / 3%);
+.admin-app[data-theme="dark"],
+.admin-app.dark {
+  color-scheme: dark;
 }
-.admin-app .text-mist { color: #667085; }
-.admin-app .text-fog { color: #98a2b3; }
-.admin-app [class*="text-violet-300"],
-.admin-app [class*="text-sky-300"],
-.admin-app [class*="text-emerald-300"] { color: #475467; }
-.admin-app [class*="text-red-400"] { color: #b42318; }
-.admin-app [class*="bg-violet-500/15"],
-.admin-app [class*="bg-sky-500/15"] { background-color: #eff4ff; }
-.admin-app [class*="bg-gradient-to-br"] { color: #fff; }
-.admin-app .border-white\/10 { border-color: #e5e9f0; }
-.admin-app .border-white\/5 { border-color: #edf0f4; }
-.admin-app .bg-white\/5 { background-color: #f8fafc; }
-.admin-app .bg-white\/10 { background-color: #eef2f6; }
-.admin-app .bg-ink { background-color: #f4f6fa; }
-.admin-app input:not([type="file"]),
-.admin-app textarea {
-  color: #172033;
-  background-color: #fff;
-  border-color: #d0d5dd;
-}
-.admin-app input::placeholder,
-.admin-app textarea::placeholder { color: #98a2b3; }
-.admin-app input:focus,
-.admin-app textarea:focus { border-color: #84adff; }
-.admin-app [class*="bg-[#0b0b14]"] { background-color: #fff; }
-.admin-app [class*="bg-gradient-to-r from-violet-600"] {
-  background-image: none;
-  background-color: #175cd3;
-  box-shadow: none;
-}
-.admin-app [class*="bg-gradient-to-r from-violet-600"]:hover { background-color: #1849a9; }
-.admin-app .text-gradient {
-  background: none;
-  color: #175cd3;
-  -webkit-text-fill-color: currentColor;
-}
-.admin-app .shadow-glow { box-shadow: none; }
-.admin-app .rounded-3xl { border-radius: 0.75rem; }
-.admin-app .rounded-2xl { border-radius: 0.65rem; }
-.admin-app .rounded-xl { border-radius: 0.5rem; }
