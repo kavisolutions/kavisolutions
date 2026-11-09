@@ -16,7 +16,7 @@ const links = [
 export default function Navbar() {
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      <div className="mx-auto mt-4 flex max-w-6xl items-center justify-between gap-3 rounded-2xl glass px-5 py-3 shadow-lift">
+      <div className="mx-auto mt-4 flex max-w-6xl items-center justify-between gap-3 rounded-xl glass px-5 py-3 shadow-lift">
         <Link href="/" className="flex items-center gap-2.5">
           <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl shadow-glow">
             <Image
@@ -38,7 +38,7 @@ export default function Navbar() {
             <Link
               key={l.href}
               href={l.href}
-              className="rounded-lg px-3 py-2 text-sm text-mist transition-all hover:bg-white/5 hover:text-white"
+              className="rounded-md px-3 py-2 text-sm text-mist transition-colors hover:bg-white/5 hover:text-white"
             >
               {l.label}
             </Link>
@@ -49,7 +49,7 @@ export default function Navbar() {
           <NavAuth />
           <Link
             href="/#contact"
-            className="rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-4 py-2 text-sm font-semibold text-white shadow-glow transition-transform hover:scale-105"
+            className="rounded-md bg-[#175cd3] px-4 py-2 text-sm font-semibold text-white shadow-glow transition-colors hover:bg-[#1849a9]"
           >
             Let&apos;s Talk
           </Link>

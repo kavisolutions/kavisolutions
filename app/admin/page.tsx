@@ -6,6 +6,12 @@ import { supabaseBrowser, useAuth } from "@/lib/auth-context";
 import GradientPicker from "@/components/GradientPicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getInitials, type OrgRole, type OrgTeam, type TeamMember, type Project, COMMON_SKILLS } from "@/lib/team";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Users, BriefcaseBusiness, Layers3, ShieldCheck, Settings2, FolderKanban, Plus, ExternalLink, LogOut, Search, Pencil, Trash2 } from "lucide-react";
 
 type AdminEntry = { email: string; source: "env" | "db" };
 
@@ -60,15 +66,15 @@ const emptyProjectDraft = (): ProjectDraft => ({
 });
 
 const inputClass =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition-colors placeholder:text-fog focus:border-violet-400/60";
+  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-shadow placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring";
 
 const sections = [
-  { key: "team", label: "Team" },
-  { key: "roles", label: "Roles" },
-  { key: "teams", label: "Teams" },
-  { key: "projects", label: "Projects" },
-  { key: "admins", label: "Admins" },
-  { key: "settings", label: "Settings" },
+  { key: "team", label: "Team members", icon: Users, description: "Manage your public team directory" },
+  { key: "roles", label: "Roles", icon: BriefcaseBusiness, description: "Define titles and responsibilities" },
+  { key: "teams", label: "Teams", icon: Layers3, description: "Organize people into teams" },
+  { key: "projects", label: "Projects", icon: FolderKanban, description: "Manage featured work and links" },
+  { key: "admins", label: "Administrators", icon: ShieldCheck, description: "Control workspace access" },
+  { key: "settings", label: "Settings", icon: Settings2, description: "Update company profile details" },
 ] as const;
 
 type SectionKey = (typeof sections)[number]["key"];
@@ -86,6 +92,7 @@ export default function AdminPage() {
   const [section, setSection] = useState<SectionKey>("team");
 
   const [members, setMembers] = useState<TeamMember[]>([]);
+  const [memberQuery, setMemberQuery] = useState("");
   const [roles, setRoles] = useState<OrgRole[]>([]);
   const [orgTeams, setOrgTeams] = useState<OrgTeam[]>([]);
   const [admins, setAdmins] = useState<AdminEntry[]>([]);
@@ -121,6 +128,9 @@ export default function AdminPage() {
   const pdHasWeb = projectDraft?.projectTypes.includes("Web") ?? false;
   const pdLinkType: "app" | "web" | "both" =
     pdHasApp && pdHasWeb ? "both" : pdHasApp ? "app" : "web";
+  const filteredMembers = members.filter((member) =>
+    `${member.name} ${member.role} ${member.teamName ?? ""}`.toLowerCase().includes(memberQuery.trim().toLowerCase()),
+  );
 
   const loadAll = useCallback(async () => {
     const headers = await authHeaders();
@@ -583,49 +593,96 @@ export default function AdminPage() {
     );
   }
 
+  const activeSection = sections.find((item) => item.key === section) ?? sections[0];
+
   return (
-    <div className="min-h-screen bg-ink px-4 py-8 text-white sm:px-6 sm:py-12">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <Link href="/" className="font-display text-xl font-semibold tracking-tight">
-              Kavi<span className="text-gradient">Solutions</span>
-            </Link>
-            <h1 className="mt-2 font-display text-3xl font-bold">Admin Panel</h1>
-            <p className="text-xs text-mist">Signed in as {session.user.email}</p>
+    <div id="admin-app" className="admin-app min-h-screen">
+      <aside className="fixed inset-y-0 left-0 z-50 hidden w-[248px] flex-col border-r border-slate-200 bg-white lg:flex">
+        <div className="flex h-[72px] items-center gap-3 border-b border-slate-200 px-5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-700 text-sm font-bold text-white">K</span>
+          <div className="leading-tight">
+            <Link href="/" className="font-semibold tracking-tight text-slate-900">Kavi Solutions</Link>
+            <p className="mt-0.5 text-[11px] text-slate-500">Company workspace</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/team"
-              className="rounded-xl bg-white/5 px-4 py-2 text-xs text-mist transition-colors hover:bg-white/10 hover:text-white"
-            >
-              View team page
-            </Link>
+        </div>
+        <p className="px-5 pb-2 pt-6 text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400">Workspace</p>
+        <nav className="flex flex-col gap-1 px-3">
+          {sections.map((item) => (
             <button
-              onClick={() => supabaseBrowser.auth.signOut()}
-              className="rounded-xl bg-white/5 px-4 py-2 text-xs text-mist transition-colors hover:bg-white/10 hover:text-white"
+              key={item.key}
+              onClick={() => selectSection(item.key)}
+              aria-current={section === item.key ? "page" : undefined}
+              className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm font-medium transition-colors ${
+                section === item.key
+                  ? "bg-blue-50 text-blue-800"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
+              }`}
             >
-              Sign out
+              <item.icon className="h-4 w-4" />{item.label}
             </button>
+          ))}
+        </nav>
+        <div className="mt-auto border-t border-slate-200 p-4">
+          <p className="mb-3 truncate text-xs text-slate-500" title={session.user.email ?? ""}>{session.user.email}</p>
+          <Button variant="outline" className="w-full justify-start" onClick={() => supabaseBrowser.auth.signOut()}>
+            <LogOut className="h-4 w-4" /> Sign out
+          </Button>
+        </div>
+      </aside>
+
+      <div className="min-h-screen lg:pl-[248px]">
+        <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 px-4 shadow-sm backdrop-blur sm:px-6">
+          <div className="mx-auto flex h-[64px] max-w-[1440px] items-center justify-between gap-4">
+            <div className="flex items-center gap-3 lg:hidden">
+              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-700 text-xs font-bold text-white">K</span>
+              <span className="text-sm font-semibold text-slate-900">Kavi Solutions</span>
+            </div>
+            <div className="hidden text-xs text-slate-500 lg:block">Kavi Solutions <span className="px-1 text-slate-300">/</span> Administration</div>
+            <div className="ml-auto flex items-center gap-2">
+              <Link href="/team" className={`${buttonVariants({ variant: "outline", size: "sm" })} hidden sm:inline-flex`}>
+                View team page <ExternalLink className="h-3.5 w-3.5" />
+              </Link>
+              <Button variant="ghost" size="sm" className="lg:hidden" onClick={() => supabaseBrowser.auth.signOut()}>
+                <LogOut className="h-4 w-4" /><span className="hidden sm:inline">Sign out</span>
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        <main className="mx-auto max-w-[1280px] px-4 pb-12 pt-8 sm:px-8">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Workspace / Administration</p>
+            <h1 className="text-[28px] font-semibold tracking-tight text-slate-950">{activeSection.label}</h1>
+            <p className="mt-1.5 text-sm text-slate-500">{activeSection.description}.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            {section === "team" && <Badge variant="outline" className="rounded-full border-slate-200 bg-white px-3 py-1 text-slate-600">{members.length} {members.length === 1 ? "member" : "members"}</Badge>}
+            {section !== "team" && <Badge variant="outline" className="rounded-full border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700">Workspace active</Badge>}
+            {section === "team" && (
+              <Button onClick={() => { setDraft(emptyDraft(members[0]?.gradient ?? "from-violet-500 to-purple-500")); setFormError(""); }}>
+                <Plus className="h-4 w-4" /> Add member
+              </Button>
+            )}
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-[220px_1fr]">
-          <aside className="flex h-max gap-1 overflow-x-auto rounded-2xl glass p-3 md:flex-col md:overflow-visible">
+        <nav aria-label="Workspace sections" className="mb-5 flex gap-1 overflow-x-auto rounded-lg border border-slate-200 bg-white p-2 shadow-sm lg:hidden">
             {sections.map((item) => (
               <button
                 key={item.key}
                 onClick={() => selectSection(item.key)}
-                className={`whitespace-nowrap rounded-xl px-4 py-2.5 text-left text-sm font-semibold transition-colors ${
+                aria-current={section === item.key ? "page" : undefined}
+                className={`flex min-w-fit items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
                   section === item.key
-                    ? "bg-gradient-to-r from-violet-600 to-sky-500 shadow-glow"
-                    : "text-mist hover:bg-white/5 hover:text-white"
+                    ? "bg-blue-50 text-blue-800"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
                 }`}
               >
-                {item.label}
+                <item.icon className="h-4 w-4" />{item.label}
               </button>
             ))}
-          </aside>
+        </nav>
 
           <div className="min-w-0">
             {notice && (
@@ -641,18 +698,6 @@ export default function AdminPage() {
 
             {section === "team" && (
               <div className="space-y-4">
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => {
-                      setDraft(emptyDraft(members[0]?.gradient ?? "from-violet-500 to-purple-500"));
-                      setFormError("");
-                    }}
-                    className="rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-4 py-2 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02]"
-                  >
-                    + Add member
-                  </button>
-                </div>
-
                 {draft && (
                   <div className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto bg-[#000000b3] p-4 py-10">
                     <div className="w-full max-w-2xl rounded-3xl border border-white/10 bg-[#0b0b14] p-6 shadow-2xl">
@@ -669,7 +714,7 @@ export default function AdminPage() {
                         </button>
                       </div>
                     <div className="grid gap-3 sm:grid-cols-2">
-                      <input
+                      <Input
                         className={inputClass}
                         placeholder="Name"
                         value={draft.name}
@@ -712,19 +757,19 @@ export default function AdminPage() {
                           ))}
                         </SelectContent>
                       </Select>
-                      <input
+                      <Input
                         className={inputClass}
                         placeholder="Portfolio URL (optional)"
                         value={draft.profileUrl}
                         onChange={(e) => setDraft({ ...draft, profileUrl: e.target.value })}
                       />
-                      <input
+                      <Input
                         className={inputClass}
                         placeholder="LinkedIn URL (optional)"
                         value={draft.linkedinUrl}
                         onChange={(e) => setDraft({ ...draft, linkedinUrl: e.target.value })}
                       />
-                      <input
+                      <Input
                         className={inputClass}
                         placeholder="Sort order (lower shows first)"
                         type="number"
@@ -753,7 +798,7 @@ export default function AdminPage() {
                         <div className="flex min-w-0 flex-col gap-1">
                           <label className="cursor-pointer text-xs font-semibold text-mist transition-colors hover:text-white">
                             {uploading ? "Uploading..." : draft.imageUrl ? "Change photo" : "Upload photo"}
-                            <input
+                            <Input
                               type="file"
                               accept="image/*"
                               className="hidden"
@@ -801,13 +846,13 @@ export default function AdminPage() {
                       />
                       {!draft.id && (
                         <>
-                          <input
+                          <Input
                             className={inputClass}
                             placeholder="Login email (optional — links/creates an account)"
                             value={draft.email}
                             onChange={(e) => setDraft({ ...draft, email: e.target.value })}
                           />
-                          <input
+                          <Input
                             className={inputClass}
                             placeholder="Login password (min 8 chars for new account)"
                             type="password"
@@ -839,106 +884,102 @@ export default function AdminPage() {
                   </div>
                 )}
 
-                <div className="overflow-hidden rounded-3xl glass">
-                  <div className="hidden grid-cols-[1.6fr_1fr_1fr_0.5fr_auto] gap-3 border-b border-white/10 px-6 py-3 text-xs uppercase tracking-widest text-fog sm:grid">
-                    <span>Member</span>
-                    <span>Role</span>
-                    <span>Team</span>
-                    <span>Order</span>
-                    <span />
-                  </div>
-                  {members.map((member) => (
-                    <div
-                      key={member.id}
-                      className="grid grid-cols-1 gap-3 border-b border-white/5 px-6 py-4 last:border-b-0 sm:grid-cols-[1.6fr_1fr_1fr_0.5fr_auto] sm:items-center"
-                    >
-                      <div className="flex items-center gap-3">
-                        {member.imageUrl ? (
-                          <button
-                            type="button"
-                            onClick={() => setPreview(member.imageUrl)}
-                            className="shrink-0"
-                            title="Preview photo"
-                          >
-                            <img
-                              src={member.imageUrl}
-                              alt={member.name}
-                              className="h-10 w-10 rounded-xl object-cover ring-1 ring-white/10 transition-transform hover:scale-105"
-                            />
-                          </button>
-                        ) : (
-                          <div
-                            className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${member.gradient} font-display text-xs font-bold`}
-                          >
-                            {member.initials || getInitials(member.name)}
-                          </div>
-                        )}
-                        <span className="font-semibold">{member.name}</span>
-                        {member.linkedinUrl && (
-                          <span className="rounded bg-[#0a66c2]/25 px-1.5 py-0.5 text-[10px] font-bold text-sky-300">
-                            in
-                          </span>
-                        )}
-                        {member.profileUrl && (
-                          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-bold text-mist">
-                            portfolio
-                          </span>
-                        )}
-                      </div>
-                      <div>
-                        {member.role ? (
-                          <span className="inline-block rounded-lg bg-violet-500/15 px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-violet-300">
-                            {member.role}
-                          </span>
-                        ) : (
-                          <span className="text-xs text-fog">No role</span>
-                        )}
-                      </div>
-                      <div>
-                        {member.teamName ? (
-                          <span className="inline-block rounded-lg bg-sky-500/15 px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-sky-300">
-                            {member.teamName}
-                          </span>
-                        ) : (
-                          <span className="text-xs text-fog">No team</span>
-                        )}
-                      </div>
-                      <span className="text-xs text-mist">{member.sortOrder}</span>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() =>
-                            setDraft({
-                              id: member.id,
-                              name: member.name,
-                              role: member.role,
-                              teamId: member.teamId ?? "",
-                              bio: member.bio,
-                              profileUrl: member.profileUrl ?? "",
-                              linkedinUrl: member.linkedinUrl ?? "",
-                              gradient: member.gradient,
-                              sortOrder: member.sortOrder,
-                              imageUrl: member.imageUrl ?? "",
-                              email: "",
-                              password: "",
-                            })
-                          }
-                          className="rounded-lg bg-white/5 px-3 py-1.5 text-xs text-mist transition-colors hover:bg-white/10 hover:text-white"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => deleteMember(member)}
-                          className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-400 transition-colors hover:bg-red-500/20"
-                        >
-                          Remove
-                        </button>
-                      </div>
+                <Card className="overflow-hidden rounded-xl border-slate-200 bg-white shadow-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-5">
+                    <div className="relative w-full max-w-sm">
+                      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                      <Input
+                        value={memberQuery}
+                        onChange={(event) => setMemberQuery(event.target.value)}
+                        placeholder="Search members, roles, or teams"
+                        aria-label="Search team members"
+                        className="h-9 border-slate-200 bg-white pl-9 text-sm shadow-none focus-visible:ring-blue-200"
+                      />
                     </div>
-                  ))}
-                  {members.length === 0 && (
-                    <p className="px-6 py-8 text-center text-sm text-mist">No team members yet.</p>
-                  )}
-                </div>
+                    <span className="text-xs text-slate-500">Showing {filteredMembers.length} of {members.length}</span>
+                  </div>
+                  <Table>
+                    <TableHeader className="bg-slate-50/80">
+                      <TableRow className="border-slate-200 hover:bg-transparent">
+                        <TableHead className="w-[38%] pl-5">Member</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead>Team</TableHead>
+                        <TableHead className="w-20">Order</TableHead>
+                        <TableHead className="w-[150px] pr-5 text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredMembers.map((member) => (
+                        <TableRow key={member.id} className="border-slate-100 hover:bg-slate-50/70">
+                          <TableCell className="pl-5">
+                            <div className="flex min-w-[210px] items-center gap-3">
+                              {member.imageUrl ? (
+                                <button type="button" onClick={() => setPreview(member.imageUrl)} className="shrink-0" title={`Preview ${member.name}'s photo`}>
+                                  <img src={member.imageUrl} alt={member.name} className="h-9 w-9 rounded-full border border-slate-200 object-cover" />
+                                </button>
+                              ) : (
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-semibold text-slate-600 ring-1 ring-slate-200">
+                                  {member.initials || getInitials(member.name)}
+                                </div>
+                              )}
+                              <div className="min-w-0">
+                                <p className="truncate font-medium text-slate-900">{member.name}</p>
+                                {(member.linkedinUrl || member.profileUrl) && (
+                                  <p className="mt-0.5 text-xs text-slate-500">{[member.linkedinUrl && "LinkedIn", member.profileUrl && "Portfolio"].filter(Boolean).join(" · ")}</p>
+                                )}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap text-slate-600">{member.role || <span className="text-slate-400">Not assigned</span>}</TableCell>
+                          <TableCell className="whitespace-nowrap text-slate-600">{member.teamName || <span className="text-slate-400">Not assigned</span>}</TableCell>
+                          <TableCell className="tabular-nums text-slate-500">{member.sortOrder}</TableCell>
+                          <TableCell className="pr-5">
+                            <div className="flex justify-end gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                aria-label={`Edit ${member.name}`}
+                                onClick={() => setDraft({
+                                  id: member.id,
+                                  name: member.name,
+                                  role: member.role,
+                                  teamId: member.teamId ?? "",
+                                  bio: member.bio,
+                                  profileUrl: member.profileUrl ?? "",
+                                  linkedinUrl: member.linkedinUrl ?? "",
+                                  gradient: member.gradient,
+                                  sortOrder: member.sortOrder,
+                                  imageUrl: member.imageUrl ?? "",
+                                  email: "",
+                                  password: "",
+                                })}
+                                className="h-8 px-2.5 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                              >
+                                <Pencil className="h-3.5 w-3.5" /><span>Edit</span>
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                aria-label={`Remove ${member.name}`}
+                                onClick={() => deleteMember(member)}
+                                className="h-8 px-2.5 text-slate-500 hover:bg-red-50 hover:text-red-700"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" /><span>Remove</span>
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {filteredMembers.length === 0 && (
+                        <TableRow className="hover:bg-transparent">
+                          <TableCell colSpan={5} className="h-28 text-center text-sm text-slate-500">
+                            {memberQuery ? "No members match your search." : "No team members yet."}
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </Card>
               </div>
             )}
 
@@ -947,7 +988,7 @@ export default function AdminPage() {
                 <div className="rounded-3xl glass p-6">
                   <h2 className="mb-4 font-display text-lg font-semibold">Add role</h2>
                   <div className="flex gap-3">
-                    <input
+                    <Input
                       className={inputClass}
                       placeholder="Role name (e.g. Advisor)"
                       value={newRoleName}
@@ -970,7 +1011,7 @@ export default function AdminPage() {
                     >
                       {editingRoleId === role.id ? (
                         <>
-                          <input
+                          <Input
                             className={`${inputClass} max-w-xs`}
                             value={editingRoleName}
                             onChange={(e) => setEditingRoleName(e.target.value)}
@@ -1027,7 +1068,7 @@ export default function AdminPage() {
                 <div className="rounded-3xl glass p-6">
                   <h2 className="mb-4 font-display text-lg font-semibold">Add team</h2>
                   <div className="flex gap-3">
-                    <input
+                    <Input
                       className={inputClass}
                       placeholder="Team name (e.g. Design Team)"
                       value={newTeamName}
@@ -1050,7 +1091,7 @@ export default function AdminPage() {
                     >
                       {editingTeamId === team.id ? (
                         <>
-                          <input
+                          <Input
                             className={`${inputClass} max-w-xs`}
                             value={editingTeamName}
                             onChange={(e) => setEditingTeamName(e.target.value)}
@@ -1139,7 +1180,7 @@ export default function AdminPage() {
                         <div className="grid gap-3 sm:grid-cols-2">
                           <div className="sm:col-span-2">
                             <label className="mb-1.5 block text-xs uppercase tracking-widest text-mist">Name</label>
-                            <input
+                            <Input
                               className={inputClass}
                               placeholder="Project name"
                               value={projectDraft.name}
@@ -1191,7 +1232,7 @@ export default function AdminPage() {
 
                             <div>
                               <label className="mb-1.5 block text-xs uppercase tracking-widest text-mist">Sort order</label>
-                              <input
+                              <Input
                                 className={inputClass}
                                 type="number"
                                 value={projectDraft.sortOrder}
@@ -1212,7 +1253,7 @@ export default function AdminPage() {
                           </p>
                           <div className="grid gap-3 sm:grid-cols-2">
                             {(pdLinkType === "app" || pdLinkType === "both") && (
-                              <input
+                              <Input
                                 className={inputClass}
                                 placeholder="App link URL"
                                 value={projectDraft.appLink}
@@ -1220,7 +1261,7 @@ export default function AdminPage() {
                               />
                             )}
                             {(pdLinkType === "web" || pdLinkType === "both") && (
-                              <input
+                              <Input
                                 className={inputClass}
                                 placeholder="Web link URL"
                                 value={projectDraft.webLink}
@@ -1233,7 +1274,7 @@ export default function AdminPage() {
                         <div>
                           <p className="mb-1.5 text-xs uppercase tracking-widest text-mist">Skills</p>
                           <div className="mb-2.5 flex gap-2">
-                            <input
+                            <Input
                               className={inputClass}
                               placeholder="Add a custom skill…"
                               value={newSkill}
@@ -1423,7 +1464,7 @@ export default function AdminPage() {
                 <div className="rounded-3xl glass p-6">
                   <h2 className="mb-4 font-display text-lg font-semibold">Add admin</h2>
                   <div className="flex gap-3">
-                    <input
+                    <Input
                       className={inputClass}
                       placeholder="email@example.com"
                       value={newAdminEmail}
@@ -1474,7 +1515,7 @@ export default function AdminPage() {
                 <div className="space-y-3">
                   <label className="block text-xs uppercase tracking-widest text-mist">
                     Team page tagline
-                    <input
+                    <Input
                       className={`${inputClass} mt-2`}
                       value={tagline}
                       onChange={(e) => setTagline(e.target.value)}
@@ -1492,7 +1533,7 @@ export default function AdminPage() {
                   </label>
                   <label className="block text-xs uppercase tracking-widest text-mist">
                     Contact form email
-                    <input
+                    <Input
                       className={`${inputClass} mt-2`}
                       value={contactEmail}
                       onChange={(e) => setContactEmail(e.target.value)}
@@ -1509,7 +1550,6 @@ export default function AdminPage() {
               </div>
             )}
           </div>
-        </div>
 
         {preview && (
           <div
@@ -1531,6 +1571,7 @@ export default function AdminPage() {
             </div>
           </div>
         )}
+        </main>
       </div>
     </div>
   );

@@ -35,7 +35,6 @@ export default function Team() {
 
         <RevealStagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {members.map((member) => {
-            const gradient = member.gradient;
             const initials = member.initials || getInitials(member.name || "?");
 
             return (
@@ -44,22 +43,16 @@ export default function Team() {
                   <div className="relative mx-auto mb-5 h-24 w-24">
                     {member.imageUrl ? (
                       <>
-                        <div
-                          className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${gradient} opacity-60 blur-lg transition-all duration-500 group-hover:opacity-90 group-hover:blur-xl`}
-                        />
                         <img
                           src={member.imageUrl}
                           alt={member.name}
-                          className="relative h-24 w-24 rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3"
+                          className="relative h-24 w-24 rounded-xl border border-white/10 object-cover"
                         />
                       </>
                     ) : (
                       <>
                         <div
-                          className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${gradient} opacity-60 blur-lg transition-all duration-500 group-hover:opacity-90 group-hover:blur-xl`}
-                        />
-                        <div
-                          className={`relative flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br ${gradient} font-display text-3xl font-bold text-white transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3`}
+                          className="relative flex h-24 w-24 items-center justify-center rounded-xl border border-white/10 bg-slate-700 font-display text-2xl font-semibold text-white"
                         >
                           {initials}
                         </div>
@@ -71,7 +64,7 @@ export default function Team() {
                     {member.name}
                   </h3>
                   {member.role && (
-                    <p className="mx-auto mt-1.5 max-w-[14rem] text-[11px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-gradient">
+                    <p className="mx-auto mt-1.5 max-w-[14rem] text-xs font-medium leading-relaxed text-blue-300">
                       {member.role}
                     </p>
                   )}

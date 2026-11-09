@@ -1,13 +1,58 @@
 @import "tailwindcss";
 
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 47.4% 11.2%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 47.4% 11.2%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 47.4% 11.2%;
+  --primary: 221 83% 53%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 88%;
+  --ring: 221 83% 53%;
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+}
+
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
 
-  --color-ink: #06060b;
-  --color-ink-soft: #0b0b14;
-  --color-mist: #a1a1b5;
-  --color-fog: #6e6e85;
+  --color-ink: #0b1220;
+  --color-ink-soft: #111c2e;
+  --color-mist: #a5b3c7;
+  --color-fog: #7889a0;
 
   --animate-float: float 9s ease-in-out infinite;
   --animate-float-slow: float 14s ease-in-out infinite;
@@ -49,7 +94,7 @@ html {
 
 body {
   background: var(--color-ink);
-  color: #f4f4f7;
+  color: #f7f9fc;
   font-family: var(--font-sans);
   overflow-x: hidden;
 }
@@ -66,22 +111,18 @@ body {
   background: #0b0b14;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #7c3aed, #0ea5e9);
+  background: #526680;
   border-radius: 999px;
 }
 
 .text-gradient {
-  background: linear-gradient(110deg, #c4b5fd, #60a5fa, #22d3ee, #c4b5fd);
-  background-size: 220% 220%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #91b4ff;
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(18, 29, 47, 0.84);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.14);
 }
 
 .card-sheen {
@@ -93,12 +134,7 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(
-    105deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.08) 50%,
-    transparent 60%
-  );
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.04) 50%, transparent 60%);
   background-size: 250% 250%;
   opacity: 0;
   transition: opacity 0.5s ease, background-position 0.9s ease;
@@ -109,13 +145,76 @@ body {
 }
 
 .shadow-glow {
-  box-shadow:
-    0 0 0 1px rgba(139, 92, 246, 0.25),
-    0 18px 50px -12px rgba(139, 92, 246, 0.45);
+  box-shadow: 0 8px 24px -14px rgba(59, 130, 246, 0.72);
 }
 
 .shadow-lift {
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.3),
-    0 30px 60px -15px rgba(0, 0, 0, 0.6);
+    0 1px 2px rgba(0, 0, 0, 0.24),
+    0 18px 42px -24px rgba(0, 0, 0, 0.62);
 }
+
+/* Keep primary actions consistent across public pages and account screens. */
+[class*="bg-gradient-to-r from-violet-600 to-sky-500"],
+[class*="bg-gradient-to-br from-violet-600 to-sky-500"] {
+  background-image: none;
+  background-color: #175cd3;
+}
+[class*="bg-gradient-to-r from-violet-600 to-sky-500"]:hover,
+[class*="bg-gradient-to-br from-violet-600 to-sky-500"]:hover {
+  background-color: #1849a9;
+}
+
+/* Admin surfaces use a restrained, light operations dashboard palette. */
+.admin-app {
+  min-height: 100vh;
+  color: #172033;
+  background: #f4f6fa;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+.admin-app .glass {
+  background: #fff;
+  border-color: #e5e9f0;
+  backdrop-filter: none;
+  box-shadow: 0 1px 2px rgb(16 24 40 / 4%), 0 8px 24px rgb(16 24 40 / 3%);
+}
+.admin-app .text-mist { color: #667085; }
+.admin-app .text-fog { color: #98a2b3; }
+.admin-app [class*="text-violet-300"],
+.admin-app [class*="text-sky-300"],
+.admin-app [class*="text-emerald-300"] { color: #475467; }
+.admin-app [class*="text-red-400"] { color: #b42318; }
+.admin-app [class*="bg-violet-500/15"],
+.admin-app [class*="bg-sky-500/15"] { background-color: #eff4ff; }
+.admin-app [class*="bg-gradient-to-br"] { color: #fff; }
+.admin-app .border-white\/10 { border-color: #e5e9f0; }
+.admin-app .border-white\/5 { border-color: #edf0f4; }
+.admin-app .bg-white\/5 { background-color: #f8fafc; }
+.admin-app .bg-white\/10 { background-color: #eef2f6; }
+.admin-app .bg-ink { background-color: #f4f6fa; }
+.admin-app input:not([type="file"]),
+.admin-app textarea {
+  color: #172033;
+  background-color: #fff;
+  border-color: #d0d5dd;
+}
+.admin-app input::placeholder,
+.admin-app textarea::placeholder { color: #98a2b3; }
+.admin-app input:focus,
+.admin-app textarea:focus { border-color: #84adff; }
+.admin-app [class*="bg-[#0b0b14]"] { background-color: #fff; }
+.admin-app [class*="bg-gradient-to-r from-violet-600"] {
+  background-image: none;
+  background-color: #175cd3;
+  box-shadow: none;
+}
+.admin-app [class*="bg-gradient-to-r from-violet-600"]:hover { background-color: #1849a9; }
+.admin-app .text-gradient {
+  background: none;
+  color: #175cd3;
+  -webkit-text-fill-color: currentColor;
+}
+.admin-app .shadow-glow { box-shadow: none; }
+.admin-app .rounded-3xl { border-radius: 0.75rem; }
+.admin-app .rounded-2xl { border-radius: 0.65rem; }
+.admin-app .rounded-xl { border-radius: 0.5rem; }

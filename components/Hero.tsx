@@ -1,4 +1,4 @@
-import { GlowOrb, Reveal } from "./motion";
+import { Reveal } from "./motion";
 
 const stats = [
   { value: "120+", label: "Projects shipped" },
@@ -13,17 +13,11 @@ export default function Hero() {
       id="top"
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-32"
     >
-      <GlowOrb className="-left-32 top-10 h-96 w-96 bg-violet-600/30" />
-      <GlowOrb className="-right-32 bottom-10 h-96 w-96 bg-sky-500/25" />
-      <GlowOrb className="left-1/2 top-1/3 h-72 w-72 bg-fuchsia-500/20" />
-
-      <div className="absolute left-1/2 top-24 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-[conic-gradient(from_0deg,rgba(124,58,237,0.35),rgba(14,165,233,0.35),rgba(217,70,239,0.35),rgba(124,58,237,0.35))] blur-3xl animate-spin-slow" />
-
       <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
         <Reveal>
-          <span className="mb-6 inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs font-medium text-mist">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse-ring" />
-            Building the digital future, together
+          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-400/5 px-4 py-1.5 text-xs font-medium tracking-wide text-blue-200">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+            Digital product studio · India &amp; beyond
           </span>
         </Reveal>
 
@@ -47,7 +41,7 @@ export default function Hero() {
           <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
             <a
               href="#contact"
-              className="group rounded-2xl bg-gradient-to-r from-violet-600 to-sky-500 px-7 py-3.5 text-sm font-semibold text-white shadow-glow transition-all hover:scale-105"
+              className="group rounded-md bg-[#175cd3] px-7 py-3.5 text-sm font-semibold text-white shadow-glow transition-colors hover:bg-[#1849a9]"
             >
               Start your project
               <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">
@@ -56,7 +50,7 @@ export default function Hero() {
             </a>
             <a
               href="#services"
-              className="rounded-2xl glass px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-white/10"
+              className="rounded-md border border-white/15 bg-white/[0.03] px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/[0.07]"
             >
               Explore services
             </a>
