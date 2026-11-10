@@ -45,8 +45,11 @@ npm run db:migrate
 echo "==> [api] Building"
 npm run build
 
+# PM2 keeps the previous `script`/`cwd` on startOrReload, so delete the app
+# first to make sure a moved entrypoint (e.g. api/ -> app/) is picked up.
 echo "==> [api] Reloading ${BE_APP} on port ${BE_PORT}"
-PORT="${BE_PORT}" pm2 startOrReload ecosystem.config.js --update-env
+pm2 delete "${BE_APP}" >/dev/null 2>&1 || true
+PORT="${BE_PORT}" pm2 start ecosystem.config.js --update-env
 pm2 save
 
 # --------------------------------------------------------------- frontend ----
@@ -61,7 +64,8 @@ export BACKEND_URL="${BACKEND_URL:-http://127.0.0.1:${BE_PORT}}"
 npm run build
 
 echo "==> [web] Reloading ${FE_APP} on port ${FE_PORT}"
-PORT="${FE_PORT}" pm2 startOrReload ecosystem.config.js --update-env
+pm2 delete "${FE_APP}" >/dev/null 2>&1 || true
+PORT="${FE_PORT}" pm2 start ecosystem.config.js --update-env
 pm2 save
 
 # -------------------------------------------------------------- health ------
