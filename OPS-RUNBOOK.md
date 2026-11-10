@@ -6,8 +6,8 @@
 - Old site (decommissioned): 161.97.169.66
 
 ## Layout on my-new-server-2
-- /var/www/kavi-solutions        Next.js 16, PM2 `kavi-solutions`, :3111
-- /var/www/kavi-solutions-be     NestJS 11, PM2 `kavi-solutions-be`, :3200
+- /var/www/kavi-solutions        monorepo — Next.js 16 in `app/`, NestJS 11 in `api/`
+  PM2 apps: `kavi-solutions` (:3111), `kavi-solutions-be` (:3200)
 - /opt/kavi/docker-compose.yml    kavi-pg (PG16, 127.0.0.1:5436), kavi-minio (127.0.0.1:9002/9003)
 - /etc/nginx/sites-available/kavisolutions   kavisolutions.in + www, /avatars/ -> MinIO
 - TLS: cert copied from old VPS, valid to 2027-01-26, auto-renew via certbot/day
@@ -24,14 +24,14 @@
 
 ## Redeploy
 Backend:
-  rsync -az --exclude node_modules --exclude dist --exclude .env ./ my-new-server-2:/var/www/kavi-solutions-be/
-  ssh my-new-server-2 'cd /var/www/kavi-solutions-be && npm ci && npm run db:migrate && npm run build && pm2 restart kavi-solutions-be --update-env'
+  rsync -az --exclude node_modules --exclude dist --exclude .env ./ my-new-server-2:/var/www/kavi-solutions/api/
+  ssh my-new-server-2 'cd /var/www/kavi-solutions/api && npm ci && npm run db:migrate && npm run build && pm2 restart kavi-solutions-be --update-env'
 Frontend:
-  rsync -az --exclude node_modules --exclude .next --exclude .env* ./ my-new-server-2:/var/www/kavi-solutions/
-  ssh my-new-server-2 'cd /var/www/kavi-solutions && npm ci && BACKEND_URL=http://127.0.0.1:3200 npm run build && pm2 restart kavi-solutions --update-env'
+  rsync -az --exclude node_modules --exclude .next --exclude .env* ./ my-new-server-2:/var/www/kavi-solutions/app/
+  ssh my-new-server-2 'cd /var/www/kavi-solutions/app && npm ci && BACKEND_URL=http://127.0.0.1:3200 npm run build && pm2 restart kavi-solutions --update-env'
 
 ## Known follow-ups
-- Google OAuth creds are empty in /var/www/kavi-solutions-be/.env → Google button returns error. Add GOOGLE_CLIENT_ID/SECRET + redirect https://kavisolutions.in/api/auth/callback/google
+- Google OAuth creds are empty in /var/www/kavi-solutions/api/.env → Google button returns error. Add GOOGLE_CLIENT_ID/SECRET + redirect https://kavisolutions.in/api/auth/callback/google
 - Admin logins with email/password: existing users keep legacy passwords (bcrypt); others must use password reset
 - SMTP_PASS set; contact form verified 201
 - GitHub Actions deploy still targets 161.97.169.66 — must be repointed or disabled

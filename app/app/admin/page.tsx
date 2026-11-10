@@ -198,7 +198,10 @@ export default function AdminPage() {
 
   const initialize = useCallback(
     async (hasSession: boolean) => {
-      if (!hasSession) return;
+      if (!hasSession) {
+        setIsAdmin(false);
+        return;
+      }
       try {
         await loadAll();
       } catch {

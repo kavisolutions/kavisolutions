@@ -2,40 +2,26 @@
   "name": "kavi-solutions",
   "version": "0.1.0",
   "private": true,
+  "description": "Kavi Solutions monorepo — Next.js frontend (app/) + NestJS backend (api/).",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "test": "vitest run",
-    "lint:all": "npm run lint && npm --prefix api run lint",
-    "build:all": "npm --prefix api run build && npm run build",
-    "test:all": "npm test && npm --prefix api test"
-  },
-  "dependencies": {
-    "@radix-ui/react-select": "^2.4.1",
-    "better-auth": "^1.7.18",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "framer-motion": "^13.1.1",
-    "lucide-react": "^1.56.0",
-    "next": "16.3.2",
-    "nodemailer": "^9.0.6",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "tailwind-merge": "^3.7.0"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/nodemailer": "^8.0.1",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.2",
-    "tailwindcss": "^4",
-    "typescript": "^5",
-    "vite": "^6.4.3",
-    "vitest": "^3.2.7"
+    "dev": "npm --prefix app run dev",
+    "build": "npm --prefix app run build",
+    "start": "npm --prefix app run start",
+    "lint": "npm --prefix app run lint",
+    "test": "npm --prefix app run test",
+    "dev:api": "npm --prefix api run start:dev",
+    "build:api": "npm --prefix api run build",
+    "start:api": "npm --prefix api run start:prod",
+    "lint:api": "npm --prefix api run lint",
+    "test:api": "npm --prefix api test",
+    "lint:all": "npm run lint && npm run lint:api",
+    "build:all": "npm run build:api && npm run build",
+    "test:all": "npm test && npm run test:api",
+    "typecheck": "npm --prefix api run type-check",
+    "db:migrate": "npm --prefix api run db:migrate",
+    "deploy": "bash deploy/deploy.sh"
   }
 }

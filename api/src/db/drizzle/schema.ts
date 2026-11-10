@@ -96,7 +96,7 @@ export const verification = pgTable(
 );
 
 // ---------------------------------------------------------------------------
-// Domain tables (ported from supabase/migrations/*.sql of the Next app).
+// Domain tables (ported from the legacy Next app's SQL migrations).
 // ---------------------------------------------------------------------------
 
 export const roles = pgTable("roles", {

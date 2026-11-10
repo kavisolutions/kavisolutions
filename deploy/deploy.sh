@@ -2,8 +2,8 @@
 #
 # Deploy Kavi Solutions (Next.js site + NestJS API) on the app server.
 #
-# Runs ON the server inside the cloned repository. The repo root is the Next.js
-# frontend; the NestJS backend lives in ./api and runs as a second PM2 app.
+# Runs ON the server inside the cloned repository. The repo root holds two apps:
+# the Next.js frontend in ./app and the NestJS backend in ./api.
 #
 # Usage:
 #   ./deploy/deploy.sh              # pull latest main, install/build/reload both apps
@@ -13,6 +13,7 @@ set -euo pipefail
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 API_DIR="${APP_DIR}/api"
+FE_DIR="${APP_DIR}/app"
 FE_PORT="${PORT:-3111}"
 BE_PORT="${API_PORT:-3200}"
 FE_APP="kavi-solutions"
@@ -50,7 +51,7 @@ pm2 save
 
 # --------------------------------------------------------------- frontend ----
 echo "==> [web] Installing dependencies"
-cd "${APP_DIR}"
+cd "${FE_DIR}"
 npm ci || npm install
 
 echo "==> [web] Building production bundle"

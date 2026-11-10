@@ -4,7 +4,7 @@ A premium one-page agency website for **Kavi Solutions**, built with **Next.js 1
 
 The repository contains both apps:
 
-- **root** — the Next.js 16 marketing site (public pages, login, admin panel)
+- **`app/`** — the Next.js 16 marketing site (public pages, login, admin panel)
 - **`api/`** — the NestJS backend (PostgreSQL + Drizzle, Better Auth, MinIO uploads)
 
 The frontend keeps calling `/api/*` on its own origin; Next.js proxies those
@@ -24,8 +24,8 @@ requests to the backend via the `BACKEND_URL` rewrite in `next.config.ts`.
 Run the backend first (see `api/README.md`), then:
 
 ```bash
-npm install
-npm run dev
+npm install --prefix app
+npm run dev        # root script -> npm --prefix app run dev
 ```
 
 Open http://localhost:3000. `.env.local` must contain `BACKEND_URL`

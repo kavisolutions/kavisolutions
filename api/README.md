@@ -84,18 +84,8 @@ pm2 save
 `ecosystem.config.js` runs the app on port `3200`. Add an Nginx `location /api/` (or a
 subdomain) that proxies to it, and keep the existing Next.js site on `3111`.
 
-## Frontend migration notes
+## Frontend
 
-The Next.js app currently calls its own `/api/*` routes backed by Supabase. To switch:
-
-1. Set `NEXT_PUBLIC_API_URL` to this service (e.g. `https://api.kavisolutions.in`).
-2. Replace `supabaseBrowser.auth.getSession()` token plumbing with Better Auth client
-   (`createAuthClient` from `better-auth/react`) and call
-   `authClient.signIn.email(...)` on the login page.
-3. Point the fetch helpers at `${NEXT_PUBLIC_API_URL}/api/...` and keep the same
-   JSON shapes — responses intentionally match the old Next routes
-   (`members`, `roles`, `teams`, `settings`, `projects`, `isAdmin`, `member`, …).
-4. Uploads: replace `/api/upload` FormData with the same endpoint on this service
-   (`Authorization: Bearer` + `file` field). Response is `{ url }`.
-5. Remove `@supabase/supabase-js` and `lib/supabase.ts`, `lib/server-auth.ts`,
-   `lib/auth-context.tsx`; delete `supabase/` migrations after data is copied.
+The Next.js app in `../app` calls `/api/*` on its own origin; Next.js proxies
+those requests here via the `BACKEND_URL` rewrite (`app/next.config.ts`). Auth is
+Better Auth through `createAuthClient` in `app/lib/auth-context.tsx`.

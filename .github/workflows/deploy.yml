@@ -28,7 +28,7 @@ jobs:
 
           # Preserve untracked runtime config (.env files) while syncing sources.
           git fetch --prune origin main
-          git clean -fd -e .env -e .env.local -e .env.production -e api/.env
+          git clean -fd -e .env -e .env.local -e .env.production -e api/.env -e app/.env -e app/.env.local -e app/.env.production
           git reset --hard origin/main
           rm -rf .next/types .next/dev
 

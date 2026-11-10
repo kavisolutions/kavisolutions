@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "node:path";
 
 const backendUrl = (
   process.env.BACKEND_URL ??
@@ -6,6 +7,9 @@ const backendUrl = (
 ).replace(/\/+$/, "");
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: path.join(__dirname),
+  },
   async rewrites() {
     if (!backendUrl) return [];
     return {
