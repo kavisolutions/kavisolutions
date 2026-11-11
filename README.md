@@ -23,6 +23,11 @@ Public pages also include `/projects`, `/team` and `/verify` (certificate
 verification by ID, also reachable as `/verify/<id>` from a printed QR code).
 `/admin` covers team, roles, teams, projects, certificates and settings.
 
+`/survey` (Survey & Research Solutions) is built but **not published**: it 404s
+until `SURVEY_PAGE_ENABLED=true` is set in the build environment. See
+[`docs/survey-page.md`](docs/survey-page.md) for how to enable it and edit its
+content.
+
 ## Local development
 
 Run the backend first (see `api/README.md`), then:
