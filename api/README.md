@@ -59,6 +59,9 @@ All prefixed with `/api`. Auth routes are Better Auth: `/api/auth/*`.
 | POST | `/certificates/reinstate` | admin | bring a revoked certificate back to `issued` |
 | DELETE | `/certificates?id=` | admin | soft delete (hidden, no longer verifiable, recoverable) |
 | POST | `/certificates/restore` | admin | clear a soft delete |
+| POST | `/certificates/:id/pdf` | admin | attach a generated PDF (multipart `file`, ≤10 MB) |
+| GET | `/certificates/:id/pdf` | public, uncached | stream the stored PDF |
+| DELETE | `/certificates/:id/pdf` | admin | remove the stored PDF |
 | POST | `/upload` | signed-in | multipart `file`, ≤5 MB, jpeg/png/webp/gif |
 | POST | `/contact` | public, throttled | sends mail to the configured contact address |
 | POST | `/survey/enquiries` | public, throttled | survey page forms (`kind`: `client` \| `surveyor`) |
@@ -93,6 +96,13 @@ session cookie (same origin). Sign-in: `POST /api/auth/sign-in/email`.
 `docker-compose.yml` starts MinIO and creates the `avatars` bucket with public read.
 In production point `S3_ENDPOINT` at your MinIO instance and set `S3_PUBLIC_URL` to the
 public URL served by Nginx (e.g. `https://cdn.kavisolutions.in/avatars`).
+
+Certificate PDFs use a second bucket, `S3_CERTIFICATES_BUCKET` (default
+`certificates`). It is created automatically and is **deliberately private**:
+certificate IDs are sequential, so a public bucket would let anyone enumerate
+every recipient. Files are served by `GET /api/certificates/:id/pdf`, which
+streams the object and never reveals the key. Object keys are
+`certificates/<year>/<CERTIFICATE_ID>.pdf`.
 
 ## Deployment (VPS, PM2 + Nginx)
 

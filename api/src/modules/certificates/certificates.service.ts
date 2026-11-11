@@ -13,13 +13,13 @@ import { sanitizeText } from "@/_shared/text";
 import { DATABASE } from "@/db/drizzle/drizzle.module";
 import type { Database } from "@/db/drizzle/drizzle.client";
 import { certificates, type CertificateRow } from "@/db/drizzle/schema";
+import { StorageService } from "@/modules/upload/storage.service";
 import type {
   CertificateIdDto,
   CreateCertificateDto,
   ReinstateCertificateDto,
   RevokeCertificateDto,
 } from "@/modules/certificates/dto/certificate.dto";
-
 export type PublicCertificateDto = {
   id: string;
   type: CertificateType;
@@ -40,6 +40,10 @@ export type AdminCertificateDto = PublicCertificateDto & {
   revokedOn: string | null;
   revokedReason: string | null;
   deletedAt: string | null;
+  /** True when a PDF exists in the private bucket. */
+  hasPdf: boolean;
+  pdfSize: number | null;
+  pdfUploadedAt: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -82,6 +86,9 @@ const toAdmin = (row: CertificateRow): AdminCertificateDto => {
     revokedOn: row.revokedOn ?? null,
     revokedReason: row.revokedReason ?? null,
     deletedAt: row.deletedAt ? row.deletedAt.toISOString() : null,
+    hasPdf: Boolean(row.pdfKey),
+    pdfSize: row.pdfSize ?? null,
+    pdfUploadedAt: row.pdfUploadedAt ? row.pdfUploadedAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
   };
@@ -89,7 +96,10 @@ const toAdmin = (row: CertificateRow): AdminCertificateDto => {
 
 @Injectable()
 export class CertificatesService {
-  constructor(@Inject(DATABASE) private readonly db: Database) {}
+  constructor(
+    @Inject(DATABASE) private readonly db: Database,
+    private readonly storage: StorageService,
+  ) {}
 
   /* Public lookup. A soft-deleted certificate is indistinguishable from an
      unknown one — the printed document must stop verifying entirely. */
@@ -219,6 +229,91 @@ export class CertificatesService {
       .returning();
 
     if (!row) throw new NotFoundException("Certificate not found");
+    return toAdmin(row);
+  }
+
+  /* --- PDF storage (private bucket) -------------------------------------- */
+
+  /* Attaches a generated PDF to an existing certificate record. The certificate
+     must already exist: the PDF is the artefact, the row is the source of truth
+     for verification. */
+  async attachPdf(
+    rawId: string,
+    file: { buffer: Buffer; originalname: string },
+  ): Promise<AdminCertificateDto> {
+    const id = normalizeCertificateId(rawId);
+
+    const [existing] = await this.db
+      .select()
+      .from(certificates)
+      .where(eq(certificates.id, id))
+      .limit(1);
+
+    if (!existing) throw new NotFoundException("Certificate not found");
+
+    const key = this.storage.certificateKey(id);
+    await this.storage.putPrivate(key, file.buffer, "application/pdf", {
+      certificateId: id,
+      originalName: file.originalname,
+    });
+
+    const [row] = await this.db
+      .update(certificates)
+      .set({
+        pdfKey: key,
+        pdfSize: file.buffer.byteLength,
+        pdfUploadedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(certificates.id, id))
+      .returning();
+
+    return toAdmin(row);
+  }
+
+  /* Returns the bytes for the download endpoint. Deliberately does not check
+     revocation: the issued document is what it is, and revocation is reported
+     by the verification page, not by withholding the artefact from its owner
+     or an auditor. */
+  async readPdf(rawId: string): Promise<{ body: Buffer; filename: string }> {
+    const id = normalizeCertificateId(rawId);
+
+    const [row] = await this.db
+      .select()
+      .from(certificates)
+      .where(eq(certificates.id, id))
+      .limit(1);
+
+    if (!row) throw new NotFoundException("Certificate not found");
+    if (!row.pdfKey) throw new NotFoundException("No PDF attached to this certificate");
+
+    const body = await this.storage.getPrivate(row.pdfKey);
+    if (!body) throw new NotFoundException("Certificate PDF is missing from storage");
+
+    return { body, filename: `${id}.pdf` };
+  }
+
+  async removePdf(rawId: string): Promise<AdminCertificateDto> {
+    const id = normalizeCertificateId(rawId);
+
+    const [existing] = await this.db
+      .select()
+      .from(certificates)
+      .where(eq(certificates.id, id))
+      .limit(1);
+
+    if (!existing) throw new NotFoundException("Certificate not found");
+
+    if (existing.pdfKey) {
+      await this.storage.deletePrivate(existing.pdfKey);
+    }
+
+    const [row] = await this.db
+      .update(certificates)
+      .set({ pdfKey: null, pdfSize: null, pdfUploadedAt: null, updatedAt: new Date() })
+      .where(eq(certificates.id, id))
+      .returning();
+
     return toAdmin(row);
   }
 }

@@ -32,6 +32,10 @@ const envSchema = z.object({
   S3_ENDPOINT: z.string().url().default("http://localhost:9002"),
   S3_REGION: z.string().default("us-east-1"),
   S3_BUCKET: z.string().default("avatars"),
+  /* Certificate PDFs live in their own bucket and are NOT public-read:
+     IDs are sequential, so a public bucket would let anyone enumerate
+     every recipient. Files are streamed through the API instead. */
+  S3_CERTIFICATES_BUCKET: z.string().default("certificates"),
   S3_ACCESS_KEY: z.string().default("minioadmin"),
   S3_SECRET_KEY: z.string().default("minioadmin"),
   S3_FORCE_PATH_STYLE: z

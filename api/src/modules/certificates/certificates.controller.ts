@@ -1,5 +1,7 @@
-import { Body, Controller, Delete, Get, Header, NotFoundException, Param, Post, Query } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, Header, NotFoundException, Param, Post, Query, Res, StreamableFile, UploadedFile, UseInterceptors, BadRequestException, Delete } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
+import type { Response } from "express";
 
 import { isCertificateId, normalizeCertificateId } from "@/_shared/certificates";
 import { AdminOnly, Public } from "@/auth/auth.decorators";
@@ -10,6 +12,8 @@ import {
   RevokeCertificateDto,
 } from "@/modules/certificates/dto/certificate.dto";
 import { CertificatesService } from "@/modules/certificates/certificates.service";
+
+const MAX_PDF_SIZE = 10 * 1024 * 1024;
 
 @ApiTags("certificates")
 @Controller("certificates")
@@ -79,5 +83,57 @@ export class CertificatesController {
   @ApiBearerAuth()
   async restore(@Body() body: CertificateIdDto) {
     return this.service.restore(body);
+  }
+
+  /* --- PDF in the private bucket ----------------------------------------- */
+
+  @Post(":id/pdf")
+  @AdminOnly()
+  @ApiBearerAuth()
+  @ApiConsumes("multipart/form-data")
+  @UseInterceptors(FileInterceptor("file", { limits: { fileSize: MAX_PDF_SIZE } }))
+  async uploadPdf(
+    @Param("id") id: string,
+    @UploadedFile() file: Express.Multer.File | undefined,
+  ) {
+    if (!file) throw new BadRequestException("No file provided");
+
+    const isPdf =
+      file.mimetype === "application/pdf" ||
+      file.originalname.toLowerCase().endsWith(".pdf");
+    if (!isPdf) throw new BadRequestException("Only PDF files are accepted");
+    if (file.size > MAX_PDF_SIZE) {
+      throw new BadRequestException(`PDF too large. Max size: ${MAX_PDF_SIZE / 1024 / 1024}MB`);
+    }
+
+    return this.service.attachPdf(id, {
+      buffer: file.buffer,
+      originalname: file.originalname,
+    });
+  }
+
+  /* Public download by certificate ID. The bucket is private, so this route is
+     the only way to fetch the file — it streams the bytes and never exposes the
+     object key or a bucket URL. */
+  @Get(":id/pdf")
+  @Public()
+  async downloadPdf(@Param("id") id: string, @Res({ passthrough: true }) res: Response) {
+    const { body, filename } = await this.service.readPdf(id);
+
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `inline; filename="${filename}"`,
+      "Cache-Control": "no-store",
+      "Content-Length": String(body.byteLength),
+    });
+
+    return new StreamableFile(body);
+  }
+
+  @Delete(":id/pdf")
+  @AdminOnly()
+  @ApiBearerAuth()
+  async deletePdf(@Param("id") id: string) {
+    return this.service.removePdf(id);
   }
 }

@@ -189,6 +189,11 @@ export const certificates = pgTable(
     status: text("status").notNull().default("issued"),
     revokedOn: text("revoked_on"),
     revokedReason: text("revoked_reason"),
+    /* Object key in the private certificates bucket. Nullable because a record
+       can exist before its PDF is uploaded (and older rows have no file). */
+    pdfKey: text("pdf_key"),
+    pdfSize: integer("pdf_size"),
+    pdfUploadedAt: timestamp("pdf_uploaded_at", { withTimezone: true }),
     /* Soft delete: a mistakenly-created record is hidden everywhere but kept,
        because the printed PDF may already be in circulation and an audit trail
        matters more than reclaiming the row. */

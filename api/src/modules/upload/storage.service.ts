@@ -1,8 +1,11 @@
 import {
   CreateBucketCommand,
+  GetObjectCommand,
   HeadBucketCommand,
-  PutBucketPolicyCommand,
+  HeadObjectCommand,
   PutObjectCommand,
+  PutBucketPolicyCommand,
+  DeleteObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
@@ -38,25 +41,37 @@ export class StorageService implements OnModuleInit {
   });
 
   async onModuleInit(): Promise<void> {
+    await this.ensureBucket(env.S3_BUCKET, true);
+    await this.ensureBucket(env.S3_CERTIFICATES_BUCKET, false);
+  }
+
+  private async ensureBucket(bucket: string, publicRead: boolean): Promise<void> {
     try {
-      await this.client.send(new HeadBucketCommand({ Bucket: env.S3_BUCKET }));
+      await this.client.send(new HeadBucketCommand({ Bucket: bucket }));
+      return;
     } catch {
-      try {
-        await this.client.send(new CreateBucketCommand({ Bucket: env.S3_BUCKET }));
+      // fall through and create
+    }
+
+    try {
+      await this.client.send(new CreateBucketCommand({ Bucket: bucket }));
+      if (publicRead) {
         await this.client.send(
           new PutBucketPolicyCommand({
-            Bucket: env.S3_BUCKET,
-            Policy: PUBLIC_READ_POLICY(env.S3_BUCKET),
+            Bucket: bucket,
+            Policy: PUBLIC_READ_POLICY(bucket),
           }),
         );
-        this.logger.log(`Created bucket "${env.S3_BUCKET}" with public read access`);
-      } catch (error) {
-        this.logger.warn(
-          `Could not verify/create bucket "${env.S3_BUCKET}": ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
       }
+      this.logger.log(
+        `Created bucket "${bucket}"${publicRead ? " with public read access" : " (private)"}`,
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Could not verify/create bucket "${bucket}": ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
     }
   }
 
@@ -77,5 +92,65 @@ export class StorageService implements OnModuleInit {
     );
 
     return this.publicUrl(key);
+  }
+
+  /* --- private certificate storage --------------------------------------- */
+
+  async putPrivate(
+    key: string,
+    body: Buffer,
+    contentType: string,
+    metadata?: Record<string, string>,
+  ): Promise<void> {
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: env.S3_CERTIFICATES_BUCKET,
+        Key: key,
+        Body: body,
+        ContentType: contentType,
+        Metadata: metadata,
+        /* Private objects are served through the API, which sets its own
+           cache headers. Immutable is still correct: a certificate PDF is
+           never re-written under the same key. */
+        CacheControl: "private, max-age=0, no-store",
+      }),
+    );
+  }
+
+  async headPrivate(key: string): Promise<boolean> {
+    try {
+      await this.client.send(
+        new HeadObjectCommand({ Bucket: env.S3_CERTIFICATES_BUCKET, Key: key }),
+      );
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async getPrivate(key: string): Promise<Buffer | null> {
+    try {
+      const result = await this.client.send(
+        new GetObjectCommand({ Bucket: env.S3_CERTIFICATES_BUCKET, Key: key }),
+      );
+
+      if (!result.Body) return null;
+      const bytes = await result.Body.transformToByteArray();
+      return Buffer.from(bytes);
+    } catch {
+      return null;
+    }
+  }
+
+  async deletePrivate(key: string): Promise<void> {
+    await this.client.send(
+      new DeleteObjectCommand({ Bucket: env.S3_CERTIFICATES_BUCKET, Key: key }),
+    );
+  }
+
+  certificateKey(id: string): string {
+    // Shard by year so one prefix never holds tens of thousands of objects.
+    const year = id.match(/-(\d{4})-/)?.[1] ?? "unknown";
+    return `certificates/${year}/${id}.pdf`;
   }
 }
