@@ -28,6 +28,10 @@ until `SURVEY_PAGE_ENABLED=true` is set in the build environment. See
 [`docs/survey-page.md`](docs/survey-page.md) for how to enable it and edit its
 content.
 
+`/financial` (Financial Services) is likewise gated behind
+`FINANCIAL_PAGE_ENABLED`. See [`docs/financial-page.md`](docs/financial-page.md)
+— it covers enabling the page and the compliance constraints on its copy.
+
 ## Local development
 
 Run the backend first (see `api/README.md`), then:
