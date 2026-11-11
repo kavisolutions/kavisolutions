@@ -66,10 +66,13 @@ All prefixed with `/api`. Auth routes are Better Auth: `/api/auth/*`.
 | POST | `/contact` | public, throttled | sends mail to the configured contact address |
 | POST | `/survey/enquiries` | public, throttled | survey page forms (`kind`: `client` \| `surveyor`) |
 | POST | `/financial/enquiries` | public, throttled | financial page forms (`kind`: `individual` \| `business`) |
-| POST | `/surveyors/register` | public, throttled | surveyor network registration (stored) || GET | `/surveyors` | admin | list (`?status=`, `?search=`) |
+| POST | `/surveyors/register` | public, throttled | surveyor network registration (stored) |
+| GET | `/surveyors` | admin | list (`?status=`, `?search=`) |
 | PATCH | `/surveyors/:id` | admin | profile, notes and status workflow |
 | DELETE | `/surveyors/:id` | admin | remove a profile |
 | POST | `/surveyors/:id/resend` | admin | re-send the notification email |
+| GET | `/pages` | public, uncached | which public pages are switched on |
+| PATCH | `/pages` | admin | publish/unpublish `survey` and `financial` |
 
 Certificates are generated offline from the `certificates/` library; the API only
 keeps the record that makes `/verify/<id>` work. Revoked records still resolve but

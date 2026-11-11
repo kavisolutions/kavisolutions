@@ -12,6 +12,7 @@ import { ContactModule } from "@/modules/contact/contact.module";
 import { FinancialModule } from "@/modules/financial/financial.module";
 import { HealthModule } from "@/modules/health/health.module";
 import { MeModule } from "@/modules/me/me.module";
+import { PagesModule } from "@/modules/pages/pages.module";
 import { ProjectsModule } from "@/modules/projects/projects.module";
 import { RolesModule } from "@/modules/roles/roles.module";
 import { SettingsModule } from "@/modules/settings/settings.module";
@@ -41,6 +42,7 @@ import { UploadModule } from "@/modules/upload/upload.module";
     SurveyModule,
     SurveyorsModule,
     FinancialModule,
+    PagesModule,
   ],
   controllers: [AuthController],
   providers: [
