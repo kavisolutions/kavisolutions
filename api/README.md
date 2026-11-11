@@ -52,8 +52,25 @@ All prefixed with `/api`. Auth routes are Better Auth: `/api/auth/*`.
 | GET/PUT | `/settings` | admin | tagline / description / contact email |
 | GET | `/projects` | public | list |
 | POST/PATCH/DELETE | `/projects` | admin | create / update (`id` in body) / delete (`?id=`) |
+| GET | `/certificates/:id` | public, uncached | verify one certificate (404 when unknown) |
+| GET | `/certificates` | admin | list, including revocation audit fields |
+| POST | `/certificates` | admin | record / update an issued certificate |
+| POST | `/certificates/revoke` | admin | revoke (`status`, `revokedOn`, `revokedReason`) |
+| POST | `/certificates/reinstate` | admin | bring a revoked certificate back to `issued` |
+| DELETE | `/certificates?id=` | admin | soft delete (hidden, no longer verifiable, recoverable) |
+| POST | `/certificates/restore` | admin | clear a soft delete |
 | POST | `/upload` | signed-in | multipart `file`, ≤5 MB, jpeg/png/webp/gif |
 | POST | `/contact` | public, throttled | sends mail to the configured contact address |
+
+Certificates are generated offline from the `certificates/` library; the API only
+keeps the record that makes `/verify/<id>` work. Revoked records still resolve but
+show as invalid and hide the recipient name. Re-recording an existing certificate
+never un-revokes it — that is what `POST /certificates/reinstate` is for.
+
+Deletes are soft (`deleted_at`): the row is kept for the audit trail, the public
+lookup returns 404, and `GET /certificates?includeDeleted=true` plus
+`POST /certificates/restore` makes a mistake reversible. Re-recording a deleted
+ID also clears the tombstone.
 
 Auth: send the Better Auth token as `Authorization: Bearer <token>` **or** rely on the
 session cookie (same origin). Sign-in: `POST /api/auth/sign-in/email`.

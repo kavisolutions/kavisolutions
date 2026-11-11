@@ -19,6 +19,10 @@ requests to the backend via the `BACKEND_URL` rewrite in `next.config.ts`.
 5. **Fellowship** — the Kavi Fellows 12-week program
 6. **Who we are (Team)** — the people behind the studio
 
+Public pages also include `/projects`, `/team` and `/verify` (certificate
+verification by ID, also reachable as `/verify/<id>` from a printed QR code).
+`/admin` covers team, roles, teams, projects, certificates and settings.
+
 ## Local development
 
 Run the backend first (see `api/README.md`), then:
