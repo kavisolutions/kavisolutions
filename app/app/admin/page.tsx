@@ -7,6 +7,17 @@ import { authClient, useAuth } from "@/lib/auth-context";
 import GradientPicker from "@/components/GradientPicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getInitials, type OrgRole, type OrgTeam, type TeamMember, type Project, COMMON_SKILLS } from "@/lib/team";
+import {
+  CERTIFICATE_TYPE_LABELS,
+  CERTIFICATE_TYPE_PREFIXES,
+  certificateTypeFromId,
+  formatCertificateDate,
+  formatCertificatePeriod,
+  retypeCertificateId,
+  type AdminCertificate,
+  type CertificateDraft,
+  type CertificateType,
+} from "@/lib/certificates";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,6 +49,9 @@ import {
   Loader2,
   Upload,
   User,
+  Award,
+  RotateCcw,
+  Ban,
 } from "lucide-react";
 
 type AdminEntry = { email: string; source: "env" | "db" };
@@ -92,11 +106,40 @@ const emptyProjectDraft = (): ProjectDraft => ({
   sortOrder: 0,
 });
 
+const emptyCertificateDraft = (): CertificateDraft => ({
+  id: "",
+  type: "fellowship",
+  recipientName: "",
+  programme: "",
+  role: "",
+  startDate: "",
+  endDate: "",
+  issuedOn: new Date().toISOString().slice(0, 10),
+  summary: "",
+});
+
+/* class-validator messages are written for developers. Translate the ones an
+   admin can actually hit into something actionable. */
+const friendlyCertificateError = (raw: string): string => {
+  if (/must match \/\^KV-/.test(raw)) return "Certificate ID must look like KV-FEL-2026-0001.";
+  if (/must be a valid ISO 8601 date/.test(raw)) {
+    return "That date does not exist. Check the day and month.";
+  }
+  if (/must be one of the following values/.test(raw)) {
+    return "Choose one of the five certificate types.";
+  }
+  if (/must be a string|should not be empty/.test(raw)) {
+    return "Fill in the required fields before saving.";
+  }
+  return raw;
+};
+
 const sections = [
   { key: "team", label: "Team members", icon: Users, description: "Manage your public team directory and member profiles" },
   { key: "roles", label: "Roles", icon: BriefcaseBusiness, description: "Define titles and job responsibilities" },
   { key: "teams", label: "Teams", icon: Layers3, description: "Organize people into functional teams and departments" },
   { key: "projects", label: "Projects", icon: FolderKanban, description: "Manage featured work, tech stacks, and live links" },
+  { key: "certificates", label: "Certificates", icon: Award, description: "Issue, revoke and reinstate verifiable certificates" },
   { key: "admins", label: "Administrators", icon: ShieldCheck, description: "Control workspace access and administrative privileges" },
   { key: "settings", label: "Settings", icon: Settings2, description: "Update company profile and public page metadata" },
 ] as const;
@@ -136,6 +179,15 @@ export default function AdminPage() {
   const [projectDraft, setProjectDraft] = useState<ProjectDraft | null>(null);
   const [newSkill, setNewSkill] = useState("");
 
+  const [certificates, setCertificates] = useState<AdminCertificate[]>([]);
+  const [certificateDraft, setCertificateDraft] = useState<CertificateDraft | null>(null);
+  const [savingCertificate, setSavingCertificate] = useState(false);
+  const [certificateError, setCertificateError] = useState("");
+  const [certificateQuery, setCertificateQuery] = useState("");
+  const [certificateStatusFilter, setCertificateStatusFilter] = useState("all");
+  const [revokeTarget, setRevokeTarget] = useState<AdminCertificate | null>(null);
+  const [revokeReason, setRevokeReason] = useState("");
+
   const [draft, setDraft] = useState<MemberDraft | null>(null);
   const [savingMember, setSavingMember] = useState(false);
   const [savingProject, setSavingProject] = useState(false);
@@ -167,12 +219,64 @@ export default function AdminPage() {
     });
   }, [members, memberQuery, roleFilter, teamFilter]);
 
+  const filteredCertificates = useMemo(() => {
+    const query = certificateQuery.trim().toLowerCase();
+
+    return certificates.filter((certificate) => {
+      const matchesQuery =
+        !query ||
+        `${certificate.id} ${certificate.recipient} ${certificate.programme ?? ""} ${certificate.title}`
+          .toLowerCase()
+          .includes(query);
+
+      const matchesStatus =
+        certificateStatusFilter === "all"
+          ? // "All statuses" means the live register: deleted rows only show
+            // under their own filter, so the default view matches production.
+            !certificate.deletedAt
+          : certificateStatusFilter === "deleted"
+            ? Boolean(certificate.deletedAt)
+            : !certificate.deletedAt && certificate.status === certificateStatusFilter;
+
+      return matchesQuery && matchesStatus;
+    });
+  }, [certificates, certificateQuery, certificateStatusFilter]);
+
+  const deletedCertificateCount = useMemo(
+    () => certificates.filter((certificate) => certificate.deletedAt).length,
+    [certificates],
+  );
+
+  const revokedCertificateCount = useMemo(
+    () =>
+      certificates.filter((certificate) => !certificate.deletedAt && certificate.status === "revoked")
+        .length,
+    [certificates],
+  );
+
+  const certificateDraftIsRevoked = useMemo(() => {
+    if (!certificateDraft) return false;
+    const id = certificateDraft.id.trim().toUpperCase();
+    return certificates.some(
+      (certificate) => certificate.id === id && certificate.status === "revoked",
+    );
+  }, [certificates, certificateDraft]);
+
+  const certificateDraftIsDeleted = useMemo(() => {
+    if (!certificateDraft) return false;
+    const id = certificateDraft.id.trim().toUpperCase();
+    return certificates.some(
+      (certificate) => certificate.id === id && Boolean(certificate.deletedAt),
+    );
+  }, [certificates, certificateDraft]);
+
   const loadAll = useCallback(async () => {
-    const [teamRes, adminsRes, settingsRes, projectsRes] = await Promise.all([
+    const [teamRes, adminsRes, settingsRes, projectsRes, certificatesRes] = await Promise.all([
       fetch("/api/team", withCookies()),
       fetch("/api/admins", withCookies()),
       fetch("/api/settings", withCookies()),
       fetch("/api/projects", withCookies()),
+      fetch("/api/certificates?includeDeleted=true", withCookies()),
     ]);
 
     if (teamRes.status === 401 || adminsRes.status === 401 || adminsRes.status === 403) {
@@ -184,6 +288,7 @@ export default function AdminPage() {
     const adminsData = await adminsRes.json();
     const settingsData = await settingsRes.json().catch(() => null);
     const projectsData = await projectsRes.json().catch(() => null);
+    const certificatesData = await certificatesRes.json().catch(() => null);
 
     setIsAdmin(true);
     setMembers(teamData.members ?? []);
@@ -191,6 +296,7 @@ export default function AdminPage() {
     setOrgTeams(teamData.teams ?? []);
     setAdmins(adminsData.admins ?? []);
     setProjects(projectsData?.projects ?? []);
+    setCertificates(certificatesData?.certificates ?? []);
     setTagline(settingsData?.settings?.tagline ?? "");
     setDescription(settingsData?.settings?.description ?? "");
     setContactEmail(settingsData?.settings?.contactEmail ?? "");
@@ -234,13 +340,13 @@ export default function AdminPage() {
   }, [notice]);
 
   useEffect(() => {
-    if (!draft && !projectDraft && !preview) return;
+    if (!draft && !projectDraft && !preview && !certificateDraft && !revokeTarget) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previous;
     };
-  }, [draft, projectDraft, preview]);
+  }, [draft, projectDraft, preview, certificateDraft, revokeTarget]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -369,6 +475,169 @@ export default function AdminPage() {
     }
 
     setNotice(`${member.name} removed from team`);
+    await loadAll();
+  };
+
+  const saveCertificate = async () => {
+    if (!certificateDraft || savingCertificate) return;
+    setSavingCertificate(true);
+    setCertificateError("");
+
+    const normalizedId = certificateDraft.id.trim().toUpperCase();
+    const isEdit = certificates.some((certificate) => certificate.id === normalizedId);
+
+    if (!/^KV-(FEL|VOL|INT|MEN|EXP)-\d{4}-\d{4}$/.test(normalizedId)) {
+      setCertificateError("Certificate ID must look like KV-FEL-2026-0001.");
+      setSavingCertificate(false);
+      return;
+    }
+
+    if (!certificateDraft.recipientName.trim()) {
+      setCertificateError("Recipient name is required.");
+      setSavingCertificate(false);
+      return;
+    }
+
+    if (!certificateDraft.issuedOn) {
+      setCertificateError("Issue date is required.");
+      setSavingCertificate(false);
+      return;
+    }
+
+    const res = await fetch("/api/certificates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        id: normalizedId,
+        type: certificateDraft.type,
+        recipientName: certificateDraft.recipientName,
+        programme: certificateDraft.programme,
+        role: certificateDraft.role,
+        startDate: certificateDraft.startDate || undefined,
+        endDate: certificateDraft.endDate || undefined,
+        issuedOn: certificateDraft.issuedOn,
+        summary: certificateDraft.summary,
+      }),
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      const raw = Array.isArray(data?.message) ? data.message.join(" · ") : data?.message;
+      setCertificateError(
+        raw ? friendlyCertificateError(raw) : data?.error || "Failed to save certificate",
+      );
+      setSavingCertificate(false);
+      return;
+    }
+
+    setNotice(isEdit ? "Certificate record updated" : "Certificate issued and now verifiable");
+    setCertificateDraft(null);
+    setSavingCertificate(false);
+    await loadAll();
+  };
+
+  const confirmRevoke = async () => {
+    if (!revokeTarget) return;
+    setActionError("");
+
+    const res = await fetch("/api/certificates/revoke", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ id: revokeTarget.id, reason: revokeReason }),
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      const message = Array.isArray(data?.message) ? data.message.join(" · ") : data?.message;
+      setActionError(message ? friendlyCertificateError(message) : "Failed to revoke certificate");
+      return;
+    }
+
+    setRevokeTarget(null);
+    setRevokeReason("");
+    setNotice(`${revokeTarget.id} revoked — public verification now shows it as invalid`);
+    await loadAll();
+  };
+
+  const reinstateCertificate = async (certificate: AdminCertificate) => {
+    if (
+      !window.confirm(
+        `Reinstate ${certificate.id}? Public verification will show it as valid again.`,
+      )
+    ) {
+      return;
+    }
+    setActionError("");
+
+    const res = await fetch("/api/certificates/reinstate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ id: certificate.id }),
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      const message = Array.isArray(data?.message) ? data.message.join(" · ") : data?.message;
+      setActionError(message ? friendlyCertificateError(message) : "Failed to reinstate certificate");
+      return;
+    }
+
+    setNotice(`${certificate.id} reinstated — public verification is valid again`);
+    await loadAll();
+  };
+
+  const deleteCertificate = async (certificate: AdminCertificate) => {
+    if (
+      !window.confirm(
+        `Delete ${certificate.id}? It will stop verifying immediately. The record is kept and can be restored from the Deleted filter.`,
+      )
+    ) {
+      return;
+    }
+    setActionError("");
+
+    const res = await fetch(`/api/certificates?id=${encodeURIComponent(certificate.id)}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      const message = Array.isArray(data?.message) ? data.message.join(" · ") : data?.message;
+      setActionError(message ? friendlyCertificateError(message) : "Failed to delete certificate");
+      return;
+    }
+
+    setNotice(`${certificate.id} deleted — restore it from the Deleted filter if needed`);
+    await loadAll();
+  };
+
+  const restoreCertificate = async (certificate: AdminCertificate) => {
+    setActionError("");
+
+    const res = await fetch("/api/certificates/restore", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ id: certificate.id }),
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      const message = Array.isArray(data?.message) ? data.message.join(" · ") : data?.message;
+      setActionError(message ? friendlyCertificateError(message) : "Failed to restore certificate");
+      return;
+    }
+
+    setNotice(`${certificate.id} restored — it verifies again as ${data.status ?? "issued"}`);
     await loadAll();
   };
 
@@ -706,6 +975,8 @@ export default function AdminPage() {
                   ? orgTeams.length
                   : item.key === "projects"
                   ? projects.length
+                  : item.key === "certificates"
+                  ? certificates.length
                   : item.key === "admins"
                   ? admins.length
                   : null;
@@ -874,6 +1145,23 @@ export default function AdminPage() {
                     className="shadow-sm font-semibold"
                   >
                     <Plus className="h-4 w-4 mr-1.5" /> Add project
+                  </Button>
+                </>
+              )}
+
+              {section === "certificates" && (
+                <>
+                  <Badge variant="outline" className="h-8 rounded-full border-border bg-muted/50 px-3 text-xs font-semibold text-foreground">
+                    {certificates.length} {certificates.length === 1 ? "certificate" : "certificates"}
+                  </Badge>
+                  <Button
+                    onClick={() => {
+                      setCertificateDraft(emptyCertificateDraft());
+                      setCertificateError("");
+                    }}
+                    className="shadow-sm font-semibold"
+                  >
+                    <Plus className="h-4 w-4 mr-1.5" /> Issue certificate
                   </Button>
                 </>
               )}
@@ -1892,6 +2180,541 @@ export default function AdminPage() {
                   </TableBody>
                 </Table>
               </Card>
+            </div>
+          )}
+
+          {/* SECTION: CERTIFICATES */}
+          {section === "certificates" && (
+            <div className="space-y-4">
+              {/* Issue / Edit Certificate Modal */}
+              {certificateDraft && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+                  <div className="relative my-8 w-full max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-2xl sm:p-8">
+                    <div className="mb-6 flex items-center justify-between border-b border-border pb-4">
+                      <div>
+                        <h2 className="text-lg font-bold text-foreground">
+                          {certificates.some(
+                            (certificate) =>
+                              certificate.id === certificateDraft.id.trim().toUpperCase(),
+                          )
+                            ? "Edit Certificate Record"
+                            : "Issue New Certificate"}
+                        </h2>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Recording a certificate makes it verifiable at /verify/&lt;id&gt;. The printed
+                          PDF is still generated separately.
+                        </p>
+                        {certificateDraftIsDeleted && (
+                          <p className="mt-2 rounded-md border border-amber-500/25 bg-amber-500/10 px-2.5 py-1.5 text-[11px] font-medium text-amber-700 dark:text-amber-300">
+                            This record is deleted and does not verify. Saving will restore it.
+                          </p>
+                        )}
+                        {!certificateDraftIsDeleted && certificateDraftIsRevoked && (
+                          <p className="mt-2 rounded-md border border-amber-500/25 bg-amber-500/10 px-2.5 py-1.5 text-[11px] font-medium text-amber-700 dark:text-amber-300">
+                            This record is revoked. Saving edits will not make it valid again — use
+                            Reinstate for that.
+                          </p>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => setCertificateDraft(null)}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        aria-label="Close modal"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                            Certificate ID *
+                          </label>
+                          <Input
+                            placeholder="KV-FEL-2026-0001"
+                            value={certificateDraft.id}
+                            spellCheck={false}
+                            className="font-mono uppercase"
+                            onChange={(event) => {
+                              const id = event.target.value;
+                              const derived = certificateTypeFromId(id);
+                              setCertificateDraft({
+                                ...certificateDraft,
+                                id,
+                                ...(derived ? { type: derived } : {}),
+                              });
+                            }}
+                          />
+                          <p className="mt-1 text-[11px] text-muted-foreground">
+                            Must use the prefix for its type:{" "}
+                            <span className="font-mono">
+                              KV-{CERTIFICATE_TYPE_PREFIXES[certificateDraft.type]}-YYYY-NNNN
+                            </span>
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                            Certificate Type *
+                          </label>
+                          <Select
+                            value={certificateDraft.type}
+                            onValueChange={(value) => {
+                              const type = value as CertificateType;
+                              setCertificateDraft({
+                                ...certificateDraft,
+                                type,
+                                id: retypeCertificateId(
+                                  certificateDraft.id,
+                                  CERTIFICATE_TYPE_PREFIXES[type],
+                                ),
+                              });
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {(Object.keys(CERTIFICATE_TYPE_LABELS) as CertificateType[]).map((type) => (
+                                <SelectItem key={type} value={type}>
+                                  {CERTIFICATE_TYPE_LABELS[type]}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                          Recipient Name *
+                        </label>
+                        <Input
+                          placeholder="As printed on the certificate"
+                          value={certificateDraft.recipientName}
+                          onChange={(event) =>
+                            setCertificateDraft({
+                              ...certificateDraft,
+                              recipientName: event.target.value,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                            Programme
+                          </label>
+                          <Input
+                            placeholder="e.g. Kavi Fellows · Cohort 04"
+                            value={certificateDraft.programme}
+                            onChange={(event) =>
+                              setCertificateDraft({
+                                ...certificateDraft,
+                                programme: event.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                            Role
+                          </label>
+                          <Input
+                            placeholder="e.g. Software Engineering Intern"
+                            value={certificateDraft.role}
+                            onChange={(event) =>
+                              setCertificateDraft({ ...certificateDraft, role: event.target.value })
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-3">
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                            Start Date
+                          </label>
+                          <Input
+                            type="date"
+                            value={certificateDraft.startDate}
+                            onChange={(event) =>
+                              setCertificateDraft({
+                                ...certificateDraft,
+                                startDate: event.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                            End Date
+                          </label>
+                          <Input
+                            type="date"
+                            value={certificateDraft.endDate}
+                            onChange={(event) =>
+                              setCertificateDraft({
+                                ...certificateDraft,
+                                endDate: event.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                            Issued On *
+                          </label>
+                          <Input
+                            type="date"
+                            value={certificateDraft.issuedOn}
+                            onChange={(event) =>
+                              setCertificateDraft({
+                                ...certificateDraft,
+                                issuedOn: event.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                          Summary
+                        </label>
+                        <textarea
+                          className="flex min-h-[70px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          placeholder="Optional note shown on the verification page."
+                          rows={3}
+                          value={certificateDraft.summary}
+                          onChange={(event) =>
+                            setCertificateDraft({
+                              ...certificateDraft,
+                              summary: event.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    {certificateError && (
+                      <div className="mt-4 flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive">
+                        <AlertCircle className="h-4 w-4 shrink-0" />
+                        <span>{certificateError}</span>
+                      </div>
+                    )}
+
+                    <div className="mt-6 flex items-center justify-end gap-3 border-t border-border pt-4">
+                      <Button variant="outline" onClick={() => setCertificateDraft(null)}>
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={saveCertificate}
+                        disabled={savingCertificate}
+                        className="font-semibold"
+                      >
+                        {savingCertificate ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                        Save Certificate
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Revoke Confirmation Modal */}
+              {revokeTarget && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                  <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl">
+                    <div className="mb-4 flex items-start gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
+                        <Ban className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h2 className="text-base font-bold text-foreground">Revoke certificate</h2>
+                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                          <span className="font-mono font-semibold text-foreground">{revokeTarget.id}</span>{" "}
+                          will show as invalid on the public verification page, and the recipient
+                          name will be hidden.
+                        </p>
+                      </div>
+                    </div>
+
+                    <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                      Reason (recorded internally)
+                    </label>
+                    <Input
+                      placeholder="e.g. Issued in error"
+                      value={revokeReason}
+                      onChange={(event) => setRevokeReason(event.target.value)}
+                    />
+
+                    <div className="mt-6 flex items-center justify-end gap-3 border-t border-border pt-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setRevokeTarget(null);
+                          setRevokeReason("");
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={confirmRevoke}
+                        className="bg-destructive font-semibold text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        <Ban className="mr-2 h-4 w-4" /> Revoke
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Filters */}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="relative flex-1 sm:max-w-sm">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by ID, recipient or programme…"
+                    value={certificateQuery}
+                    onChange={(event) => setCertificateQuery(event.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+                <Select value={certificateStatusFilter} onValueChange={setCertificateStatusFilter}>
+                  <SelectTrigger className="w-full sm:w-[190px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All statuses</SelectItem>
+                    <SelectItem value="issued">Issued only</SelectItem>
+                    <SelectItem value="revoked">
+                      Revoked only{revokedCertificateCount ? ` (${revokedCertificateCount})` : ""}
+                    </SelectItem>
+                    <SelectItem value="deleted">
+                      Deleted only{deletedCertificateCount ? ` (${deletedCertificateCount})` : ""}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className="text-xs text-muted-foreground sm:ml-auto">
+                  Showing {filteredCertificates.length} of {certificates.length}
+                </div>
+              </div>
+
+              {/* Certificates Table Card */}
+              <Card className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+                <Table>
+                  <TableHeader className="bg-muted/40">
+                    <TableRow className="border-border hover:bg-transparent">
+                      <TableHead className="w-full pl-5 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Certificate</TableHead>
+                      <TableHead className="whitespace-nowrap font-semibold text-xs uppercase tracking-wider text-muted-foreground">Recipient</TableHead>
+                      <TableHead className="whitespace-nowrap font-semibold text-xs uppercase tracking-wider text-muted-foreground">Issued</TableHead>
+                      <TableHead className="whitespace-nowrap font-semibold text-xs uppercase tracking-wider text-muted-foreground">Status</TableHead>
+                      <TableHead className="whitespace-nowrap pr-5 text-right font-semibold text-xs uppercase tracking-wider text-muted-foreground">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredCertificates.map((certificate) => (
+                      <TableRow key={certificate.id} className="border-border hover:bg-muted/30 transition-colors">
+                        <TableCell className="pl-5 py-3.5 max-w-0">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div
+                              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white shadow-xs ${
+                                certificate.status === "revoked"
+                                  ? "bg-gradient-to-br from-rose-600 to-red-700"
+                                  : "bg-gradient-to-br from-blue-600 to-indigo-600"
+                              }`}
+                            >
+                              <Award className="h-4 w-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="truncate font-mono text-xs font-semibold text-foreground">
+                                {certificate.id}
+                              </p>
+                              <p className="truncate text-xs text-muted-foreground">
+                                {certificate.title}
+                                {certificate.programme ? ` · ${certificate.programme}` : ""}
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-3.5">
+                          <p className="text-sm font-medium text-foreground">{certificate.recipient}</p>
+                          {certificate.role && (
+                            <p className="text-xs text-muted-foreground">{certificate.role}</p>
+                          )}
+                        </TableCell>
+                        <TableCell className="py-3.5 whitespace-nowrap">
+                          <span className="text-xs text-foreground">
+                            {formatCertificateDate(certificate.issuedOn)}
+                          </span>
+                          {(certificate.startDate || certificate.endDate) && (
+                            <p className="text-[11px] text-muted-foreground">
+                              {formatCertificatePeriod(certificate.startDate, certificate.endDate)}
+                            </p>
+                          )}
+                        </TableCell>
+                        <TableCell className="py-3.5">
+                          {certificate.deletedAt ? (
+                            <div className="space-y-1">
+                              <Badge
+                                variant="outline"
+                                className="border-border bg-muted text-[10px] font-semibold uppercase tracking-wide text-muted-foreground"
+                              >
+                                Deleted
+                              </Badge>
+                              <p className="text-[11px] text-muted-foreground">
+                                {formatCertificateDate(certificate.deletedAt.slice(0, 10))}
+                              </p>
+                            </div>
+                          ) : certificate.status === "revoked" ? (
+                            <div className="space-y-1">
+                              <Badge
+                                variant="outline"
+                                className="border-destructive/30 bg-destructive/10 text-[10px] font-semibold uppercase tracking-wide text-destructive"
+                              >
+                                Revoked
+                              </Badge>
+                              {certificate.revokedOn && (
+                                <p className="text-[11px] text-muted-foreground">
+                                  {formatCertificateDate(certificate.revokedOn)}
+                                </p>
+                              )}
+                            </div>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className="border-emerald-500/30 bg-emerald-500/10 text-[10px] font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-400"
+                            >
+                              Issued
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="pr-5 py-3.5 text-right">
+                          <div className="flex justify-end gap-1 whitespace-nowrap">
+                            {!certificate.deletedAt && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                                title="Open the public verification page"
+                                aria-label={`Open the verification page for ${certificate.id}`}
+                                onClick={() =>
+                                  window.open(
+                                    `/verify/${encodeURIComponent(certificate.id)}`,
+                                    "_blank",
+                                    "noopener",
+                                  )
+                                }
+                              >
+                                <ExternalLink className="h-3.5 w-3.5" />
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                              title="Edit this record"
+                              aria-label={`Edit ${certificate.id}`}
+                              onClick={() => {
+                                setCertificateError("");
+                                setCertificateDraft({
+                                  id: certificate.id,
+                                  type: certificate.type,
+                                  recipientName: certificate.recipient,
+                                  programme: certificate.programme ?? "",
+                                  role: certificate.role ?? "",
+                                  startDate: certificate.startDate ?? "",
+                                  endDate: certificate.endDate ?? "",
+                                  issuedOn: certificate.issuedOn,
+                                  summary: certificate.summary ?? "",
+                                });
+                              }}
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </Button>
+                            {certificate.deletedAt ? (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 px-2 text-xs text-emerald-600 hover:bg-emerald-500/10 hover:text-emerald-600 dark:text-emerald-400"
+                                title="Restore this certificate"
+                                aria-label={`Restore ${certificate.id}`}
+                                onClick={() => restoreCertificate(certificate)}
+                              >
+                                <RotateCcw className="h-3.5 w-3.5" />
+                              </Button>
+                            ) : (
+                              <>
+                                {certificate.status === "revoked" ? (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 px-2.5 text-xs text-emerald-600 hover:bg-emerald-500/10 hover:text-emerald-600 dark:text-emerald-400"
+                                    title="Make this certificate valid again"
+                                    onClick={() => reinstateCertificate(certificate)}
+                                  >
+                                    <RotateCcw className="h-3.5 w-3.5 mr-1" /> Reinstate
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 px-2 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                                    title="Revoke this certificate"
+                                    aria-label={`Revoke ${certificate.id}`}
+                                    onClick={() => {
+                                      setRevokeReason("");
+                                      setRevokeTarget(certificate);
+                                    }}
+                                  >
+                                    <Ban className="h-3.5 w-3.5" />
+                                  </Button>
+                                )}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 px-2 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                                  title="Delete this record (recoverable)"
+                                  aria-label={`Delete ${certificate.id}`}
+                                  onClick={() => deleteCertificate(certificate)}
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {filteredCertificates.length === 0 && (
+                      <TableRow className="hover:bg-transparent">
+                        <TableCell colSpan={5} className="h-32 text-center text-sm text-muted-foreground">
+                          {certificates.length === 0
+                            ? "No certificates recorded yet. Click “+ Issue certificate” to add one."
+                            : "No certificates match this search."}
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </Card>
+
+              {revokedCertificateCount > 0 && (
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  Revoked certificates still resolve on the verification page, but they show as
+                  invalid and hide the recipient name. Reinstate one to make it valid again.
+                </p>
+              )}
+
+              {deletedCertificateCount > 0 && (
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  {deletedCertificateCount} deleted{" "}
+                  {deletedCertificateCount === 1 ? "record is" : "records are"} hidden from this
+                  view and no longer verify. Choose “Deleted only” to restore one.
+                </p>
+              )}
             </div>
           )}
 
