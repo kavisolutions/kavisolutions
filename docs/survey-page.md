@@ -36,6 +36,22 @@ Until then:
 
 To take it down again, remove the variable and rebuild.
 
+### Environment dashboard
+
+The var lives in the Env Manager project `kavi-solutions`, env `fe-local`
+(project `kavi-solutions` holds frontend envs; `kavi-solutions-be` holds the
+backend ones). Production is intentionally left without it, so the page stays
+unpublished until you set it on the server and rebuild.
+
+A local checkout can pull it with a deploy token:
+
+```bash
+curl -fsSk -H "Authorization: Bearer $ENV_TOKEN" \
+  https://env.arkasodhara.tech/api/v1/kavi-solutions/fe-local -o app/.env.local
+```
+
+`app/.env.example` documents the key with a safe default of `false`.
+
 ## Where the API is called
 
 `POST /api/survey/enquiries` — public, throttled to 5 requests/minute per IP.
