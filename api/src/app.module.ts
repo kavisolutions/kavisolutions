@@ -9,6 +9,7 @@ import { DrizzleModule } from "@/db/drizzle/drizzle.module";
 import { AdminsModule } from "@/modules/admins/admins.module";
 import { CertificatesModule } from "@/modules/certificates/certificates.module";
 import { ContactModule } from "@/modules/contact/contact.module";
+import { FinancialModule } from "@/modules/financial/financial.module";
 import { HealthModule } from "@/modules/health/health.module";
 import { MeModule } from "@/modules/me/me.module";
 import { ProjectsModule } from "@/modules/projects/projects.module";
@@ -39,6 +40,7 @@ import { UploadModule } from "@/modules/upload/upload.module";
     ContactModule,
     SurveyModule,
     SurveyorsModule,
+    FinancialModule,
   ],
   controllers: [AuthController],
   providers: [

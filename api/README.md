@@ -65,8 +65,8 @@ All prefixed with `/api`. Auth routes are Better Auth: `/api/auth/*`.
 | POST | `/upload` | signed-in | multipart `file`, ≤5 MB, jpeg/png/webp/gif |
 | POST | `/contact` | public, throttled | sends mail to the configured contact address |
 | POST | `/survey/enquiries` | public, throttled | survey page forms (`kind`: `client` \| `surveyor`) |
-| POST | `/surveyors/register` | public, throttled | surveyor network registration (stored) |
-| GET | `/surveyors` | admin | list (`?status=`, `?search=`) |
+| POST | `/financial/enquiries` | public, throttled | financial page forms (`kind`: `individual` \| `business`) |
+| POST | `/surveyors/register` | public, throttled | surveyor network registration (stored) || GET | `/surveyors` | admin | list (`?status=`, `?search=`) |
 | PATCH | `/surveyors/:id` | admin | profile, notes and status workflow |
 | DELETE | `/surveyors/:id` | admin | remove a profile |
 | POST | `/surveyors/:id/resend` | admin | re-send the notification email |

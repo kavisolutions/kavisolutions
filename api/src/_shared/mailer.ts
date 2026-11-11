@@ -131,6 +131,83 @@ export async function sendSurveyorRegisteredEmail(
   });
 }
 
+export type FinancialEnquiryKind = "individual" | "business";
+
+export type FinancialEnquiryMailInput = {
+  kind: FinancialEnquiryKind;
+  name: string;
+  email: string;
+  phone: string;
+  organisation?: string;
+  entityType?: string;
+  service?: string;
+  financialYear?: string;
+  message: string;
+  to: string;
+};
+
+const FINANCIAL_LABEL: Record<FinancialEnquiryKind, string> = {
+  individual: "Individual financial enquiry",
+  business: "Business financial enquiry",
+};
+
+/* Financial enquiries are kept visually distinct from contact/survey mail so
+   the inbox can triage them separately, and the subject never contains more
+   than a name — subject lines leak into notification previews. */
+export async function sendFinancialEnquiryEmail(
+  input: FinancialEnquiryMailInput,
+): Promise<void> {
+  const rows: Array<[string, string]> = [
+    ["Name", input.name],
+    ["Email", input.email],
+    ["Phone", input.phone],
+  ];
+
+  if (input.kind === "business") {
+    if (input.organisation) rows.push(["Organisation", input.organisation]);
+    if (input.entityType) rows.push(["Entity type", input.entityType]);
+  } else if (input.financialYear) {
+    rows.push(["Financial year", input.financialYear]);
+  }
+
+  if (input.service) rows.push(["Interested in", input.service]);
+
+  const accent = input.kind === "business" ? "#1d4ed8" : "#0d7a6b";
+
+  await getTransporter().sendMail({
+    from: `"Kavi Financial Website" <${env.SMTP_USER}>`,
+    to: input.to,
+    replyTo: input.email,
+    subject: `[Kavi Financial] ${FINANCIAL_LABEL[input.kind]} — ${input.name}`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#06060b;color:#e0e0e0;border-radius:12px;">
+        <p style="margin:0 0 4px;color:${accent};font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">
+          ${FINANCIAL_LABEL[input.kind]}
+        </p>
+        <h2 style="color:#ffffff;margin:0 0 16px;">New submission from kavisolutions.in/financial</h2>
+        <table style="width:100%;border-collapse:collapse;">
+          ${rows
+            .map(
+              ([label, value]) => `<tr>
+            <td style="padding:8px 0;color:#a1a1b5;font-weight:bold;width:140px;">${escapeHtml(label)}</td>
+            <td style="padding:8px 0;">${escapeHtml(value)}</td>
+          </tr>`,
+            )
+            .join("")}
+        </table>
+        <div style="margin-top:16px;padding:16px;background:#0b0b14;border-radius:8px;border:1px solid rgba(255,255,255,0.1);">
+          <p style="color:#a1a1b5;font-weight:bold;margin:0 0 8px;">Details</p>
+          <p style="margin:0;white-space:pre-wrap;">${escapeHtml(input.message)}</p>
+        </div>
+        <p style="margin-top:16px;color:#6e6e85;font-size:12px;">
+          Reply directly to this email to reach the enquirer. Do not request documents
+          until scope and engagement terms are agreed in writing.
+        </p>
+      </div>
+    `,
+  });
+}
+
 const escapeHtml = (value: string): string =>
   value
     .replace(/&/g, "&amp;")
