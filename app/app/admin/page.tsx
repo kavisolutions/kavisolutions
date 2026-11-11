@@ -13,6 +13,7 @@ import {
   certificateTypeFromId,
   formatCertificateDate,
   formatCertificatePeriod,
+  formatFileSize,
   retypeCertificateId,
   type AdminCertificate,
   type CertificateDraft,
@@ -63,6 +64,8 @@ import {
   RotateCcw,
   Ban,
   ClipboardList,
+  FileText,
+  FileX,
 } from "lucide-react";
 
 type AdminEntry = { email: string; source: "env" | "db" };
@@ -683,6 +686,72 @@ export default function AdminPage() {
     }
 
     setNotice(`${certificate.id} restored — it verifies again as ${data.status ?? "issued"}`);
+    await loadAll();
+  };
+
+  /* Upload the generated PDF into the private bucket. The file input is hidden
+     and triggered programmatically so each row needs only one button. */
+  const uploadCertificatePdf = (certificate: AdminCertificate) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/pdf,.pdf";
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      if (!file.name.toLowerCase().endsWith(".pdf") && file.type !== "application/pdf") {
+        setActionError("Only PDF files can be attached to a certificate.");
+        return;
+      }
+
+      setActionError("");
+      const form = new FormData();
+      form.append("file", file);
+
+      const res = await fetch(`/api/certificates/${encodeURIComponent(certificate.id)}/pdf`, {
+        method: "POST",
+        body: form,
+        credentials: "include",
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        const message = Array.isArray(data?.message) ? data.message.join(" · ") : data?.message;
+        setActionError(message || "Failed to upload the certificate PDF");
+        return;
+      }
+
+      setNotice(
+        `PDF attached to ${certificate.id} (${formatFileSize(data?.pdfSize ?? file.size)})`,
+      );
+      await loadAll();
+    };
+    input.click();
+  };
+
+  const deleteCertificatePdf = async (certificate: AdminCertificate) => {
+    if (
+      !window.confirm(
+        `Remove the PDF attached to ${certificate.id}? The record stays and still verifies, but the document can no longer be downloaded.`,
+      )
+    ) {
+      return;
+    }
+    setActionError("");
+
+    const res = await fetch(`/api/certificates/${encodeURIComponent(certificate.id)}/pdf`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      setActionError(data?.message || "Failed to remove the PDF");
+      return;
+    }
+
+    setNotice(`PDF removed from ${certificate.id}`);
     await loadAll();
   };
 
@@ -2686,6 +2755,7 @@ export default function AdminPage() {
                       <TableHead className="whitespace-nowrap font-semibold text-xs uppercase tracking-wider text-muted-foreground">Recipient</TableHead>
                       <TableHead className="whitespace-nowrap font-semibold text-xs uppercase tracking-wider text-muted-foreground">Issued</TableHead>
                       <TableHead className="whitespace-nowrap font-semibold text-xs uppercase tracking-wider text-muted-foreground">Status</TableHead>
+                      <TableHead className="whitespace-nowrap font-semibold text-xs uppercase tracking-wider text-muted-foreground">PDF</TableHead>
                       <TableHead className="whitespace-nowrap pr-5 text-right font-semibold text-xs uppercase tracking-wider text-muted-foreground">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -2766,6 +2836,28 @@ export default function AdminPage() {
                             </Badge>
                           )}
                         </TableCell>
+                        <TableCell className="py-3.5">
+                          {certificate.hasPdf ? (
+                            <div className="space-y-0.5">
+                              <a
+                                href={`/api/certificates/${encodeURIComponent(certificate.id)}/pdf`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline"
+                                title="Download the stored PDF"
+                              >
+                                <FileText className="h-3 w-3" /> {formatFileSize(certificate.pdfSize)}
+                              </a>
+                              {certificate.pdfUploadedAt && (
+                                <p className="text-[10px] text-muted-foreground">
+                                  {formatCertificateDate(certificate.pdfUploadedAt.slice(0, 10))}
+                                </p>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-[11px] text-muted-foreground/60">None</span>
+                          )}
+                        </TableCell>
                         <TableCell className="pr-5 py-3.5 text-right">
                           <div className="flex justify-end gap-1 whitespace-nowrap">
                             {!certificate.deletedAt && (
@@ -2809,6 +2901,28 @@ export default function AdminPage() {
                             >
                               <Pencil className="h-3.5 w-3.5" />
                             </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                              title={certificate.hasPdf ? "Replace the stored PDF" : "Attach the generated PDF"}
+                              aria-label={`${certificate.hasPdf ? "Replace" : "Attach"} PDF for ${certificate.id}`}
+                              onClick={() => uploadCertificatePdf(certificate)}
+                            >
+                              <Upload className="h-3.5 w-3.5" />
+                            </Button>
+                            {certificate.hasPdf && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 px-2 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                                title="Remove the stored PDF"
+                                aria-label={`Remove PDF for ${certificate.id}`}
+                                onClick={() => deleteCertificatePdf(certificate)}
+                              >
+                                <FileX className="h-3.5 w-3.5" />
+                              </Button>
+                            )}
                             {certificate.deletedAt ? (
                               <Button
                                 variant="ghost"

@@ -22,6 +22,10 @@ export type AdminCertificate = PublicCertificate & {
   revokedOn: string | null;
   revokedReason: string | null;
   deletedAt: string | null;
+  /** True when a generated PDF is stored in the private bucket. */
+  hasPdf: boolean;
+  pdfSize: number | null;
+  pdfUploadedAt: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -93,6 +97,14 @@ export function todayIso(): string {
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
   return `${now.getFullYear()}-${month}-${day}`;
+}
+
+/* Certificate PDFs are ~900 KB, so show something readable in the table. */
+export function formatFileSize(bytes: number | null | undefined): string {
+  if (!bytes || bytes <= 0) return "";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
 
