@@ -1,0 +1,13 @@
+services:
+  social-agent:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # The example .env binds to loopback for PM2; inside a container it must
+      # listen on all interfaces for the port mapping to work.
+      HOST: 0.0.0.0
+    ports:
+      - "3300:3300"
+    volumes:
+      - ./data:/app/data

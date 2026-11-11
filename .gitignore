@@ -16,6 +16,12 @@ app/out/
 api/dist/
 api/*.tsbuildinfo
 
+# social-agent sidecar build/data
+/social-agent/dist
+/social-agent/data/
+/social-agent/.env
+/social-agent/.env.local
+
 # production
 /build
 
