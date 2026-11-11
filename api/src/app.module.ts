@@ -7,6 +7,7 @@ import { AuthModule } from "@/auth/auth.module";
 import { AuthController } from "@/auth/auth.controller";
 import { DrizzleModule } from "@/db/drizzle/drizzle.module";
 import { AdminsModule } from "@/modules/admins/admins.module";
+import { CertificatesModule } from "@/modules/certificates/certificates.module";
 import { ContactModule } from "@/modules/contact/contact.module";
 import { HealthModule } from "@/modules/health/health.module";
 import { MeModule } from "@/modules/me/me.module";
@@ -31,6 +32,7 @@ import { UploadModule } from "@/modules/upload/upload.module";
     AdminsModule,
     SettingsModule,
     ProjectsModule,
+    CertificatesModule,
     UploadModule,
     ContactModule,
   ],

@@ -171,6 +171,39 @@ export const projects = pgTable(
 );
 
 // ---------------------------------------------------------------------------
+// Issued certificates — backs the public /verify/<id> lookup.
+// ---------------------------------------------------------------------------
+
+export const certificates = pgTable(
+  "certificates",
+  {
+    id: text("id").primaryKey(),
+    type: text("type").notNull(),
+    recipientName: text("recipient_name").notNull(),
+    programme: text("programme"),
+    role: text("role"),
+    startDate: text("start_date"),
+    endDate: text("end_date"),
+    issuedOn: text("issued_on").notNull(),
+    summary: text("summary"),
+    status: text("status").notNull().default("issued"),
+    revokedOn: text("revoked_on"),
+    revokedReason: text("revoked_reason"),
+    /* Soft delete: a mistakenly-created record is hidden everywhere but kept,
+       because the printed PDF may already be in circulation and an audit trail
+       matters more than reclaiming the row. */
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("certificates_type_idx").on(table.type),
+    index("certificates_issued_on_idx").on(table.issuedOn),
+    index("certificates_deleted_at_idx").on(table.deletedAt),
+  ],
+);
+
+// ---------------------------------------------------------------------------
 // Relations
 // ---------------------------------------------------------------------------
 
@@ -218,3 +251,5 @@ export type AdminRow = typeof admins.$inferSelect;
 export type AppSettingRow = typeof appSettings.$inferSelect;
 export type ProjectRow = typeof projects.$inferSelect;
 export type ProjectInsert = typeof projects.$inferInsert;
+export type CertificateRow = typeof certificates.$inferSelect;
+export type CertificateInsert = typeof certificates.$inferInsert;

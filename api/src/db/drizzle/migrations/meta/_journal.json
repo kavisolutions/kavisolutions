@@ -8,6 +8,20 @@
       "when": 1794206184050,
       "tag": "0000_salty_tarantula",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794382375557,
+      "tag": "0001_certificates",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794392133591,
+      "tag": "0002_certificate_soft_delete",
+      "breakpoints": true
     }
   ]
 }
