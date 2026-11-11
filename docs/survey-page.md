@@ -13,35 +13,29 @@ Status: **built, not launched.** The page 404s until it is explicitly enabled.
 | API endpoint | `api/src/modules/survey/` |
 | Email template | `api/src/_shared/mailer.ts` → `sendSurveyEnquiryEmail` |
 
-## Enable the page
+## Publish the page
 
-The route reads `SURVEY_PAGE_ENABLED` **at build time**. Next.js prerenders this
-page, so setting the variable only on the running process is not enough.
+Admins switch `/survey` on and off from the admin panel:
+**Settings → Live pages → Survey & Research**. A hidden page returns **404** and
+is marked `noindex, nofollow`; no navigation link exists on the site, so nothing
+points at it either way.
 
-```bash
-# on the server, in /var/www/kavi-solutions/app/.env.production
-SURVEY_PAGE_ENABLED=true
+The switch is stored in `app_settings` (`page_survey_enabled`) and read by the
+API at `GET /api/pages`. `app/app/survey/page.tsx` checks it on every request —
+that is why the route sets `dynamic = "force-dynamic"`. Two consequences:
 
-# then rebuild + restart the frontend
-cd /var/www/kavi-solutions/app
-BACKEND_URL=http://127.0.0.1:3200 npm run build
-pm2 restart kavi-solutions --update-env
-```
+- There is **no environment variable** and no rebuild: flipping it takes effect
+  on the next request.
+- The check **fails closed**. If the API is unreachable or the stored value is
+  anything but `"true"`, the page 404s rather than publishing itself.
 
-Until then:
+The API is the source of truth; `PATCH /api/pages` (admin only) is what the
+panel calls. The endpoints are listed in `api/README.md`.
 
-- `/survey` returns **404**.
-- `<meta name="robots">` is `noindex, nofollow`.
-- No navigation link exists anywhere on the site, so nothing points at it.
+### Env dashboard
 
-To take it down again, remove the variable and rebuild.
-
-### Environment dashboard
-
-The var lives in the Env Manager project `kavi-solutions`, env `fe-local`
-(project `kavi-solutions` holds frontend envs; `kavi-solutions-be` holds the
-backend ones). Production is intentionally left without it, so the page stays
-unpublished until you set it on the server and rebuild.
+Nothing to configure. If an old deployment note or Env Manager entry mentions
+`SURVEY_PAGE_ENABLED`, it can be removed — the variable is no longer read.
 
 A local checkout can pull it with a deploy token:
 

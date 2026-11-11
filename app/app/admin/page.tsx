@@ -161,6 +161,25 @@ const sections = [
 
 type SectionKey = (typeof sections)[number]["key"];
 
+/* Public page switches, read from and written to /api/pages. A page is
+   unpublished until its switch is on, in which case the route 404s. */
+type PageVisibility = { survey: boolean; financial: boolean };
+
+const PAGE_SWITCHES: { key: keyof PageVisibility; label: string; href: string; blurb: string }[] = [
+  {
+    key: "survey",
+    label: "Survey & Research",
+    href: "/survey",
+    blurb: "Field surveys, market research and the surveyor network.",
+  },
+  {
+    key: "financial",
+    label: "Financial Services",
+    href: "/financial",
+    blurb: "Tax filing, planning, accounting and cash flow support.",
+  },
+];
+
 const withCookies = (extra: RequestInit = {}): RequestInit => ({
   credentials: "include",
   ...extra,
@@ -189,6 +208,8 @@ export default function AdminPage() {
   const [tagline, setTagline] = useState("");
   const [description, setDescription] = useState("");
   const [contactEmail, setContactEmail] = useState("");
+  const [pageVisibility, setPageVisibility] = useState<PageVisibility | null>(null);
+  const [savingPages, setSavingPages] = useState(false);
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectDraft, setProjectDraft] = useState<ProjectDraft | null>(null);
@@ -316,13 +337,14 @@ export default function AdminPage() {
   }, [certificates, certificateDraft]);
 
   const loadAll = useCallback(async () => {
-    const [teamRes, adminsRes, settingsRes, projectsRes, certificatesRes, surveyorsRes] = await Promise.all([
+    const [teamRes, adminsRes, settingsRes, projectsRes, certificatesRes, surveyorsRes, pagesRes] = await Promise.all([
       fetch("/api/team", withCookies()),
       fetch("/api/admins", withCookies()),
       fetch("/api/settings", withCookies()),
       fetch("/api/projects", withCookies()),
       fetch("/api/certificates?includeDeleted=true", withCookies()),
       fetch("/api/surveyors", withCookies()),
+      fetch("/api/pages", withCookies()),
     ]);
 
     if (teamRes.status === 401 || adminsRes.status === 401 || adminsRes.status === 403) {
@@ -336,6 +358,7 @@ export default function AdminPage() {
     const projectsData = await projectsRes.json().catch(() => null);
     const certificatesData = await certificatesRes.json().catch(() => null);
     const surveyorsData = await surveyorsRes.json().catch(() => null);
+    const pagesData = await pagesRes.json().catch(() => null);
 
     setIsAdmin(true);
     setMembers(teamData.members ?? []);
@@ -348,6 +371,11 @@ export default function AdminPage() {
     setTagline(settingsData?.settings?.tagline ?? "");
     setDescription(settingsData?.settings?.description ?? "");
     setContactEmail(settingsData?.settings?.contactEmail ?? "");
+    setPageVisibility(
+      pagesData?.pages
+        ? { survey: pagesData.pages.survey === true, financial: pagesData.pages.financial === true }
+        : null,
+    );
   }, []);
 
   const initialize = useCallback(
@@ -1071,6 +1099,44 @@ export default function AdminPage() {
     }
 
     setNotice("Settings saved successfully");
+  };
+
+  /* Page switches save immediately rather than on the card's Save button: they
+     are the difference between a 404 and a live page, so a half-filled settings
+     form must not be able to publish one by accident. */
+  const togglePage = async (page: keyof PageVisibility, next: boolean) => {
+    if (savingPages) return;
+
+    setActionError("");
+    setSavingPages(true);
+
+    try {
+      const res = await fetch("/api/pages", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ [page]: next }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        setActionError(data?.error || "Failed to update page visibility");
+        return;
+      }
+
+      setPageVisibility({
+        survey: data?.pages?.survey === true,
+        financial: data?.pages?.financial === true,
+      });
+
+      const label = PAGE_SWITCHES.find((item) => item.key === page)?.label ?? "Page";
+      setNotice(next ? `${label} page published` : `${label} page unpublished`);
+    } catch {
+      setActionError("Could not reach the server. Try again.");
+    } finally {
+      setSavingPages(false);
+    }
   };
 
   if (authLoading || isAdmin === null) {
@@ -3406,7 +3472,7 @@ export default function AdminPage() {
               <CardHeader>
                 <CardTitle className="text-lg font-bold">Workspace & Directory Settings</CardTitle>
                 <CardDescription>
-                  Configure public metadata and destination email addresses for the Kavi Solutions website.
+                  Configure public metadata, destination email addresses and which pages are live on the Kavi Solutions website.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 max-w-2xl">
@@ -3446,6 +3512,55 @@ export default function AdminPage() {
                     placeholder="contact@kavisolutions.in"
                   />
                   <p className="mt-1 text-[11px] text-muted-foreground">Recipient for customer inquiries submitted through the contact form.</p>
+                </div>
+
+                <div className="space-y-3 border-t border-border pt-4">
+                  <div>
+                    <p className="text-xs font-semibold text-foreground">Live pages</p>
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      A hidden page returns a 404 and is kept out of search results. Changes apply
+                      immediately — no redeploy needed.
+                    </p>
+                  </div>
+
+                  {PAGE_SWITCHES.map((item) => {
+                    const enabled = pageVisibility?.[item.key] ?? false;
+
+                    return (
+                      <div
+                        key={item.key}
+                        className="flex items-center justify-between gap-4 rounded-lg border border-border px-3 py-2.5"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-foreground">{item.label}</p>
+                          <p className="text-[11px] text-muted-foreground">{item.blurb}</p>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-2">
+                          <a
+                            href={item.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                          >
+                            View
+                          </a>
+                          <Button
+                            type="button"
+                            role="switch"
+                            aria-checked={enabled}
+                            aria-label={`${enabled ? "Unpublish" : "Publish"} the ${item.label} page`}
+                            disabled={savingPages || pageVisibility === null}
+                            onClick={() => void togglePage(item.key, !enabled)}
+                            variant={enabled ? "default" : "outline"}
+                            size="sm"
+                            className="min-w-[92px] font-semibold"
+                          >
+                            {enabled ? "Published" : "Hidden"}
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <div className="pt-2">

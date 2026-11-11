@@ -13,22 +13,19 @@ Status: **built, not launched.** The page 404s until it is explicitly enabled.
 | API endpoint | `api/src/modules/financial/` |
 | Email template | `api/src/_shared/mailer.ts` → `sendFinancialEnquiryEmail` |
 
-## Enable the page
+## Publish the page
 
-`FINANCIAL_PAGE_ENABLED` is read at **build time** — Next.js prerenders the
-page, so setting it only on the running process has no effect.
+Admins switch `/financial` on and off from the admin panel:
+**Settings → Live pages → Financial Services**. A hidden page returns **404**,
+is marked `noindex, nofollow`, and no navigation link points at it.
 
-```bash
-# /var/www/kavi-solutions/app/.env.production
-FINANCIAL_PAGE_ENABLED=true
+The switch is stored in `app_settings` (`page_financial_enabled`) and read by
+the API at `GET /api/pages`. `app/app/financial/page.tsx` checks it on every
+request — that is why the route sets `dynamic = "force-dynamic"`. The check
+fails closed, so an unreachable API hides the page instead of publishing it.
 
-cd /var/www/kavi-solutions/app
-BACKEND_URL=http://127.0.0.1:3200 npm run build
-pm2 restart kavi-solutions --update-env
-```
-
-Until then: `/financial` returns **404**, `robots` is `noindex, nofollow`, and
-no navigation link points at it.
+There is no environment variable and no rebuild involved. `FINANCIAL_PAGE_ENABLED`
+is no longer read; remove it from any server env file or Env Manager entry.
 
 ## Sections built
 

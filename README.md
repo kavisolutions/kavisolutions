@@ -23,14 +23,13 @@ Public pages also include `/projects`, `/team` and `/verify` (certificate
 verification by ID, also reachable as `/verify/<id>` from a printed QR code).
 `/admin` covers team, roles, teams, projects, certificates and settings.
 
-`/survey` (Survey & Research Solutions) is built but **not published**: it 404s
-until `SURVEY_PAGE_ENABLED=true` is set in the build environment. See
-[`docs/survey-page.md`](docs/survey-page.md) for how to enable it and edit its
-content.
-
-`/financial` (Financial Services) is likewise gated behind
-`FINANCIAL_PAGE_ENABLED`. See [`docs/financial-page.md`](docs/financial-page.md)
-— it covers enabling the page and the compliance constraints on its copy.
+`/survey` (Survey & Research Solutions) and `/financial` (Financial Services)
+are built but **not published by default**: they return 404 until an
+administrator switches them on in the admin panel under **Settings → Live
+pages**. The switch takes effect immediately — no rebuild or redeploy. See
+[`docs/survey-page.md`](docs/survey-page.md) and
+[`docs/financial-page.md`](docs/financial-page.md) for content and the
+compliance constraints on the financial copy.
 
 ## Local development
 
