@@ -204,6 +204,41 @@ export const certificates = pgTable(
 );
 
 // ---------------------------------------------------------------------------
+// Surveyor registry — the field network behind Kavi Survey & Research.
+// ---------------------------------------------------------------------------
+
+export const SURVEYOR_STATUSES = ["applied", "verified", "active", "inactive", "rejected"] as const;
+export type SurveyorStatus = (typeof SURVEYOR_STATUSES)[number];
+
+export const surveyors = pgTable(
+  "surveyors",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    phone: text("phone").notNull(),
+    /* Where the surveyor can physically work. Free text because coverage is
+       usually "Warangal + 3 neighbouring districts" rather than a lookup code. */
+    location: text("location").notNull().default(""),
+    languages: text("languages").array().notNull().default([]),
+    skills: text("skills").array().notNull().default([]),
+    experience: text("experience").notNull().default(""),
+    notes: text("notes").notNull().default(""),
+    status: text("status").notNull().default("applied"),
+    verifiedAt: timestamp("verified_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("surveyors_status_idx").on(table.status),
+    index("surveyors_location_idx").on(table.location),
+    /* One profile per email: a repeat registration updates the existing record
+       instead of creating duplicates in the network. */
+    uniqueIndex("surveyors_email_unique").on(table.email),
+  ],
+);
+
+// ---------------------------------------------------------------------------
 // Relations
 // ---------------------------------------------------------------------------
 
@@ -253,3 +288,5 @@ export type ProjectRow = typeof projects.$inferSelect;
 export type ProjectInsert = typeof projects.$inferInsert;
 export type CertificateRow = typeof certificates.$inferSelect;
 export type CertificateInsert = typeof certificates.$inferInsert;
+export type SurveyorRow = typeof surveyors.$inferSelect;
+export type SurveyorInsert = typeof surveyors.$inferInsert;

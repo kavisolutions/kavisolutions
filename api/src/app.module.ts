@@ -15,6 +15,7 @@ import { ProjectsModule } from "@/modules/projects/projects.module";
 import { RolesModule } from "@/modules/roles/roles.module";
 import { SettingsModule } from "@/modules/settings/settings.module";
 import { SurveyModule } from "@/modules/survey/survey.module";
+import { SurveyorsModule } from "@/modules/surveyors/surveyors.module";
 import { TeamModule } from "@/modules/team/team.module";
 import { TeamsModule } from "@/modules/teams/teams.module";
 import { UploadModule } from "@/modules/upload/upload.module";
@@ -37,6 +38,7 @@ import { UploadModule } from "@/modules/upload/upload.module";
     UploadModule,
     ContactModule,
     SurveyModule,
+    SurveyorsModule,
   ],
   controllers: [AuthController],
   providers: [
