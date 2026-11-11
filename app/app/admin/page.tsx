@@ -18,6 +18,16 @@ import {
   type CertificateDraft,
   type CertificateType,
 } from "@/lib/certificates";
+import {
+  emptySurveyorDraft,
+  splitCommaList,
+  SURVEYOR_STATUS_LABELS,
+  SURVEYOR_STATUS_TONES,
+  toSurveyorDraft,
+  type Surveyor,
+  type SurveyorDraft,
+  type SurveyorStatus,
+} from "@/lib/surveyors";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,6 +62,7 @@ import {
   Award,
   RotateCcw,
   Ban,
+  ClipboardList,
 } from "lucide-react";
 
 type AdminEntry = { email: string; source: "env" | "db" };
@@ -140,6 +151,7 @@ const sections = [
   { key: "teams", label: "Teams", icon: Layers3, description: "Organize people into functional teams and departments" },
   { key: "projects", label: "Projects", icon: FolderKanban, description: "Manage featured work, tech stacks, and live links" },
   { key: "certificates", label: "Certificates", icon: Award, description: "Issue, revoke and reinstate verifiable certificates" },
+  { key: "surveyors", label: "Surveyors", icon: ClipboardList, description: "Review and verify the field surveyor network" },
   { key: "admins", label: "Administrators", icon: ShieldCheck, description: "Control workspace access and administrative privileges" },
   { key: "settings", label: "Settings", icon: Settings2, description: "Update company profile and public page metadata" },
 ] as const;
@@ -187,6 +199,13 @@ export default function AdminPage() {
   const [certificateStatusFilter, setCertificateStatusFilter] = useState("all");
   const [revokeTarget, setRevokeTarget] = useState<AdminCertificate | null>(null);
   const [revokeReason, setRevokeReason] = useState("");
+
+  const [surveyors, setSurveyors] = useState<Surveyor[]>([]);
+  const [surveyorDraft, setSurveyorDraft] = useState<SurveyorDraft | null>(null);
+  const [savingSurveyor, setSavingSurveyor] = useState(false);
+  const [surveyorError, setSurveyorError] = useState("");
+  const [surveyorQuery, setSurveyorQuery] = useState("");
+  const [surveyorStatusFilter, setSurveyorStatusFilter] = useState("all");
 
   const [draft, setDraft] = useState<MemberDraft | null>(null);
   const [savingMember, setSavingMember] = useState(false);
@@ -247,6 +266,29 @@ export default function AdminPage() {
     [certificates],
   );
 
+  const filteredSurveyors = useMemo(() => {
+    const query = surveyorQuery.trim().toLowerCase();
+
+    return surveyors.filter((surveyor) => {
+      const matchesQuery =
+        !query ||
+        `${surveyor.name} ${surveyor.email} ${surveyor.location} ${surveyor.languages.join(" ")}`
+          .toLowerCase()
+          .includes(query);
+      const matchesStatus =
+        surveyorStatusFilter === "all" || surveyor.status === surveyorStatusFilter;
+      return matchesQuery && matchesStatus;
+    });
+  }, [surveyors, surveyorQuery, surveyorStatusFilter]);
+
+  const surveyorStatusCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const surveyor of surveyors) {
+      counts[surveyor.status] = (counts[surveyor.status] ?? 0) + 1;
+    }
+    return counts;
+  }, [surveyors]);
+
   const revokedCertificateCount = useMemo(
     () =>
       certificates.filter((certificate) => !certificate.deletedAt && certificate.status === "revoked")
@@ -271,12 +313,13 @@ export default function AdminPage() {
   }, [certificates, certificateDraft]);
 
   const loadAll = useCallback(async () => {
-    const [teamRes, adminsRes, settingsRes, projectsRes, certificatesRes] = await Promise.all([
+    const [teamRes, adminsRes, settingsRes, projectsRes, certificatesRes, surveyorsRes] = await Promise.all([
       fetch("/api/team", withCookies()),
       fetch("/api/admins", withCookies()),
       fetch("/api/settings", withCookies()),
       fetch("/api/projects", withCookies()),
       fetch("/api/certificates?includeDeleted=true", withCookies()),
+      fetch("/api/surveyors", withCookies()),
     ]);
 
     if (teamRes.status === 401 || adminsRes.status === 401 || adminsRes.status === 403) {
@@ -289,6 +332,7 @@ export default function AdminPage() {
     const settingsData = await settingsRes.json().catch(() => null);
     const projectsData = await projectsRes.json().catch(() => null);
     const certificatesData = await certificatesRes.json().catch(() => null);
+    const surveyorsData = await surveyorsRes.json().catch(() => null);
 
     setIsAdmin(true);
     setMembers(teamData.members ?? []);
@@ -297,6 +341,7 @@ export default function AdminPage() {
     setAdmins(adminsData.admins ?? []);
     setProjects(projectsData?.projects ?? []);
     setCertificates(certificatesData?.certificates ?? []);
+    setSurveyors(surveyorsData?.surveyors ?? []);
     setTagline(settingsData?.settings?.tagline ?? "");
     setDescription(settingsData?.settings?.description ?? "");
     setContactEmail(settingsData?.settings?.contactEmail ?? "");
@@ -340,13 +385,13 @@ export default function AdminPage() {
   }, [notice]);
 
   useEffect(() => {
-    if (!draft && !projectDraft && !preview && !certificateDraft && !revokeTarget) return;
+    if (!draft && !projectDraft && !preview && !certificateDraft && !revokeTarget && !surveyorDraft) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previous;
     };
-  }, [draft, projectDraft, preview, certificateDraft, revokeTarget]);
+  }, [draft, projectDraft, preview, certificateDraft, revokeTarget, surveyorDraft]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -638,6 +683,117 @@ export default function AdminPage() {
     }
 
     setNotice(`${certificate.id} restored — it verifies again as ${data.status ?? "issued"}`);
+    await loadAll();
+  };
+
+  const saveSurveyor = async () => {
+    if (!surveyorDraft || savingSurveyor) return;
+    setSavingSurveyor(true);
+    setSurveyorError("");
+
+    if (!surveyorDraft.name.trim() || !surveyorDraft.email.trim() || !surveyorDraft.phone.trim()) {
+      setSurveyorError("Name, email and phone are required.");
+      setSavingSurveyor(false);
+      return;
+    }
+
+    const body = {
+      name: surveyorDraft.name,
+      email: surveyorDraft.email,
+      phone: surveyorDraft.phone,
+      location: surveyorDraft.location,
+      languages: splitCommaList(surveyorDraft.languages),
+      skills: splitCommaList(surveyorDraft.skills),
+      experience: surveyorDraft.experience,
+      notes: surveyorDraft.notes,
+      status: surveyorDraft.status,
+    };
+
+    const res = surveyorDraft.id
+      ? await fetch(`/api/surveyors/${surveyorDraft.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(body),
+        })
+      : await fetch("/api/surveyors/register", {
+          /* Admins adding someone manually go through the public endpoint, so a
+             new profile starts in the same "applied" state as a self-signup. */
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(body),
+        });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      const message = Array.isArray(data?.message) ? data.message.join(" · ") : data?.message;
+      setSurveyorError(message || "Failed to save surveyor");
+      setSavingSurveyor(false);
+      return;
+    }
+
+    // Registration ignores status, so promote it separately when adding.
+    if (!surveyorDraft.id && surveyorDraft.status !== "applied" && data?.surveyor?.id) {
+      await fetch(`/api/surveyors/${data.surveyor.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ status: surveyorDraft.status }),
+      });
+    }
+
+    setNotice(surveyorDraft.id ? "Surveyor profile updated" : "Surveyor added to the network");
+    setSurveyorDraft(null);
+    setSavingSurveyor(false);
+    await loadAll();
+  };
+
+  const setSurveyorStatus = async (surveyor: Surveyor, status: SurveyorStatus) => {
+    setActionError("");
+
+    const res = await fetch(`/api/surveyors/${surveyor.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ status }),
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      const message = Array.isArray(data?.message) ? data.message.join(" · ") : data?.message;
+      setActionError(message || "Failed to update status");
+      return;
+    }
+
+    setNotice(`${surveyor.name} → ${SURVEYOR_STATUS_LABELS[status]}`);
+    await loadAll();
+  };
+
+  const deleteSurveyor = async (surveyor: Surveyor) => {
+    if (
+      !window.confirm(
+        `Remove ${surveyor.name} from the surveyor network? This deletes the profile permanently.`,
+      )
+    ) {
+      return;
+    }
+    setActionError("");
+
+    const res = await fetch(`/api/surveyors/${surveyor.id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      setActionError(data?.message || "Failed to remove surveyor");
+      return;
+    }
+
+    setNotice(`${surveyor.name} removed from the network`);
     await loadAll();
   };
 
@@ -977,6 +1133,8 @@ export default function AdminPage() {
                   ? projects.length
                   : item.key === "certificates"
                   ? certificates.length
+                  : item.key === "surveyors"
+                  ? surveyors.length
                   : item.key === "admins"
                   ? admins.length
                   : null;
@@ -1162,6 +1320,23 @@ export default function AdminPage() {
                     className="shadow-sm font-semibold"
                   >
                     <Plus className="h-4 w-4 mr-1.5" /> Issue certificate
+                  </Button>
+                </>
+              )}
+
+              {section === "surveyors" && (
+                <>
+                  <Badge variant="outline" className="h-8 rounded-full border-border bg-muted/50 px-3 text-xs font-semibold text-foreground">
+                    {surveyors.length} {surveyors.length === 1 ? "surveyor" : "surveyors"}
+                  </Badge>
+                  <Button
+                    onClick={() => {
+                      setSurveyorDraft(emptySurveyorDraft());
+                      setSurveyorError("");
+                    }}
+                    className="shadow-sm font-semibold"
+                  >
+                    <Plus className="h-4 w-4 mr-1.5" /> Add surveyor
                   </Button>
                 </>
               )}
@@ -2715,6 +2890,322 @@ export default function AdminPage() {
                   view and no longer verify. Choose “Deleted only” to restore one.
                 </p>
               )}
+            </div>
+          )}
+
+          {/* SECTION: SURVEYORS */}
+          {section === "surveyors" && (
+            <div className="space-y-4">
+              {/* Add / Edit Surveyor Modal */}
+              {surveyorDraft && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+                  <div className="relative my-8 w-full max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-2xl sm:p-8">
+                    <div className="mb-6 flex items-center justify-between border-b border-border pb-4">
+                      <div>
+                        <h2 className="text-lg font-bold text-foreground">
+                          {surveyorDraft.id ? "Edit Surveyor Profile" : "Add Surveyor"}
+                        </h2>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Field network profile. Location and languages decide which projects they
+                          can be considered for.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setSurveyorDraft(null)}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        aria-label="Close modal"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">Name *</label>
+                          <Input
+                            value={surveyorDraft.name}
+                            onChange={(e) => setSurveyorDraft({ ...surveyorDraft, name: e.target.value })}
+                            placeholder="Full name"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">Phone *</label>
+                          <Input
+                            value={surveyorDraft.phone}
+                            onChange={(e) => setSurveyorDraft({ ...surveyorDraft, phone: e.target.value })}
+                            placeholder="+91 …"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">Email *</label>
+                          <Input
+                            type="email"
+                            value={surveyorDraft.email}
+                            onChange={(e) => setSurveyorDraft({ ...surveyorDraft, email: e.target.value })}
+                            placeholder="surveyor@example.com"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">Location</label>
+                          <Input
+                            value={surveyorDraft.location}
+                            onChange={(e) => setSurveyorDraft({ ...surveyorDraft, location: e.target.value })}
+                            placeholder="City / district / state"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                            Languages
+                          </label>
+                          <Input
+                            value={surveyorDraft.languages}
+                            onChange={(e) => setSurveyorDraft({ ...surveyorDraft, languages: e.target.value })}
+                            placeholder="Telugu, Hindi, English"
+                          />
+                          <p className="mt-1 text-[11px] text-muted-foreground">Comma separated</p>
+                        </div>
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">Skills</label>
+                          <Input
+                            value={surveyorDraft.skills}
+                            onChange={(e) => setSurveyorDraft({ ...surveyorDraft, skills: e.target.value })}
+                            placeholder="Household surveys, CAPI, back-checking"
+                          />
+                          <p className="mt-1 text-[11px] text-muted-foreground">Comma separated</p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Status</label>
+                        <Select
+                          value={surveyorDraft.status}
+                          onValueChange={(value) =>
+                            setSurveyorDraft({ ...surveyorDraft, status: value as SurveyorStatus })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {(Object.keys(SURVEYOR_STATUS_LABELS) as SurveyorStatus[]).map((status) => (
+                              <SelectItem key={status} value={status}>
+                                {SURVEYOR_STATUS_LABELS[status]}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Experience</label>
+                        <textarea
+                          className="flex min-h-[70px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          rows={3}
+                          value={surveyorDraft.experience}
+                          onChange={(e) =>
+                            setSurveyorDraft({ ...surveyorDraft, experience: e.target.value })
+                          }
+                          placeholder="Surveys run, sectors covered, years of field work."
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                          Internal notes
+                        </label>
+                        <textarea
+                          className="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          rows={2}
+                          value={surveyorDraft.notes}
+                          onChange={(e) => setSurveyorDraft({ ...surveyorDraft, notes: e.target.value })}
+                          placeholder="References checked, availability, payment terms. Never shown publicly."
+                        />
+                      </div>
+                    </div>
+
+                    {surveyorError && (
+                      <div className="mt-4 flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive">
+                        <AlertCircle className="h-4 w-4 shrink-0" />
+                        <span>{surveyorError}</span>
+                      </div>
+                    )}
+
+                    <div className="mt-6 flex items-center justify-end gap-3 border-t border-border pt-4">
+                      <Button variant="outline" onClick={() => setSurveyorDraft(null)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={saveSurveyor} disabled={savingSurveyor} className="font-semibold">
+                        {savingSurveyor ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                        Save Surveyor
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Filters */}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="relative flex-1 sm:max-w-sm">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by name, email, location…"
+                    value={surveyorQuery}
+                    onChange={(e) => setSurveyorQuery(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+                <Select value={surveyorStatusFilter} onValueChange={setSurveyorStatusFilter}>
+                  <SelectTrigger className="w-full sm:w-[190px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All statuses</SelectItem>
+                    {(Object.keys(SURVEYOR_STATUS_LABELS) as SurveyorStatus[]).map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {SURVEYOR_STATUS_LABELS[status]}
+                        {surveyorStatusCounts[status] ? ` (${surveyorStatusCounts[status]})` : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="text-xs text-muted-foreground sm:ml-auto">
+                  Showing {filteredSurveyors.length} of {surveyors.length}
+                </div>
+              </div>
+
+              {/* Surveyors Table */}
+              <Card className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+                <Table>
+                  <TableHeader className="bg-muted/40">
+                    <TableRow className="border-border hover:bg-transparent">
+                      <TableHead className="w-full pl-5 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Surveyor</TableHead>
+                      <TableHead className="whitespace-nowrap font-semibold text-xs uppercase tracking-wider text-muted-foreground">Location</TableHead>
+                      <TableHead className="whitespace-nowrap font-semibold text-xs uppercase tracking-wider text-muted-foreground">Languages</TableHead>
+                      <TableHead className="whitespace-nowrap font-semibold text-xs uppercase tracking-wider text-muted-foreground">Status</TableHead>
+                      <TableHead className="whitespace-nowrap pr-5 text-right font-semibold text-xs uppercase tracking-wider text-muted-foreground">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredSurveyors.map((surveyor) => (
+                      <TableRow key={surveyor.id} className="border-border hover:bg-muted/30 transition-colors">
+                        <TableCell className="pl-5 py-3.5 max-w-0">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                              {getInitials(surveyor.name)}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-semibold text-foreground">
+                                {surveyor.name}
+                              </p>
+                              <p className="truncate text-xs text-muted-foreground">{surveyor.email}</p>
+                              <p className="truncate text-[11px] text-muted-foreground/80">
+                                {surveyor.phone}
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-3.5 whitespace-nowrap">
+                          <span className="text-xs text-foreground">{surveyor.location || "—"}</span>
+                        </TableCell>
+                        <TableCell className="py-3.5">
+                          <div className="flex flex-wrap gap-1">
+                            {surveyor.languages.slice(0, 3).map((language) => (
+                              <span
+                                key={language}
+                                className="rounded-full border border-border bg-muted/50 px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
+                              >
+                                {language}
+                              </span>
+                            ))}
+                            {surveyor.languages.length > 3 && (
+                              <span className="text-[10px] text-muted-foreground">
+                                +{surveyor.languages.length - 3}
+                              </span>
+                            )}
+                            {surveyor.languages.length === 0 && (
+                              <span className="text-xs text-muted-foreground/60">—</span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-3.5">
+                          <Badge
+                            variant="outline"
+                            className={`text-[10px] font-semibold uppercase tracking-wide ${SURVEYOR_STATUS_TONES[surveyor.status]}`}
+                          >
+                            {SURVEYOR_STATUS_LABELS[surveyor.status]}
+                          </Badge>
+                          {surveyor.verifiedAt && (
+                            <p className="mt-1 text-[10px] text-muted-foreground">
+                              {formatCertificateDate(surveyor.verifiedAt.slice(0, 10))}
+                            </p>
+                          )}
+                        </TableCell>
+                        <TableCell className="pr-5 py-3.5 text-right">
+                          <div className="flex justify-end gap-1 whitespace-nowrap">
+                            {surveyor.status !== "verified" && surveyor.status !== "active" && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 px-2 text-xs text-emerald-600 hover:bg-emerald-500/10 hover:text-emerald-600 dark:text-emerald-400"
+                                title="Mark as verified"
+                                aria-label={`Verify ${surveyor.name}`}
+                                onClick={() => setSurveyorStatus(surveyor, "verified")}
+                              >
+                                <CheckCircle2 className="h-3.5 w-3.5" />
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                              title="Edit profile"
+                              aria-label={`Edit ${surveyor.name}`}
+                              onClick={() => {
+                                setSurveyorError("");
+                                setSurveyorDraft(toSurveyorDraft(surveyor));
+                              }}
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                              title="Remove from network"
+                              aria-label={`Remove ${surveyor.name}`}
+                              onClick={() => deleteSurveyor(surveyor)}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {filteredSurveyors.length === 0 && (
+                      <TableRow className="hover:bg-transparent">
+                        <TableCell colSpan={5} className="h-32 text-center text-sm text-muted-foreground">
+                          {surveyors.length === 0
+                            ? "No surveyors yet. Registrations from the survey page appear here."
+                            : "No surveyors match this filter."}
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </Card>
+
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Registrations from the survey page arrive with status <strong>Applied</strong>.
+                Verify a profile after checking references, then mark it active when the person is
+                available for assignment.
+              </p>
             </div>
           )}
 

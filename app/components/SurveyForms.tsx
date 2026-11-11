@@ -12,6 +12,13 @@ const labelClass = "mb-1.5 block text-xs font-semibold text-mist";
 
 type Status = { kind: "idle" } | { kind: "sending" } | { kind: "sent" } | { kind: "error"; message: string };
 
+/* The form takes one comma-separated field; the registry stores a list. */
+const splitList = (value: string): string[] =>
+  value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
 export default function SurveyForms() {
   const [kind, setKind] = useState<Kind>("client");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -42,17 +49,33 @@ export default function SurveyForms() {
     if (sending) return;
     setStatus({ kind: "sending" });
 
-    const payload =
-      kind === "client"
-        ? { kind, ...client }
-        : { kind, ...surveyor };
-
     try {
-      const res = await fetch("/api/survey/enquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      /* Surveyor registrations are stored in the network registry; client
+         enquiries stay email-only. */
+      const res =
+        kind === "surveyor"
+          ? await fetch("/api/surveyors/register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: surveyor.name,
+                email: surveyor.email,
+                phone: surveyor.phone,
+                location: surveyor.location,
+                languages: splitList(surveyor.languages),
+                /* The form asks for a short field-experience line plus an
+                   "about you" note; the registry keeps one experience field. */
+                experience: [surveyor.experience, surveyor.message]
+                  .filter(Boolean)
+                  .join(" — ")
+                  .slice(0, 500),
+              }),
+            })
+          : await fetch("/api/survey/enquiries", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ kind, ...client }),
+            });
 
       if (!res.ok) {
         const data = await res.json().catch(() => null);

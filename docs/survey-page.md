@@ -105,14 +105,14 @@ otherwise visitors hit a 404.
 
 ## Future technical dependencies
 
-This page is a brochure with two lead forms. The task also describes a much
-larger platform. Nothing below is built; these are the pieces that would be
-needed.
+This page is a brochure with two lead forms, backed by a surveyor registry. The
+task also describes a much larger platform. Nothing below is built; these are
+the pieces that would be needed.
 
-### 1. Surveyor registry
-A `surveyors` table (profile, location, languages, skills, availability,
-verification status) plus an admin screen. Today registrations arrive as email
-and must be entered by hand.
+### 1. Surveyor registry — **built**
+
+`surveyors` table, public registration at `/survey`, admin management at
+`/admin?section=surveyors`. See "Surveyor registry" below.
 
 ### 2. Project and assignment tracking
 `projects` → `assignments` → `surveyor` relationships, with status transitions
@@ -134,6 +134,43 @@ the platform instead of in spreadsheets.
 The content module is deliberately isolated in `lib/survey-data.ts` and the page
 in `components/SurveyPage.tsx` so both can move to a standalone Next.js app
 without rewriting the design.
+
+## Surveyor registry
+
+Registrations from the page are stored, not just emailed.
+
+| Piece | Location |
+| --- | --- |
+| Table | `surveyors` (migration `0003_surveyors`) |
+| Public registration | `POST /api/surveyors/register` |
+| Admin list/update/delete | `/api/surveyors` (`GET`, `PATCH /:id`, `DELETE /:id`) |
+| Admin screen | `/admin?section=surveyors` |
+| Shared types | `app/lib/surveyors.ts` |
+
+### Status workflow
+
+`applied` → `verified` → `active`, with `inactive` and `rejected` as exits.
+
+- Registrations always arrive as **applied**.
+- Verifying stamps `verified_at`. Moving to `active` keeps that original date.
+- Rejecting or returning to `applied` clears `verified_at`.
+- Re-registering with an existing email **updates the profile and keeps its
+  status**, so a verified surveyor is never silently reset to applied.
+- Internal `notes` and `verified_at` are never returned by the public
+  registration response.
+
+### Privacy note
+
+The registry stores name, email, phone, location, languages, skills and
+experience — personal data about individual field workers. Before this goes
+live, decide:
+
+- who can export it (today every admin can, via the admin API),
+- how long inactive profiles are retained,
+- whether surveyors can request deletion (the delete endpoint exists, but there
+  is no self-service path).
+
+There is no audit log of who verified or deleted a profile yet.
 
 ## Deliberate privacy decisions
 
