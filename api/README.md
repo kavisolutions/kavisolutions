@@ -61,6 +61,7 @@ All prefixed with `/api`. Auth routes are Better Auth: `/api/auth/*`.
 | POST | `/certificates/restore` | admin | clear a soft delete |
 | POST | `/upload` | signed-in | multipart `file`, ≤5 MB, jpeg/png/webp/gif |
 | POST | `/contact` | public, throttled | sends mail to the configured contact address |
+| POST | `/survey/enquiries` | public, throttled | survey page forms (`kind`: `client` \| `surveyor`) |
 
 Certificates are generated offline from the `certificates/` library; the API only
 keeps the record that makes `/verify/<id>` work. Revoked records still resolve but

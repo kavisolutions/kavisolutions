@@ -14,6 +14,7 @@ import { MeModule } from "@/modules/me/me.module";
 import { ProjectsModule } from "@/modules/projects/projects.module";
 import { RolesModule } from "@/modules/roles/roles.module";
 import { SettingsModule } from "@/modules/settings/settings.module";
+import { SurveyModule } from "@/modules/survey/survey.module";
 import { TeamModule } from "@/modules/team/team.module";
 import { TeamsModule } from "@/modules/teams/teams.module";
 import { UploadModule } from "@/modules/upload/upload.module";
@@ -35,6 +36,7 @@ import { UploadModule } from "@/modules/upload/upload.module";
     CertificatesModule,
     UploadModule,
     ContactModule,
+    SurveyModule,
   ],
   controllers: [AuthController],
   providers: [

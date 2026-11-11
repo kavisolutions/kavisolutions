@@ -76,3 +76,77 @@ const escapeHtml = (value: string): string =>
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+
+export type SurveyEnquiryKind = "client" | "surveyor";
+
+export type SurveyEnquiryMailInput = {
+  kind: SurveyEnquiryKind;
+  name: string;
+  email: string;
+  phone: string;
+  organisation?: string;
+  /** Client enquiry: the service the organisation is interested in. */
+  service?: string;
+  /** Surveyor enquiry: location, languages, experience. */
+  location?: string;
+  languages?: string;
+  experience?: string;
+  message: string;
+  to: string;
+};
+
+const SURVEY_LABEL: Record<SurveyEnquiryKind, string> = {
+  client: "Client / project enquiry",
+  surveyor: "Surveyor network registration",
+};
+
+/* Two visually distinct emails so the inbox can tell a client lead from a
+   surveyor application without opening the message. */
+export async function sendSurveyEnquiryEmail(input: SurveyEnquiryMailInput): Promise<void> {
+  const rows: Array<[string, string]> = [
+    ["Name", input.name],
+    ["Email", input.email],
+    ["Phone", input.phone],
+  ];
+
+  if (input.kind === "client") {
+    if (input.organisation) rows.push(["Organisation", input.organisation]);
+    if (input.service) rows.push(["Service", input.service]);
+  } else {
+    if (input.location) rows.push(["Location", input.location]);
+    if (input.languages) rows.push(["Languages", input.languages]);
+    if (input.experience) rows.push(["Experience", input.experience]);
+  }
+
+  const accent = input.kind === "client" ? "#0d7a6b" : "#6d28d9";
+
+  await getTransporter().sendMail({
+    from: `"Kavi Survey Website" <${env.SMTP_USER}>`,
+    to: input.to,
+    replyTo: input.email,
+    subject: `[Kavi Survey] ${SURVEY_LABEL[input.kind]} — ${input.name}`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#06060b;color:#e0e0e0;border-radius:12px;">
+        <p style="margin:0 0 4px;color:${accent};font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">
+          ${SURVEY_LABEL[input.kind]}
+        </p>
+        <h2 style="color:#ffffff;margin:0 0 16px;">New submission from kavisolutions.in/survey</h2>
+        <table style="width:100%;border-collapse:collapse;">
+          ${rows
+            .map(
+              ([label, value]) => `<tr>
+            <td style="padding:8px 0;color:#a1a1b5;font-weight:bold;width:140px;">${escapeHtml(label)}</td>
+            <td style="padding:8px 0;">${escapeHtml(value)}</td>
+          </tr>`,
+            )
+            .join("")}
+        </table>
+        <div style="margin-top:16px;padding:16px;background:#0b0b14;border-radius:8px;border:1px solid rgba(255,255,255,0.1);">
+          <p style="color:#a1a1b5;font-weight:bold;margin:0 0 8px;">Details</p>
+          <p style="margin:0;white-space:pre-wrap;">${escapeHtml(input.message)}</p>
+        </div>
+        <p style="margin-top:16px;color:#6e6e85;font-size:12px;">Sent from the Kavi Survey &amp; Research Solutions page</p>
+      </div>
+    `,
+  });
+}
