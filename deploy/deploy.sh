@@ -18,6 +18,8 @@ FE_PORT="${PORT:-3111}"
 BE_PORT="${API_PORT:-3200}"
 FE_APP="kavi-solutions"
 BE_APP="kavi-solutions-be"
+SOCIAL_APP="kavi-social-agent"
+SOCIAL_PORT="${SOCIAL_PORT:-3300}"
 BRANCH="${BRANCH:-main}"
 PULL=1
 [ "${1:-}" = "--no-pull" ] && PULL=0
@@ -68,6 +70,29 @@ pm2 delete "${FE_APP}" >/dev/null 2>&1 || true
 PORT="${FE_PORT}" pm2 start ecosystem.config.js --update-env
 pm2 save
 
+# ---------------------------------------------------------- social agent ----
+# Optional sidecar: image calendar + scheduled captions + publishing.
+# Its runtime config lives in social-agent/.env, which is untracked and
+# preserved across deploys. If the directory is absent, skip it.
+SOCIAL_DIR="${APP_DIR}/social-agent"
+SOCIAL_READY=0
+if [ -f "${SOCIAL_DIR}/package.json" ] && [ -f "${SOCIAL_DIR}/.env" ]; then
+  echo "==> [social] Installing dependencies"
+  cd "${SOCIAL_DIR}"
+  npm ci || npm install
+
+  echo "==> [social] Building"
+  npm run build
+
+  echo "==> [social] Reloading ${SOCIAL_APP} on port ${SOCIAL_PORT}"
+  pm2 delete "${SOCIAL_APP}" >/dev/null 2>&1 || true
+  PORT="${SOCIAL_PORT}" pm2 start ecosystem.config.js --update-env
+  pm2 save
+  SOCIAL_READY=1
+else
+  echo "==> [social] Skipped (social-agent/.env is not configured)"
+fi
+
 # -------------------------------------------------------------- health ------
 echo "==> Health checks"
 for attempt in $(seq 1 15); do
@@ -93,5 +118,19 @@ for attempt in $(seq 1 15); do
   fi
   sleep 2
 done
+
+if [ "${SOCIAL_READY}" = "1" ]; then
+  for attempt in $(seq 1 15); do
+    if curl -fsS -o /dev/null "http://127.0.0.1:${SOCIAL_PORT}/health" 2>/dev/null; then
+      echo "    social agent OK (:${SOCIAL_PORT})"
+      break
+    fi
+    if [ "${attempt}" = "15" ]; then
+      echo "ERROR: social agent did not respond on port ${SOCIAL_PORT}. Check: pm2 logs ${SOCIAL_APP}"
+      exit 1
+    fi
+    sleep 2
+  done
+fi
 
 echo "==> Done."

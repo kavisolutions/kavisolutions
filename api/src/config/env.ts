@@ -43,6 +43,11 @@ const envSchema = z.object({
     .default("true")
     .transform((value) => value === "true" || value === "1"),
   S3_PUBLIC_URL: z.string().url().default("http://localhost:9002/avatars"),
+  /* Optional social-agent sidecar (social-agent/). Admin panel proxies to it;
+     when unset, /api/admin/social/* reports "not configured" instead of
+     failing the rest of the admin console. */
+  SOCIAL_AGENT_URL: z.string().url().optional(),
+  SOCIAL_AGENT_ADMIN_TOKEN: z.string().min(1).optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

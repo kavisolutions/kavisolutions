@@ -16,6 +16,7 @@ import { PagesModule } from "@/modules/pages/pages.module";
 import { ProjectsModule } from "@/modules/projects/projects.module";
 import { RolesModule } from "@/modules/roles/roles.module";
 import { SettingsModule } from "@/modules/settings/settings.module";
+import { SocialModule } from "@/modules/social/social.module";
 import { SurveyModule } from "@/modules/survey/survey.module";
 import { SurveyorsModule } from "@/modules/surveyors/surveyors.module";
 import { TeamModule } from "@/modules/team/team.module";
@@ -43,6 +44,7 @@ import { UploadModule } from "@/modules/upload/upload.module";
     SurveyorsModule,
     FinancialModule,
     PagesModule,
+    SocialModule,
   ],
   controllers: [AuthController],
   providers: [

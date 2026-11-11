@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { authClient, useAuth } from "@/lib/auth-context";
 import GradientPicker from "@/components/GradientPicker";
+import SocialPanel from "@/components/admin/SocialPanel";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getInitials, type OrgRole, type OrgTeam, type TeamMember, type Project, COMMON_SKILLS } from "@/lib/team";
 import {
@@ -66,6 +67,7 @@ import {
   ClipboardList,
   FileText,
   FileX,
+  Sparkles,
 } from "lucide-react";
 
 type AdminEntry = { email: string; source: "env" | "db" };
@@ -155,6 +157,7 @@ const sections = [
   { key: "projects", label: "Projects", icon: FolderKanban, description: "Manage featured work, tech stacks, and live links" },
   { key: "certificates", label: "Certificates", icon: Award, description: "Issue, revoke and reinstate verifiable certificates" },
   { key: "surveyors", label: "Surveyors", icon: ClipboardList, description: "Review and verify the field surveyor network" },
+  { key: "social", label: "Social agent", icon: Sparkles, description: "Plan a year of images, generate captions and publish on schedule" },
   { key: "admins", label: "Administrators", icon: ShieldCheck, description: "Control workspace access and administrative privileges" },
   { key: "settings", label: "Settings", icon: Settings2, description: "Update company profile and public page metadata" },
 ] as const;
@@ -3390,6 +3393,9 @@ export default function AdminPage() {
           )}
 
           {/* SECTION: ADMINISTRATORS */}
+          {/* SECTION: SOCIAL AGENT */}
+          {section === "social" && <SocialPanel />}
+
           {section === "admins" && (
             <div className="space-y-6">
               {/* Add Admin Card */}

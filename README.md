@@ -21,7 +21,15 @@ requests to the backend via the `BACKEND_URL` rewrite in `next.config.ts`.
 
 Public pages also include `/projects`, `/team` and `/verify` (certificate
 verification by ID, also reachable as `/verify/<id>` from a printed QR code).
-`/admin` covers team, roles, teams, projects, certificates and settings.
+`/admin` covers team, roles, teams, projects, certificates, the social-agent
+image calendar and settings.
+
+`social-agent/` is a small Fastify sidecar for scheduled social posts: import a
+year of images from Google Drive, assign one per day, let a vision model write
+the caption, and publish to LinkedIn/Facebook/Instagram after Telegram
+approval. See [`docs/social-agent.md`](docs/social-agent.md). The admin panel
+talks to it through `/api/admin/social/*`; the sidecar is optional and the rest
+of the site runs without it.
 
 `/survey` (Survey & Research Solutions) and `/financial` (Financial Services)
 are built but **not published by default**: they return 404 until an
