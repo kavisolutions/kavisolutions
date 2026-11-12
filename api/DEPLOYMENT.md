@@ -36,6 +36,16 @@ Frontend:
 - SMTP_PASS set; contact form verified 201
 - GitHub Actions deploy still targets 161.97.169.66 — must be repointed or disabled
 
+## Social agent sidecar (optional)
+
+- Code + SQLite data: `/var/www/kavi-solutions/social-agent` (PM2 `kavi-social-agent`, :3300)
+- Runtime env: `social-agent/.env` (not tracked); bridge in `api/.env`:
+  `SOCIAL_AGENT_URL=http://127.0.0.1:3300` and `SOCIAL_AGENT_ADMIN_TOKEN=<ADMIN_TOKEN>`
+- nginx proxies `/social-media/` (public images), `/auth/` (OAuth callbacks) and
+  `/telegram/` (webhook); `client_max_body_size 25m`
+- Back up `social-agent/data/app.db` + `social-agent/data/public/`
+- Full setup: [`docs/social-agent.md`](../docs/social-agent.md)
+
 ## Update (2026-11-09, later)
 
 - Repository is now a single monorepo: Next.js at the root, NestJS in `api/`

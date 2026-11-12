@@ -2,7 +2,13 @@
 
 Daily post drafting + publishing to LinkedIn, Facebook Page, and Instagram, with Telegram approval before anything goes live.
 
-Flow: cron -> pick topic -> LLM writes caption -> optional AI image -> Telegram draft with Approve/Reject -> publish to chosen platforms -> results logged + reported back.
+In this repository it runs as a sidecar for **Kavi Solutions**. The admin panel
+connects through `/api/admin/social/*` and manages a calendar of images (one per
+day) imported from Google Drive. See
+[`../docs/social-agent.md`](../docs/social-agent.md) for the integration setup.
+
+Flow: image calendar -> vision model describes the photo -> LLM writes captions
+-> Telegram approval -> publish to chosen platforms -> results logged.
 
 ## 1. Setup
 
@@ -102,7 +108,36 @@ social.example.com {
 }
 ```
 
-## 8. Caveats
+## 8. Image calendar (media plan)
+
+Instead of a topic pool, the daily job can use a pre-imported image calendar:
+
+```
+ENABLE_MEDIA_SCHEDULER=true
+MEDIA_POST_SCHEDULE=30 8 * * *
+MEDIA_AUTO_PUBLISH=false
+```
+
+Import once:
+
+```bash
+# local folder (downloaded Drive folder works too)
+npm run import:media -- --dir ./images --start 2026-01-01
+
+# or straight from a Drive folder link
+npm run import:media -- --drive "https://drive.google.com/drive/folders/..." --start 2026-01-01
+```
+
+Filenames like `2026-01-15.jpg` set their own date; undated files take one day
+each from the start date. The cron picks the image whose date has arrived,
+describes it with a vision model (`VISION_PROVIDER`), writes per-platform
+captions, and sends the Telegram draft. Re-importing the same folder updates
+rows in place and keeps edited dates.
+
+Drive access uses a service account (`GOOGLE_SERVICE_ACCOUNT_FILE`) or, for a
+link-shared folder, `GOOGLE_API_KEY`. See `.env.example` for all variables.
+
+## 9. Caveats
 
 - LinkedIn: no profile-update API. Only posting.
 - Instagram: Business/Creator + linked FB Page mandatory. Images must be public HTTPS.

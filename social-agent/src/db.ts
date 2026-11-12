@@ -446,6 +446,15 @@ export function deleteMediaPlan(id: number): MediaPlan | null {
   return existing;
 }
 
+/* A draft or published post keeps its own image_path, so an image file must
+   not be deleted while a post still points at it. */
+export function mediaFileInUse(localFile: string): boolean {
+  const row = db
+    .prepare('SELECT 1 AS used FROM posts WHERE image_path = ? LIMIT 1')
+    .get(localFile) as { used: number } | undefined;
+  return Boolean(row);
+}
+
 export function mediaDateTaken(date: string, exceptId = 0): boolean {
   const row = db
     .prepare('SELECT id FROM media_plan WHERE scheduled_date = ? AND id != ?')

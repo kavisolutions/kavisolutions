@@ -100,6 +100,10 @@ One image per day. Dates come from, in order:
 2. The **Start date** in the import form (or `--start`), then one image per day
    for files with no date. Days that already have an image are skipped.
 
+A date in the filename wins even if it is in the past. If a folder uses dates
+from an old year and you want it scheduled forward, remove/rename the dates or
+import with filenames that have no date.
+
 Re-importing the same folder updates the existing rows (matched by Drive file
 ID) and keeps the date an editor moved, so a re-sync is safe.
 
@@ -143,30 +147,39 @@ to go on.
 
 ## 7. Deployment
 
-`deploy/deploy.sh` builds and reloads both apps and, when `social-agent/` is
-present, also builds it and starts PM2 app `kavi-social-agent` on `:3300`.
+`deploy/deploy.sh` builds and reloads both apps and, when `social-agent/.env`
+exists, also builds the sidecar and starts PM2 app `kavi-social-agent` on
+`:3300`. Without that file it skips the sidecar so a fresh checkout still
+deploys the website.
 
 Nginx exposes the images publicly at `/social-media/` (see
 `deploy/nginx.conf`), because Instagram publishing requires an HTTPS image URL.
-The rest of the sidecar stays on `127.0.0.1`.
+The rest of the sidecar stays on `127.0.0.1`. Reinstall the nginx site once
+after this change:
+
+```bash
+sudo cp deploy/nginx.conf /etc/nginx/sites-available/kavisolutions
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+The nginx config proxies `/auth/` and `/telegram/` to the sidecar, so the OAuth
+callback URLs and the Telegram webhook can live on the main domain. Set the
+platform redirect URLs to:
+
+```
+https://kavisolutions.in/auth/linkedin/callback
+https://kavisolutions.in/auth/meta/callback
+```
 
 Telegram approval needs a public webhook for the buttons to work:
 
 ```bash
 SECRET=$(openssl rand -hex 16)
-curl "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook?url=https://kavisolutions.in/social-agent/telegram/webhook/$SECRET&secret_token=$SECRET"
+curl "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook?url=https://kavisolutions.in/telegram/webhook/$SECRET&secret_token=$SECRET"
 ```
 
-Add a matching nginx location if you use the Telegram webhook through the main
-domain:
-
-```nginx
-location /social-agent/ {
-    proxy_pass http://127.0.0.1:3300/;
-}
-```
-
-(Otherwise approve from the admin panel or set up a separate subdomain.)
+Add `TELEGRAM_WEBHOOK_SECRET=$SECRET` to `social-agent/.env` and restart. Without
+the webhook, drafts can still be approved from the admin panel.
 
 ## 8. API
 

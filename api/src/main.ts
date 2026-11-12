@@ -23,7 +23,7 @@ async function bootstrap(): Promise<void> {
   );
 
   // Better Auth needs the raw request body; every other route gets JSON/urlencoded.
-  // 24mb because the admin social panel uploads a base64 image (max 20mb decoded).
+  // 24mb because the admin social panel uploads a base64 image (max 15mb decoded).
   const authPath = "/api/auth";
   const jsonParser = bodyParser.json({ limit: "24mb" });
   const urlencodedParser = bodyParser.urlencoded({ extended: true, limit: "2mb" });

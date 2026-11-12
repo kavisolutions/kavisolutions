@@ -195,7 +195,7 @@ async function walkFolder(
 
   do {
     const page = await listFolder(folderId, pageToken);
-    for (const file of page.files) {
+    for (const file of page.files ?? []) {
       if (file.mimeType === 'application/vnd.google-apps.folder') {
         if (depth < 4) folders.push(file.id);
         continue;

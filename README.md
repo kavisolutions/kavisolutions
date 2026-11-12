@@ -48,6 +48,14 @@ npm install --prefix app
 npm run dev        # root script -> npm --prefix app run dev
 ```
 
+Optional social-agent sidecar (admin image calendar):
+
+```bash
+npm install --prefix social-agent
+cp social-agent/.env.example social-agent/.env   # fill in
+npm run dev:social                               # :3300
+```
+
 Open http://localhost:3000. `.env.local` must contain `BACKEND_URL`
 (default `http://localhost:3200`). If `BACKEND_URL` is unset there is no proxy and
 `/api/*` returns 404 — that is intentional so a misconfigured production build
@@ -82,9 +90,10 @@ On the VPS the deploy does:
 4. `pm2 startOrReload ecosystem.config.js` + `pm2 save`
 5. a health check against `http://127.0.0.1:3111/`
 
-`deploy/deploy.sh` deploys **both** apps: it installs, migrates (`api/npm run
-db:migrate`), builds and reloads `kavi-solutions-be` (:3200) and then the Next.js
-site `kavi-solutions` (:3111). Next.js rewrites are baked in at build time, so
+`deploy/deploy.sh` deploys **both** apps and, when `social-agent/.env` exists,
+the social-agent sidecar: it installs, migrates (`api/npm run db:migrate`),
+builds and reloads `kavi-solutions-be` (:3200), the Next.js site
+`kavi-solutions` (:3111) and `kavi-social-agent` (:3300). Next.js rewrites are baked in at build time, so
 `BACKEND_URL` must be set for the build and the running process; the script
 exports it (default `http://127.0.0.1:3200`) and `ecosystem.config.js` passes it
 to PM2. Database migrations live in `api/src/db/drizzle/migrations`.

@@ -45,9 +45,16 @@ const envSchema = z.object({
   S3_PUBLIC_URL: z.string().url().default("http://localhost:9002/avatars"),
   /* Optional social-agent sidecar (social-agent/). Admin panel proxies to it;
      when unset, /api/admin/social/* reports "not configured" instead of
-     failing the rest of the admin console. */
-  SOCIAL_AGENT_URL: z.string().url().optional(),
-  SOCIAL_AGENT_ADMIN_TOKEN: z.string().min(1).optional(),
+     failing the rest of the admin console. Empty strings in .env count as
+     unset so a copied template does not break startup. */
+  SOCIAL_AGENT_URL: z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.string().url().optional(),
+  ),
+  SOCIAL_AGENT_ADMIN_TOKEN: z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.string().min(1).optional(),
+  ),
 });
 
 const parsed = envSchema.safeParse(process.env);

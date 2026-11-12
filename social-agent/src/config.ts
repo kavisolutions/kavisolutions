@@ -255,6 +255,8 @@ export function callbackUrl(platform: string): string {
 }
 
 export function publicMediaUrl(filename: string): string {
-  const base = config.publicMediaBaseUrl || config.publicBaseUrl;
-  return `${base}/media/${filename}`;
+  /* PUBLIC_MEDIA_BASE_URL is the full public base for media (it may include a
+     path such as /social-media), so only the filename is appended. */
+  const base = config.publicMediaBaseUrl || `${config.publicBaseUrl}/media`;
+  return `${base}/${filename}`;
 }

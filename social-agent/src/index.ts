@@ -1,7 +1,7 @@
 import Fastify from 'fastify';
 import fastifyStatic from '@fastify/static';
 import { config } from './config.js';
-import { db, type Platform } from './db.js';
+import { db, getMediaPlan, type Platform } from './db.js';
 import { registerRoutes } from './routes/index.js';
 import { startScheduler } from './services/scheduler.js';
 import { answerCallbackQuery, editMessageReplyMarkup, notify, telegramConfigured } from './services/telegram.js';
@@ -187,6 +187,11 @@ async function main(): Promise<void> {
           }
         } else if (action === 'reject' && Number.isInteger(postId)) {
           db.prepare('UPDATE posts SET status = ? WHERE id = ?').run('rejected', postId);
+          /* Return the calendar row to "planned" so the day can be drafted
+             again instead of looking finished forever. */
+          db.prepare(
+            "UPDATE media_plan SET status = 'planned', post_id = NULL, updated_at = ? WHERE post_id = ?",
+          ).run(Date.now(), postId);
           await answerCallbackQuery(cq.id, 'Rejected');
           if (cq.message) await editMessageReplyMarkup(cq.message.message_id, `Post #${postId} rejected`);
         } else if (action === 'regen' && Number.isInteger(postId)) {
@@ -202,8 +207,21 @@ async function main(): Promise<void> {
             db.prepare('UPDATE posts SET status = ? WHERE id = ?').run('superseded', postId);
             if (cq.message) await editMessageReplyMarkup(cq.message.message_id, `Regenerating from #${postId}...`);
             try {
-              const newId = await createDraft(row.topic, parseTargets(row.targets), true);
-              await notify(`New draft #${newId} ready.`);
+              /* Media-plan drafts must keep their photo; regenerate through
+                 the plan so the image and cached description are reused. */
+              const linked = db
+                .prepare('SELECT id FROM media_plan WHERE post_id = ?')
+                .get(postId) as { id: number } | undefined;
+              const plan = linked ? getMediaPlan(linked.id) : null;
+
+              if (plan) {
+                const { draftMediaPlan } = await import('./services/media-plan.js');
+                const result = await draftMediaPlan(plan, { force: true });
+                await notify(`New draft #${result.postId} ready.`);
+              } else {
+                const newId = await createDraft(row.topic, parseTargets(row.targets), true);
+                await notify(`New draft #${newId} ready.`);
+              }
             } catch (error) {
               await notify(`Regenerate failed: ${error instanceof Error ? error.message : error}`);
             }

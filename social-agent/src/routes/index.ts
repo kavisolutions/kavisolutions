@@ -11,6 +11,7 @@ import {
   listAccounts,
   listMediaPlan,
   MEDIA_PLAN_STATUSES,
+  mediaFileInUse,
   mediaPlanCounts,
   updateMediaPlan,
   type MediaPlanStatus,
@@ -216,7 +217,9 @@ export async function registerRoutes(app: FastifyInstance): Promise<void> {
 
     const removed = deleteMediaPlan(id);
     if (!removed) return reply.code(404).send({ error: 'media plan not found' });
-    await unlink(join(config.publicMediaDir, removed.localFile)).catch(() => undefined);
+    if (!mediaFileInUse(removed.localFile)) {
+      await unlink(join(config.publicMediaDir, removed.localFile)).catch(() => undefined);
+    }
     return { ok: true };
   });
 

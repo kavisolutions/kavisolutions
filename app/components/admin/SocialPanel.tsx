@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -19,7 +20,7 @@ import {
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -40,6 +41,7 @@ type MediaItem = {
   status: string;
   postId: number | null;
   error: string | null;
+  updatedAt: number;
 };
 
 type ImportJob = {
@@ -400,6 +402,48 @@ SOCIAL_AGENT_ADMIN_TOKEN=<same value as ADMIN_TOKEN in social-agent/.env>`}
         </div>
       )}
 
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base font-bold">
+            <Link2 className="h-4 w-4 text-primary" /> Connected accounts
+          </CardTitle>
+          <CardDescription>
+            OAuth links go through the sidecar. Re-authorize LinkedIn before its 60-day token
+            expires.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap items-center gap-2">
+          {(agent?.accounts ?? []).length === 0 ? (
+            <p className="text-sm text-muted-foreground">No platform connected yet.</p>
+          ) : (
+            (agent?.accounts ?? []).map((account) => (
+              <Badge key={account.platform} variant="outline" className="capitalize">
+                {account.platform}: {account.accountName ?? account.accountId} · expires{" "}
+                {new Date(account.expiresAt).toISOString().slice(0, 10)}
+              </Badge>
+            ))
+          )}
+          <div className="ml-auto flex flex-wrap gap-2">
+            <a
+              href="/auth/linkedin"
+              target="_blank"
+              rel="noreferrer"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              Connect LinkedIn
+            </a>
+            <a
+              href="/auth/meta"
+              target="_blank"
+              rel="noreferrer"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              Connect Facebook / Instagram
+            </a>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Drive import */}
         <Card>
@@ -582,7 +626,7 @@ SOCIAL_AGENT_ADMIN_TOKEN=<same value as ADMIN_TOKEN in social-agent/.env>`}
                 <div key={item.id} className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center">
                   <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
                     <img
-                      src={`/api/admin/social/media/${item.id}/image`}
+                      src={`/api/admin/social/media/${item.id}/image?v=${item.updatedAt}`}
                       alt={item.fileName}
                       className="h-full w-full object-cover"
                       loading="lazy"
@@ -661,7 +705,7 @@ SOCIAL_AGENT_ADMIN_TOKEN=<same value as ADMIN_TOKEN in social-agent/.env>`}
                       size="sm"
                       variant="outline"
                       className="font-semibold"
-                      disabled={busyId === item.id || item.status === "skipped"}
+                      disabled={busyId === item.id || item.status === "skipped" || item.status === "published"}
                       onClick={() =>
                         void run(
                           item.id,

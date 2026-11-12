@@ -1,20 +1,28 @@
-import { readFile, readdir, unlink, writeFile } from 'node:fs/promises';
+import { access, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
 import { extname, join, relative } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { config } from '../config.js';
 import {
+  db,
   dueMediaPlan,
   findMediaPlanBySource,
   insertMediaPlan,
   markMissedMedia,
+  mediaFileInUse,
   nextFreeMediaDate,
   updateMediaPlan,
   type MediaPlan,
 } from '../db.js';
-import { addDays, naturalCompare, parseDateFromName, todayInTimeZone } from '../dates.js';
+import {
+  addDays,
+  isValidDate,
+  naturalCompare,
+  parseDateFromName,
+  todayInTimeZone,
+} from '../dates.js';
 import { composePost } from './composer.js';
 import { createDraft } from './drafter.js';
-import { downloadDriveImage, listDriveImages, type DriveImage } from './drive.js';
+import { downloadDriveImage, listDriveImages } from './drive.js';
 import { defaultTargets, publishPost } from './publisher.js';
 import { notify } from './telegram.js';
 import { describeImage } from './vision.js';
@@ -84,6 +92,9 @@ export function startDriveImport(input: DriveImportInput): ImportJob {
   pruneJobs();
 
   const startDate = input.startDate?.trim() || todayInTimeZone(config.timezone);
+  if (!isValidDate(startDate)) {
+    throw new Error('startDate must be a valid YYYY-MM-DD date');
+  }
   const job: ImportJob = {
     id: randomUUID(),
     status: 'listing',
@@ -129,11 +140,8 @@ async function runDriveImport(
       job.message = `Importing ${image.name}`;
       try {
         const existing = findMediaPlanBySource('drive', image.id);
-        const desiredDate = existing?.scheduledDate ?? parsedDate(image, sequentialDate);
-
-        if (!existing && !parseDateFromName(image.name)) {
-          sequentialDate = addDays(desiredDate, 1);
-        }
+        const namedDate = parseDateFromName(image.name);
+        const desiredDate = existing?.scheduledDate ?? namedDate ?? sequentialDate;
 
         const buffer = await downloadDriveImage(image);
         const result = await ingestImage({
@@ -145,6 +153,12 @@ async function runDriveImport(
           topicHint,
           keepExistingDate: Boolean(existing),
         });
+
+        /* Advance from the date the row actually got, not the requested one,
+           so a collision does not queue the next image on the same day. */
+        if (!existing && !namedDate) {
+          sequentialDate = addDays(result.plan.scheduledDate, 1);
+        }
 
         if (result.created) job.imported += 1;
         else job.updated += 1;
@@ -169,10 +183,6 @@ async function runDriveImport(
   }
 }
 
-function parsedDate(image: DriveImage, fallback: string): string {
-  return parseDateFromName(image.name) ?? fallback;
-}
-
 export type IngestInput = {
   source: 'drive' | 'local' | 'upload' | 'manual';
   sourceId?: string | null;
@@ -189,52 +199,76 @@ export type IngestResult = {
 };
 
 export async function ingestImage(input: IngestInput): Promise<IngestResult> {
-  const normalized = await normalizeImage(input.buffer);
-  const localFile = `plan-${input.scheduledDate}-${randomUUID().slice(0, 8)}.jpg`;
-  await writeFile(join(config.publicMediaDir, localFile), normalized.data);
-
   const existing =
     input.sourceId != null
       ? findMediaPlanBySource(input.source, input.sourceId)
       : null;
 
-  if (existing) {
-    const updated = updateMediaPlan(existing.id, {
-      scheduledDate: input.keepExistingDate ? existing.scheduledDate : input.scheduledDate,
+  const scheduledDate = existing
+    ? input.keepExistingDate
+      ? existing.scheduledDate
+      : input.scheduledDate
+    : nextFreeMediaDate(input.scheduledDate);
+
+  const localFile = `plan-${scheduledDate}-${randomUUID().slice(0, 8)}.jpg`;
+  const localPath = join(config.publicMediaDir, localFile);
+  const normalized = await normalizeImage(input.buffer);
+  await writeFile(localPath, normalized.data);
+
+  try {
+    if (existing) {
+      const updated = updateMediaPlan(existing.id, {
+        scheduledDate,
+        fileName: input.fileName,
+        localFile,
+        mimeType: 'image/jpeg',
+        size: normalized.size,
+        width: normalized.width,
+        height: normalized.height,
+        description: null,
+        error: null,
+        status:
+          existing.status === 'failed' || existing.status === 'missed'
+            ? 'planned'
+            : existing.status,
+        ...(input.topicHint ? { topicHint: input.topicHint } : {}),
+      });
+      if (!updated) throw new Error('Failed to update media plan');
+
+      /* A pending draft follows the new image; a published post never changes
+         and keeps the old file alive. */
+      if (existing.postId) {
+        db.prepare(
+          "UPDATE posts SET image_path = ? WHERE id = ? AND status = 'pending_approval'",
+        ).run(localFile, existing.postId);
+      }
+
+      if (existing.localFile !== localFile && !mediaFileInUse(existing.localFile)) {
+        await unlink(join(config.publicMediaDir, existing.localFile)).catch(() => undefined);
+      }
+      return { plan: updated, created: false };
+    }
+
+    const plan = insertMediaPlan({
+      scheduledDate,
+      source: input.source,
+      sourceId: input.sourceId ?? null,
       fileName: input.fileName,
       localFile,
       mimeType: 'image/jpeg',
       size: normalized.size,
       width: normalized.width,
       height: normalized.height,
-      description: null,
-      error: null,
-      status: existing.status === 'failed' || existing.status === 'missed' ? 'planned' : existing.status,
-      ...(input.topicHint ? { topicHint: input.topicHint } : {}),
+      topicHint: input.topicHint ?? null,
     });
-    if (!updated) throw new Error('Failed to update media plan');
 
-    if (existing.localFile !== localFile) {
-      await unlink(join(config.publicMediaDir, existing.localFile)).catch(() => undefined);
-    }
-    return { plan: updated, created: false };
+    return { plan, created: true };
+  } catch (error) {
+    /* Do not leave an orphan file behind when the row cannot be written
+       (invalid date, date collision, database error). */
+    await unlink(localPath).catch(() => undefined);
+    throw error;
   }
-
-  const scheduledDate = nextFreeMediaDate(input.scheduledDate);
-  const plan = insertMediaPlan({
-    scheduledDate,
-    source: input.source,
-    sourceId: input.sourceId ?? null,
-    fileName: input.fileName,
-    localFile,
-    mimeType: 'image/jpeg',
-    size: normalized.size,
-    width: normalized.width,
-    height: normalized.height,
-    topicHint: input.topicHint ?? null,
-  });
-
-  return { plan, created: true };
 }
 
 export async function uploadImage(input: {
@@ -266,6 +300,9 @@ export async function importLocalFolder(input: {
   topicHint?: string;
 }): Promise<LocalImportReport> {
   const startDate = input.startDate?.trim() || todayInTimeZone(config.timezone);
+  if (!isValidDate(startDate)) {
+    throw new Error('startDate must be a valid YYYY-MM-DD date');
+  }
   const entries = await readdir(input.dir, { recursive: true, withFileTypes: true });
   const files = entries
     .filter((entry) => entry.isFile() && IMAGE_EXTENSIONS.has(extname(entry.name).toLowerCase()))
@@ -288,7 +325,6 @@ export async function importLocalFolder(input: {
       const existing = findMediaPlanBySource('local', sourceId);
       const namedDate = parseDateFromName(file.name);
       const desiredDate = existing?.scheduledDate ?? namedDate ?? sequentialDate;
-      if (!existing && !namedDate) sequentialDate = addDays(desiredDate, 1);
 
       const buffer = await readFile(fullPath);
       const result = await ingestImage({
@@ -300,6 +336,10 @@ export async function importLocalFolder(input: {
         topicHint: input.topicHint ?? null,
         keepExistingDate: Boolean(existing),
       });
+
+      if (!existing && !namedDate) {
+        sequentialDate = addDays(result.plan.scheduledDate, 1);
+      }
 
       if (result.created) report.imported += 1;
       else report.updated += 1;
@@ -365,13 +405,17 @@ export async function draftMediaPlan(
   if (plan.postId && plan.status === 'drafted' && !options.force) {
     return { plan, postId: plan.postId, alreadyDrafted: true };
   }
+  if (plan.status === 'published' && !options.force) {
+    throw new Error('This image was already published. Move it to another date or use force.');
+  }
 
   try {
-    const description =
-      plan.description ??
-      (await describeImage(plan.localFile)) ??
-      plan.topicHint ??
-      fileNameTopic(plan.fileName);
+    await access(join(config.publicMediaDir, plan.localFile)).catch(() => {
+      throw new Error(`Image file is missing: ${plan.localFile}`);
+    });
+
+    const visionDescription = plan.description ?? (await describeImage(plan.localFile));
+    const description = visionDescription ?? plan.topicHint ?? fileNameTopic(plan.fileName);
 
     if (!plan.description) {
       updateMediaPlan(plan.id, { description });
@@ -381,7 +425,12 @@ export async function draftMediaPlan(
     const instructions =
       'The post is published together with the planned photo. Write copy that fits the photo and the topic. ' +
       'Do not describe the photo literally and do not start with "In this image".';
-    const topic = plan.topicHint ? `${plan.topicHint}. ${description}` : description;
+    /* Only prepend the editor's hint when the description came from the photo;
+       with no vision provider the hint already is the topic. */
+    const topic =
+      plan.topicHint && visionDescription
+        ? `${plan.topicHint}. ${visionDescription}`
+        : description;
 
     const captions: Partial<Record<(typeof targets)[number], string>> = {};
     for (const platform of targets) {

@@ -55,6 +55,12 @@ export async function publishPost(
     postId,
   );
 
+  /* Keep the calendar in sync when approval happens from Telegram rather than
+     from the media-plan worker. */
+  db.prepare(
+    'UPDATE media_plan SET status = ?, updated_at = ? WHERE post_id = ?',
+  ).run(anySuccess ? 'published' : 'failed', Date.now(), postId);
+
   const summary = outcomes
     .map((o) => `${o.platform}: ${o.ok ? `ok (${o.externalId})` : `FAILED - ${o.error}`}`)
     .join('\n');
