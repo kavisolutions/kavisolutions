@@ -12,6 +12,7 @@ const links = [
   { href: "/mobile", label: "Mobile" },
   { href: "/product", label: "Product" },
   { href: "/marketing", label: "Marketing" },
+  { href: "/ai-blockchain", label: "AI & Blockchain" },
   { href: "/projects", label: "Projects" },
   { href: "/fellowship", label: "Fellowship" },
   { href: "/team", label: "Team" },

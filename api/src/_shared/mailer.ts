@@ -289,3 +289,139 @@ export async function sendSurveyEnquiryEmail(input: SurveyEnquiryMailInput): Pro
     `,
   });
 }
+
+export type GovernmentEnquiryMailInput = {
+  name: string;
+  email: string;
+  phone: string;
+  organisation: string;
+  role?: string;
+  portal?: string;
+  service?: string;
+  message: string;
+  to: string;
+};
+
+/* Government enquiries are kept separate from commercial contact mail so the
+   inbox can route them to the public-sector workstream. The subject carries a
+   name only; personal or platform details stay in the body. */
+export async function sendGovernmentEnquiryEmail(
+  input: GovernmentEnquiryMailInput,
+): Promise<void> {
+  const rows: Array<[string, string]> = [
+    ["Name", input.name],
+    ["Email", input.email],
+    ["Phone", input.phone],
+    ["Department / organisation", input.organisation],
+  ];
+
+  if (input.role) rows.push(["Role", input.role]);
+  if (input.portal) rows.push(["Platform / portal", input.portal]);
+  if (input.service) rows.push(["Interested in", input.service]);
+
+  await getTransporter().sendMail({
+    from: `"Kavi Government Website" <${env.SMTP_USER}>`,
+    to: input.to,
+    replyTo: input.email,
+    subject: `[Kavi Government] Modernisation enquiry — ${input.name}`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#06060b;color:#e0e0e0;border-radius:12px;">
+        <p style="margin:0 0 4px;color:#0284c7;font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">
+          Government technology enquiry
+        </p>
+        <h2 style="color:#ffffff;margin:0 0 16px;">New submission from kavisolutions.in/government</h2>
+        <table style="width:100%;border-collapse:collapse;">
+          ${rows
+            .map(
+              ([label, value]) => `<tr>
+            <td style="padding:8px 0;color:#a1a1b5;font-weight:bold;width:160px;">${escapeHtml(label)}</td>
+            <td style="padding:8px 0;">${escapeHtml(value)}</td>
+          </tr>`,
+            )
+            .join("")}
+        </table>
+        <div style="margin-top:16px;padding:16px;background:#0b0b14;border-radius:8px;border:1px solid rgba(255,255,255,0.1);">
+          <p style="color:#a1a1b5;font-weight:bold;margin:0 0 8px;">Brief</p>
+          <p style="margin:0;white-space:pre-wrap;">${escapeHtml(input.message)}</p>
+        </div>
+        <p style="margin-top:16px;color:#6e6e85;font-size:12px;">
+          Do not begin any assessment, scanning or testing until written authorisation is in place.
+        </p>
+      </div>
+    `,
+  });
+}
+
+export type FarmsEnquiryKind = "product" | "tourism";
+
+export type FarmsEnquiryMailInput = {
+  kind: FarmsEnquiryKind;
+  name: string;
+  email: string;
+  phone: string;
+  product?: string;
+  quantity?: string;
+  service?: string;
+  travelMonth?: string;
+  groupSize?: string;
+  message: string;
+  to: string;
+};
+
+const FARMS_LABEL: Record<FarmsEnquiryKind, string> = {
+  product: "Farm product enquiry",
+  tourism: "Village tourism enquiry",
+};
+
+/* Farms enquiries are split by track in the subject so the team can route a
+   product order and a weekend booking separately without opening the mail. */
+export async function sendFarmsEnquiryEmail(input: FarmsEnquiryMailInput): Promise<void> {
+  const rows: Array<[string, string]> = [
+    ["Name", input.name],
+    ["Email", input.email],
+    ["Phone", input.phone],
+  ];
+
+  if (input.kind === "product") {
+    if (input.product) rows.push(["Product", input.product]);
+    if (input.quantity) rows.push(["Quantity", input.quantity]);
+  } else {
+    if (input.service) rows.push(["Experience", input.service]);
+    if (input.travelMonth) rows.push(["Preferred month", input.travelMonth]);
+    if (input.groupSize) rows.push(["Group size", input.groupSize]);
+  }
+
+  const accent = input.kind === "product" ? "#15803d" : "#a16207";
+
+  await getTransporter().sendMail({
+    from: `"Kavi Farms Website" <${env.SMTP_USER}>`,
+    to: input.to,
+    replyTo: input.email,
+    subject: `[Kavi Farms] ${FARMS_LABEL[input.kind]} — ${input.name}`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#06060b;color:#e0e0e0;border-radius:12px;">
+        <p style="margin:0 0 4px;color:${accent};font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">
+          ${FARMS_LABEL[input.kind]}
+        </p>
+        <h2 style="color:#ffffff;margin:0 0 16px;">New submission from kavisolutions.in/farms</h2>
+        <table style="width:100%;border-collapse:collapse;">
+          ${rows
+            .map(
+              ([label, value]) => `<tr>
+            <td style="padding:8px 0;color:#a1a1b5;font-weight:bold;width:150px;">${escapeHtml(label)}</td>
+            <td style="padding:8px 0;">${escapeHtml(value)}</td>
+          </tr>`,
+            )
+            .join("")}
+        </table>
+        <div style="margin-top:16px;padding:16px;background:#0b0b14;border-radius:8px;border:1px solid rgba(255,255,255,0.1);">
+          <p style="color:#a1a1b5;font-weight:bold;margin:0 0 8px;">Details</p>
+          <p style="margin:0;white-space:pre-wrap;">${escapeHtml(input.message)}</p>
+        </div>
+        <p style="margin-top:16px;color:#6e6e85;font-size:12px;">
+          Confirm current availability and the package contribution before accepting payment.
+        </p>
+      </div>
+    `,
+  });
+}

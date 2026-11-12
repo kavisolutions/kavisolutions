@@ -24,7 +24,7 @@ const tracks = [
   },
 ];
 
-const cohort = ["Winter 2026", "Spring 2026", "Summer 2026"];
+const cohort = ["January 2027", "May 2027", "September 2027"];
 
 export default function Fellowship() {
   return (
@@ -40,7 +40,7 @@ export default function Fellowship() {
               <span className="text-gradient">Kavi Fellows</span>
             </>
           }
-          subtitle="A 12-week immersive program where students and early-career devs build real products, learn from pros and get hired."
+          subtitle="An 11-month cohort programme for diploma students, final-year students, graduates and people returning to work — built around Vipassana, leadership practice, field service and real projects."
         />
 
         <Reveal className="mx-auto mb-14 max-w-3xl">

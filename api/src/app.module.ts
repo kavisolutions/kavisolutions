@@ -9,7 +9,9 @@ import { DrizzleModule } from "@/db/drizzle/drizzle.module";
 import { AdminsModule } from "@/modules/admins/admins.module";
 import { CertificatesModule } from "@/modules/certificates/certificates.module";
 import { ContactModule } from "@/modules/contact/contact.module";
+import { FarmsModule } from "@/modules/farms/farms.module";
 import { FinancialModule } from "@/modules/financial/financial.module";
+import { GovernmentModule } from "@/modules/government/government.module";
 import { HealthModule } from "@/modules/health/health.module";
 import { MeModule } from "@/modules/me/me.module";
 import { PagesModule } from "@/modules/pages/pages.module";
@@ -43,6 +45,8 @@ import { UploadModule } from "@/modules/upload/upload.module";
     SurveyModule,
     SurveyorsModule,
     FinancialModule,
+    GovernmentModule,
+    FarmsModule,
     PagesModule,
     SocialModule,
   ],

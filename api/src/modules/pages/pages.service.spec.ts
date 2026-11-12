@@ -39,7 +39,7 @@ describe("PagesService", () => {
     const { service } = build();
 
     await expect(service.get()).resolves.toEqual({
-      pages: { survey: false, financial: false },
+      pages: { survey: false, financial: false, government: false, farms: false },
     });
   });
 
@@ -50,7 +50,7 @@ describe("PagesService", () => {
     ]);
 
     await expect(service.get()).resolves.toEqual({
-      pages: { survey: true, financial: false },
+      pages: { survey: true, financial: false, government: false, farms: false },
     });
   });
 
@@ -70,7 +70,7 @@ describe("PagesService", () => {
     ]);
 
     await expect(service.update({ survey: true })).resolves.toEqual({
-      pages: { survey: true, financial: true },
+      pages: { survey: true, financial: true, government: false, farms: false },
     });
     expect(store.get(PAGE_SETTING_KEYS.financial)).toBe("true");
   });
@@ -79,7 +79,7 @@ describe("PagesService", () => {
     const { service } = build([{ key: PAGE_SETTING_KEYS.survey, value: "true" }]);
 
     await expect(service.update({ survey: false })).resolves.toEqual({
-      pages: { survey: false, financial: false },
+      pages: { survey: false, financial: false, government: false, farms: false },
     });
   });
 

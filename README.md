@@ -16,13 +16,14 @@ requests to the backend via the `BACKEND_URL` rewrite in `next.config.ts`.
 2. **Mobile** — native & cross-platform apps
 3. **Product** — digital product design & MVP sprints
 4. **Digital Marketing** — SEO, paid ads & growth
-5. **Fellowship** — the Kavi Fellows 12-week program
-6. **Who we are (Team)** — the people behind the studio
+5. **Fellowship** — the 11-month Kavi Fellowship programme
+6. **AI & Blockchain** — production AI and auditable chain systems
+7. **Who we are (Team)** — the people behind the studio
 
-Public pages also include `/projects`, `/team` and `/verify` (certificate
-verification by ID, also reachable as `/verify/<id>` from a printed QR code).
-`/admin` covers team, roles, teams, projects, certificates, the social-agent
-image calendar and settings.
+Public pages also include `/projects`, `/team`, `/ai-blockchain` and `/verify`
+(certificate verification by ID, also reachable as `/verify/<id>` from a printed
+QR code). `/admin` covers team, roles, teams, projects, certificates, the
+social-agent image calendar and settings.
 
 `social-agent/` is a small Fastify sidecar for scheduled social posts: import a
 year of images from Google Drive, assign one per day, let a vision model write
@@ -31,13 +32,20 @@ approval. See [`docs/social-agent.md`](docs/social-agent.md). The admin panel
 talks to it through `/api/admin/social/*`; the sidecar is optional and the rest
 of the site runs without it.
 
-`/survey` (Survey & Research Solutions) and `/financial` (Financial Services)
-are built but **not published by default**: they return 404 until an
-administrator switches them on in the admin panel under **Settings → Live
-pages**. The switch takes effect immediately — no rebuild or redeploy. See
-[`docs/survey-page.md`](docs/survey-page.md) and
-[`docs/financial-page.md`](docs/financial-page.md) for content and the
-compliance constraints on the financial copy.
+`/survey` (Survey & Research Solutions), `/financial` (Financial Services),
+`/government` (Government Technology Services) and `/farms` (Kavi Farms) are
+built but **not published by default**: they return 404 until an administrator
+switches them on in the admin panel under **Settings → Live pages**. The switch
+takes effect immediately — no rebuild or redeploy. See
+[`docs/survey-page.md`](docs/survey-page.md),
+[`docs/financial-page.md`](docs/financial-page.md),
+[`docs/government-page.md`](docs/government-page.md) and
+[`docs/farms-page.md`](docs/farms-page.md) for content and compliance notes.
+The fellowship programme is documented in
+[`docs/fellowship-page.md`](docs/fellowship-page.md) and
+[`docs/fellowship-curriculum.md`](docs/fellowship-curriculum.md). Legal and
+FSSAI research notes for the farms/licensing work are in
+[`docs/legal-registration.md`](docs/legal-registration.md).
 
 ## Local development
 

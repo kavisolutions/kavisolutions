@@ -11,4 +11,12 @@ export class UpdatePagesDto {
   @IsOptional()
   @IsBoolean()
   financial?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  government?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  farms?: boolean;
 }

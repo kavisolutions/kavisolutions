@@ -8,7 +8,7 @@ import { cache } from "react";
  * that calls this, otherwise Next.js would bake the answer into a static page
  * at build time and a toggle would appear to do nothing. */
 
-export type GatedPage = "survey" | "financial";
+export type GatedPage = "survey" | "financial" | "government" | "farms";
 
 export type PageVisibility = Record<GatedPage, boolean>;
 
@@ -21,7 +21,12 @@ const backendUrl = (): string =>
 /* Wrapped in React's cache so a route that calls this from both
    `generateMetadata` and the page component fetches it once per request. */
 export const pageVisibility = cache(async (): Promise<PageVisibility> => {
-  const hidden: PageVisibility = { survey: false, financial: false };
+  const hidden: PageVisibility = {
+    survey: false,
+    financial: false,
+    government: false,
+    farms: false,
+  };
   const base = backendUrl();
   if (!base) return hidden;
 
@@ -33,6 +38,8 @@ export const pageVisibility = cache(async (): Promise<PageVisibility> => {
     return {
       survey: data.pages?.survey === true,
       financial: data.pages?.financial === true,
+      government: data.pages?.government === true,
+      farms: data.pages?.farms === true,
     };
   } catch {
     /* Fail closed: an unreachable API must hide the page rather than publish

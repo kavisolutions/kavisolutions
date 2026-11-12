@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
+import EmergingTech from "@/components/EmergingTech";
 import Features from "@/components/Features";
 import Fellowship from "@/components/Fellowship";
 import Team from "@/components/Team";
@@ -13,6 +14,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Services />
+      <EmergingTech />
       <Features />
       <Fellowship />
       <Team />

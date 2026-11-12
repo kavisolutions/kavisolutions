@@ -11,6 +11,8 @@ import { appSettings } from "@/db/drizzle/schema";
 export const PAGE_SETTING_KEYS = {
   survey: "page_survey_enabled",
   financial: "page_financial_enabled",
+  government: "page_government_enabled",
+  farms: "page_farms_enabled",
 } as const;
 
 export type PageKey = keyof typeof PAGE_SETTING_KEYS;
@@ -37,6 +39,8 @@ export class PagesService {
       pages: {
         survey: map.get(PAGE_SETTING_KEYS.survey) === "true",
         financial: map.get(PAGE_SETTING_KEYS.financial) === "true",
+        government: map.get(PAGE_SETTING_KEYS.government) === "true",
+        farms: map.get(PAGE_SETTING_KEYS.farms) === "true",
       },
     };
   }

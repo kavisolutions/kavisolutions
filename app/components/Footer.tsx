@@ -21,7 +21,7 @@ export default function Footer() {
             </span>
           </Link>
           <p className="mt-2 text-sm text-fog">
-            Web · Mobile · Product · Marketing · Fellowship
+            Web · Mobile · Product · Marketing · AI · Fellowship
           </p>
         </div>
 
@@ -30,6 +30,7 @@ export default function Footer() {
           <Link href="/mobile" className="transition-colors hover:text-white">Mobile</Link>
           <Link href="/product" className="transition-colors hover:text-white">Product</Link>
           <Link href="/marketing" className="transition-colors hover:text-white">Marketing</Link>
+          <Link href="/ai-blockchain" className="transition-colors hover:text-white">AI &amp; Blockchain</Link>
           <Link href="/fellowship" className="transition-colors hover:text-white">Fellowship</Link>
           <Link href="/#team" className="transition-colors hover:text-white">Team</Link>
           <Link href="/#contact" className="transition-colors hover:text-white">Contact</Link>

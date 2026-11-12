@@ -166,7 +166,7 @@ type SectionKey = (typeof sections)[number]["key"];
 
 /* Public page switches, read from and written to /api/pages. A page is
    unpublished until its switch is on, in which case the route 404s. */
-type PageVisibility = { survey: boolean; financial: boolean };
+type PageVisibility = { survey: boolean; financial: boolean; government: boolean; farms: boolean };
 
 const PAGE_SWITCHES: { key: keyof PageVisibility; label: string; href: string; blurb: string }[] = [
   {
@@ -180,6 +180,18 @@ const PAGE_SWITCHES: { key: keyof PageVisibility; label: string; href: string; b
     label: "Financial Services",
     href: "/financial",
     blurb: "Tax filing, planning, accounting and cash flow support.",
+  },
+  {
+    key: "government",
+    label: "Government Technology",
+    href: "/government",
+    blurb: "Modernisation, security and digital service delivery for public platforms.",
+  },
+  {
+    key: "farms",
+    label: "Kavi Farms",
+    href: "/farms",
+    blurb: "Farm products, village experiences and weekend tourism packages.",
   },
 ];
 
@@ -376,7 +388,12 @@ export default function AdminPage() {
     setContactEmail(settingsData?.settings?.contactEmail ?? "");
     setPageVisibility(
       pagesData?.pages
-        ? { survey: pagesData.pages.survey === true, financial: pagesData.pages.financial === true }
+        ? {
+            survey: pagesData.pages.survey === true,
+            financial: pagesData.pages.financial === true,
+            government: pagesData.pages.government === true,
+            farms: pagesData.pages.farms === true,
+          }
         : null,
     );
   }, []);
@@ -1131,6 +1148,8 @@ export default function AdminPage() {
       setPageVisibility({
         survey: data?.pages?.survey === true,
         financial: data?.pages?.financial === true,
+        government: data?.pages?.government === true,
+        farms: data?.pages?.farms === true,
       });
 
       const label = PAGE_SWITCHES.find((item) => item.key === page)?.label ?? "Page";

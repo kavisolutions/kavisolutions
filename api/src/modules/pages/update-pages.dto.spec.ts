@@ -13,8 +13,10 @@ describe("UpdatePagesDto", () => {
     await expect(errorsFor({ survey: true })).resolves.toHaveLength(0);
   });
 
-  it("accepts both switches", async () => {
-    await expect(errorsFor({ survey: false, financial: true })).resolves.toHaveLength(0);
+  it("accepts multiple switches", async () => {
+    await expect(
+      errorsFor({ survey: false, financial: true, government: false, farms: true }),
+    ).resolves.toHaveLength(0);
   });
 
   /* JSON clients sometimes send "true"/"false" strings. They are rejected so

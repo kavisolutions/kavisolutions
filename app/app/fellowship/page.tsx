@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import FellowshipPage from "@/components/FellowshipPage";
 
 export const metadata: Metadata = {
-  title: "Kavi Fellows — 12-Week Fellowship Program | Kavi Solutions",
+  title: "Kavi Fellowship — 11-Month Programme | Kavi Solutions",
   description:
-    "A 12-week immersive program where students and early-career devs build real products, learn from pros and get hired. Apply now for the next cohort.",
+    "An 11-month cohort fellowship for diploma students, final-year students, graduates and people returning to work. Vipassana, YLTP, DSN, real projects and a public capstone.",
 };
 
 export default function Fellowship() {
