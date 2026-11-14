@@ -42,9 +42,21 @@ export const auth = betterAuth({
         google: {
           clientId: env.GOOGLE_CLIENT_ID as string,
           clientSecret: env.GOOGLE_CLIENT_SECRET as string,
+          /* Always let the user pick the Google account instead of silently
+             reusing the last one in the browser. */
+          prompt: "select_account",
         },
       }
     : {},
+  /* Admin-provisioned users often have a verified local email. Trusting Google
+     lets those accounts sign in with Google instead of creating a duplicate
+     user, while still requiring the provider's verified email claim. */
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ["google"],
+    },
+  },
   plugins: [admin(), bearer()],
   advanced: {
     ipAddress: { ipAddressHeaders: ["x-forwarded-for", "x-real-ip"] },

@@ -43,7 +43,7 @@ function Faq({ items }: { items: { q: string; a: string }[] }) {
           key={item.q}
           className="group rounded-2xl glass px-5 py-4 transition-colors open:bg-white/[0.07]"
         >
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-white">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-[#0F172A] dark:text-white">
             {item.q}
             <span className="shrink-0 text-fog transition-transform group-open:rotate-45">+</span>
           </summary>
@@ -56,7 +56,7 @@ function Faq({ items }: { items: { q: string; a: string }[] }) {
 
 export function SurveyPage() {
   return (
-    <div className="relative min-h-screen bg-ink font-sans text-white">
+    <div className="relative min-h-screen bg-ink font-sans text-[#0F172A] dark:text-white">
       {/* 1. HERO */}
       <section className="relative overflow-hidden px-6 pt-40 pb-20">
         <GlowOrb className="-left-24 top-10 h-80 w-80 bg-gradient-to-br from-teal-500 to-emerald-500 opacity-25 blur-3xl" />
@@ -88,7 +88,7 @@ export function SurveyPage() {
               </a>
               <a
                 href="#join-network"
-                className="rounded-2xl glass px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                className="rounded-2xl glass border border-slate-300/80 dark:border-white/15 px-7 py-3.5 text-sm font-semibold text-[#0F172A] dark:text-white transition-colors hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm"
               >
                 Join the survey network
               </a>
@@ -434,7 +434,7 @@ export function SurveyPage() {
                     key={opportunity.name}
                     className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3"
                   >
-                    <p className="text-sm font-semibold text-white">{opportunity.name}</p>
+                    <p className="text-sm font-semibold text-[#0F172A] dark:text-white">{opportunity.name}</p>
                     <p className="mt-0.5 text-xs text-fog">{opportunity.note}</p>
                   </li>
                 ))}
@@ -514,7 +514,7 @@ export function SurveyPage() {
                 </a>
                 <a
                   href="#client-enquiry"
-                  className="rounded-2xl glass px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                  className="rounded-2xl glass border border-slate-300/80 dark:border-white/15 px-6 py-3 text-sm font-semibold text-[#0F172A] dark:text-white transition-colors hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm"
                 >
                   Use the enquiry form
                 </a>

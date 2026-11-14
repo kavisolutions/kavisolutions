@@ -57,7 +57,7 @@ function ServiceCard({ service }: { service: FinancialService }) {
 
 export function FinancialPage() {
   return (
-    <div className="relative min-h-screen bg-ink font-sans text-white">
+    <div className="relative min-h-screen bg-ink font-sans text-[#0F172A] dark:text-white">
       {/* 1. HERO */}
       <section className="relative overflow-hidden px-6 pt-40 pb-20">
         <GlowOrb className="-left-24 top-10 h-80 w-80 bg-gradient-to-br from-emerald-500 to-teal-500 opacity-25 blur-3xl" />
@@ -90,7 +90,7 @@ export function FinancialPage() {
               </a>
               <a
                 href="#individual"
-                className="rounded-2xl glass px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                className="rounded-2xl glass border border-slate-300/80 dark:border-white/15 px-7 py-3.5 text-sm font-semibold text-[#0F172A] dark:text-white transition-colors hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm"
               >
                 Explore services
               </a>
@@ -479,7 +479,7 @@ export function FinancialPage() {
                       key={item.q}
                       className="group rounded-2xl glass px-5 py-4 transition-colors open:bg-white/[0.07]"
                     >
-                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-white">
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-[#0F172A] dark:text-white">
                         {item.q}
                         <span className="shrink-0 text-fog transition-transform group-open:rotate-45">
                           +

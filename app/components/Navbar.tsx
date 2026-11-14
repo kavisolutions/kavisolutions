@@ -102,8 +102,8 @@ export default function Navbar() {
     <header className="fixed inset-x-0 top-0 z-50 px-4 sm:px-6 pointer-events-none">
       <div className="mx-auto mt-4 flex max-w-[1152px] h-16 items-center justify-between gap-3 rounded-[12px] bg-[rgba(18,29,47,0.84)] backdrop-blur-[16px] border border-[rgba(148,163,184,0.14)] px-4 sm:px-6 shadow-[0_1px_8px_rgba(0,0,0,0.04)] pointer-events-auto relative">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <span className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg shadow-glow transition-transform duration-300 group-hover:scale-105">
+        <Link href="/" className="flex items-center gap-3 group shrink-0">
+          <span className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg shadow-glow transition-transform duration-300 group-hover:scale-105 shrink-0">
             <Image
               src="/logo.svg"
               alt="Kavi Solutions logo"
@@ -113,13 +113,13 @@ export default function Navbar() {
               priority
             />
           </span>
-          <span className="font-display text-base sm:text-lg font-semibold tracking-tight text-[#F7F9FC]">
+          <span className="font-display text-base sm:text-lg font-semibold tracking-tight text-[#F7F9FC] whitespace-nowrap">
             Kavi<span className="text-[#91B4FF]">Solutions</span>
           </span>
         </Link>
 
         {/* Center Desktop Navigation */}
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1 lg:flex xl:gap-2 shrink-0">
           {/* Services Mega Dropdown */}
           <div
             ref={menuRef}
@@ -131,7 +131,7 @@ export default function Navbar() {
               type="button"
               onClick={() => setDropdownOpen((prev) => !prev)}
               aria-expanded={dropdownOpen}
-              className={`inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[14px] font-medium transition-colors ${
+              className={`inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[14px] font-medium transition-colors whitespace-nowrap ${
                 dropdownOpen
                   ? "bg-white/10 text-[#F7F9FC]"
                   : "text-[#A5B3C7] hover:bg-white/5 hover:text-[#F7F9FC]"
@@ -236,29 +236,31 @@ export default function Navbar() {
             <Link
               key={l.href}
               href={l.href}
-              className="rounded-lg px-3 py-1.5 text-[14px] font-medium text-[#A5B3C7] transition-colors hover:bg-white/5 hover:text-[#F7F9FC]"
+              className="rounded-lg px-3 py-1.5 text-[14px] font-medium text-[#A5B3C7] transition-colors hover:bg-white/5 hover:text-[#F7F9FC] whitespace-nowrap shrink-0"
             >
               {l.label}
             </Link>
           ))}
         </nav>
 
-        {/* Right CTA Cluster */}
-        <div className="hidden items-center gap-2.5 sm:flex">
+        {/* Right Action Cluster */}
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
           <ThemeToggle />
-          <NavAuth />
-          <Link
-            href="/#contact"
-            className="inline-flex items-center justify-center h-10 px-4 rounded-[12px] bg-[#175CD3] hover:bg-[#1849A9] text-[#FFFFFF] text-[14px] font-medium transition-all shadow-[0_0_20px_rgba(23,92,211,0.35)] focus:outline-none focus:ring-2 focus:ring-[#91B4FF] focus:ring-offset-2 focus:ring-offset-[#0B1220]"
-          >
-            Let&apos;s Talk
-          </Link>
-        </div>
 
-        {/* Mobile Navigation Drawer Trigger */}
-        <div className="flex items-center gap-2 sm:hidden">
-          <ThemeToggle />
-          <MobileMenu />
+          <div className="hidden sm:flex items-center gap-2 sm:gap-2.5 shrink-0">
+            <NavAuth />
+            <Link
+              href="/#contact"
+              className="inline-flex items-center justify-center h-10 px-4 rounded-[12px] bg-[#175CD3] hover:bg-[#1849A9] text-[#FFFFFF] text-[14px] font-medium whitespace-nowrap shrink-0 transition-all shadow-[0_0_20px_rgba(23,92,211,0.35)] focus:outline-none focus:ring-2 focus:ring-[#91B4FF] focus:ring-offset-2 focus:ring-offset-[#0B1220]"
+            >
+              Let&apos;s Talk
+            </Link>
+          </div>
+
+          {/* Mobile & Tablet Drawer Trigger */}
+          <div className="lg:hidden shrink-0">
+            <MobileMenu />
+          </div>
         </div>
       </div>
     </header>

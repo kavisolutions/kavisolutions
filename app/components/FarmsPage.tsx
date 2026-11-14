@@ -26,10 +26,10 @@ function SectionHeading({
 }) {
   return (
     <Reveal className="mx-auto mb-12 max-w-3xl text-center">
-      <span className="mb-4 inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-lime-300">
+      <span className="mb-4 inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-emerald-700 dark:text-lime-300 border border-slate-300/80 dark:border-white/15">
         {eyebrow}
       </span>
-      <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
+      <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl text-[#0F172A] dark:text-white">{title}</h2>
       {description && <p className="mt-4 text-base leading-relaxed text-mist">{description}</p>}
     </Reveal>
   );
@@ -37,7 +37,7 @@ function SectionHeading({
 
 export function FarmsPage() {
   return (
-    <div className="relative min-h-screen bg-ink font-sans text-white">
+    <div className="relative min-h-screen bg-ink font-sans text-[#0F172A] dark:text-white">
       {/* HERO */}
       <section className="relative overflow-hidden px-6 pt-40 pb-20">
         <GlowOrb className="-left-24 top-10 h-80 w-80 bg-gradient-to-br from-emerald-500 to-lime-500 opacity-25 blur-3xl" />
@@ -45,12 +45,12 @@ export function FarmsPage() {
 
         <div className="relative mx-auto max-w-4xl text-center">
           <Reveal>
-            <span className="mb-6 inline-flex items-center gap-2 rounded-full bg-lime-500/10 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-lime-300 ring-1 ring-lime-400/20">
+            <span className="mb-6 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 dark:bg-lime-500/10 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-emerald-700 dark:text-lime-300 ring-1 ring-emerald-500/30 dark:ring-lime-400/20">
               🌾 {FARMS_HERO.eyebrow}
             </span>
           </Reveal>
           <Reveal delay={0.1}>
-            <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight sm:text-6xl">
+            <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight sm:text-6xl text-[#0F172A] dark:text-white">
               {FARMS_HERO.title}{" "}
               <span className="text-gradient">{FARMS_HERO.highlight}</span>
             </h1>
@@ -70,7 +70,7 @@ export function FarmsPage() {
               </a>
               <a
                 href="#tourism"
-                className="rounded-2xl glass px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                className="rounded-2xl glass border border-slate-300/80 dark:border-white/15 px-7 py-3.5 text-sm font-semibold text-[#0F172A] dark:text-white transition-colors hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm"
               >
                 Weekend village experience
               </a>
@@ -159,12 +159,12 @@ export function FarmsPage() {
                   <div className="flex h-24 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500/20 to-lime-500/10 text-4xl">
                     {product.icon}
                   </div>
-                  <p className="mt-4 text-[10px] font-semibold uppercase tracking-widest text-lime-300">
+                  <p className="mt-4 text-[10px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-lime-300">
                     {product.category}
                   </p>
-                  <h3 className="mt-1 font-display text-base font-semibold">{product.name}</h3>
+                  <h3 className="mt-1 font-display text-base font-semibold text-[#0F172A] dark:text-white">{product.name}</h3>
                   <p className="mt-2 text-xs leading-relaxed text-mist">{product.description}</p>
-                  <p className="mt-4 border-t border-white/10 pt-3 text-xs font-semibold text-white">
+                  <p className="mt-4 border-t border-slate-200 dark:border-white/10 pt-3 text-xs font-semibold text-slate-900 dark:text-white">
                     {product.price}{" "}
                     <span className="font-normal text-fog">· {product.unit}</span>
                   </p>
@@ -196,7 +196,7 @@ export function FarmsPage() {
               <RevealItem key={experience.title}>
                 <div className="h-full rounded-3xl glass p-6">
                   <span className="text-2xl">{experience.icon}</span>
-                  <h3 className="mt-3 font-display text-lg font-semibold">{experience.title}</h3>
+                  <h3 className="mt-3 font-display text-lg font-semibold text-[#0F172A] dark:text-white">{experience.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-mist">{experience.summary}</p>
                 </div>
               </RevealItem>
@@ -217,14 +217,14 @@ export function FarmsPage() {
             {FARM_ITINERARY.map((day) => (
               <RevealItem key={day.day}>
                 <div className="h-full rounded-3xl glass p-6">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-lime-300">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-lime-300">
                     {day.day}
                   </p>
-                  <h3 className="mt-1 font-display text-lg font-semibold">{day.title}</h3>
-                  <ul className="mt-4 space-y-2 border-t border-white/10 pt-4">
+                  <h3 className="mt-1 font-display text-lg font-semibold text-[#0F172A] dark:text-white">{day.title}</h3>
+                  <ul className="mt-4 space-y-2 border-t border-slate-200 dark:border-white/10 pt-4">
                     {day.items.map((item) => (
                       <li key={`${day.day}-${item.time}-${item.activity}`} className="flex gap-3 text-xs leading-relaxed text-mist">
-                        <span className="w-20 shrink-0 font-semibold text-white/80">{item.time}</span>
+                        <span className="w-20 shrink-0 font-semibold text-slate-900 dark:text-white/80">{item.time}</span>
                         <span>{item.activity}</span>
                       </li>
                     ))}
@@ -236,12 +236,12 @@ export function FarmsPage() {
 
           <div className="mt-8 grid gap-5 sm:grid-cols-2">
             <Reveal>
-              <div className="rounded-3xl border border-emerald-400/20 bg-emerald-500/5 p-6">
-                <h3 className="font-display text-base font-semibold text-emerald-200">Included</h3>
+              <div className="rounded-3xl border border-emerald-500/30 dark:border-emerald-400/20 bg-emerald-500/10 dark:bg-emerald-500/5 p-6">
+                <h3 className="font-display text-base font-semibold text-emerald-900 dark:text-emerald-200">Included</h3>
                 <ul className="mt-3 space-y-2 text-xs text-mist">
                   {FARM_PACKAGE_INCLUSIONS.map((item) => (
                     <li key={item} className="flex gap-2">
-                      <span className="text-emerald-400">✓</span>
+                      <span className="text-emerald-600 dark:text-emerald-400">✓</span>
                       {item}
                     </li>
                   ))}
@@ -249,12 +249,12 @@ export function FarmsPage() {
               </div>
             </Reveal>
             <Reveal delay={0.05}>
-              <div className="rounded-3xl border border-amber-400/20 bg-amber-500/5 p-6">
-                <h3 className="font-display text-base font-semibold text-amber-200">Not included</h3>
+              <div className="rounded-3xl border border-amber-500/30 dark:border-amber-400/20 bg-amber-500/10 dark:bg-amber-500/5 p-6">
+                <h3 className="font-display text-base font-semibold text-amber-900 dark:text-amber-200">Not included</h3>
                 <ul className="mt-3 space-y-2 text-xs text-mist">
                   {FARM_PACKAGE_EXCLUSIONS.map((item) => (
                     <li key={item} className="flex gap-2">
-                      <span className="text-amber-400">·</span>
+                      <span className="text-amber-600 dark:text-amber-400">·</span>
                       {item}
                     </li>
                   ))}
@@ -263,7 +263,7 @@ export function FarmsPage() {
             </Reveal>
           </div>
           <Reveal className="mt-6 rounded-2xl glass p-5 text-center text-xs text-mist">
-            Package contribution: <span className="font-semibold text-white">on enquiry</span>.
+            Package contribution: <span className="font-semibold text-slate-900 dark:text-white">on enquiry</span>.
             Confirmed after we check availability, group size and the season.
           </Reveal>
         </div>
@@ -281,10 +281,10 @@ export function FarmsPage() {
             {FARM_DESTINATIONS.map((destination) => (
               <RevealItem key={destination.name}>
                 <div className="h-full rounded-3xl glass p-6">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-lime-300">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-lime-300">
                     {destination.type}
                   </p>
-                  <h3 className="mt-2 font-display text-base font-semibold">{destination.name}</h3>
+                  <h3 className="mt-2 font-display text-base font-semibold text-[#0F172A] dark:text-white">{destination.name}</h3>
                   <p className="mt-2 text-xs leading-relaxed text-mist">{destination.summary}</p>
                 </div>
               </RevealItem>
@@ -311,7 +311,7 @@ export function FarmsPage() {
               { icon: "🪔", label: "Festival evening" },
             ].map((tile) => (
               <RevealItem key={tile.label}>
-                <div className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-gradient-to-br from-emerald-600/10 to-lime-500/5 text-center">
+                <div className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-2xl border border-slate-200 dark:border-white/10 bg-gradient-to-br from-emerald-600/10 to-lime-500/5 text-center">
                   <span className="text-3xl">{tile.icon}</span>
                   <span className="text-xs text-mist">{tile.label}</span>
                 </div>
@@ -329,7 +329,7 @@ export function FarmsPage() {
             {FARM_FAQ.map((item) => (
               <RevealItem key={item.q}>
                 <details className="group rounded-2xl glass p-6">
-                  <summary className="flex cursor-pointer list-none items-center justify-between font-display text-base font-semibold">
+                  <summary className="flex cursor-pointer list-none items-center justify-between font-display text-base font-semibold text-[#0F172A] dark:text-white">
                     {item.q}
                     <span className="ml-4 text-mist transition-transform group-open:rotate-45">+</span>
                   </summary>
@@ -355,20 +355,20 @@ export function FarmsPage() {
                 booked.
               </p>
               <div className="mt-8 space-y-3 text-sm">
-                <p className="text-mist">
-                  <span className="font-semibold text-white">Email:</span>{" "}
-                  <a className="text-lime-300 hover:text-lime-200" href={`mailto:${FARMS_CONTACT.email}`}>
+                <p className="text-slate-600 dark:text-mist">
+                  <span className="font-semibold text-slate-900 dark:text-white">Email:</span>{" "}
+                  <a className="text-emerald-700 dark:text-lime-300 font-medium hover:underline" href={`mailto:${FARMS_CONTACT.email}`}>
                     {FARMS_CONTACT.email}
                   </a>
                 </p>
-                <p className="text-mist">
-                  <span className="font-semibold text-white">Phone:</span> {FARMS_CONTACT.phone}
+                <p className="text-slate-600 dark:text-mist">
+                  <span className="font-semibold text-slate-900 dark:text-white">Phone:</span> {FARMS_CONTACT.phone}
                 </p>
-                <p className="text-mist">
-                  <span className="font-semibold text-white">Location:</span> {FARMS_CONTACT.location}
+                <p className="text-slate-600 dark:text-mist">
+                  <span className="font-semibold text-slate-900 dark:text-white">Location:</span> {FARMS_CONTACT.location}
                 </p>
               </div>
-              <p className="mt-8 rounded-xl border border-lime-400/20 bg-lime-500/5 p-4 text-xs leading-relaxed text-lime-200/80">
+              <p className="mt-8 rounded-xl border border-emerald-500/30 dark:border-lime-400/20 bg-emerald-500/10 dark:bg-lime-500/5 p-4 text-xs leading-relaxed text-emerald-950 dark:text-lime-200/90 font-medium">
                 This is a working farm. Visitors follow the farm&apos;s safety instructions, stay with the
                 group, and accept that weather and crop work can change the schedule.
               </p>

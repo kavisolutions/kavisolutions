@@ -46,7 +46,7 @@ function SectionHeading({
 
 export default function FellowshipPage() {
   return (
-    <div className="relative min-h-screen bg-ink font-sans text-white">
+    <div className="relative min-h-screen bg-ink font-sans text-[#0F172A] dark:text-white">
       {/* HERO */}
       <section className="relative overflow-hidden px-6 pt-36 pb-20">
         <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-[500px] w-[900px] rounded-full bg-gradient-to-b from-[#175CD3]/20 via-[#8B5CF6]/10 to-transparent blur-[120px]" />

@@ -83,7 +83,8 @@ fails loudly instead of silently hitting the wrong origin.
 Auth is **Better Auth** (email/password + Google OAuth) served by the backend at
 `/api/auth/*`. The session cookie is first-party because of the same-origin
 proxy. Admin access is decided by `user.role = "admin"` or the `ADMIN_EMAILS`
-allowlist on the backend; the UI only reflects it.
+allowlist on the backend; the UI only reflects it. Google OAuth setup and
+redirect URIs are documented in [`docs/google-sign-in.md`](docs/google-sign-in.md).
 
 ## Production build
 

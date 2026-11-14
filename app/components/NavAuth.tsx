@@ -47,7 +47,7 @@ export default function NavAuth({ variant = "desktop" }: { variant?: "desktop" |
   const itemClass =
     variant === "menu"
       ? "block rounded-xl px-4 py-3 text-base font-medium text-mist transition-colors hover:bg-white/5 hover:text-white"
-      : "rounded-xl bg-white/5 px-4 py-2 text-sm font-semibold text-mist transition-colors hover:bg-white/10 hover:text-white";
+      : "rounded-xl bg-white/5 px-3.5 py-2 text-sm font-semibold text-mist transition-colors hover:bg-white/10 hover:text-white whitespace-nowrap shrink-0";
 
   if (loading) return null;
 
@@ -59,16 +59,16 @@ export default function NavAuth({ variant = "desktop" }: { variant?: "desktop" |
     );
   }
 
-  const primary =
-    me?.isAdmin === true
-      ? { href: "/admin", label: "Admin Panel" }
-      : { href: "/profile", label: "My Profile" };
-
   return (
-    <div className={variant === "menu" ? "flex flex-col gap-1" : "flex items-center gap-2"}>
-      <Link href={primary.href} className={itemClass}>
-        {primary.label}
+    <div className={variant === "menu" ? "flex flex-col gap-1" : "flex items-center gap-2 shrink-0"}>
+      <Link href="/dashboard" className={itemClass}>
+        Dashboard
       </Link>
+      {me?.isAdmin === true && (
+        <Link href="/admin" className={itemClass}>
+          Admin Panel
+        </Link>
+      )}
       <button onClick={handleSignOut} className={itemClass}>
         Logout
       </button>

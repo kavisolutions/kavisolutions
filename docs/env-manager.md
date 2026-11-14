@@ -17,6 +17,10 @@ tokens.
 `kavi-solutions-be` has empty `fe-local` / `fe-production` envs. They are legacy
 duplicates; use the mapping above.
 
+`GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are present in both `be-local`
+and `be-production`, so Google sign-in works locally and in production. See
+[`google-sign-in.md`](google-sign-in.md).
+
 ## Pull manually
 
 ```bash

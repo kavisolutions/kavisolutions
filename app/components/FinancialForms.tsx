@@ -8,7 +8,7 @@ type Kind = "individual" | "business";
 const inputClass =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-fog focus:border-emerald-400/60";
 
-const labelClass = "mb-1.5 block text-xs font-semibold text-mist";
+const labelClass = "mb-1.5 block text-xs font-semibold text-slate-700 dark:text-mist";
 
 type Status =
   | { kind: "idle" }
@@ -109,7 +109,7 @@ export default function FinancialForms() {
 
   return (
     <div className="rounded-3xl glass p-6 shadow-lift sm:p-8">
-      <div className="mb-6 flex gap-2 rounded-xl bg-white/5 p-1">
+      <div className="mb-6 flex gap-2 rounded-xl bg-slate-100 dark:bg-white/5 p-1 border border-slate-200/80 dark:border-transparent">
         {(
           [
             { id: "individual", label: "Individual" },
@@ -127,7 +127,7 @@ export default function FinancialForms() {
             className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-semibold transition-colors sm:text-sm ${
               kind === option.id
                 ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-sm"
-                : "text-mist hover:bg-white/5 hover:text-white"
+                : "text-slate-600 dark:text-mist hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-white/5"
             }`}
           >
             {option.label}

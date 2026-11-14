@@ -10,7 +10,7 @@ import {
 const inputClass =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-fog focus:border-sky-400/60";
 
-const labelClass = "mb-1.5 block text-xs font-semibold text-mist";
+const labelClass = "mb-1.5 block text-xs font-semibold text-slate-700 dark:text-mist";
 
 type Status =
   | { kind: "idle" }

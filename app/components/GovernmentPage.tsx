@@ -36,7 +36,7 @@ function SectionHeading({
 
 export function GovernmentPage() {
   return (
-    <div className="relative min-h-screen bg-ink font-sans text-white">
+    <div className="relative min-h-screen bg-ink font-sans text-[#0F172A] dark:text-white">
       {/* HERO */}
       <section className="relative overflow-hidden px-6 pt-40 pb-20">
         <GlowOrb className="-left-24 top-10 h-80 w-80 bg-gradient-to-br from-blue-600 to-cyan-500 opacity-25 blur-3xl" />
@@ -69,7 +69,7 @@ export function GovernmentPage() {
               </a>
               <a
                 href="#focus"
-                className="rounded-2xl glass px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                className="rounded-2xl glass border border-slate-300/80 dark:border-white/15 px-7 py-3.5 text-sm font-semibold text-[#0F172A] dark:text-white transition-colors hover:bg-slate-100 dark:hover:bg-white/10 shadow-sm"
               >
                 Explore focus areas
               </a>
@@ -341,17 +341,17 @@ export function GovernmentPage() {
                 level.
               </p>
               <div className="mt-8 space-y-3 text-sm">
-                <p className="text-mist">
-                  <span className="font-semibold text-white">Email:</span>{" "}
-                  <a className="text-sky-300 hover:text-sky-200" href={`mailto:${GOVERNMENT_CONTACT.email}`}>
+                <p className="text-slate-600 dark:text-mist">
+                  <span className="font-semibold text-slate-900 dark:text-white">Email:</span>{" "}
+                  <a className="text-sky-700 dark:text-sky-300 font-medium hover:underline" href={`mailto:${GOVERNMENT_CONTACT.email}`}>
                     {GOVERNMENT_CONTACT.email}
                   </a>
                 </p>
-                <p className="text-mist">
-                  <span className="font-semibold text-white">Location:</span> {GOVERNMENT_CONTACT.location}
+                <p className="text-slate-600 dark:text-mist">
+                  <span className="font-semibold text-slate-900 dark:text-white">Location:</span> {GOVERNMENT_CONTACT.location}
                 </p>
               </div>
-              <p className="mt-8 rounded-xl border border-amber-400/20 bg-amber-500/5 p-4 text-xs leading-relaxed text-amber-200/80">
+              <p className="mt-8 rounded-xl border border-amber-500/30 dark:border-amber-400/20 bg-amber-500/10 dark:bg-amber-500/5 p-4 text-xs leading-relaxed text-amber-950 dark:text-amber-200/90 font-medium">
                 We do not claim government empanelment, accreditation or an existing client
                 relationship on this page. Any assessment begins only after written authorisation.
               </p>

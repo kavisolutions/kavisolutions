@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -19,6 +20,8 @@ import {
   Users,
   GraduationCap,
   Mail,
+  Menu,
+  X,
 } from "lucide-react";
 import NavAuth from "./NavAuth";
 import ThemeToggle from "./ThemeToggle";
@@ -45,13 +48,23 @@ const mainLinks = [
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
   const [servicesExpanded, setServicesExpanded] = useState(true);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.style.overflow = previous;
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [open]);
 
@@ -60,28 +73,31 @@ export default function MobileMenu() {
       <button
         onClick={() => setOpen(true)}
         aria-label="Open menu"
-        className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 border border-[rgba(148,163,184,0.14)] text-base text-[#F7F9FC]"
+        className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 border border-[rgba(148,163,184,0.14)] text-base text-[#F7F9FC] hover:bg-white/10 transition-colors"
       >
-        ☰
+        <Menu className="h-5 w-5 text-[#F7F9FC]" />
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setOpen(false)}
-              className="fixed inset-0 z-[60] bg-[#000000b3] backdrop-blur-sm md:hidden"
-            />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 26, stiffness: 260 }}
-              className="fixed right-0 top-0 z-[70] flex h-full w-80 flex-col justify-between overflow-y-auto rounded-l-3xl border-l border-[rgba(148,163,184,0.16)] bg-[#0B1220] p-6 shadow-2xl md:hidden"
-            >
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {open && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => setOpen(false)}
+                  className="fixed inset-0 z-[999] bg-[#000000cc] backdrop-blur-sm lg:hidden pointer-events-auto"
+                />
+                <motion.div
+                  initial={{ x: "100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "100%" }}
+                  transition={{ type: "spring", damping: 26, stiffness: 260 }}
+                  className="fixed inset-y-0 right-0 z-[1000] flex h-screen w-80 sm:w-96 flex-col justify-between overflow-y-auto rounded-l-3xl border-l border-[rgba(148,163,184,0.16)] bg-[#0B1220] p-6 shadow-2xl lg:hidden pointer-events-auto"
+                >
               <div>
                 {/* Header */}
                 <div className="mb-6 flex items-center justify-between">
@@ -103,10 +119,10 @@ export default function MobileMenu() {
                     <ThemeToggle />
                     <button
                       onClick={() => setOpen(false)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-sm text-[#A5B3C7] hover:text-white"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-sm text-[#A5B3C7] hover:text-white hover:bg-white/10 transition-colors"
                       aria-label="Close menu"
                     >
-                      ✕
+                      <X className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
@@ -183,7 +199,9 @@ export default function MobileMenu() {
             </motion.div>
           </>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body
+    )}
     </>
   );
 }

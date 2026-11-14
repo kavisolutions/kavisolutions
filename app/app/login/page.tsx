@@ -38,6 +38,21 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
+  /* Better Auth redirects OAuth failures back to the callback URL with an
+     `error` query parameter. Show a human message instead of a silent form. */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const oauthError = new URLSearchParams(window.location.search).get("error");
+    if (!oauthError) return;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- OAuth errors only exist after the redirect
+    setError(
+      oauthError === "access_denied"
+        ? "Google sign-in was cancelled."
+        : "Google sign-in failed. Please try again.",
+    );
+  }, []);
+
   const goToDestination = useCallback(async () => {
     const next = getNextPath();
     if (next) {
@@ -48,9 +63,9 @@ export default function LoginPage() {
     try {
       const res = await fetch("/api/me", { credentials: "include" });
       const data = await res.json();
-      router.push(data?.isAdmin ? "/admin" : "/team");
+      router.push(data?.isAdmin ? "/admin" : "/dashboard");
     } catch {
-      router.push("/team");
+      router.push("/dashboard");
     }
   }, [router]);
 
