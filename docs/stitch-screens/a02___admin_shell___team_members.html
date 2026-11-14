@@ -1,0 +1,636 @@
+<!DOCTYPE html><html class="light" lang="en" style="width: 1280px; height: 1037px; overflow: hidden; position: relative;"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"primary-fixed-dim":"#b4c5ff","surface-tint":"#0053db","background":"#faf8ff","primary":"#004ac6","surface":"#faf8ff","on-primary":"#ffffff","on-primary-container":"#eeefff","on-error-container":"#93000a","primary-fixed":"#dbe1ff","on-tertiary-fixed":"#002113","on-surface":"#131b2e","on-primary-fixed":"#00174b","tertiary-container":"#007d55","on-secondary-fixed":"#001e2f","surface-container-high":"#e2e7ff","surface-bright":"#faf8ff","secondary-fixed-dim":"#89ceff","inverse-on-surface":"#eef0ff","outline":"#737686","surface-container-low":"#f2f3ff","on-secondary-fixed-variant":"#004c6e","tertiary-fixed-dim":"#4edea3","surface-variant":"#dae2fd","inverse-surface":"#283044","error-container":"#ffdad6","secondary-fixed":"#c9e6ff","surface-container-lowest":"#ffffff","outline-variant":"#c3c6d7","error":"#ba1a1a","primary-container":"#2563eb","surface-dim":"#d2d9f4","on-primary-fixed-variant":"#003ea8","secondary":"#006591","on-error":"#ffffff","secondary-container":"#39b8fd","surface-container-highest":"#dae2fd","on-surface-variant":"#434655","tertiary-fixed":"#6ffbbe","on-background":"#131b2e","on-secondary":"#ffffff","on-tertiary":"#ffffff","inverse-primary":"#b4c5ff","tertiary":"#006242","surface-container":"#eaedff","on-tertiary-fixed-variant":"#005236","on-tertiary-container":"#bdffdb","on-secondary-container":"#004666"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"margin":"1rem","space-md":"0.75rem","margin-desktop":"1.5rem","gutter":"1rem","space-sm":"0.5rem","space-xs":"0.25rem","space-lg":"1rem","gutter-desktop":"1.5rem","space-xl":"1.5rem"},"fontFamily":{"headline-lg-mobile":["Space Grotesk"],"body-sm":["Geist"],"label-md":["Geist"],"headline-md":["Space Grotesk"],"body-md":["Geist"],"headline-lg":["Space Grotesk"],"headline-sm":["Space Grotesk"],"body-lg":["Geist"],"label-sm":["Geist"],"code-sm":["Geist"]},"fontSize":{"headline-lg-mobile":["24px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-sm":["13px",{"lineHeight":"18px","fontWeight":"400"}],"label-md":["13px",{"lineHeight":"16px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"headline-lg":["30px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"-0.005em","fontWeight":"600"}],"body-lg":["15px",{"lineHeight":"22px","fontWeight":"400"}],"label-sm":["12px",{"lineHeight":"16px","fontWeight":"500"}],"code-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest flex flex-col z-50 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-lg flex items-center justify-between border-b border-surface-container-high"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-container to-secondary-container flex items-center justify-center text-on-primary font-headline-sm text-headline-sm font-bold shadow-sm">K</div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight leading-none">Kavi Solutions</span><div class="flex items-center gap-1.5 mt-1"><span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-[10px] leading-none">Admin Console</span></div></div></div></div><div class="px-space-md pt-space-lg pb-space-xs"><span class="px-space-sm font-label-sm text-label-sm text-outline tracking-wider uppercase font-semibold text-[11px]">Workspace</span></div><nav class="flex-1 px-space-md py-space-xs space-y-1 overflow-y-auto" data-active-classes="bg-surface-container-high text-primary font-medium rounded-lg"><a aria-current="page" class="flex items-center justify-between px-space-sm py-2 transition-colors bg-surface-container-high text-primary font-medium rounded-lg" data-path="team-members" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">group</span><span class="font-label-md text-label-md">Team members</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">12</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="roles" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">badge</span><span class="font-label-md text-label-md">Roles</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">4</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="teams" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">diversity_3</span><span class="font-label-md text-label-md">Teams</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">3</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="projects" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">folder</span><span class="font-label-md text-label-md">Projects</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">8</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="certificates" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">verified</span><span class="font-label-md text-label-md">Certificates</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">24</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="surveyors" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">engineering</span><span class="font-label-md text-label-md">Surveyors</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">15</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="social-agent" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">share</span><span class="font-label-md text-label-md">Social agent</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="administrators" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">admin_panel_settings</span><span class="font-label-md text-label-md">Administrators</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">2</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="settings" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">settings</span><span class="font-label-md text-label-md">Settings</span></div></a></nav><div class="p-space-md border-t border-surface-container-high"><div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low"><div class="flex items-center gap-space-sm min-w-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="text-on-primary font-headline-sm text-headline-sm font-bold text-xs">KR</span></div><div class="flex flex-col min-w-0"><span class="font-label-sm text-label-sm text-on-surface font-medium truncate leading-tight">raman@kavisolutions.in</span><span class="font-body-sm text-body-sm text-on-surface-variant text-[11px] leading-tight">Administrator</span></div></div><a aria-label="Log out" class="p-1 text-on-surface-variant hover:text-error hover:bg-surface-container-high rounded transition-colors shrink-0" data-path="login" href="#"><span class="material-symbols-outlined text-[18px]">logout</span></a></div></div></aside><div class="pl-64 flex flex-col min-h-screen bg-background"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl border-b border-surface-container-high z-40 px-space-xl flex items-center justify-between"><div class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant"><span class="text-outline hover:text-on-surface transition-colors cursor-pointer">Kavi Solutions</span><span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-bold bg-primary text-on-primary shadow-xs mr-2">A02</span><span class="text-outline hover:text-on-surface transition-colors cursor-pointer">Workspace</span><span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span><span class="text-on-surface font-medium">Team members</span></div><div class="flex items-center gap-space-md"><button aria-label="Toggle Theme" class="w-9 h-9 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">light_mode</span></button><a class="h-9 px-space-md flex items-center gap-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface hover:bg-surface-container hover:text-on-surface transition-colors" href="#"><span>Live team page</span><span class="material-symbols-outlined text-[14px]">north_east</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 flex-1"><div class="max-w-[1152px] mx-auto p-8"><div class="flex flex-col w-full">
+<!-- PAGE HEADER -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-surface-container-high">
+<div class="space-y-1">
+<div class="flex items-center gap-2"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-bold bg-primary text-on-primary shadow-xs tracking-wider">A02</span><span class="font-label-sm text-label-sm font-semibold tracking-wider text-primary uppercase">WORKSPACE / ADMINISTRATION</span><span class="w-1 h-1 rounded-full bg-outline-variant"></span><span class="font-code-sm text-code-sm text-outline">PRODUCTION DIRECTORY</span></div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Team members</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+        Manage your public team directory, credentials, and member profiles across core functional pods.
+      </p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed border border-primary-fixed-dim font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>12 members</span>
+</div>
+<button class="h-9 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container shadow-sm flex items-center gap-2 transition-all active:scale-[0.98]" id="openAddMemberBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Add member</span>
+</button>
+</div>
+</div>
+<!-- KPI SUMMARY ROW -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high relative overflow-hidden group">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">Total Directory</span>
+<span class="material-symbols-outlined text-outline text-[20px]">groups</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">12</span>
+<span class="font-label-sm text-label-sm text-tertiary font-medium">100% active</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Distributed across 4 studio divisions</p>
+<div class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high relative overflow-hidden group">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">Public Profiles Synced</span>
+<span class="material-symbols-outlined text-tertiary-container text-[20px]">verified</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">100%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Edge active</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Zero unassigned roles or broken links</p>
+<div class="absolute bottom-0 left-0 right-0 h-0.5 bg-tertiary-container transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high relative overflow-hidden group">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">Pending Modifications</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">cloud_done</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">0</span>
+<span class="font-label-sm text-label-sm text-tertiary font-medium">Clean state</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Live build deployed to CDN 4m ago</p>
+<div class="absolute bottom-0 left-0 right-0 h-0.5 bg-secondary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+</div>
+</div>
+<!-- FILTER & SEARCH CONTROLS -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container-high p-3 mb-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div class="flex flex-wrap items-center gap-2.5 flex-1">
+<!-- Search Input -->
+<div class="relative w-full md:w-80">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full h-9 pl-9 pr-3 rounded-lg border border-outline-variant bg-surface-container-lowest font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all" id="memberSearchInput" placeholder="Search by name, role, or team..." type="text">
+</div>
+<!-- Role Dropdown Filter -->
+<div class="relative">
+<select class="h-9 appearance-none pl-3 pr-8 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 cursor-pointer transition-colors" id="roleFilter">
+<option value="ALL">All roles</option>
+<option value="Architect">Architect</option>
+<option value="Design">Product Design</option>
+<option value="Engineering">Engineering</option>
+<option value="Operations">Operations</option>
+<option value="AI">Cognitive / AI</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[16px]">expand_more</span>
+</div>
+<!-- Team Dropdown Filter -->
+<div class="relative">
+<select class="h-9 appearance-none pl-3 pr-8 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 cursor-pointer transition-colors" id="teamFilter">
+<option value="ALL">All teams</option>
+<option value="Core Architecture">Core Architecture</option>
+<option value="Cognitive Labs">Cognitive Labs</option>
+<option value="Field Operations">Field Operations</option>
+<option value="Design">Design</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[16px]">expand_more</span>
+</div>
+<!-- Clear Filters button (Dynamic) -->
+<button class="hidden h-9 px-2.5 text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm items-center gap-1 transition-colors" id="resetFiltersBtn" type="button">
+<span class="material-symbols-outlined text-[16px]">close</span>
+<span>Clear</span>
+</button>
+</div>
+<!-- Status counter -->
+<div class="flex items-center gap-2 text-on-surface-variant px-2 shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant" id="renderedRowsIndicator">Showing 8 of 12</span>
+</div>
+</div>
+<!-- MEMBERS DATA TABLE -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container-high shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="membersDataTable">
+<thead>
+<tr class="bg-surface-container-low border-b border-surface-container-high text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider h-10 select-none">
+<th class="py-3 px-6 font-semibold cursor-pointer group" onclick="sortTable(0)">
+<div class="flex items-center gap-1.5">
+<span>Member</span>
+<span class="material-symbols-outlined text-[14px] text-outline group-hover:text-on-surface transition-colors">swap_vert</span>
+</div>
+</th>
+<th class="py-3 px-6 font-semibold">Role</th>
+<th class="py-3 px-6 font-semibold">Team</th>
+<th class="py-3 px-6 font-semibold text-center w-20">Order</th>
+<th class="py-3 px-6 font-semibold">Status</th>
+<th class="py-3 px-6 font-semibold text-right w-24">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low font-body-sm text-body-sm text-on-surface" id="tableBodyContent">
+<!-- Row 1: K. V. Raman -->
+<tr class="hover:bg-surface-container-low/60 transition-colors h-[54px] group" data-member-name="K. V. Raman" data-role="Principal Architect &amp; Founder" data-team="Core Architecture">
+<td class="py-2.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-on-primary-fixed to-primary flex items-center justify-center text-on-primary font-headline-sm text-[12px] font-bold shrink-0 shadow-xs">
+                  KR
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface tracking-tight group-hover:text-primary transition-colors">K. V. Raman</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant truncate">raman@kavisolutions.in</span>
+</div>
+</div>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm border border-outline-variant/40">
+                Principal Architect &amp; Founder
+              </span>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+                Core Architecture
+              </span>
+</td>
+<td class="py-2.5 px-6 text-center font-code-sm text-code-sm text-outline font-medium">01</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Active
+              </span>
+</td>
+<td class="py-2.5 px-6 text-right">
+<div class="inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+<button aria-label="Edit Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container/20 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: S. Nandini -->
+<tr class="hover:bg-surface-container-low/60 transition-colors h-[54px] group" data-member-name="S. Nandini" data-role="Head of Product Design" data-team="Design">
+<td class="py-2.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-secondary to-secondary-container flex items-center justify-center text-on-secondary font-headline-sm text-[12px] font-bold shrink-0 shadow-xs">
+                  SN
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface tracking-tight group-hover:text-primary transition-colors">S. Nandini</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant truncate">nandini@kavisolutions.in</span>
+</div>
+</div>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm border border-outline-variant/40">
+                Head of Product Design
+              </span>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+                Design
+              </span>
+</td>
+<td class="py-2.5 px-6 text-center font-code-sm text-code-sm text-outline font-medium">02</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Active
+              </span>
+</td>
+<td class="py-2.5 px-6 text-right">
+<div class="inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+<button aria-label="Edit Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container/20 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Arjun Mehta -->
+<tr class="hover:bg-surface-container-low/60 transition-colors h-[54px] group" data-member-name="Arjun Mehta" data-role="VP of Engineering" data-team="Core Architecture">
+<td class="py-2.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-tertiary to-tertiary-container flex items-center justify-center text-on-tertiary font-headline-sm text-[12px] font-bold shrink-0 shadow-xs">
+                  AM
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface tracking-tight group-hover:text-primary transition-colors">Arjun Mehta</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant truncate">arjun.mehta@kavisolutions.in</span>
+</div>
+</div>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm border border-outline-variant/40">
+                VP of Engineering
+              </span>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+                Core Architecture
+              </span>
+</td>
+<td class="py-2.5 px-6 text-center font-code-sm text-code-sm text-outline font-medium">03</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Active
+              </span>
+</td>
+<td class="py-2.5 px-6 text-right">
+<div class="inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+<button aria-label="Edit Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container/20 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Priya Deshmukh -->
+<tr class="hover:bg-surface-container-low/60 transition-colors h-[54px] group" data-member-name="Priya Deshmukh" data-role="Director of Growth &amp; Telemetry" data-team="Field Operations">
+<td class="py-2.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-on-surface-variant to-primary flex items-center justify-center text-on-primary font-headline-sm text-[12px] font-bold shrink-0 shadow-xs">
+                  PD
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface tracking-tight group-hover:text-primary transition-colors">Priya Deshmukh</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant truncate">priya.d@kavisolutions.in</span>
+</div>
+</div>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm border border-outline-variant/40">
+                Director of Growth &amp; Telemetry
+              </span>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+                Field Operations
+              </span>
+</td>
+<td class="py-2.5 px-6 text-center font-code-sm text-code-sm text-outline font-medium">04</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Active
+              </span>
+</td>
+<td class="py-2.5 px-6 text-right">
+<div class="inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+<button aria-label="Edit Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container/20 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Harish Chandra -->
+<tr class="hover:bg-surface-container-low/60 transition-colors h-[54px] group" data-member-name="Harish Chandra" data-role="Principal Field Systems Eng" data-team="Field Operations">
+<td class="py-2.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-surface-tint to-secondary-container flex items-center justify-center text-on-primary font-headline-sm text-[12px] font-bold shrink-0 shadow-xs">
+                  HC
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface tracking-tight group-hover:text-primary transition-colors">Harish Chandra</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant truncate">harish@kavisolutions.in</span>
+</div>
+</div>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm border border-outline-variant/40">
+                Principal Field Systems Eng
+              </span>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+                Field Operations
+              </span>
+</td>
+<td class="py-2.5 px-6 text-center font-code-sm text-code-sm text-outline font-medium">05</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Active
+              </span>
+</td>
+<td class="py-2.5 px-6 text-right">
+<div class="inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+<button aria-label="Edit Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container/20 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 6: Meera Sen -->
+<tr class="hover:bg-surface-container-low/60 transition-colors h-[54px] group" data-member-name="Meera Sen" data-role="Lead AI &amp; Applied ML" data-team="Cognitive Labs">
+<td class="py-2.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-inverse-primary flex items-center justify-center text-on-primary font-headline-sm text-[12px] font-bold shrink-0 shadow-xs">
+                  MS
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface tracking-tight group-hover:text-primary transition-colors">Meera Sen</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant truncate">meera.sen@kavisolutions.in</span>
+</div>
+</div>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm border border-outline-variant/40">
+                Lead AI &amp; Applied ML
+              </span>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+                Cognitive Labs
+              </span>
+</td>
+<td class="py-2.5 px-6 text-center font-code-sm text-code-sm text-outline font-medium">06</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Active
+              </span>
+</td>
+<td class="py-2.5 px-6 text-right">
+<div class="inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+<button aria-label="Edit Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container/20 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 7: Rohit Nair -->
+<tr class="hover:bg-surface-container-low/60 transition-colors h-[54px] group" data-member-name="Rohit Nair" data-role="Senior Full-Stack Architect" data-team="Core Architecture">
+<td class="py-2.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-secondary to-tertiary flex items-center justify-center text-on-primary font-headline-sm text-[12px] font-bold shrink-0 shadow-xs">
+                  RN
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface tracking-tight group-hover:text-primary transition-colors">Rohit Nair</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant truncate">rohit.nair@kavisolutions.in</span>
+</div>
+</div>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm border border-outline-variant/40">
+                Senior Full-Stack Architect
+              </span>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+                Core Architecture
+              </span>
+</td>
+<td class="py-2.5 px-6 text-center font-code-sm text-code-sm text-outline font-medium">07</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Active
+              </span>
+</td>
+<td class="py-2.5 px-6 text-right">
+<div class="inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+<button aria-label="Edit Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container/20 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 8: Divya Patel -->
+<tr class="hover:bg-surface-container-low/60 transition-colors h-[54px] group" data-member-name="Divya Patel" data-role="Operations &amp; Fellowship Dir" data-team="Field Operations">
+<td class="py-2.5 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-primary-container flex items-center justify-center text-on-primary font-headline-sm text-[12px] font-bold shrink-0 shadow-xs">
+                  DP
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface tracking-tight group-hover:text-primary transition-colors">Divya Patel</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant truncate">divya.patel@kavisolutions.in</span>
+</div>
+</div>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm border border-outline-variant/40">
+                Operations &amp; Fellowship Dir
+              </span>
+</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+                Field Operations
+              </span>
+</td>
+<td class="py-2.5 px-6 text-center font-code-sm text-code-sm text-outline font-medium">08</td>
+<td class="py-2.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Active
+              </span>
+</td>
+<td class="py-2.5 px-6 text-right">
+<div class="inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+<button aria-label="Edit Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Member" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container/20 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- TABLE FOOTER & PAGINATION -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-6 py-3.5 bg-surface-container-lowest border-t border-surface-container-high">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Page 1 of 2 (12 total records)</span>
+<div class="flex items-center gap-1.5">
+<button class="h-8 px-3 rounded-lg border border-outline-variant bg-surface-container-low text-outline font-label-sm text-label-sm cursor-not-allowed opacity-60" disabled="" type="button">
+          Previous
+        </button>
+<button class="h-8 w-8 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-medium flex items-center justify-center shadow-xs" type="button">
+          1
+        </button>
+<button class="h-8 w-8 rounded-lg border border-transparent hover:border-outline-variant hover:bg-surface-container text-on-surface font-label-sm text-label-sm font-medium flex items-center justify-center transition-colors" type="button">
+          2
+        </button>
+<button class="h-8 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-high font-label-sm text-label-sm transition-colors" type="button">
+          Next
+        </button>
+</div>
+</div>
+</div>
+<!-- ADD MEMBER MODAL DIALOG (Embedded / Interactive) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40 backdrop-blur-xs hidden" id="addMemberModal">
+<div class="bg-surface-container-lowest border border-surface-container-high rounded-xl max-w-lg w-full mx-4 shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+<div class="flex items-center justify-between px-6 py-4 border-b border-surface-container-high">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Add team member</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Create a credentialed identity for directory display</span>
+</div>
+<button class="text-outline hover:text-on-surface p-1 rounded-lg hover:bg-surface-container transition-colors" id="closeAddMemberBtn" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<form class="p-6 space-y-4" id="addMemberForm">
+<div>
+<label class="block font-label-sm text-label-sm font-medium text-on-surface mb-1.5" for="mName">Full Name</label>
+<input class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" id="mName" placeholder="e.g. S. Nandini" required="" type="text">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm font-medium text-on-surface mb-1.5" for="mEmail">Email Address</label>
+<input class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" id="mEmail" placeholder="e.g. nandini@kavisolutions.in" required="" type="email">
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block font-label-sm text-label-sm font-medium text-on-surface mb-1.5" for="mRole">Role Title</label>
+<input class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" id="mRole" placeholder="e.g. Senior Architect" required="" type="text">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm font-medium text-on-surface mb-1.5" for="mTeam">Team</label>
+<select class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" id="mTeam">
+<option value="Core Architecture">Core Architecture</option>
+<option value="Cognitive Labs">Cognitive Labs</option>
+<option value="Field Operations">Field Operations</option>
+<option value="Design">Design</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block font-label-sm text-label-sm font-medium text-on-surface mb-1.5" for="mOrder">Display Order</label>
+<input class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" id="mOrder" min="1" type="number" value="09">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm font-medium text-on-surface mb-1.5" for="mStatus">Status</label>
+<select class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" id="mStatus">
+<option value="Active">Active</option>
+<option value="Draft">Draft</option>
+</select>
+</div>
+</div>
+<div class="pt-4 flex items-center justify-end gap-2 border-t border-surface-container-high">
+<button class="h-9 px-4 rounded-lg border border-outline-variant text-on-surface font-label-md text-label-md hover:bg-surface-container transition-colors" id="cancelAddMemberBtn" type="button">
+            Cancel
+          </button>
+<button class="h-9 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container shadow-xs transition-colors" type="submit">
+            Create Member
+          </button>
+</div>
+</form>
+</div>
+</div>
+<script>
+    (function initDirectoryUI() {
+      const searchInput = document.getElementById('memberSearchInput');
+      const roleFilter = document.getElementById('roleFilter');
+      const teamFilter = document.getElementById('teamFilter');
+      const resetBtn = document.getElementById('resetFiltersBtn');
+      const tableBody = document.getElementById('tableBodyContent');
+      const rows = Array.from(tableBody.querySelectorAll('tr'));
+      const counterIndicator = document.getElementById('renderedRowsIndicator');
+
+      const modal = document.getElementById('addMemberModal');
+      const openModalBtn = document.getElementById('openAddMemberBtn');
+      const closeModalBtn = document.getElementById('closeAddMemberBtn');
+      const cancelModalBtn = document.getElementById('cancelAddMemberBtn');
+      const addForm = document.getElementById('addMemberForm');
+
+      function filterRows() {
+        const query = (searchInput.value || '').toLowerCase().trim();
+        const selectedRole = roleFilter.value;
+        const selectedTeam = teamFilter.value;
+
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+          const name = (row.getAttribute('data-member-name') || '').toLowerCase();
+          const role = (row.getAttribute('data-role') || '').toLowerCase();
+          const team = (row.getAttribute('data-team') || '');
+
+          const matchesQuery = !query || name.includes(query) || role.includes(query) || team.toLowerCase().includes(query);
+          const matchesRole = (selectedRole === 'ALL') || role.includes(selectedRole.toLowerCase());
+          const matchesTeam = (selectedTeam === 'ALL') || team === selectedTeam;
+
+          if (matchesQuery && matchesRole && matchesTeam) {
+            row.style.display = '';
+            visibleCount++;
+          } else {
+            row.style.display = 'none';
+          }
+        });
+
+        counterIndicator.textContent = `Showing ${visibleCount} of 12`;
+
+        const hasActiveFilter = query.length > 0 || selectedRole !== 'ALL' || selectedTeam !== 'ALL';
+        if (hasActiveFilter) {
+          resetBtn.classList.remove('hidden');
+          resetBtn.classList.add('inline-flex');
+        } else {
+          resetBtn.classList.add('hidden');
+          resetBtn.classList.remove('inline-flex');
+        }
+      }
+
+      searchInput.addEventListener('input', filterRows);
+      roleFilter.addEventListener('change', filterRows);
+      teamFilter.addEventListener('change', filterRows);
+
+      resetBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        roleFilter.value = 'ALL';
+        teamFilter.value = 'ALL';
+        filterRows();
+      });
+
+      // Modal Handlers
+      function toggleModal(show) {
+        if (show) {
+          modal.classList.remove('hidden');
+        } else {
+          modal.classList.add('hidden');
+        }
+      }
+
+      openModalBtn.addEventListener('click', () => toggleModal(true));
+      closeModalBtn.addEventListener('click', () => toggleModal(false));
+      cancelModalBtn.addEventListener('click', () => toggleModal(false));
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+          toggleModal(false);
+        }
+      });
+
+      addForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        toggleModal(false);
+        addForm.reset();
+      });
+
+      // Sorting
+      window.sortTable = function(colIndex) {
+        const sorted = rows.slice().sort((a, b) => {
+          const aName = a.getAttribute('data-member-name') || '';
+          const bName = b.getAttribute('data-member-name') || '';
+          return aName.localeCompare(bName);
+        });
+        sorted.forEach(r => tableBody.appendChild(r));
+      };
+    })();
+  </script>
+</div></div></main></div>
+
+<div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

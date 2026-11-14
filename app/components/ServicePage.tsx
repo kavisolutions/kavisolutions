@@ -1,187 +1,256 @@
+"use client";
+
 import Link from "next/link";
+import { ArrowRight, CheckCircle2, ChevronDown } from "lucide-react";
 import type { ServiceData } from "@/lib/services-data";
-import { GlowOrb, Reveal, RevealItem, RevealStagger } from "@/components/motion";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { GlowOrb, Reveal, RevealItem, RevealStagger, TiltCard } from "@/components/motion";
 
 export function ServicePage({ data }: { data: ServiceData }) {
   return (
-    <div className="relative min-h-screen bg-ink font-sans text-white">
-      {/* HERO */}
-      <section className="relative overflow-hidden px-6 pt-40 pb-20">
-        <GlowOrb className={`-left-24 top-10 h-80 w-80 bg-gradient-to-br ${data.gradient} opacity-30 blur-3xl`} />
-        <GlowOrb className="-right-24 bottom-10 h-80 w-80 bg-gradient-to-br ${data.gradient} opacity-20 blur-3xl" />
+    <div className="relative min-h-screen bg-ink font-sans text-[#F7F9FC] flex flex-col justify-between">
+      <Navbar />
 
-        <div className="relative mx-auto max-w-4xl text-center">
-          <Reveal>
-            <span className={`mb-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r ${data.gradient} bg-opacity-10 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-gradient ring-1 ring-white/10`}>
-              {data.icon} {data.tag}
-            </span>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight sm:text-6xl">
-              {data.title}{" "}
-              <span className="text-gradient">{data.highlight}</span>
-            </h1>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <p className="mx-auto mt-6 max-w-2xl text-base text-mist sm:text-lg">
-              {data.hero}
-            </p>
-          </Reveal>
-          <Reveal delay={0.3}>
-            <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
-              <a
-                href="#contact"
-                className={`rounded-2xl bg-gradient-to-r ${data.gradient} px-7 py-3.5 text-sm font-semibold text-white shadow-glow transition-all hover:scale-105`}
-              >
-                Start your project →
-              </a>
-              <a
-                href="#features"
-                className="rounded-2xl glass px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-white/10"
-              >
-                Explore features
-              </a>
-            </div>
-          </Reveal>
+      <div className="flex-grow">
+        {/* HERO */}
+        <section className="relative overflow-hidden px-6 pt-36 pb-20">
+          <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-[500px] w-[900px] rounded-full bg-gradient-to-b from-[#175CD3]/20 via-[#8B5CF6]/10 to-transparent blur-[120px]" />
 
-          <Reveal delay={0.4} className="mt-14 w-full max-w-3xl">
-            <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-4">
-              {data.metrics.map((m) => (
-                <div
-                  key={m.label}
-                  className="group flex flex-col items-center gap-1 bg-ink-soft p-6 transition-colors hover:bg-white/5"
-                >
-                  <span className={`font-display text-2xl font-bold text-gradient transition-transform group-hover:scale-110 sm:text-3xl`}>
-                    {m.value}
-                  </span>
-                  <span className="text-xs text-fog">{m.label}</span>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
+          <div className="relative mx-auto max-w-4xl text-center">
+            {/* Elevated Stitch Eyebrow Pill */}
+            <Reveal>
+              <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-[#19202E]/80 backdrop-blur-md border border-[rgba(148,163,184,0.18)] shadow-sm">
+                <span className="h-2 w-2 rounded-full bg-[#34D399] animate-pulse" />
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#91B4FF]">
+                  {data.tag}
+                </span>
+              </div>
+            </Reveal>
 
-      {/* FEATURES */}
-      <section id="features" className="relative px-6 py-24">
-        <div className="mx-auto max-w-6xl">
-          <Reveal className="mx-auto mb-14 max-w-3xl text-center">
-            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-5xl">
-              {data.featuresTitle}
-            </h2>
-          </Reveal>
-          <RevealStagger className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {data.features.map((f) => (
-              <RevealItem key={f.title}>
-                <div className="group relative h-full overflow-hidden rounded-3xl glass p-6 shadow-lift transition-all duration-300 hover:-translate-y-2 hover:shadow-glow">
-                  <span className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 text-2xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
-                    {f.icon}
-                  </span>
-                  <h3 className="font-display text-lg font-semibold">{f.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-mist">{f.desc}</p>
-                </div>
-              </RevealItem>
-            ))}
-          </RevealStagger>
-        </div>
-      </section>
+            {/* Headline */}
+            <Reveal delay={0.1}>
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#F7F9FC] leading-[1.15]">
+                {data.title}{" "}
+                <span className="bg-gradient-to-r from-[#91B4FF] to-[#68FCBF] bg-clip-text text-transparent">
+                  {data.highlight}
+                </span>
+              </h1>
+            </Reveal>
 
-      {/* PROCESS */}
-      <section className="relative px-6 py-24">
-        <div className="mx-auto max-w-5xl">
-          <Reveal className="mx-auto mb-14 max-w-3xl text-center">
-            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-5xl">
-              {data.processTitle}
-            </h2>
-          </Reveal>
-          <RevealStagger className="space-y-4">
-            {data.process.map((p) => (
-              <RevealItem key={p.step}>
-                <div className="group flex items-start gap-5 rounded-2xl glass p-6 shadow-lift transition-all duration-300 hover:border-white/20 hover:bg-white/5">
-                  <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${data.gradient} font-display text-lg font-bold text-white`}>
-                    {p.step}
-                  </span>
-                  <div>
-                    <h3 className="font-display text-lg font-semibold">{p.title}</h3>
-                    <p className="mt-1 text-sm text-mist">{p.desc}</p>
-                  </div>
-                </div>
-              </RevealItem>
-            ))}
-          </RevealStagger>
-        </div>
-      </section>
+            {/* Subtitle */}
+            <Reveal delay={0.2}>
+              <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-[#A5B3C7]">
+                {data.hero}
+              </p>
+            </Reveal>
 
-      {/* STACK */}
-      <section className="relative px-6 py-24">
-        <div className="mx-auto max-w-6xl">
-          <Reveal className="mx-auto mb-10 max-w-3xl text-center">
-            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-5xl">
-              {data.stackTitle}
-            </h2>
-          </Reveal>
-          <Reveal className="flex flex-wrap items-center justify-center gap-3">
-            {data.stack.map((t) => (
-              <span
-                key={t}
-                className="rounded-full glass px-4 py-2 text-sm text-mist transition-colors hover:bg-white/10 hover:text-white"
-              >
-                {t}
-              </span>
-            ))}
-          </Reveal>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="relative px-6 py-24">
-        <div className="mx-auto max-w-3xl">
-          <Reveal className="mx-auto mb-10 text-center">
-            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-              {data.faqTitle}
-            </h2>
-          </Reveal>
-          <RevealStagger className="space-y-4">
-            {data.faq.map((f) => (
-              <RevealItem key={f.q}>
-                <details className="group rounded-2xl glass p-6 shadow-lift transition-colors hover:border-white/20">
-                  <summary className="flex cursor-pointer list-none items-center justify-between font-display text-base font-semibold">
-                    {f.q}
-                    <span className="ml-4 text-mist transition-transform group-open:rotate-45">+</span>
-                  </summary>
-                  <p className="mt-3 text-sm leading-relaxed text-mist">{f.a}</p>
-                </details>
-              </RevealItem>
-            ))}
-          </RevealStagger>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section id="contact" className="relative overflow-hidden px-6 pb-28 pt-6">
-        <div className="mx-auto max-w-4xl">
-          <Reveal>
-            <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${data.gradient} p-10 text-center text-white shadow-glow`}>
-              <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
-              <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
-              <div className="relative">
-                <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-                  {data.ctaTitle}
-                </h2>
-                <p className="mx-auto mt-3 max-w-xl text-sm text-white/90 sm:text-base">
-                  {data.ctaDesc}
-                </p>
+            {/* Action Buttons */}
+            <Reveal delay={0.3}>
+              <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   href="/#contact"
-                  className="mt-7 inline-block rounded-2xl bg-white px-7 py-3.5 text-sm font-semibold text-gray-900 shadow-lift transition-all hover:scale-105"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] bg-[#175CD3] hover:bg-[#1849A9] text-white px-8 text-[15px] font-medium transition-all shadow-[0_0_24px_rgba(23,92,211,0.4)]"
                 >
-                  Get in touch →
+                  <span>Start your project</span>
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
+                <a
+                  href="#features"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-[rgba(255,255,255,0.14)] bg-[rgba(18,29,47,0.7)] px-7 text-[15px] font-medium text-[#F7F9FC] backdrop-blur-md transition-all hover:bg-white/[0.08]"
+                >
+                  <span>Explore capabilities</span>
+                  <ChevronDown className="h-4 w-4 text-[#91B4FF]" />
+                </a>
               </div>
+            </Reveal>
+
+            {/* Metrics Ribbon with 3D Tilt */}
+            <Reveal delay={0.4} className="mt-14 w-full max-w-3xl mx-auto">
+              <TiltCard
+                intensity={6}
+                className="overflow-hidden rounded-[20px] border border-[rgba(148,163,184,0.18)] bg-[rgba(18,29,47,0.85)] backdrop-blur-[20px] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)]"
+              >
+                <div className="grid grid-cols-2 divide-y divide-[rgba(148,163,184,0.12)] sm:grid-cols-4 sm:divide-y-0 sm:divide-x">
+                  {data.metrics.map((m) => (
+                    <div
+                      key={m.label}
+                      className="flex flex-col items-center justify-center p-6 text-center"
+                    >
+                      <span className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-[#F7F9FC]">
+                        {m.value}
+                      </span>
+                      <span className="mt-1 text-[11px] font-mono uppercase tracking-wider text-[#7889A0]">
+                        {m.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </TiltCard>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* FEATURES / WHAT WE BUILD */}
+        <section id="features" className="relative px-6 py-20">
+          <div className="mx-auto max-w-[1152px]">
+            <Reveal className="mx-auto mb-14 max-w-3xl text-center">
+              <div className="inline-flex items-center gap-2 mb-3">
+                <span className="h-2 w-2 rounded-full bg-[#175CD3]" />
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#91B4FF]">
+                  CAPABILITIES
+                </span>
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[#F7F9FC]">
+                {data.featuresTitle}
+              </h2>
+            </Reveal>
+
+            <RevealStagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {data.features.map((f, idx) => (
+                <RevealItem key={f.title}>
+                  <TiltCard
+                    intensity={8}
+                    className="group relative flex h-full flex-col justify-between overflow-hidden rounded-[24px] bg-[rgba(18,29,47,0.85)] backdrop-blur-[16px] border border-[rgba(148,163,184,0.16)] p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] hover:border-[rgba(148,163,184,0.35)] transition-all"
+                  >
+                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#2563EB] to-[#06B6D4]" />
+                    <div>
+                      <span className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#175CD3]/10 border border-[#175CD3]/20 text-xs font-mono font-semibold text-[#91B4FF] group-hover:bg-[#175CD3] group-hover:text-white transition-colors">
+                        {(idx + 1).toString().padStart(2, "0")}
+                      </span>
+                      <h3 className="font-display text-lg font-semibold text-[#F7F9FC] mb-2">
+                        {f.title}
+                      </h3>
+                      <p className="text-[13px] leading-relaxed text-[#A5B3C7]">{f.desc}</p>
+                    </div>
+                  </TiltCard>
+                </RevealItem>
+              ))}
+            </RevealStagger>
+          </div>
+        </section>
+
+        {/* PROCESS */}
+        <section className="relative px-6 py-20">
+          <div className="mx-auto max-w-4xl">
+            <Reveal className="mx-auto mb-14 max-w-3xl text-center">
+              <div className="inline-flex items-center gap-2 mb-3">
+                <span className="h-2 w-2 rounded-full bg-[#175CD3]" />
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#91B4FF]">
+                  DELIVERY LIFECYCLE
+                </span>
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight text-[#F7F9FC]">
+                {data.processTitle}
+              </h2>
+            </Reveal>
+
+            <RevealStagger className="space-y-4">
+              {data.process.map((p) => (
+                <RevealItem key={p.step}>
+                  <div className="rounded-[20px] bg-[rgba(18,29,47,0.85)] backdrop-blur-[16px] border border-[rgba(148,163,184,0.16)] p-6 flex items-start gap-5 shadow-sm">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#175CD3]/15 border border-[#175CD3]/30 font-mono text-sm font-bold text-[#91B4FF]">
+                      {p.step}
+                    </span>
+                    <div>
+                      <h3 className="font-display text-lg font-semibold text-[#F7F9FC]">
+                        {p.title}
+                      </h3>
+                      <p className="mt-1 text-sm leading-relaxed text-[#A5B3C7]">{p.desc}</p>
+                    </div>
+                  </div>
+                </RevealItem>
+              ))}
+            </RevealStagger>
+          </div>
+        </section>
+
+        {/* TECHNOLOGIES STACK */}
+        {data.stack && data.stack.length > 0 && (
+          <section className="relative px-6 py-12">
+            <div className="mx-auto max-w-4xl text-center">
+              <Reveal>
+                <div className="rounded-[24px] bg-[rgba(18,29,47,0.85)] backdrop-blur-[16px] border border-[rgba(148,163,184,0.16)] p-8 shadow-sm">
+                  <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#91B4FF] mb-6">
+                    {data.stackTitle || "Technologies We Use"}
+                  </h3>
+                  <div className="flex flex-wrap items-center justify-center gap-2.5">
+                    {data.stack.map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-full bg-[#151B2A] border border-[rgba(148,163,184,0.14)] px-4 py-1.5 text-xs font-mono text-[#F7F9FC]"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </Reveal>
             </div>
-          </Reveal>
-        </div>
-      </section>
+          </section>
+        )}
+
+        {/* FAQ */}
+        <section className="relative px-6 py-20">
+          <div className="mx-auto max-w-3xl">
+            <Reveal className="mx-auto mb-12 max-w-3xl text-center">
+              <div className="inline-flex items-center gap-2 mb-3">
+                <span className="h-2 w-2 rounded-full bg-[#175CD3]" />
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#91B4FF]">
+                  COMMON QUESTIONS
+                </span>
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight text-[#F7F9FC]">
+                {data.faqTitle || "Frequently Asked"}
+              </h2>
+            </Reveal>
+
+            <RevealStagger className="space-y-3">
+              {data.faq.map((f) => (
+                <RevealItem key={f.q}>
+                  <details className="group rounded-[18px] bg-[rgba(18,29,47,0.85)] backdrop-blur-[16px] border border-[rgba(148,163,184,0.16)] p-6 transition-all">
+                    <summary className="flex cursor-pointer list-none items-center justify-between font-display text-base font-semibold text-[#F7F9FC]">
+                      {f.q}
+                      <span className="ml-4 font-mono text-[#91B4FF] transition-transform group-open:rotate-45">
+                        +
+                      </span>
+                    </summary>
+                    <p className="mt-3 text-sm leading-relaxed text-[#A5B3C7]">{f.a}</p>
+                  </details>
+                </RevealItem>
+              ))}
+            </RevealStagger>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section id="contact" className="relative px-6 pb-28 pt-6">
+          <div className="mx-auto max-w-4xl">
+            <Reveal>
+              <div className="relative overflow-hidden rounded-[28px] border border-[rgba(148,163,184,0.18)] bg-[rgba(18,29,47,0.85)] backdrop-blur-[20px] p-10 sm:p-14 text-center shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)]">
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#2563EB] via-[#91B4FF] to-[#06B6D4]" />
+                <h2 className="font-display text-3xl font-semibold tracking-tight text-[#F7F9FC] sm:text-4xl">
+                  {data.ctaTitle}
+                </h2>
+                <p className="mx-auto mt-4 max-w-xl text-base text-[#A5B3C7] leading-relaxed">
+                  {data.ctaDesc}
+                </p>
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+                  <Link
+                    href="/#contact"
+                    className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] bg-[#175CD3] hover:bg-[#1849A9] text-white px-8 text-[15px] font-medium transition-all shadow-[0_0_24px_rgba(23,92,211,0.4)]"
+                  >
+                    <span>Start your project</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+      </div>
+
+      <Footer />
     </div>
   );
 }

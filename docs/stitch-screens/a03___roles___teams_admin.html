@@ -1,0 +1,442 @@
+<!DOCTYPE html><html class="light" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"primary-fixed-dim":"#b4c5ff","surface-tint":"#0053db","background":"#faf8ff","primary":"#004ac6","surface":"#faf8ff","on-primary":"#ffffff","on-primary-container":"#eeefff","on-error-container":"#93000a","primary-fixed":"#dbe1ff","on-tertiary-fixed":"#002113","on-surface":"#131b2e","on-primary-fixed":"#00174b","tertiary-container":"#007d55","on-secondary-fixed":"#001e2f","surface-container-high":"#e2e7ff","surface-bright":"#faf8ff","secondary-fixed-dim":"#89ceff","inverse-on-surface":"#eef0ff","outline":"#737686","surface-container-low":"#f2f3ff","on-secondary-fixed-variant":"#004c6e","tertiary-fixed-dim":"#4edea3","surface-variant":"#dae2fd","inverse-surface":"#283044","error-container":"#ffdad6","secondary-fixed":"#c9e6ff","surface-container-lowest":"#ffffff","outline-variant":"#c3c6d7","error":"#ba1a1a","primary-container":"#2563eb","surface-dim":"#d2d9f4","on-primary-fixed-variant":"#003ea8","secondary":"#006591","on-error":"#ffffff","secondary-container":"#39b8fd","surface-container-highest":"#dae2fd","on-surface-variant":"#434655","tertiary-fixed":"#6ffbbe","on-background":"#131b2e","on-secondary":"#ffffff","on-tertiary":"#ffffff","inverse-primary":"#b4c5ff","tertiary":"#006242","surface-container":"#eaedff","on-tertiary-fixed-variant":"#005236","on-tertiary-container":"#bdffdb","on-secondary-container":"#004666"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"margin":"1rem","space-md":"0.75rem","margin-desktop":"1.5rem","gutter":"1rem","space-sm":"0.5rem","space-xs":"0.25rem","space-lg":"1rem","gutter-desktop":"1.5rem","space-xl":"1.5rem"},"fontFamily":{"headline-lg-mobile":["Space Grotesk"],"body-sm":["Geist"],"label-md":["Geist"],"headline-md":["Space Grotesk"],"body-md":["Geist"],"headline-lg":["Space Grotesk"],"headline-sm":["Space Grotesk"],"body-lg":["Geist"],"label-sm":["Geist"],"code-sm":["Geist"]},"fontSize":{"headline-lg-mobile":["24px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-sm":["13px",{"lineHeight":"18px","fontWeight":"400"}],"label-md":["13px",{"lineHeight":"16px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"headline-lg":["30px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"-0.005em","fontWeight":"600"}],"body-lg":["15px",{"lineHeight":"22px","fontWeight":"400"}],"label-sm":["12px",{"lineHeight":"16px","fontWeight":"500"}],"code-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest flex flex-col z-50 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-lg flex items-center justify-between border-b border-surface-container-high"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-container to-secondary-container flex items-center justify-center text-on-primary font-headline-sm text-headline-sm font-bold shadow-sm">K</div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight leading-none">Kavi Solutions</span><div class="flex items-center gap-1.5 mt-1"><span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-[10px] leading-none">Admin Console</span></div></div></div></div><div class="px-space-md pt-space-lg pb-space-xs"><span class="px-space-sm font-label-sm text-label-sm text-outline tracking-wider uppercase font-semibold text-[11px]">Workspace</span></div><nav class="flex-1 px-space-md py-space-xs space-y-1 overflow-y-auto" data-active-classes="bg-surface-container-high text-primary font-medium rounded-lg"><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="team-members" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">group</span><span class="font-label-md text-label-md">Team members</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">12</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="roles" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">badge</span><span class="font-label-md text-label-md">Roles</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">4</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="teams" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">diversity_3</span><span class="font-label-md text-label-md">Teams</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">3</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="projects" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">folder</span><span class="font-label-md text-label-md">Projects</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">8</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="certificates" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">verified</span><span class="font-label-md text-label-md">Certificates</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">24</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="surveyors" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">engineering</span><span class="font-label-md text-label-md">Surveyors</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">15</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="social-agent" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">share</span><span class="font-label-md text-label-md">Social agent</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="administrators" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">admin_panel_settings</span><span class="font-label-md text-label-md">Administrators</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">2</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="settings" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">settings</span><span class="font-label-md text-label-md">Settings</span></div></a></nav><div class="p-space-md border-t border-surface-container-high"><div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low"><div class="flex items-center gap-space-sm min-w-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="text-on-primary font-headline-sm text-headline-sm font-bold text-xs">KR</span></div><div class="flex flex-col min-w-0"><span class="font-label-sm text-label-sm text-on-surface font-medium truncate leading-tight">raman@kavisolutions.in</span><span class="font-body-sm text-body-sm text-on-surface-variant text-[11px] leading-tight">Administrator</span></div></div><a aria-label="Log out" class="p-1 text-on-surface-variant hover:text-error hover:bg-surface-container-high rounded transition-colors shrink-0" data-path="login" href="#"><span class="material-symbols-outlined text-[18px]">logout</span></a></div></div></aside><div class="pl-64 flex flex-col min-h-screen bg-background"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl border-b border-surface-container-high z-40 px-space-xl flex items-center justify-between"><div class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant"><span class="text-outline hover:text-on-surface transition-colors cursor-pointer">Kavi Solutions</span><span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span><span class="text-outline hover:text-on-surface transition-colors cursor-pointer">Workspace</span><span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span><span class="text-on-surface font-medium">Team members</span><span class="px-1.5 py-0.5 rounded text-[11px] font-code-sm bg-surface-container text-primary font-semibold tracking-wider">[A03]</span></div><div class="flex items-center gap-space-md"><button aria-label="Toggle Theme" class="w-9 h-9 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">light_mode</span></button><a class="h-9 px-space-md flex items-center gap-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface hover:bg-surface-container hover:text-on-surface transition-colors" href="#"><span>Live team page</span><span class="material-symbols-outlined text-[14px]">north_east</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 flex-1"><div class="flex flex-col w-full">
+<div class="w-full max-w-[1152px] mx-auto px-margin-desktop py-space-xl flex flex-col gap-space-xl">
+<!-- Top Context & Header -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">WORKSPACE / ADMINISTRATION</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-label-sm text-label-sm text-tertiary-container font-medium">Synced with directory</span>
+</div>
+<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
+<div class="flex items-center gap-2"><h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">Roles &amp; Teams</h1><span class="px-2 py-0.5 rounded-lg text-body-sm font-code-sm bg-primary/10 text-primary font-semibold tracking-wider border border-primary/20">[A03]</span></div>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xl">
+          Define organizational role hierarchies, systemic permissions, job classifications, and operational pod distribution.
+        </p>
+</div>
+</div>
+<!-- Quick Stats Metric Strip -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md">
+<div class="bg-surface-container-lowest p-space-md rounded-xl flex items-center justify-between shadow-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Standardized Roles</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold mt-0.5">6 Active</span>
+</div>
+<div class="w-9 h-9 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl flex items-center justify-between shadow-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Operational Pods</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold mt-0.5">3 Divisions</span>
+</div>
+<div class="w-9 h-9 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">diversity_3</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl flex items-center justify-between shadow-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Allocated Headcount</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold mt-0.5">12 Specialists</span>
+</div>
+<div class="w-9 h-9 rounded-lg bg-surface-container-low flex items-center justify-center text-tertiary-container">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</div>
+</div>
+</div>
+<!-- Main Workspace Layout: 2 Columns Side-by-Side -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- SECTION 1: ROLES MANAGEMENT (7 cols) -->
+<section class="lg:col-span-7 flex flex-col gap-space-md">
+<!-- Section Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm flex flex-col overflow-hidden">
+<!-- Header and inline creation -->
+<div class="p-space-lg flex flex-col gap-space-md bg-surface-container-lowest">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">badge</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Roles</h2>
+<span class="px-2 py-0.5 rounded text-[11px] font-label-sm font-semibold bg-surface-container text-on-surface-variant">6 total</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Level 1 - 4 Scope</span>
+</div>
+<!-- Inline Role Input Form -->
+<div class="flex items-center gap-2">
+<div class="relative flex-1">
+<span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+</span>
+<input class="w-full h-9 pl-8 pr-3 rounded-lg bg-surface-container-lowest font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-low transition-all" id="role-input" placeholder="New role title (e.g. Lead Reliability Engineer)" type="text">
+</div>
+<button class="h-9 px-space-md rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-1.5 transition-colors shrink-0 shadow-sm" id="btn-add-role" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Add role</span>
+</button>
+</div>
+</div>
+<!-- Alert Notification: Inline Confirmation Mock -->
+<div class="mx-space-lg mb-space-md p-space-md rounded-lg bg-error-container text-on-error-container flex flex-col gap-2" id="delete-alert">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-error text-[20px] shrink-0 mt-0.5">warning</span>
+<div class="flex flex-col flex-1 min-w-0">
+<span class="font-label-md text-label-md font-semibold text-error">Delete role "Designer"?</span>
+<p class="font-body-sm text-body-sm text-on-error-container mt-0.5">
+                  Members currently assigned to this role will be set to <span class="font-semibold underline">Unassigned</span> status. This action cannot be reverted.
+                </p>
+</div>
+</div>
+<div class="flex items-center justify-end gap-2 mt-1">
+<button class="h-7 px-space-sm rounded font-label-sm text-label-sm text-on-surface hover:bg-surface-container transition-colors" onclick="document.getElementById('delete-alert').classList.add('hidden')" type="button">
+                Cancel
+              </button>
+<button class="h-7 px-space-md rounded bg-error hover:opacity-95 text-on-error font-label-sm text-label-sm font-semibold flex items-center gap-1 shadow-sm transition-opacity" onclick="document.getElementById('delete-alert').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[14px]">delete</span>
+<span>Delete role</span>
+</button>
+</div>
+</div>
+<!-- Roles Table List -->
+<div class="flex flex-col divide-y-0">
+<!-- Table Header -->
+<div class="h-9 px-space-lg bg-surface-container-low flex items-center justify-between text-outline font-label-sm text-label-sm uppercase tracking-wider text-[11px] font-semibold">
+<div class="flex items-center gap-2 flex-1">
+<span>Role Designation</span>
+</div>
+<div class="w-28 text-right pr-4">Active Staff</div>
+<div class="w-16 text-right">Actions</div>
+</div>
+<!-- Role Item 1 -->
+<div class="group h-12 px-space-lg flex items-center justify-between hover:bg-surface-container-low/60 transition-colors">
+<div class="flex items-center gap-space-sm min-w-0 flex-1">
+<span class="w-2 h-2 rounded-full bg-primary shrink-0"></span>
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">Principal Architect &amp; Founder</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-code-sm bg-primary-fixed text-on-primary-fixed uppercase tracking-tight">Tier 0</span>
+</div>
+<div class="w-28 text-right pr-4 font-body-sm text-body-sm text-on-surface-variant">
+<span class="inline-flex items-center gap-1">
+<span class="font-medium text-on-surface">1</span> member
+                </span>
+</div>
+<div class="w-16 flex items-center justify-end gap-1">
+<button aria-label="Rename Role" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Role" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Role Item 2 -->
+<div class="group h-12 px-space-lg flex items-center justify-between hover:bg-surface-container-low/60 transition-colors bg-surface-container-lowest">
+<div class="flex items-center gap-space-sm min-w-0 flex-1">
+<span class="w-2 h-2 rounded-full bg-primary-container shrink-0"></span>
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">Head of Product Architecture</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-code-sm bg-surface-container text-on-surface-variant uppercase tracking-tight">Tier 1</span>
+</div>
+<div class="w-28 text-right pr-4 font-body-sm text-body-sm text-on-surface-variant">
+<span class="inline-flex items-center gap-1">
+<span class="font-medium text-on-surface">1</span> member
+                </span>
+</div>
+<div class="w-16 flex items-center justify-end gap-1">
+<button aria-label="Rename Role" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Role" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Role Item 3 -->
+<div class="group h-12 px-space-lg flex items-center justify-between hover:bg-surface-container-low/60 transition-colors">
+<div class="flex items-center gap-space-sm min-w-0 flex-1">
+<span class="w-2 h-2 rounded-full bg-secondary shrink-0"></span>
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">VP of Engineering</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-code-sm bg-surface-container text-on-surface-variant uppercase tracking-tight">Tier 1</span>
+</div>
+<div class="w-28 text-right pr-4 font-body-sm text-body-sm text-on-surface-variant">
+<span class="inline-flex items-center gap-1">
+<span class="font-medium text-on-surface">2</span> members
+                </span>
+</div>
+<div class="w-16 flex items-center justify-end gap-1">
+<button aria-label="Rename Role" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Role" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Role Item 4 -->
+<div class="group h-12 px-space-lg flex items-center justify-between hover:bg-surface-container-low/60 transition-colors bg-surface-container-lowest">
+<div class="flex items-center gap-space-sm min-w-0 flex-1">
+<span class="w-2 h-2 rounded-full bg-tertiary-container shrink-0"></span>
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">Senior Full-Stack Architect</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-code-sm bg-tertiary-container/10 text-tertiary-container uppercase tracking-tight">Core</span>
+</div>
+<div class="w-28 text-right pr-4 font-body-sm text-body-sm text-on-surface-variant">
+<span class="inline-flex items-center gap-1">
+<span class="font-medium text-on-surface">3</span> members
+                </span>
+</div>
+<div class="w-16 flex items-center justify-end gap-1">
+<button aria-label="Rename Role" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Role" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Role Item 5 -->
+<div class="group h-12 px-space-lg flex items-center justify-between hover:bg-surface-container-low/60 transition-colors">
+<div class="flex items-center gap-space-sm min-w-0 flex-1">
+<span class="w-2 h-2 rounded-full bg-secondary-container shrink-0"></span>
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">Field Systems Engineer</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-code-sm bg-secondary-fixed text-on-secondary-fixed uppercase tracking-tight">Operations</span>
+</div>
+<div class="w-28 text-right pr-4 font-body-sm text-body-sm text-on-surface-variant">
+<span class="inline-flex items-center gap-1">
+<span class="font-medium text-on-surface">2</span> members
+                </span>
+</div>
+<div class="w-16 flex items-center justify-end gap-1">
+<button aria-label="Rename Role" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Role" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Role Item 6 -->
+<div class="group h-12 px-space-lg flex items-center justify-between hover:bg-surface-container-low/60 transition-colors bg-surface-container-lowest">
+<div class="flex items-center gap-space-sm min-w-0 flex-1">
+<span class="w-2 h-2 rounded-full bg-outline shrink-0"></span>
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">Fellowship Resident</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-code-sm bg-surface-container text-on-surface-variant uppercase tracking-tight">Rotational</span>
+</div>
+<div class="w-28 text-right pr-4 font-body-sm text-body-sm text-on-surface-variant">
+<span class="inline-flex items-center gap-1">
+<span class="font-medium text-on-surface">3</span> members
+                </span>
+</div>
+<div class="w-16 flex items-center justify-end gap-1">
+<button aria-label="Rename Role" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button aria-label="Delete Role" class="w-7 h-7 flex items-center justify-center rounded text-outline hover:text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bottom Summary Footer -->
+<div class="p-space-md bg-surface-container-low/50 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Default fallback role: <strong class="text-on-surface">Fellowship Resident</strong></span>
+<button class="font-label-sm text-label-sm text-primary hover:underline font-medium flex items-center gap-1" type="button">
+<span>Audit role logs</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Role Distribution Visual Panel -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Hierarchy Weight Distribution</span>
+<span class="font-code-sm text-code-sm text-outline">12 TOTAL HEADCOUNT</span>
+</div>
+<!-- Linear Distribution Bar -->
+<div class="w-full h-2.5 bg-surface-container rounded-full overflow-hidden flex">
+<div class="h-full bg-primary" style="width: 8.3%;" title="Principal: 1"></div>
+<div class="h-full bg-primary-container" style="width: 8.3%;" title="Head of Product: 1"></div>
+<div class="h-full bg-secondary" style="width: 16.6%;" title="VP Eng: 2"></div>
+<div class="h-full bg-tertiary-container" style="width: 25%;" title="Senior Fullstack: 3"></div>
+<div class="h-full bg-secondary-container" style="width: 16.6%;" title="Field Systems: 2"></div>
+<div class="h-full bg-outline-variant" style="width: 25%;" title="Fellowship: 3"></div>
+</div>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-[11px] font-label-sm text-on-surface-variant">
+<div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary"></span> Executive (1)</div>
+<div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary"></span> Leadership (3)</div>
+<div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-tertiary-container"></span> Engineering (5)</div>
+<div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-outline-variant"></span> Residents (3)</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: TEAMS MANAGEMENT (5 cols) -->
+<section class="lg:col-span-5 flex flex-col gap-space-md">
+<!-- Section Container -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm flex flex-col overflow-hidden">
+<!-- Header and inline team creation -->
+<div class="p-space-lg flex flex-col gap-space-md bg-surface-container-lowest">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[20px]">diversity_3</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Teams &amp; Divisions</h2>
+<span class="px-2 py-0.5 rounded text-[11px] font-label-sm font-semibold bg-surface-container text-on-surface-variant">3 active</span>
+</div>
+</div>
+<!-- Inline Team Input Form -->
+<div class="flex items-center gap-2">
+<div class="relative flex-1">
+<span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[16px]">group_add</span>
+</span>
+<input class="w-full h-9 pl-8 pr-3 rounded-lg bg-surface-container-lowest font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-low transition-all" id="team-input" placeholder="New team designation..." type="text">
+</div>
+<button class="h-9 px-space-md rounded-lg bg-secondary hover:bg-secondary/90 text-on-secondary font-label-md text-label-md flex items-center gap-1.5 transition-colors shrink-0 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Add team</span>
+</button>
+</div>
+</div>
+<!-- Functional Teams Card Pods -->
+<div class="p-space-md flex flex-col gap-space-sm bg-surface-container-low/30">
+<!-- Team Pod 1: Core Architecture -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-sm hover:shadow transition-shadow">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 min-w-0">
+<div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[16px]">hub</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold truncate text-[15px]">Core Architecture</h3>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full text-[11px] font-label-sm font-medium bg-primary-fixed text-on-primary-fixed">4 members</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-outline uppercase text-[10px] tracking-wider">Functional Focus</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                  Distributed systems, cloud infrastructure &amp; high-throughput protocol pipelines.
+                </p>
+</div>
+<div class="pt-2 flex items-center justify-between text-on-surface-variant">
+<div class="flex -space-x-1.5 overflow-hidden">
+<div class="inline-block h-6 w-6 rounded-full bg-primary text-on-primary text-[10px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">KR</div>
+<div class="inline-block h-6 w-6 rounded-full bg-secondary text-on-secondary text-[10px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">SM</div>
+<div class="inline-block h-6 w-6 rounded-full bg-tertiary text-on-tertiary text-[10px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">AN</div>
+<div class="inline-block h-6 w-6 rounded-full bg-surface-container-high text-on-surface text-[10px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">+1</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="h-7 px-2 rounded hover:bg-surface-container text-on-surface-variant font-label-sm text-label-sm transition-colors" type="button">Reassign</button>
+<button aria-label="Team settings" class="w-7 h-7 flex items-center justify-center rounded hover:bg-surface-container text-outline hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Team Pod 2: Cognitive Labs & Applied AI -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-sm hover:shadow transition-shadow">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 min-w-0">
+<div class="w-7 h-7 rounded-lg bg-tertiary-container/10 flex items-center justify-center text-tertiary-container">
+<span class="material-symbols-outlined text-[16px]">neurology</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold truncate text-[15px]">Cognitive Labs &amp; Applied AI</h3>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full text-[11px] font-label-sm font-medium bg-tertiary-fixed text-on-tertiary-fixed">3 members</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-outline uppercase text-[10px] tracking-wider">Functional Focus</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                  Deterministic RAG workflows, ML safety guardrails &amp; multimodal vision edge inference.
+                </p>
+</div>
+<div class="pt-2 flex items-center justify-between text-on-surface-variant">
+<div class="flex -space-x-1.5 overflow-hidden">
+<div class="inline-block h-6 w-6 rounded-full bg-tertiary-container text-on-tertiary text-[10px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">DL</div>
+<div class="inline-block h-6 w-6 rounded-full bg-primary-container text-on-primary text-[10px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">PJ</div>
+<div class="inline-block h-6 w-6 rounded-full bg-secondary-container text-on-secondary text-[10px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">RK</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="h-7 px-2 rounded hover:bg-surface-container text-on-surface-variant font-label-sm text-label-sm transition-colors" type="button">Reassign</button>
+<button aria-label="Team settings" class="w-7 h-7 flex items-center justify-center rounded hover:bg-surface-container text-outline hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Team Pod 3: Field Operations & Telemetry -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-sm hover:shadow transition-shadow">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 min-w-0">
+<div class="w-7 h-7 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[16px]">radar</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold truncate text-[15px]">Field Operations &amp; Telemetry</h3>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full text-[11px] font-label-sm font-medium bg-secondary-fixed text-on-secondary-fixed">5 members</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-outline uppercase text-[10px] tracking-wider">Functional Focus</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                  Offline GIS data sync, provincial surveyor networks &amp; IoT sensor mesh telemetry.
+                </p>
+</div>
+<div class="pt-2 flex items-center justify-between text-on-surface-variant">
+<div class="flex -space-x-1.5 overflow-hidden">
+<div class="inline-block h-6 w-6 rounded-full bg-secondary text-on-secondary text-[10px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">TR</div>
+<div class="inline-block h-6 w-6 rounded-full bg-primary text-on-primary text-[10px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">AS</div>
+<div class="inline-block h-6 w-6 rounded-full bg-outline text-on-primary text-[10px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">BN</div>
+<div class="inline-block h-6 w-6 rounded-full bg-surface-container-high text-on-surface text-[10px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">+2</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="h-7 px-2 rounded hover:bg-surface-container text-on-surface-variant font-label-sm text-label-sm transition-colors" type="button">Reassign</button>
+<button aria-label="Team settings" class="w-7 h-7 flex items-center justify-center rounded hover:bg-surface-container text-outline hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pod Management Global Actions -->
+<div class="p-space-md bg-surface-container-lowest flex items-center justify-between">
+<button class="h-8 px-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm font-medium flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">swap_vert</span>
+<span>Reorder pods</span>
+</button>
+<a class="font-label-sm text-label-sm text-primary hover:underline font-medium flex items-center gap-1" href="#">
+<span>View pod routing rules</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- Quick Info Callout -->
+<div class="p-space-md rounded-xl bg-surface-container-low/70 flex items-start gap-space-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-outline text-[18px] shrink-0 mt-0.5">info</span>
+<p class="font-body-sm text-body-sm leading-normal">
+            Pod distribution dictates automatic ticket routing, survey inspection dispatch, and cross-functional sign-off chains across provincial projects.
+          </p>
+</div>
+</section>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const roleInput = document.getElementById('role-input');
+    const addRoleBtn = document.getElementById('btn-add-role');
+
+    if (addRoleBtn && roleInput) {
+      addRoleBtn.addEventListener('click', function() {
+        const val = roleInput.value.trim();
+        if (val) {
+          alert('Role "' + val + '" staged. Synchronizing permissions...');
+          roleInput.value = '';
+        } else {
+          roleInput.focus();
+        }
+      });
+    }
+  })();
+</script></main></div>
+
+</body></html>

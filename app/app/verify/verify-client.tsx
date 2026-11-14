@@ -111,7 +111,7 @@ export default function VerifyClient({ initialId }: { initialId: string }) {
   };
 
   return (
-    <div className="min-h-screen bg-ink text-white flex flex-col justify-between">
+    <div className="min-h-screen bg-ink text-[#F7F9FC] flex flex-col justify-between">
       <Navbar />
 
       <main className="px-6 pt-36 pb-20 flex-grow">

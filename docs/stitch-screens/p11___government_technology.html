@@ -1,0 +1,833 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"primary":"#b1c5ff","inverse-primary":"#0957ce","on-tertiary":"#003825","on-error-container":"#ffdad6","on-background":"#dce2f6","on-error":"#690005","surface-container-high":"#232a39","surface-container-highest":"#2e3544","tertiary-fixed-dim":"#45dfa4","on-primary-fixed-variant":"#0040a0","primary-fixed-dim":"#b1c5ff","on-secondary":"#002e6a","surface-container":"#19202e","tertiary":"#45dfa4","on-secondary-container":"#97b8ff","secondary-fixed-dim":"#aec6ff","on-tertiary-fixed":"#002114","error-container":"#93000a","on-primary":"#002c72","inverse-on-surface":"#2a3040","secondary-container":"#1e478b","inverse-surface":"#dce2f6","primary-container":"#175cd3","on-surface":"#dce2f6","outline-variant":"#424654","tertiary-container":"#00724f","secondary-fixed":"#d8e2ff","on-secondary-fixed-variant":"#1b4588","surface-container-low":"#151b2a","tertiary-fixed":"#68fcbf","error":"#ffb4ab","background":"#0c1321","primary-fixed":"#dae2ff","surface-dim":"#0c1321","surface-container-lowest":"#070e1c","on-primary-fixed":"#001847","surface":"#0c1321","secondary":"#aec6ff","outline":"#8d909f","on-tertiary-container":"#66fabd","on-tertiary-fixed-variant":"#005137","on-surface-variant":"#c3c6d6","surface-bright":"#323949","on-primary-container":"#d7e0ff","on-secondary-fixed":"#001a42","surface-variant":"#2e3544","surface-tint":"#b1c5ff"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-3xl":"4rem","space-section":"6rem","space-2xl":"3rem","space-lg":"1.5rem","gutter-mobile":"1rem","margin":"1.5rem","space-sm":"0.5rem","space-xs":"0.25rem","space-md":"1rem","space-xl":"2rem","margin-desktop":"auto","space-section-xl":"8rem","gutter":"1.5rem"},"fontFamily":{"hero-h1-tablet":["Space Grotesk"],"hero-h1":["Space Grotesk"],"caption":["Geist"],"section-h2":["Space Grotesk"],"hero-h1-mobile":["Space Grotesk"],"body-md":["Geist"],"card-h3-sm":["Space Grotesk"],"eyebrow":["Geist"],"card-h3":["Space Grotesk"],"page-h1-mobile":["Space Grotesk"],"section-h2-mobile":["Space Grotesk"],"page-h1":["Space Grotesk"],"body-lg":["Geist"],"body-medium":["Geist"]},"fontSize":{"hero-h1-tablet":["60px",{"lineHeight":"1.1","letterSpacing":"-0.025em","fontWeight":"700"}],"hero-h1":["72px",{"lineHeight":"1.1","letterSpacing":"-0.03em","fontWeight":"700"}],"caption":["13px",{"lineHeight":"1.4","letterSpacing":"0.01em","fontWeight":"400"}],"section-h2":["48px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"600"}],"hero-h1-mobile":["36px",{"lineHeight":"1.15","letterSpacing":"-0.02em","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"1.6","letterSpacing":"0","fontWeight":"400"}],"card-h3-sm":["18px",{"lineHeight":"1.35","letterSpacing":"-0.01em","fontWeight":"600"}],"eyebrow":["11px",{"lineHeight":"1","letterSpacing":"0.2em","fontWeight":"600"}],"card-h3":["22px",{"lineHeight":"1.3","letterSpacing":"-0.01em","fontWeight":"600"}],"page-h1-mobile":["36px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"600"}],"section-h2-mobile":["30px",{"lineHeight":"1.25","letterSpacing":"-0.015em","fontWeight":"600"}],"page-h1":["60px",{"lineHeight":"1.15","letterSpacing":"-0.025em","fontWeight":"600"}],"body-lg":["18px",{"lineHeight":"1.6","letterSpacing":"-0.005em","fontWeight":"400"}],"body-medium":["16px",{"lineHeight":"1.6","letterSpacing":"0","fontWeight":"500"}]}}}}</script></head><body class="bg-[#0B1220] font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-4 left-0 right-0 z-50 px-gutter"><div class="max-w-[1152px] mx-auto h-16 rounded-[12px] bg-[#121d2fd6] backdrop-blur-[16px] px-space-md flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><a class="flex items-center gap-space-sm group" data-path="showcase" href="#"><div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary via-inverse-primary to-tertiary flex items-center justify-center shadow-inner"><span class="font-card-h3 text-card-h3 font-bold text-surface-container-lowest leading-none select-none">K</span></div><div class="flex flex-col"><span class="font-card-h3-sm text-card-h3-sm font-semibold tracking-tight text-on-surface leading-none">Kavi Solutions</span><span class="font-eyebrow text-eyebrow text-outline tracking-[0.2em] uppercase mt-1">Engineering Studio</span></div><span class="px-2 py-0.5 rounded bg-surface-container-high text-[#91B4FF] font-eyebrow text-[11px] tracking-wider uppercase border-2 border-primary/20 select-none">[P11]</span></a><nav class="hidden lg:flex items-center gap-1 bg-surface-container-lowest/50 p-1 rounded-xl" data-active-classes="text-on-surface bg-surface-container-high font-medium rounded-lg"><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="showcase" href="#">Showcase<span class="px-2 py-0.5 rounded bg-surface-container-high text-[#91B4FF] font-eyebrow text-[11px] tracking-wider uppercase border-2 border-primary/20 select-none">[P11]</span></a><a aria-current="page" class="px-3 py-1.5 transition-all text-on-surface bg-surface-container-high font-medium rounded-lg" data-path="services" href="#">Services</a><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="projects" href="#">Projects</a><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="fellowship" href="#">Fellowship</a><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="team" href="#">Team</a><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="verification" href="#">Verification</a></nav><div class="flex items-center gap-space-sm"><a class="hidden sm:inline-flex px-3 py-2 font-caption text-caption text-on-surface-variant hover:text-on-surface transition-colors" data-path="login" href="#">Login</a><a class="px-4 py-2 rounded-xl bg-primary-container hover:bg-[#1849A9] text-[#FFFFFF] font-body-medium text-caption transition-all shadow-[0_1px_12px_rgba(23,92,211,0.25)] focus:ring-2 focus:ring-[#91B4FF] focus:outline-none" data-path="contact" href="#">Let's Talk</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-[#0B1220] min-h-[calc(100vh-280px)]"><div class="flex flex-col w-full text-on-surface">
+<!-- HERO SECTION -->
+<section class="relative w-full overflow-hidden pb-space-section-xl pt-space-xl">
+<!-- Atmospheric Ambient Glow Orbs -->
+<div class="absolute -top-32 left-1/4 w-[540px] h-[540px] rounded-full bg-primary/20 blur-[120px] pointer-events-none -z-10"></div>
+<div class="absolute top-1/3 -right-24 w-[460px] h-[460px] rounded-full bg-[#06B6D4]/15 blur-[140px] pointer-events-none -z-10"></div>
+<div class="absolute bottom-0 left-1/12 w-[380px] h-[380px] rounded-full bg-primary-container/20 blur-[100px] pointer-events-none -z-10"></div>
+<div class="max-w-[1152px] mx-auto px-gutter relative z-10">
+<!-- Institutional Category Pill -->
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high/90 backdrop-blur-md shadow-sm mb-space-lg"><span class="px-2 py-0.5 rounded bg-surface-container-lowest text-[#91B4FF] font-eyebrow text-[10px] tracking-widest uppercase border-2 border-primary/30">[P11]</span><span class="text-sm select-none">🏛️</span><span class="font-eyebrow text-eyebrow uppercase tracking-[0.2em] text-[#91B4FF]">Government Technology Services</span></div>
+<!-- Main Headline with Accent Span -->
+<div class="max-w-[960px] mb-space-md">
+<h1 class="font-hero-h1 text-hero-h1 text-on-surface tracking-tight leading-[1.08]">
+          Modern public platforms. <span class="text-[#91B4FF] block sm:inline">Better citizen journeys.</span>
+</h1>
+</div>
+<!-- Hero Subcopy -->
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[840px] mb-space-xl leading-relaxed">
+        We help government departments, universities, examination boards and public institutions modernise websites, portals and service workflows — across data, frontend, backend and security. Assessments are only carried out with written authorisation.
+      </p>
+<!-- Action Buttons -->
+<div class="flex flex-wrap items-center gap-space-md mb-space-3xl">
+<a class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-primary-container text-white font-body-medium text-body-md hover:bg-[#1849A9] shadow-md transition-all" href="#brief-form">
+<span>Discuss a modernisation brief</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<a class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-surface-container-high/80 text-on-surface font-body-medium text-body-md hover:bg-surface-container-highest shadow-sm transition-all" href="#focus-areas">
+<span>Explore focus areas</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</a>
+</div>
+<!-- 4 High-Assurance Metrics Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-sm">
+<div class="font-eyebrow text-eyebrow uppercase tracking-[0.2em] text-[#91B4FF] mb-2">Scope Vector</div>
+<div class="font-section-h2 text-[32px] text-on-surface leading-tight mb-1">3 Layers</div>
+<p class="font-caption text-caption text-outline">Data schemas, resilient frontend interfaces, cloud backend pipelines.</p>
+</div>
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-sm">
+<div class="font-eyebrow text-eyebrow uppercase tracking-[0.2em] text-tertiary mb-2">Execution Protocol</div>
+<div class="font-section-h2 text-[32px] text-on-surface leading-tight mb-1">AP-FIRST</div>
+<p class="font-caption text-caption text-outline">Initial baseline benchmarking and field evaluation focused on Andhra Pradesh.</p>
+</div>
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-sm">
+<div class="font-eyebrow text-eyebrow uppercase tracking-[0.2em] text-[#91B4FF] mb-2">System Paradigm</div>
+<div class="font-section-h2 text-[32px] text-on-surface leading-tight mb-1">CITIZEN-FIRST</div>
+<p class="font-caption text-caption text-outline">End-to-end journey-led modernisation rather than superficial skinning.</p>
+</div>
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-sm">
+<div class="font-eyebrow text-eyebrow uppercase tracking-[0.2em] text-outline mb-2">Compliance Boundary</div>
+<div class="font-section-h2 text-[32px] text-on-surface leading-tight mb-1">AUTHORISED</div>
+<p class="font-caption text-caption text-outline">Independent assessments performed strictly under written department sanction.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 1: APPROACH (5-Step Citizen Journey Overhaul) -->
+<section class="w-full py-space-section bg-surface-container-lowest">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-space-2xl">
+<div>
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-[#91B4FF] font-eyebrow text-eyebrow uppercase tracking-[0.2em] mb-3">
+            Service Architecture Methodology
+          </div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight">
+            Start with the citizen journey, not the homepage
+          </h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+          Portal redesigns fail when treated as visual vanity exercises. We dismantle public friction from request filing to verified issuance.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+<!-- Step 1 -->
+<div class="p-6 rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-sm relative group hover:bg-surface-container transition-all">
+<div>
+<span class="font-eyebrow text-eyebrow text-[#91B4FF] tracking-[0.2em]">PHASE 01</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary my-4">
+<span class="material-symbols-outlined text-[20px]">explore</span>
+</div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Friction Mapping</h3>
+<p class="font-caption text-caption text-on-surface-variant">Tracing dead ends, redundant document submissions, and dropped network sessions in rural field conditions.</p>
+</div>
+<div class="pt-4 mt-4 font-caption text-caption text-outline">Telemetry Audit</div>
+</div>
+<!-- Step 2 -->
+<div class="p-6 rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-sm relative group hover:bg-surface-container transition-all">
+<div>
+<span class="font-eyebrow text-eyebrow text-[#91B4FF] tracking-[0.2em]">PHASE 02</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary my-4">
+<span class="material-symbols-outlined text-[20px]">account_tree</span>
+</div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Schema Decoupling</h3>
+<p class="font-caption text-caption text-on-surface-variant">Untangling legacy Oracle/MSSQL relational locks into isolated RESTful micro-endpoints and event-driven sinks.</p>
+</div>
+<div class="pt-4 mt-4 font-caption text-caption text-outline">Data Architecture</div>
+</div>
+<!-- Step 3 -->
+<div class="p-6 rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-sm relative group hover:bg-surface-container transition-all">
+<div>
+<span class="font-eyebrow text-eyebrow text-tertiary tracking-[0.2em]">PHASE 03</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-tertiary my-4">
+<span class="material-symbols-outlined text-[20px]">bolt</span>
+</div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Edge Optimization</h3>
+<p class="font-caption text-caption text-on-surface-variant">Building offline-first progressive client interfaces that execute cleanly on sub-₹8,000 mobile devices.</p>
+</div>
+<div class="pt-4 mt-4 font-caption text-caption text-outline">Frontend Delivery</div>
+</div>
+<!-- Step 4 -->
+<div class="p-6 rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-sm relative group hover:bg-surface-container transition-all">
+<div>
+<span class="font-eyebrow text-eyebrow text-[#91B4FF] tracking-[0.2em]">PHASE 04</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary my-4">
+<span class="material-symbols-outlined text-[20px]">security</span>
+</div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Zero-Trust Hardening</h3>
+<p class="font-caption text-caption text-on-surface-variant">Enforcing parameterized database access, state cryptographic signing, and strict role-based officer access.</p>
+</div>
+<div class="pt-4 mt-4 font-caption text-caption text-outline">Security Guardrails</div>
+</div>
+<!-- Step 5 -->
+<div class="p-6 rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-sm relative group hover:bg-surface-container transition-all">
+<div>
+<span class="font-eyebrow text-eyebrow text-[#91B4FF] tracking-[0.2em]">PHASE 05</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary my-4">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+</div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">SLA Calibration</h3>
+<p class="font-caption text-caption text-on-surface-variant">Executing automated high-concurrency surge simulations before state-wide announcement deadlines.</p>
+</div>
+<div class="pt-4 mt-4 font-caption text-caption text-outline">Stress Certification</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: FOCUS AREAS (6 Grid Cards) -->
+<section class="w-full py-space-section" id="focus-areas">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<div class="max-w-2xl mb-space-2xl">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-low text-primary font-eyebrow text-eyebrow uppercase tracking-[0.2em] mb-3">
+          Specialised Engineering Disciplines
+        </div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight">
+          Targeted intervention areas for statutory scale
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-3">
+          We do not deploy generic marketing CMS platforms. We engineer resilient infrastructure designed for tens of millions of concurrent citizen hits.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="p-8 rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-md hover:bg-surface-container transition-all">
+<div>
+<div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-[28px]">speed</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-3">High-Capacity Portals</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Traffic absorption engines for admit card release windows, hall ticket distribution, and board examination results without catastrophic gateway timeouts.
+            </p>
+</div>
+<div class="mt-8 pt-4 flex items-center gap-2 text-xs font-caption text-outline uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+            Autoscaling Edge Ingestion
+          </div>
+</div>
+<!-- Card 2 -->
+<div class="p-8 rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-md hover:bg-surface-container transition-all">
+<div>
+<div class="w-12 h-12 rounded-xl bg-[#06B6D4]/20 flex items-center justify-center text-[#06B6D4] mb-6">
+<span class="material-symbols-outlined text-[28px]">database</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-3">Citizen Data Integrity</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Deterministic deduplication, Aadhaar vault reconciliation patterns, normalized record schemas, and zero-loss audit registries across legacy storage.
+            </p>
+</div>
+<div class="mt-8 pt-4 flex items-center gap-2 text-xs font-caption text-outline uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+            Cryptographic Checksums
+          </div>
+</div>
+<!-- Card 3 -->
+<div class="p-8 rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-md hover:bg-surface-container transition-all">
+<div>
+<div class="w-12 h-12 rounded-xl bg-tertiary/20 flex items-center justify-center text-tertiary mb-6">
+<span class="material-symbols-outlined text-[28px]">domain_verification</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-3">Automated Verifications</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Instantaneous certificate issuance, dynamic QR payload generators, DigiLocker push sync, and paperless administrative approval hierarchies.
+            </p>
+</div>
+<div class="mt-8 pt-4 flex items-center gap-2 text-xs font-caption text-outline uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+            Sub-second Validation
+          </div>
+</div>
+<!-- Card 4 -->
+<div class="p-8 rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-md hover:bg-surface-container transition-all">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-[28px]">cable</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-3">Legacy Decoupling</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Strangler fig patterns to peel user-facing journeys off monolithic NIC/state mainframe infrastructure without interrupting active citizen records.
+            </p>
+</div>
+<div class="mt-8 pt-4 flex items-center gap-2 text-xs font-caption text-outline uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-[#91B4FF]"></span>
+            Zero Downtime Transition
+          </div>
+</div>
+<!-- Card 5 -->
+<div class="p-8 rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-md hover:bg-surface-container transition-all">
+<div>
+<div class="w-12 h-12 rounded-xl bg-error-container flex items-center justify-center text-[#ffdad6] mb-6">
+<span class="material-symbols-outlined text-[28px]">policy</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-3">Security &amp; Penetration</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              CERT-In guideline conformance, OWASP Top 10 remediation, automated vulnerability scans, and state boundary egress monitoring for data sovereignty.
+            </p>
+</div>
+<div class="mt-8 pt-4 flex items-center gap-2 text-xs font-caption text-outline uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+            CERT-In Aligned Audits
+          </div>
+</div>
+<!-- Card 6 -->
+<div class="p-8 rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-md hover:bg-surface-container transition-all">
+<div>
+<div class="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-[28px]">translate</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-3">Multilingual Accessibility</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              WCAG 2.1 AA certified UI systems natively built in regional scripts (Telugu, Hindi, Tamil) with screen reader telemetry and low-bandwidth fallbacks.
+            </p>
+</div>
+<div class="mt-8 pt-4 flex items-center gap-2 text-xs font-caption text-outline uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+            Native Typography Shaders
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: PLATFORM DIRECTORY (Explicit Disclaimers Applied) -->
+<section class="w-full py-space-section bg-surface-container-lowest">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<!-- Statutory Clarification Banner -->
+<div class="p-4 rounded-xl bg-surface-container mb-space-xl flex items-start gap-4">
+<span class="material-symbols-outlined text-outline mt-0.5">info</span>
+<div>
+<span class="font-eyebrow text-eyebrow text-outline uppercase tracking-widest block mb-1">Notice of Independent Technical Analysis</span>
+<p class="font-caption text-caption text-on-surface-variant">
+            The entities listed below are public institutional portals selected as prospective evaluation candidates under public interest frameworks. <strong class="text-on-surface">These are assessment candidates, not clients.</strong> Listing does not imply government empanelment, endorsement, vendor selection, or current commercial engagement.
+          </p>
+</div>
+</div>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-space-lg">
+<div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight">Public Platform Candidate Index</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Regional digital infrastructure mapped for end-to-end journey refactoring.</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+<span class="font-caption text-caption text-outline">Standardised Evaluation Matrix v2.4</span>
+</div>
+</div>
+<!-- Modern Data Table -->
+<div class="w-full overflow-x-auto rounded-2xl bg-surface-container-low shadow-md">
+<table class="w-full text-left font-caption text-caption border-collapse">
+<thead>
+<tr class="bg-surface-container-high/60 text-outline uppercase tracking-wider font-eyebrow text-eyebrow">
+<th class="py-4 px-6">Portal / System Name</th>
+<th class="py-4 px-6">Institutional Authority</th>
+<th class="py-4 px-6">Critical Touchpoint</th>
+<th class="py-4 px-6">Candidate Assessment Status</th>
+<th class="py-4 px-6 text-right">Target Latency Goal</th>
+</tr>
+</thead>
+<tbody class="text-on-surface-variant">
+<tr class="hover:bg-surface-container/50 transition-colors">
+<td class="py-4 px-6 font-medium text-on-surface">AP POLYCET Portal</td>
+<td class="py-4 px-6">SBTET, Government of Andhra Pradesh</td>
+<td class="py-4 px-6 text-outline">Application Submission &amp; Hall Ticket Gen</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest text-[#91B4FF] text-[11px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  Journey Modeled
+                </span>
+</td>
+<td class="py-4 px-6 text-right font-medium text-on-surface">&lt; 850ms</td>
+</tr>
+<tr class="hover:bg-surface-container/50 transition-colors">
+<td class="py-4 px-6 font-medium text-on-surface">Andhra University Examination Portal</td>
+<td class="py-4 px-6">Office of the Controller of Examinations, AU</td>
+<td class="py-4 px-6 text-outline">Marksheet Verification &amp; Transcript Issuance</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest text-tertiary text-[11px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                  Schema Mapped
+                </span>
+</td>
+<td class="py-4 px-6 text-right font-medium text-on-surface">&lt; 400ms</td>
+</tr>
+<tr class="hover:bg-surface-container/50 transition-colors">
+<td class="py-4 px-6 font-medium text-on-surface">AP EAPCET Counseling Engine</td>
+<td class="py-4 px-6">APSCHE</td>
+<td class="py-4 px-6 text-outline">Seat Allocation Matrix &amp; Option Entry</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest text-outline text-[11px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                  Baseline Profiling
+                </span>
+</td>
+<td class="py-4 px-6 text-right font-medium text-on-surface">&lt; 1200ms</td>
+</tr>
+<tr class="hover:bg-surface-container/50 transition-colors">
+<td class="py-4 px-6 font-medium text-on-surface">JNTU-K Results Distribution Edge</td>
+<td class="py-4 px-6">Jawaharlal Nehru Technological University</td>
+<td class="py-4 px-6 text-outline">High-Burst Semester Grade Dispatch</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest text-[#91B4FF] text-[11px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  Journey Modeled
+                </span>
+</td>
+<td class="py-4 px-6 text-right font-medium text-on-surface">&lt; 300ms</td>
+</tr>
+<tr class="hover:bg-surface-container/50 transition-colors">
+<td class="py-4 px-6 font-medium text-on-surface">State Scholarship Disbursement UI</td>
+<td class="py-4 px-6">Social Welfare Department</td>
+<td class="py-4 px-6 text-outline">Aadhaar E-KYC Authentication &amp; Sanction Status</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest text-outline text-[11px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                  Preliminary Review
+                </span>
+</td>
+<td class="py-4 px-6 text-right font-medium text-on-surface">&lt; 650ms</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- SECTION 4: POLYCET REFERENCE JOURNEY (7-Step Horizontal Timeline) -->
+<section class="w-full py-space-section">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<!-- Reference Disclaimer Warning -->
+<div class="mb-space-lg p-3 rounded-lg bg-surface-container-low inline-flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-[#91B4FF]">shield</span>
+<span class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider">
+          Reference workflow model only — not a claim that Kavi Solutions built or currently operates POLYCET.
+        </span>
+</div>
+<div class="mb-space-2xl">
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight">
+          POLYCET Candidate Workflow: 7-Stage Public Cycle
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mt-2">
+          An architectural blueprint detailing where latency bottlenecks occur across state examination lifecycles and how zero-lock workflows keep systems online.
+        </p>
+</div>
+<!-- Horizontal 7-Step Journey Card Flow -->
+<div class="grid grid-cols-1 md:grid-cols-7 gap-3">
+<!-- Step 1 -->
+<div class="p-4 rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between">
+<div>
+<div class="font-eyebrow text-[10px] text-[#91B4FF] uppercase tracking-widest mb-2">Stage 01</div>
+<div class="w-7 h-7 rounded-md bg-surface-container flex items-center justify-center text-primary mb-3">
+<span class="material-symbols-outlined text-[16px]">campaign</span>
+</div>
+<h4 class="font-card-h3-sm text-[15px] text-on-surface mb-1 leading-snug">Public Gazetting</h4>
+<p class="font-caption text-[12px] text-outline leading-normal">Static cached CDN distribution of syllabi &amp; criteria.</p>
+</div>
+<div class="mt-4 pt-2 text-[10px] font-caption text-on-surface-variant">Low Compute Demand</div>
+</div>
+<!-- Step 2 -->
+<div class="p-4 rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between">
+<div>
+<div class="font-eyebrow text-[10px] text-[#91B4FF] uppercase tracking-widest mb-2">Stage 02</div>
+<div class="w-7 h-7 rounded-md bg-surface-container flex items-center justify-center text-primary mb-3">
+<span class="material-symbols-outlined text-[16px]">how_to_reg</span>
+</div>
+<h4 class="font-card-h3-sm text-[15px] text-on-surface mb-1 leading-snug">Registration</h4>
+<p class="font-caption text-[12px] text-outline leading-normal">Resilient forms with client-side image compression.</p>
+</div>
+<div class="mt-4 pt-2 text-[10px] font-caption text-[#91B4FF]">Asynchronous Ingestion</div>
+</div>
+<!-- Step 3 -->
+<div class="p-4 rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between">
+<div>
+<div class="font-eyebrow text-[10px] text-[#91B4FF] uppercase tracking-widest mb-2">Stage 03</div>
+<div class="w-7 h-7 rounded-md bg-surface-container flex items-center justify-center text-primary mb-3">
+<span class="material-symbols-outlined text-[16px]">payments</span>
+</div>
+<h4 class="font-card-h3-sm text-[15px] text-on-surface mb-1 leading-snug">Fee Reconciliation</h4>
+<p class="font-caption text-[12px] text-outline leading-normal">Multi-gateway webhooks with idempotency keys.</p>
+</div>
+<div class="mt-4 pt-2 text-[10px] font-caption text-tertiary">Zero-Drop Ledger</div>
+</div>
+<!-- Step 4 -->
+<div class="p-4 rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between">
+<div>
+<div class="font-eyebrow text-[10px] text-[#06B6D4] uppercase tracking-widest mb-2">Stage 04</div>
+<div class="w-7 h-7 rounded-md bg-surface-container flex items-center justify-center text-[#06B6D4] mb-3">
+<span class="material-symbols-outlined text-[16px]">badge</span>
+</div>
+<h4 class="font-card-h3-sm text-[15px] text-on-surface mb-1 leading-snug">Hall Ticket Surge</h4>
+<p class="font-caption text-[12px] text-outline leading-normal">Pre-generated vector PDFs served via geographically local edge caches.</p>
+</div>
+<div class="mt-4 pt-2 text-[10px] font-caption text-[#06B6D4]">Peak Latency Critical</div>
+</div>
+<!-- Step 5 -->
+<div class="p-4 rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between">
+<div>
+<div class="font-eyebrow text-[10px] text-[#91B4FF] uppercase tracking-widest mb-2">Stage 05</div>
+<div class="w-7 h-7 rounded-md bg-surface-container flex items-center justify-center text-primary mb-3">
+<span class="material-symbols-outlined text-[16px]">quiz</span>
+</div>
+<h4 class="font-card-h3-sm text-[15px] text-on-surface mb-1 leading-snug">Exam Conduct</h4>
+<p class="font-caption text-[12px] text-outline leading-normal">Centre attendance sync &amp; telemetry logging.</p>
+</div>
+<div class="mt-4 pt-2 text-[10px] font-caption text-outline">Internal Network Ops</div>
+</div>
+<!-- Step 6 -->
+<div class="p-4 rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between">
+<div>
+<div class="font-eyebrow text-[10px] text-error uppercase tracking-widest mb-2">Stage 06</div>
+<div class="w-7 h-7 rounded-md bg-surface-container flex items-center justify-center text-error mb-3">
+<span class="material-symbols-outlined text-[16px]">equalizer</span>
+</div>
+<h4 class="font-card-h3-sm text-[15px] text-on-surface mb-1 leading-snug">Rank Dispatch</h4>
+<p class="font-caption text-[12px] text-outline leading-normal">Isolated read-only memory caches for score lookups.</p>
+</div>
+<div class="mt-4 pt-2 text-[10px] font-caption text-error">Maximum Concurrency</div>
+</div>
+<!-- Step 7 -->
+<div class="p-4 rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between">
+<div>
+<div class="font-eyebrow text-[10px] text-tertiary uppercase tracking-widest mb-2">Stage 07</div>
+<div class="w-7 h-7 rounded-md bg-surface-container flex items-center justify-center text-tertiary mb-3">
+<span class="material-symbols-outlined text-[16px]">school</span>
+</div>
+<h4 class="font-card-h3-sm text-[15px] text-on-surface mb-1 leading-snug">Seat Allocation</h4>
+<p class="font-caption text-[12px] text-outline leading-normal">Deterministic merit allocation &amp; real-time certificate locking.</p>
+</div>
+<div class="mt-4 pt-2 text-[10px] font-caption text-tertiary">Cryptographic Finality</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: ASSESSMENT FRAMEWORK (5 Repeatable Pillars) -->
+<section class="w-full py-space-section bg-surface-container-lowest">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+<div class="lg:col-span-5">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-[#91B4FF] font-eyebrow text-eyebrow uppercase tracking-[0.2em] mb-3">
+            Repeatable Public Framework
+          </div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight mb-4">
+            Auditing digital public goods systematically
+          </h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">
+            We provide government secretaries, board chairpersons, and technical directors with an unbiased, empirical view of operational weaknesses before seasonal demand strikes.
+          </p>
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-inner">
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Statutory Deliverable</h4>
+<p class="font-caption text-caption text-outline">
+              Every modernisation audit results in an unredacted technical dossier detailing database bottleneck traces, dependency vulnerabilities, and cost-to-serve refactoring paths.
+            </p>
+</div>
+</div>
+<div class="lg:col-span-7 flex flex-col gap-4">
+<!-- Item 1 -->
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-sm flex items-start gap-4">
+<span class="font-card-h3 text-card-h3 text-primary font-bold">01</span>
+<div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-1">Authorised Discovery</h3>
+<p class="font-caption text-caption text-on-surface-variant">Formal validation of ministry/board sanction, boundary agreement, non-production test mirror procurement, and stakeholder scope sign-off.</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-sm flex items-start gap-4">
+<span class="font-card-h3 text-card-h3 text-primary font-bold">02</span>
+<div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-1">Architecture &amp; Data Audit</h3>
+<p class="font-caption text-caption text-on-surface-variant">Deep relational schema profiling, query index health, data replication delay under load, and API endpoint decoupling viability.</p>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-sm flex items-start gap-4">
+<span class="font-card-h3 text-card-h3 text-primary font-bold">03</span>
+<div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-1">Latency &amp; Concurrency Profiling</h3>
+<p class="font-caption text-caption text-on-surface-variant">Simulated traffic surges matching historic result release volumes. Isolation of memory leaks, socket saturation, and cold-start limits.</p>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-sm flex items-start gap-4">
+<span class="font-card-h3 text-card-h3 text-tertiary font-bold">04</span>
+<div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-1">Security &amp; Sovereign Scrutiny</h3>
+<p class="font-caption text-caption text-on-surface-variant">Compliance analysis against Indian data protection standards, role-based boundary verification, injection testing, and TLS cipher auditing.</p>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-sm flex items-start gap-4">
+<span class="font-card-h3 text-card-h3 text-[#91B4FF] font-bold">05</span>
+<div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-1">Modernization Blueprint</h3>
+<p class="font-caption text-caption text-on-surface-variant">An actionable roadmap including staged rollout strategies, backward compatible data proxies, frontend UI specifications, and budget projections.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 6: SECURITY & AUTHORISATION MANDATE -->
+<section class="w-full py-space-section">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<div class="p-8 md:p-12 rounded-3xl bg-surface-container-low shadow-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center relative z-10">
+<div class="lg:col-span-2">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-error-container/40 text-[#ffb4ab] font-eyebrow text-eyebrow uppercase tracking-[0.2em] mb-4">
+              Written Authorisation Mandatory
+            </div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight mb-4">
+              Strict non-disclosure &amp; data containment protocol
+            </h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">
+              Kavi Solutions conducts security, latency, and code scrutiny exclusively on systems where explicit administrative authorization has been granted by the governing body. We do not engage in unauthorized penetration testing, vulnerability disclosure bounties, or scraping of public assets.
+            </p>
+<div class="flex flex-wrap gap-4 text-xs font-caption text-outline">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px] text-tertiary">check_circle</span> Department Sanction Signed</span>
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px] text-tertiary">check_circle</span> Synthetic PII Mock Data Only</span>
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px] text-tertiary">check_circle</span> Air-Gapped Analysis Sandboxes</span>
+</div>
+</div>
+<div class="p-6 rounded-2xl bg-surface-container-highest shadow-inner flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-error text-[24px]">gpp_bad</span>
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface">Data Boundary Rule</h4>
+</div>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+<strong class="text-on-surface">Do not submit citizen PII, student marksheets, access keys, or internal credentials</strong> through this website. All sensitive project discovery is conducted via protected, digitally signed channels following formal execution of non-disclosure documents.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 7: CORE TECHNICAL CAPABILITIES (3 Pillars) -->
+<section class="w-full py-space-section bg-surface-container-lowest">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<div class="max-w-2xl mb-space-2xl">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-[#91B4FF] font-eyebrow text-eyebrow uppercase tracking-[0.2em] mb-3">
+          Full Stack Architecture
+        </div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight">
+          Engineered for statutory resilience
+        </h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Pillar 1 -->
+<div class="p-8 rounded-2xl bg-surface-container-low shadow-sm flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-[28px]">schema</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-3">Data Pipelines</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Resilient ETL pipelines that convert historic state registries into clean, searchable, and verified columnar storage with tamper-evident audit trails.
+            </p>
+<ul class="mt-6 space-y-2 text-xs font-caption text-outline">
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Partitioned Read Replicas</li>
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Immutable Verification Logs</li>
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Sub-second Aggregation</li>
+</ul>
+</div>
+</div>
+<!-- Pillar 2 -->
+<div class="p-8 rounded-2xl bg-surface-container-low shadow-sm flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-tertiary mb-6">
+<span class="material-symbols-outlined text-[28px]">devices</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-3">Resilient Frontend</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Progressive web platforms compiled to zero-dependency static bundles. Guaranteed functionality on 2G/3G connectivity across tier-3 municipalities.
+            </p>
+<ul class="mt-6 space-y-2 text-xs font-caption text-outline">
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> WCAG 2.1 AA Compliant</li>
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Dynamic Telugu Script Kerning</li>
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> &lt; 50KB First Meaningful Paint</li>
+</ul>
+</div>
+</div>
+<!-- Pillar 3 -->
+<div class="p-8 rounded-2xl bg-surface-container-low shadow-sm flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-[#91B4FF] mb-6">
+<span class="material-symbols-outlined text-[28px]">cloud_sync</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-3">Cloud Backend</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Stateless microservices deployed within MeitY-empaneled sovereign cloud data centres. Elastic surge mitigation built directly into ingress proxies.
+            </p>
+<ul class="mt-6 space-y-2 text-xs font-caption text-outline">
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#91B4FF]"></span> Geo-Fenced Data Boundaries</li>
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#91B4FF]"></span> Zero Cold-Start Provisioning</li>
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#91B4FF]"></span> Disaster Recovery Automation</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 8: FAQ ("Before you brief us") -->
+<section class="w-full py-space-section">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<div class="max-w-2xl mb-space-2xl">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-low text-outline font-eyebrow text-eyebrow uppercase tracking-[0.2em] mb-3">
+          Prerequisites &amp; Integrity
+        </div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight">
+          Before you brief us
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">
+          Clear answers regarding how Kavi Solutions interfaces with statutory authorities, tenders, and assessment workflows.
+        </p>
+</div>
+<div class="max-w-3xl space-y-4">
+<!-- Q1 -->
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-sm">
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Are you an empaneled government vendor or agency?</h3>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+            No. Kavi Solutions is an independent digital product and engineering studio. We do not claim official empanelment, institutional affiliation, or vendor accreditation with any state government or board. We engage through formal authorized advisory briefings or via standard statutory procurement channels.
+          </p>
+</div>
+<!-- Q2 -->
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-sm">
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">What is required before you can assess our portal?</h3>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+            We require written authorization issued by a competent institutional authority (Department Head, Controller of Examinations, or Vice Chancellor) clearly outlining testing boundaries, permitted environments (preferably pre-production or mirrored testbeds), and authorized timelines.
+          </p>
+</div>
+<!-- Q3 -->
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-sm">
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Do you replace existing government data centres or NIC setups?</h3>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+            No. Our modernization frameworks focus on architectural optimization, interface decoupling, and cloud-burst caching that integrate directly with existing State Data Centres (SDC) or National Informatics Centre (NIC) cores, augmenting performance without disrupting institutional ownership.
+          </p>
+</div>
+<!-- Q4 -->
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-sm">
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">How do you manage student and citizen data security during testing?</h3>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+            We insist on sanitized or synthetic data environments for diagnostic load testing. No personally identifiable citizen information (PII) is ever transferred to external systems. All technical traces and logs generated during assessments are destroyed or handed over post-briefing.
+          </p>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 9: ENQUIRY BRIEF FORM (Interactive Glass Panel) -->
+<section class="w-full py-space-section-xl bg-surface-container-lowest relative" id="brief-form">
+<div class="max-w-[1152px] mx-auto px-gutter relative z-10">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- Left Explanatory Column -->
+<div class="lg:col-span-5 flex flex-col justify-between">
+<div>
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-[#91B4FF] font-eyebrow text-eyebrow uppercase tracking-[0.2em] mb-4">
+              Institutional Contact
+            </div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight mb-4">
+              Discuss a portal modernization brief
+            </h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">
+              Initiate a confidential preliminary inquiry for technical assessment, latency remediation, or citizen workflow modernization.
+            </p>
+<div class="p-6 rounded-2xl bg-surface-container-low mb-6">
+<span class="font-eyebrow text-eyebrow text-error uppercase tracking-widest block mb-2">Verification Protocols</span>
+<p class="font-caption text-caption text-outline leading-relaxed">
+                Inquiries are verified against official governmental, institutional, or university email domains before exploratory discussions proceed.
+              </p>
+</div>
+</div>
+<!-- Form State Switcher (Interactive Preview Bar) -->
+<div class="p-4 rounded-xl bg-surface-container-high/50 flex flex-col gap-2">
+<span class="font-eyebrow text-[10px] text-outline uppercase tracking-wider">Preview Feedback States:</span>
+<div class="flex flex-wrap gap-2">
+<button class="px-2.5 py-1 rounded bg-surface-container text-xs text-on-surface hover:bg-surface-container-highest" onclick="setFormState('idle')">Idle State</button>
+<button class="px-2.5 py-1 rounded bg-surface-container text-xs text-on-surface hover:bg-surface-container-highest" onclick="setFormState('sending')">Sending State</button>
+<button class="px-2.5 py-1 rounded bg-surface-container text-xs text-on-surface hover:bg-surface-container-highest" onclick="setFormState('sent')">Success State</button>
+<button class="px-2.5 py-1 rounded bg-surface-container text-xs text-on-surface hover:bg-surface-container-highest" onclick="setFormState('error')">Error State</button>
+</div>
+</div>
+</div>
+<!-- Right Column: Glass Form Container -->
+<div class="lg:col-span-7">
+<div class="p-8 md:p-10 rounded-3xl bg-surface-container-low backdrop-blur-xl shadow-2xl relative">
+<!-- IDLE FORM -->
+<form class="flex flex-col gap-5" id="state-idle" onsubmit="event.preventDefault(); simulateSubmit();">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+<div>
+<label class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider block mb-2">Officer / Engineer Name *</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline/50 font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="e.g. Dr. K. Ramanathan" required="" type="text">
+</div>
+<div>
+<label class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider block mb-2">Official Email Address *</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline/50 font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="name@gov.in or name@univ.ac.in" required="" type="email">
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+<div>
+<label class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider block mb-2">Contact Telephone *</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline/50 font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="+91 90000 00000" required="" type="tel">
+</div>
+<div>
+<label class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider block mb-2">Department / Authority *</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline/50 font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="e.g. Technical Board / Higher Ed" required="" type="text">
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+<div>
+<label class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider block mb-2">Official Role / Designation *</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline/50 font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="e.g. Joint Secretary / IT Advisor" required="" type="text">
+</div>
+<div>
+<label class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider block mb-2">Portal Name / Current URL (Optional)</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline/50 font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="https://..." type="text">
+</div>
+</div>
+<div>
+<label class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider block mb-2">Primary Scope of Interest *</label>
+<select class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>High-Capacity Result / Hall Ticket Surge Optimization</option>
+<option>Citizen Journey &amp; UI/UX Accessibility Modernization</option>
+<option>Architecture &amp; Latency Bottleneck Assessment</option>
+<option>Legacy Decoupling &amp; Cloud Integration Blueprint</option>
+<option>Independent Security &amp; Integrity Verification</option>
+</select>
+</div>
+<div>
+<label class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider block mb-2">Brief Summary of Operational Challenges</label>
+<textarea class="w-full p-4 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline/50 font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner resize-none" placeholder="Detail peak traffic volumes, recurring timeouts, or specific modernisation objectives..." rows="4"></textarea>
+</div>
+<div class="p-3 rounded-lg bg-surface-container-high/40 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-tertiary">lock</span>
+<p class="font-caption text-[11px] text-outline">
+                  By submitting, you confirm you are an authorized representative of the mentioned institution. Do not include classified or personal citizen data.
+                </p>
+</div>
+<button class="w-full py-4 rounded-xl bg-primary-container text-white font-body-medium text-body-md hover:bg-[#1849A9] shadow-md transition-all flex items-center justify-center gap-2" type="submit">
+<span>Submit Technical Modernisation Inquiry</span>
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</form>
+<!-- SENDING STATE (Hidden by default) -->
+<div class="hidden flex-col items-center justify-center py-20 text-center" id="state-sending">
+<div class="w-12 h-12 rounded-full border-2 border-primary border-t-transparent animate-spin mb-4"></div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-2">Transmitting Institutional Brief</h3>
+<p class="font-caption text-caption text-outline max-w-sm">Verifying institutional transport payload via encrypted channel...</p>
+</div>
+<!-- SUCCESS STATE (Hidden by default) -->
+<div class="hidden flex-col items-center justify-center py-16 text-center" id="state-sent">
+<div class="w-16 h-16 rounded-2xl bg-tertiary-container/30 flex items-center justify-center text-tertiary mb-6">
+<span class="material-symbols-outlined text-[36px]">verified</span>
+</div>
+<span class="font-eyebrow text-eyebrow text-tertiary uppercase tracking-widest mb-2">Transmission Logged</span>
+<h3 class="font-section-h2 text-[28px] text-on-surface mb-3">Brief Received Successfully</h3>
+<p class="font-body-md text-caption text-on-surface-variant max-w-md mb-8 leading-relaxed">
+                Thank you. Our public platforms engineering desk will review the provided details and initiate domain verification before scheduling an exploratory technical briefing.
+              </p>
+<button class="px-6 py-2.5 rounded-xl bg-surface-container-highest text-on-surface font-caption text-caption hover:bg-surface-container-high transition-colors" onclick="setFormState('idle')">
+                Submit Another Request
+              </button>
+</div>
+<!-- ERROR STATE (Hidden by default) -->
+<div class="hidden flex-col items-center justify-center py-16 text-center" id="state-error">
+<div class="w-16 h-16 rounded-2xl bg-error-container/30 flex items-center justify-center text-error mb-6">
+<span class="material-symbols-outlined text-[36px]">error_outline</span>
+</div>
+<span class="font-eyebrow text-eyebrow text-error uppercase tracking-widest mb-2">Handshake Interrupted</span>
+<h3 class="font-section-h2 text-[28px] text-on-surface mb-3">Submission Verification Failed</h3>
+<p class="font-body-md text-caption text-on-surface-variant max-w-md mb-8 leading-relaxed">
+                Unable to route the transmission. Please ensure all mandatory fields are populated with valid institutional contact credentials.
+              </p>
+<button class="px-6 py-2.5 rounded-xl bg-surface-container-highest text-on-surface font-caption text-caption hover:bg-surface-container-high transition-colors" onclick="setFormState('idle')">
+                Return to Form
+              </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive JavaScript for Form State Switcher -->
+<script>
+    function setFormState(state) {
+      const states = ['idle', 'sending', 'sent', 'error'];
+      states.forEach(s => {
+        const el = document.getElementById('state-' + s);
+        if (el) {
+          if (s === state) {
+            el.classList.remove('hidden');
+            el.classList.add('flex');
+          } else {
+            el.classList.add('hidden');
+            el.classList.remove('flex');
+          }
+        }
+      });
+    }
+
+    function simulateSubmit() {
+      setFormState('sending');
+      setTimeout(() => {
+        setFormState('sent');
+      }, 1200);
+    }
+  </script>
+</div></main><footer class="w-full bg-[#06060F] text-on-surface-variant pt-space-section pb-space-2xl"><div class="max-w-[1152px] mx-auto px-gutter"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-xl pb-space-2xl"><div class="lg:col-span-2 space-y-space-md pr-space-md"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary via-inverse-primary to-tertiary flex items-center justify-center"><span class="font-card-h3-sm text-card-h3-sm font-bold text-surface-container-lowest leading-none select-none">K</span></div><span class="font-card-h3-sm text-card-h3-sm font-semibold tracking-tight text-on-surface">Kavi Solutions</span></div><p class="font-body-md text-caption text-outline max-w-sm">High-assurance digital product engineering. Architecting calibrated software primitives, cloud pipelines, and cognitive intelligence systems for modern enterprises.</p><div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-container-low"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="font-eyebrow text-eyebrow tracking-widest text-on-surface-variant uppercase">All Core Systems Operational</span></div></div><div><p class="font-eyebrow text-eyebrow uppercase text-on-surface tracking-widest mb-space-md">Disciplines</p><ul class="space-y-2 font-caption text-caption"><li class="text-outline hover:text-on-surface transition-colors">Web Platforms</li><li class="text-outline hover:text-on-surface transition-colors">Mobile Native</li><li class="text-outline hover:text-on-surface transition-colors">Product Systems</li><li class="text-outline hover:text-on-surface transition-colors">Growth &amp; Marketing</li><li class="text-outline hover:text-on-surface transition-colors">Applied AI &amp; Models</li><li class="text-outline hover:text-on-surface transition-colors">Fellowship Research</li></ul></div><div><p class="font-eyebrow text-eyebrow uppercase text-on-surface tracking-widest mb-space-md">Navigation</p><ul class="space-y-2 font-caption text-caption"><li><a class="text-outline hover:text-on-surface transition-colors" data-path="showcase" href="#">Showcase</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="services" href="#">Services Portfolio</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="projects" href="#">Client Index</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="fellowship" href="#">Engineering Fellowship</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="team" href="#">Principals &amp; Team</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="verification" href="#">Credential Verification</a></li></ul></div><div><p class="font-eyebrow text-eyebrow uppercase text-on-surface tracking-widest mb-space-md">Directives</p><ul class="space-y-2 font-caption text-caption"><li><a class="text-outline hover:text-on-surface transition-colors" data-path="contact" href="#">Initiate Brief</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="login" href="#">Client Portal</a></li><li class="text-outline hover:text-on-surface transition-colors">Security Matrix</li><li class="text-outline hover:text-on-surface transition-colors">Privacy Telemetry</li></ul></div></div><div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md font-caption text-caption text-outline"><p>© 2025 Kavi Solutions Digital Product Studio. All rights reserved.</p><p class="font-eyebrow text-eyebrow uppercase tracking-widest text-outline-variant">Precision Hardware • Engineering Monitors</p></div></div></footer>
+
+</body></html>

@@ -1,0 +1,934 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"primary":"#b1c5ff","inverse-primary":"#0957ce","on-tertiary":"#003825","on-error-container":"#ffdad6","on-background":"#dce2f6","on-error":"#690005","surface-container-high":"#232a39","surface-container-highest":"#2e3544","tertiary-fixed-dim":"#45dfa4","on-primary-fixed-variant":"#0040a0","primary-fixed-dim":"#b1c5ff","on-secondary":"#002e6a","surface-container":"#19202e","tertiary":"#45dfa4","on-secondary-container":"#97b8ff","secondary-fixed-dim":"#aec6ff","on-tertiary-fixed":"#002114","error-container":"#93000a","on-primary":"#002c72","inverse-on-surface":"#2a3040","secondary-container":"#1e478b","inverse-surface":"#dce2f6","primary-container":"#175cd3","on-surface":"#dce2f6","outline-variant":"#424654","tertiary-container":"#00724f","secondary-fixed":"#d8e2ff","on-secondary-fixed-variant":"#1b4588","surface-container-low":"#151b2a","tertiary-fixed":"#68fcbf","error":"#ffb4ab","background":"#0c1321","primary-fixed":"#dae2ff","surface-dim":"#0c1321","surface-container-lowest":"#070e1c","on-primary-fixed":"#001847","surface":"#0c1321","secondary":"#aec6ff","outline":"#8d909f","on-tertiary-container":"#66fabd","on-tertiary-fixed-variant":"#005137","on-surface-variant":"#c3c6d6","surface-bright":"#323949","on-primary-container":"#d7e0ff","on-secondary-fixed":"#001a42","surface-variant":"#2e3544","surface-tint":"#b1c5ff"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-3xl":"4rem","space-section":"6rem","space-2xl":"3rem","space-lg":"1.5rem","gutter-mobile":"1rem","margin":"1.5rem","space-sm":"0.5rem","space-xs":"0.25rem","space-md":"1rem","space-xl":"2rem","margin-desktop":"auto","space-section-xl":"8rem","gutter":"1.5rem"},"fontFamily":{"hero-h1-tablet":["Space Grotesk"],"hero-h1":["Space Grotesk"],"caption":["Geist"],"section-h2":["Space Grotesk"],"hero-h1-mobile":["Space Grotesk"],"body-md":["Geist"],"card-h3-sm":["Space Grotesk"],"eyebrow":["Geist"],"card-h3":["Space Grotesk"],"page-h1-mobile":["Space Grotesk"],"section-h2-mobile":["Space Grotesk"],"page-h1":["Space Grotesk"],"body-lg":["Geist"],"body-medium":["Geist"]},"fontSize":{"hero-h1-tablet":["60px",{"lineHeight":"1.1","letterSpacing":"-0.025em","fontWeight":"700"}],"hero-h1":["72px",{"lineHeight":"1.1","letterSpacing":"-0.03em","fontWeight":"700"}],"caption":["13px",{"lineHeight":"1.4","letterSpacing":"0.01em","fontWeight":"400"}],"section-h2":["48px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"600"}],"hero-h1-mobile":["36px",{"lineHeight":"1.15","letterSpacing":"-0.02em","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"1.6","letterSpacing":"0","fontWeight":"400"}],"card-h3-sm":["18px",{"lineHeight":"1.35","letterSpacing":"-0.01em","fontWeight":"600"}],"eyebrow":["11px",{"lineHeight":"1","letterSpacing":"0.2em","fontWeight":"600"}],"card-h3":["22px",{"lineHeight":"1.3","letterSpacing":"-0.01em","fontWeight":"600"}],"page-h1-mobile":["36px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"600"}],"section-h2-mobile":["30px",{"lineHeight":"1.25","letterSpacing":"-0.015em","fontWeight":"600"}],"page-h1":["60px",{"lineHeight":"1.15","letterSpacing":"-0.025em","fontWeight":"600"}],"body-lg":["18px",{"lineHeight":"1.6","letterSpacing":"-0.005em","fontWeight":"400"}],"body-medium":["16px",{"lineHeight":"1.6","letterSpacing":"0","fontWeight":"500"}]}}}}</script></head><body class="bg-[#0B1220] font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-4 left-0 right-0 z-50 px-gutter"><div class="max-w-[1152px] mx-auto h-16 rounded-[12px] bg-[#121d2fd6] backdrop-blur-[16px] px-space-md flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><a class="flex items-center gap-space-sm group" data-path="showcase" href="#"><div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary via-inverse-primary to-tertiary flex items-center justify-center shadow-inner"><span class="font-card-h3 text-card-h3 font-bold text-surface-container-lowest leading-none select-none">K</span></div><div class="flex flex-col"><span class="font-card-h3-sm text-card-h3-sm font-semibold tracking-tight text-on-surface leading-none">Kavi Solutions</span><span class="font-eyebrow text-eyebrow text-outline tracking-[0.2em] uppercase mt-1">Engineering Studio</span></div><span class="font-mono text-[11px] font-semibold text-primary bg-surface-container-high px-2 py-0.5 rounded border border-outline-variant/40 tracking-wider">[P10]</span></a><nav class="hidden lg:flex items-center gap-1 bg-surface-container-lowest/50 p-1 rounded-xl" data-active-classes="text-on-surface bg-surface-container-high font-medium rounded-lg"><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="showcase" href="#">Showcase<span class="font-mono text-[11px] font-semibold text-primary bg-surface-container-high px-2 py-0.5 rounded border border-outline-variant/40 tracking-wider">[P10]</span></a><a aria-current="page" class="px-3 py-1.5 transition-all text-on-surface bg-surface-container-high font-medium rounded-lg" data-path="services" href="#">Services</a><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="projects" href="#">Projects</a><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="fellowship" href="#">Fellowship</a><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="team" href="#">Team</a><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="verification" href="#">Verification</a></nav><div class="flex items-center gap-space-sm"><a class="hidden sm:inline-flex px-3 py-2 font-caption text-caption text-on-surface-variant hover:text-on-surface transition-colors" data-path="login" href="#">Login</a><a class="px-4 py-2 rounded-xl bg-primary-container hover:bg-[#1849A9] text-[#FFFFFF] font-body-medium text-caption transition-all shadow-[0_1px_12px_rgba(23,92,211,0.25)] focus:ring-2 focus:ring-[#91B4FF] focus:outline-none" data-path="contact" href="#">Let's Talk</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-[#0B1220] min-h-[calc(100vh-280px)]"><div class="flex flex-col w-full">
+<!-- Atmospheric Glow Orbs (Subtle Backdrop) -->
+<div class="relative w-full overflow-hidden">
+<div class="absolute -top-32 left-1/4 w-[520px] h-[520px] bg-tertiary/10 rounded-full blur-[140px] pointer-events-none"></div>
+<div class="absolute top-48 right-10 w-[420px] h-[420px] bg-primary/10 rounded-full blur-[160px] pointer-events-none"></div>
+<!-- HERO SECTION -->
+<section class="max-w-[1152px] mx-auto px-gutter pt-space-2xl pb-space-section relative z-10">
+<div class="max-w-[896px]">
+<!-- Eyebrow Pill -->
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high/80 backdrop-blur-md mb-space-lg shadow-sm"><span class="font-mono text-[11px] font-bold text-tertiary bg-tertiary/10 px-2 py-0.5 rounded border border-tertiary/20 tracking-wider">[P10]</span><span class="text-tertiary text-xs">💼</span><span class="font-eyebrow text-eyebrow tracking-[0.2em] text-tertiary uppercase">Financial Services</span><span class="w-1.5 h-1.5 rounded-full bg-tertiary/60 animate-ping"></span></div>
+<h1 class="font-hero-h1 text-hero-h1 text-on-surface tracking-tight leading-[1.08] mb-space-md">
+          Tax, planning and cash flow — <span class="text-[#91B4FF]">handled properly.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[780px] mb-space-xl">
+          Support for individuals and businesses across income tax filing, tax planning, budgeting, cash-flow management and long-term financial planning. Where a service is regulated, it is delivered through appropriately qualified professionals.
+        </p>
+<!-- CTA Cluster -->
+<div class="flex flex-wrap items-center gap-space-md">
+<a class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#10B981] to-[#14B8A6] hover:from-[#0fa674] hover:to-[#119e8f] text-on-tertiary font-body-medium text-body-md transition-all shadow-lg shadow-tertiary/20 flex items-center gap-2 group" href="#enquiry-section">
+<span>Request a consultation</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+<a class="px-6 py-3.5 rounded-xl bg-surface-container-high/60 hover:bg-surface-container-highest/80 backdrop-blur-md text-on-surface font-body-medium text-body-md transition-all shadow-sm" href="#services-matrix">
+            Explore services
+          </a>
+</div>
+</div>
+<!-- Hero 4 Metrics Strip -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-md mt-space-3xl pt-space-xl bg-surface-container-lowest/60 backdrop-blur-lg rounded-2xl p-space-lg shadow-md">
+<div class="flex flex-col">
+<span class="font-eyebrow text-eyebrow uppercase tracking-[0.2em] text-outline mb-1">Architecture</span>
+<span class="font-card-h3 text-card-h3 text-tertiary font-bold">2 Tracks</span>
+<span class="font-caption text-caption text-on-surface-variant mt-1">Individual &amp; Business</span>
+</div>
+<div class="flex flex-col">
+<span class="font-eyebrow text-eyebrow uppercase tracking-[0.2em] text-outline mb-1">Coverage</span>
+<span class="font-card-h3 text-card-h3 text-primary font-bold">5 Service Areas</span>
+<span class="font-caption text-caption text-on-surface-variant mt-1">Full life-cycle support</span>
+</div>
+<div class="flex flex-col">
+<span class="font-eyebrow text-eyebrow uppercase tracking-[0.2em] text-outline mb-1">Cadence</span>
+<span class="font-card-h3 text-card-h3 text-on-surface font-bold">Year-Round</span>
+<span class="font-caption text-caption text-on-surface-variant mt-1">Not just filing season</span>
+</div>
+<div class="flex flex-col">
+<span class="font-eyebrow text-eyebrow uppercase tracking-[0.2em] text-outline mb-1">Standard</span>
+<span class="font-card-h3 text-card-h3 text-secondary font-bold">Documented</span>
+<span class="font-caption text-caption text-on-surface-variant mt-1">Audit-ready workpapers</span>
+</div>
+</div>
+</section>
+<!-- SECTION 1: APPROACH -->
+<section class="max-w-[1152px] mx-auto px-gutter py-space-section">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-2xl">
+<div>
+<span class="font-eyebrow text-eyebrow text-tertiary tracking-[0.2em] uppercase">Rigorous Workflow</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight mt-1">
+            Advice that starts with your numbers
+          </h2>
+</div>
+<p class="font-body-md text-caption text-outline max-w-sm">
+          No generic rules of thumb. Every decision pathway begins with raw data ingestion, reconciliation, and statutory mapping.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-5 gap-space-md">
+<!-- Step 1 -->
+<div class="bg-surface-container/90 backdrop-blur-md p-space-md rounded-xl shadow-sm flex flex-col justify-between h-full group hover:bg-surface-container-high transition-all">
+<div>
+<div class="flex items-center justify-between text-outline mb-space-md">
+<span class="font-card-h3-sm text-card-h3-sm font-bold text-tertiary">01</span>
+<span class="material-symbols-outlined text-outline">data_table</span>
+</div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Ingestion</h3>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+              Consolidation of bank registers, AIS/TIS exports, invoices, and statutory ledgers without manual guesswork.
+            </p>
+</div>
+<div class="mt-space-lg pt-2">
+<span class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider">Phase I</span>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="bg-surface-container/90 backdrop-blur-md p-space-md rounded-xl shadow-sm flex flex-col justify-between h-full group hover:bg-surface-container-high transition-all">
+<div>
+<div class="flex items-center justify-between text-outline mb-space-md">
+<span class="font-card-h3-sm text-card-h3-sm font-bold text-primary">02</span>
+<span class="material-symbols-outlined text-outline">fact_check</span>
+</div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Reconciliation</h3>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+              Cross-verifying 26AS, GSTR-2B, input tax balances, and actual cash flows to locate anomalies early.
+            </p>
+</div>
+<div class="mt-space-lg pt-2">
+<span class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider">Phase II</span>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="bg-surface-container/90 backdrop-blur-md p-space-md rounded-xl shadow-sm flex flex-col justify-between h-full group hover:bg-surface-container-high transition-all">
+<div>
+<div class="flex items-center justify-between text-outline mb-space-md">
+<span class="font-card-h3-sm text-card-h3-sm font-bold text-tertiary">03</span>
+<span class="material-symbols-outlined text-outline">calculate</span>
+</div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Modeling</h3>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+              Evaluating regime trade-offs (Old vs New), advance tax schedules, and liquidity burn scenarios.
+            </p>
+</div>
+<div class="mt-space-lg pt-2">
+<span class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider">Phase III</span>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="bg-surface-container/90 backdrop-blur-md p-space-md rounded-xl shadow-sm flex flex-col justify-between h-full group hover:bg-surface-container-high transition-all">
+<div>
+<div class="flex items-center justify-between text-outline mb-space-md">
+<span class="font-card-h3-sm text-card-h3-sm font-bold text-secondary">04</span>
+<span class="material-symbols-outlined text-outline">description</span>
+</div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Documentation</h3>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+              Synthesizing clear computation notes, rationale memos, and complete workpapers for historical context.
+            </p>
+</div>
+<div class="mt-space-lg pt-2">
+<span class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider">Phase IV</span>
+</div>
+</div>
+<!-- Step 5 -->
+<div class="bg-surface-container/90 backdrop-blur-md p-space-md rounded-xl shadow-sm flex flex-col justify-between h-full group hover:bg-surface-container-high transition-all">
+<div>
+<div class="flex items-center justify-between text-outline mb-space-md">
+<span class="font-card-h3-sm text-card-h3-sm font-bold text-on-surface">05</span>
+<span class="material-symbols-outlined text-outline">sync</span>
+</div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Review Cadence</h3>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+              Periodic quarterly health-checks to adapt to regulatory updates, bonus payouts, or business pivots.
+            </p>
+</div>
+<div class="mt-space-lg pt-2">
+<span class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider">Phase V</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: TWO TRACKS -->
+<section class="max-w-[1152px] mx-auto px-gutter py-space-section">
+<div class="text-center max-w-[700px] mx-auto mb-space-2xl">
+<span class="font-eyebrow text-eyebrow text-tertiary tracking-[0.2em] uppercase">Structured Engagements</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight mt-1">Two Tailored Operating Tracks</h2>
+<p class="font-body-md text-caption text-outline mt-2">Engineered specifically for personal balance sheets or operational entity accounting.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-space-lg">
+<!-- Individual Track Card -->
+<div class="bg-surface-container-low/90 backdrop-blur-md rounded-2xl p-space-xl shadow-md flex flex-col justify-between relative overflow-hidden">
+<div class="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[24px]">person</span>
+</div>
+<span class="px-3 py-1 rounded-full bg-surface-container-high font-eyebrow text-eyebrow tracking-widest text-primary uppercase">Individual Track</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-sm">Personal Financial Engineering</h3>
+<p class="font-body-md text-caption text-on-surface-variant mb-space-lg">
+              Designed for tech executives, salaried professionals with multi-asset income, freelancers, and angel syndicates.
+            </p>
+<div class="space-y-space-sm">
+<div class="p-space-sm rounded-lg bg-surface-container flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary text-[20px] mt-0.5">check_circle</span>
+<div>
+<span class="font-body-medium text-caption text-on-surface block">Complex Salary &amp; Equity Structuring</span>
+<span class="font-caption text-caption text-outline">ESOPs, RSUs, cross-border equity exercise taxation, and DTAA relief.</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary text-[20px] mt-0.5">check_circle</span>
+<div>
+<span class="font-body-medium text-caption text-on-surface block">Capital Gains &amp; Asset Realization</span>
+<span class="font-caption text-outline">Equity trading, crypto, debt instruments, and real estate transition math.</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary text-[20px] mt-0.5">check_circle</span>
+<div>
+<span class="font-body-medium text-caption text-on-surface block">Independent Freelance Ledger</span>
+<span class="font-caption text-outline">Section 44ADA compliance, foreign remittances, and FIRCs reconciliation.</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-space-xl pt-space-md flex items-center justify-between">
+<span class="font-caption text-caption text-outline">Scope: Tailored for Indian &amp; Global Resident Taxpayers</span>
+<a class="font-body-medium text-caption text-primary hover:text-on-surface flex items-center gap-1 transition-colors" href="#enquiry-section">
+              Request Track Brief <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</a>
+</div>
+</div>
+<!-- Business Track Card -->
+<div class="bg-surface-container-low/90 backdrop-blur-md rounded-2xl p-space-xl shadow-md flex flex-col justify-between relative overflow-hidden">
+<div class="absolute top-0 right-0 w-48 h-48 bg-tertiary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary text-[24px]">corporate_fare</span>
+</div>
+<span class="px-3 py-1 rounded-full bg-surface-container-high font-eyebrow text-eyebrow tracking-widest text-tertiary uppercase">Business Track</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-sm">Enterprise &amp; Entity Management</h3>
+<p class="font-body-md text-caption text-on-surface-variant mb-space-lg">
+              Tailored for registered LLPs, Private Limited entities, agencies, and high-growth venture-backed operations.
+            </p>
+<div class="space-y-space-sm">
+<div class="p-space-sm rounded-lg bg-surface-container flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary text-[20px] mt-0.5">check_circle</span>
+<div>
+<span class="font-body-medium text-caption text-on-surface block">Continuous Monthly Bookkeeping</span>
+<span class="font-caption text-outline">Accrual accounting, AP/AR age tracking, and verified ledger closing.</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary text-[20px] mt-0.5">check_circle</span>
+<div>
+<span class="font-body-medium text-caption text-on-surface block">Statutory Indirect Tax (GST) Pipeline</span>
+<span class="font-caption text-outline">GSTR-1, GSTR-3B filings, reverse-charge tracking, and monthly reconciliation.</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary text-[20px] mt-0.5">check_circle</span>
+<div>
+<span class="font-body-medium text-caption text-on-surface block">Operational Cash Flow Modeling</span>
+<span class="font-caption text-outline">13-week liquidity runout forecasts, burn monitoring, and payroll escrow schedules.</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-space-xl pt-space-md flex items-center justify-between">
+<span class="font-caption text-caption text-outline">Scope: LLPs, Pvt Ltds, Partnerships</span>
+<a class="font-body-medium text-caption text-tertiary hover:text-on-surface flex items-center gap-1 transition-colors" href="#enquiry-section">
+              Request Entity Scope <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3 & 4: SERVICES MATRIX (INDIVIDUAL & BUSINESS) -->
+<section class="max-w-[1152px] mx-auto px-gutter py-space-section" id="services-matrix">
+<!-- Section 3: Individual Services -->
+<div class="mb-space-section">
+<div class="flex items-center gap-2 mb-space-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<span class="font-eyebrow text-eyebrow text-primary uppercase tracking-[0.2em]">Personal Spectrum</span>
+</div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight mb-space-xl">Individual Disciplines</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<div class="bg-surface-container p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div>
+<span class="material-symbols-outlined text-primary text-[28px] mb-3">assignment</span>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">ITR Filing &amp; Rectifications</h3>
+<p class="font-caption text-caption text-on-surface-variant">
+                Full-spectrum return filing (ITR-1 through ITR-4), schedule FA disclosures for foreign assets, and prompt handling of CPC mismatch notices.
+              </p>
+</div>
+<div class="mt-space-md pt-2">
+<span class="font-eyebrow text-eyebrow text-outline tracking-wider uppercase">Annual &amp; Retrospective</span>
+</div>
+</div>
+<div class="bg-surface-container p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div>
+<span class="material-symbols-outlined text-tertiary text-[28px] mb-3">tune</span>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Tax Architecture Planning</h3>
+<p class="font-caption text-caption text-on-surface-variant">
+                Regime optimization models comparing Section 115BAC versus old deductions, advance tax cash-flow matching, and legitimate write-off alignment.
+              </p>
+</div>
+<div class="mt-space-md pt-2">
+<span class="font-eyebrow text-eyebrow text-outline tracking-wider uppercase">Quarterly Calibration</span>
+</div>
+</div>
+<div class="bg-surface-container p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div>
+<span class="material-symbols-outlined text-secondary text-[28px] mb-3">account_balance_wallet</span>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Granular Budgeting</h3>
+<p class="font-caption text-caption text-on-surface-variant">
+                Net disposable cash-flow allocations, recurring liability stress tests, emergency fund sizing, and discretionary spend limits.
+              </p>
+</div>
+<div class="mt-space-md pt-2">
+<span class="font-eyebrow text-eyebrow text-outline tracking-wider uppercase">Operating Cadence</span>
+</div>
+</div>
+<div class="bg-surface-container p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div>
+<span class="material-symbols-outlined text-on-surface text-[28px] mb-3">timeline</span>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Long-Term Blueprinting</h3>
+<p class="font-caption text-caption text-on-surface-variant">
+                Goal-oriented asset allocation architectures, retirement milestone modeling, and debt amortization sequencing.
+              </p>
+</div>
+<div class="mt-space-md pt-2">
+<span class="font-eyebrow text-eyebrow text-outline tracking-wider uppercase">Strategic Horizon</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 4: Business Services -->
+<div>
+<div class="flex items-center gap-2 mb-space-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+<span class="font-eyebrow text-eyebrow text-tertiary uppercase tracking-[0.2em]">Commercial Spectrum</span>
+</div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight mb-space-xl">Business Disciplines</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<div class="bg-surface-container p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div>
+<span class="material-symbols-outlined text-tertiary text-[28px] mb-3">menu_book</span>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Systematic Bookkeeping</h3>
+<p class="font-caption text-caption text-on-surface-variant">
+                Accurate ledger recording, bank and credit card statement reconciliations, voucher tagging, and timely monthly closes.
+              </p>
+</div>
+<div class="mt-space-md pt-2">
+<span class="font-eyebrow text-eyebrow text-outline tracking-wider uppercase">Monthly Deliverable</span>
+</div>
+</div>
+<div class="bg-surface-container p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div>
+<span class="material-symbols-outlined text-primary text-[28px] mb-3">receipt_long</span>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">GST Compliance &amp; ITC</h3>
+<p class="font-caption text-caption text-on-surface-variant">
+                Preparation of GSTR-1 outward summaries, reconciliation with GSTR-2B for maximum eligible input tax credit, and payment computations.
+              </p>
+</div>
+<div class="mt-space-md pt-2">
+<span class="font-eyebrow text-eyebrow text-outline tracking-wider uppercase">Statutory Cycles</span>
+</div>
+</div>
+<div class="bg-surface-container p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div>
+<span class="material-symbols-outlined text-secondary text-[28px] mb-3">payments</span>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Payroll &amp; Deductions</h3>
+<p class="font-caption text-caption text-on-surface-variant">
+                Monthly employee payroll schedules, TDS on salary (Section 192), contractor TDS (Section 194C/J), and quarterly form generation.
+              </p>
+</div>
+<div class="mt-space-md pt-2">
+<span class="font-eyebrow text-eyebrow text-outline tracking-wider uppercase">Internal Operations</span>
+</div>
+</div>
+<div class="bg-surface-container p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div>
+<span class="material-symbols-outlined text-on-surface text-[28px] mb-3">monitoring</span>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-2">Cash Flow Governance</h3>
+<p class="font-caption text-caption text-on-surface-variant">
+                13-week runway variance analyses, working capital buffers, vendor terms management, and receivables aging tracking.
+              </p>
+</div>
+<div class="mt-space-md pt-2">
+<span class="font-eyebrow text-eyebrow text-outline tracking-wider uppercase">Executive Telemetry</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: TAX PLANNING CHECKLIST -->
+<section class="max-w-[1152px] mx-auto px-gutter py-space-section">
+<div class="bg-surface-container-low rounded-2xl p-space-xl shadow-lg">
+<div class="flex flex-col lg:flex-row gap-space-xl">
+<div class="lg:w-5/12">
+<span class="font-eyebrow text-eyebrow text-tertiary tracking-[0.2em] uppercase">Statutory Protocol</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight mt-1 mb-space-md">
+              Tax Planning with Clear Verification
+            </h2>
+<p class="font-body-md text-caption text-on-surface-variant mb-space-lg leading-relaxed">
+              We operate strictly within tax statutes. We do not use speculative schemes or aggressive gray-area interpretations. Our goal is absolute compliance alongside optimal mathematical efficiency.
+            </p>
+<!-- Prominent Neutral Note: No Guaranteed Outcomes -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest">
+<div class="flex items-center gap-2 text-outline mb-1">
+<span class="material-symbols-outlined text-[18px]">info</span>
+<span class="font-eyebrow text-eyebrow tracking-widest uppercase">Important Notice</span>
+</div>
+<p class="font-caption text-caption text-outline leading-relaxed">
+                Tax laws and assessment patterns remain subject to official revisions and departmental interpretation. We provide no guaranteed outcomes or liability eliminations. All tax strategies reflect our conservative understanding of the prevailing statutory framework.
+              </p>
+</div>
+</div>
+<div class="lg:w-7/12 flex flex-col justify-between">
+<div class="space-y-space-sm">
+<div class="p-space-md rounded-xl bg-surface-container flex items-start gap-space-sm">
+<span class="w-6 h-6 rounded-full bg-tertiary/20 text-tertiary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</span>
+<div>
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface">Dual-Regime Mathematical Modeling</h4>
+<p class="font-caption text-caption text-on-surface-variant mt-0.5">Direct comparative simulation of New vs Old Regime factoring all Section 80C, 80D, HRA, and home loan deductions.</p>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container flex items-start gap-space-sm">
+<span class="w-6 h-6 rounded-full bg-tertiary/20 text-tertiary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</span>
+<div>
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface">Advance Tax Installment Management</h4>
+<p class="font-caption text-caption text-on-surface-variant mt-0.5">Preventing mandatory interest under Sections 234B and 234C via staged quarterly payments matched to actual income inflow.</p>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container flex items-start gap-space-sm">
+<span class="w-6 h-6 rounded-full bg-tertiary/20 text-tertiary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</span>
+<div>
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface">Annual Information Statement (AIS) Reconciliation</h4>
+<p class="font-caption text-caption text-on-surface-variant mt-0.5">Systematic cross-matching of mutual fund sales, dividend receipts, high-value purchases, and offshore transfers.</p>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container flex items-start gap-space-sm">
+<span class="w-6 h-6 rounded-full bg-tertiary/20 text-tertiary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</span>
+<div>
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface">Deductible Business Expense Substantiation</h4>
+<p class="font-caption text-caption text-on-surface-variant mt-0.5">Ensuring proper documentation, invoices, and payment rails for business expenditures to withstand desk scrutinies.</p>
+</div>
+</div>
+</div>
+<div class="mt-space-md text-right">
+<span class="font-caption text-caption text-outline">All work verified against latest Finance Act amendments</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 6 & 7: INVESTMENT PLANNING & FINANCIAL PLANNING -->
+<section class="max-w-[1152px] mx-auto px-gutter py-space-section">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-space-lg">
+<!-- Section 6: Investment Planning (Education-Only) -->
+<div class="bg-surface-container-low rounded-2xl p-space-xl shadow-md flex flex-col justify-between">
+<div>
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high text-tertiary font-eyebrow text-eyebrow tracking-widest uppercase mb-space-md">
+<span class="material-symbols-outlined text-[14px]">school</span> Pure Financial Education
+            </div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-sm">Goal-Based Investment Guidance</h3>
+<p class="font-body-md text-caption text-on-surface-variant mb-space-lg">
+              We design frameworks to help you understand capital allocation, risk balancing, and volatility curves. We do not sell insurance, mutual funds, or structured products.
+            </p>
+<div class="p-space-md rounded-xl bg-surface-container-lowest/80 mb-space-lg">
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-1">Our Strict Separation: No Financial Products Sold</h4>
+<p class="font-caption text-caption text-outline leading-relaxed">
+                Kavi Solutions has zero distribution agreements, trailing commissions, or referral incentives. Our guidance is focused entirely on education and mathematical alignment with your goals.
+              </p>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 text-on-surface-variant font-caption text-caption">
+<span class="material-symbols-outlined text-primary text-[18px]">done</span>
+<span>Asset allocation education across equity, fixed income, and liquidity</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-caption text-caption">
+<span class="material-symbols-outlined text-primary text-[18px]">done</span>
+<span>Evaluation of risk capacity vs psychological risk tolerance</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-caption text-caption">
+<span class="material-symbols-outlined text-primary text-[18px]">done</span>
+<span>Time-weighted modeling for milestone liabilities (education, sabbatical)</span>
+</div>
+</div>
+</div>
+<div class="mt-space-xl pt-space-md">
+<span class="font-eyebrow text-eyebrow tracking-wider text-outline uppercase">Independence Guaranteed: 100% Fee-Based Support</span>
+</div>
+</div>
+<!-- Section 7: Financial Planning (Written Plan) -->
+<div class="bg-surface-container-low rounded-2xl p-space-xl shadow-md flex flex-col justify-between">
+<div>
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high text-primary font-eyebrow text-eyebrow tracking-widest uppercase mb-space-md">
+<span class="material-symbols-outlined text-[14px]">edit_document</span> Formalized Output
+            </div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-sm">A Clear Written Plan, Not Just a Conversation</h3>
+<p class="font-body-md text-caption text-on-surface-variant mb-space-lg">
+              Advice without clear documentation is quickly forgotten. Every planning engagement concludes with a comprehensive, personalized manual detailing your financial setup.
+            </p>
+<!-- Illustrated Document Spec Block -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest/90 font-mono text-caption text-outline space-y-2 mb-space-lg">
+<div class="flex items-center justify-between text-on-surface font-caption">
+<span class="text-tertiary"># DELIVERABLE_MANIFEST_v2025</span>
+<span>48 Pages</span>
+</div>
+<div class="text-[12px] space-y-1">
+<p>01. Executive Net Worth Statement &amp; Liquidity Tiering</p>
+<p>02. Projected Cash Flow Schedule (Base vs Stress-Tested)</p>
+<p>03. Tax Drag Impact Report across All Revenue Accounts</p>
+<p>04. Amortization and Liability Pay-Off Schedule</p>
+<p>05. Immediate 30-60-90 Day Action Checklist</p>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 text-on-surface-variant font-caption text-caption">
+<span class="material-symbols-outlined text-tertiary text-[18px]">done</span>
+<span>Clear calculations and assumptions, not hidden proprietary models</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-caption text-caption">
+<span class="material-symbols-outlined text-tertiary text-[18px]">done</span>
+<span>Complete data exports ready for your personal archive or accountant</span>
+</div>
+</div>
+</div>
+<div class="mt-space-xl pt-space-md">
+<span class="font-eyebrow text-eyebrow tracking-wider text-outline uppercase">Standard Deliverable: Bindable Digital Dossier</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 8: CASH FLOW MANAGEMENT (13-WEEK FORECAST MODEL) -->
+<section class="max-w-[1152px] mx-auto px-gutter py-space-section">
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md mb-space-xl">
+<div>
+<span class="font-eyebrow text-eyebrow text-tertiary tracking-[0.2em] uppercase">Liquidity Intelligence</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight mt-1">
+            Know what is coming before it arrives
+          </h2>
+</div>
+<p class="font-body-md text-caption text-outline max-w-md">
+          Surprises disrupt businesses. Our rolling 13-week forecast model provides clear visibility into capital cushions, upcoming vendor payouts, and receivables.
+        </p>
+</div>
+<!-- 13-Week Data Visualization Matrix Card -->
+<div class="bg-surface-container rounded-2xl p-space-xl shadow-lg">
+<div class="flex flex-wrap items-center justify-between gap-4 mb-space-lg pb-space-md">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-sm bg-tertiary"></span>
+<span class="font-caption text-caption text-on-surface-variant">Projected Inflow</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-sm bg-error/80"></span>
+<span class="font-caption text-caption text-on-surface-variant">Obligations (Payroll &amp; Statutory)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-sm bg-primary"></span>
+<span class="font-caption text-caption text-on-surface-variant">Net Rolling Cushion</span>
+</div>
+</div>
+<span class="font-mono text-caption text-outline">Model: 13-WK Rolling Telemetry (Units in ₹ Lakhs)</span>
+</div>
+<!-- Inline SVG Visualization Chart -->
+<div class="w-full h-64 relative flex items-end">
+<svg class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 960 220">
+<!-- Grid Lines -->
+<line stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 4" x1="0" x2="960" y1="40" y2="40"></line>
+<line stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 4" x1="0" x2="960" y1="90" y2="90"></line>
+<line stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 4" x1="0" x2="960" y1="140" y2="140"></line>
+<line stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 4" x1="0" x2="960" y1="190" y2="190"></line>
+<!-- Inflow Bar Series -->
+<rect fill="#10B981" fill-opacity="0.8" height="120" rx="3" width="16" x="25" y="70"></rect>
+<rect fill="#10B981" fill-opacity="0.8" height="105" rx="3" width="16" x="95" y="85"></rect>
+<rect fill="#10B981" fill-opacity="0.8" height="135" rx="3" width="16" x="165" y="55"></rect>
+<rect fill="#10B981" fill-opacity="0.8" height="90" rx="3" width="16" x="235" y="100"></rect>
+<rect fill="#10B981" fill-opacity="0.8" height="130" rx="3" width="16" x="305" y="60"></rect>
+<rect fill="#10B981" fill-opacity="0.8" height="145" rx="3" width="16" x="375" y="45"></rect>
+<rect fill="#10B981" fill-opacity="0.8" height="100" rx="3" width="16" x="445" y="90"></rect>
+<rect fill="#10B981" fill-opacity="0.8" height="125" rx="3" width="16" x="515" y="65"></rect>
+<rect fill="#10B981" fill-opacity="0.8" height="140" rx="3" width="16" x="585" y="50"></rect>
+<rect fill="#10B981" fill-opacity="0.8" height="110" rx="3" width="16" x="655" y="80"></rect>
+<rect fill="#10B981" fill-opacity="0.8" height="150" rx="3" width="16" x="725" y="40"></rect>
+<rect fill="#10B981" fill-opacity="0.8" height="115" rx="3" width="16" x="795" y="75"></rect>
+<rect fill="#10B981" fill-opacity="0.8" height="160" rx="3" width="16" x="865" y="30"></rect>
+<!-- Outflow Bar Series (Dark Red Tint) -->
+<rect fill="#ffb4ab" fill-opacity="0.4" height="80" rx="3" width="16" x="45" y="110"></rect>
+<rect fill="#ffb4ab" fill-opacity="0.4" height="65" rx="3" width="16" x="115" y="125"></rect>
+<rect fill="#ffb4ab" fill-opacity="0.4" height="95" rx="3" width="16" x="185" y="95"></rect>
+<rect fill="#ffb4ab" fill-opacity="0.4" height="60" rx="3" width="16" x="255" y="130"></rect>
+<rect fill="#ffb4ab" fill-opacity="0.4" height="75" rx="3" width="16" x="325" y="115"></rect>
+<rect fill="#ffb4ab" fill-opacity="0.4" height="85" rx="3" width="16" x="395" y="105"></rect>
+<rect fill="#ffb4ab" fill-opacity="0.4" height="50" rx="3" width="16" x="465" y="140"></rect>
+<rect fill="#ffb4ab" fill-opacity="0.4" height="80" rx="3" width="16" x="535" y="110"></rect>
+<rect fill="#ffb4ab" fill-opacity="0.4" height="90" rx="3" width="16" x="605" y="100"></rect>
+<rect fill="#ffb4ab" fill-opacity="0.4" height="70" rx="3" width="16" x="675" y="120"></rect>
+<rect fill="#ffb4ab" fill-opacity="0.4" height="100" rx="3" width="16" x="745" y="90"></rect>
+<rect fill="#ffb4ab" fill-opacity="0.4" height="75" rx="3" width="16" x="815" y="115"></rect>
+<rect fill="#ffb4ab" fill-opacity="0.4" height="105" rx="3" width="16" x="885" y="85"></rect>
+<!-- Net Cushion Polynomial Line -->
+<path d="M 33 130 Q 105 145 175 110 T 315 120 T 455 135 T 595 105 T 735 90 T 875 60" fill="none" stroke="#b1c5ff" stroke-linecap="round" stroke-width="3"></path>
+<circle cx="175" cy="110" fill="#b1c5ff" r="4"></circle>
+<circle cx="455" cy="135" fill="#b1c5ff" r="4"></circle>
+<circle cx="735" cy="90" fill="#b1c5ff" r="4"></circle>
+<circle cx="875" cy="60" fill="#b1c5ff" r="4"></circle>
+</svg>
+</div>
+<div class="grid grid-cols-13 text-center font-mono text-[11px] text-outline mt-3 pt-2">
+<span>W1</span><span>W2</span><span>W3</span><span>W4</span><span>W5</span>
+<span>W6</span><span>W7</span><span>W8</span><span>W9</span><span>W10</span>
+<span>W11</span><span>W12</span><span>W13</span>
+</div>
+<!-- Metric Footer -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md mt-space-lg pt-space-md">
+<div class="p-space-sm rounded-lg bg-surface-container-low">
+<span class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider block">Minimum Runway Floor</span>
+<span class="font-card-h3-sm text-card-h3-sm text-tertiary font-bold">14.2 Weeks</span>
+<span class="font-caption text-caption text-outline block mt-0.5">Zero revenue stress-tested baseline</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low">
+<span class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider block">Vendor DPO Calibration</span>
+<span class="font-card-h3-sm text-card-h3-sm text-primary font-bold">38 Days</span>
+<span class="font-caption text-caption text-outline block mt-0.5">Matched with client receivable DSO</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low">
+<span class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider block">Statutory Reserve Lock</span>
+<span class="font-card-h3-sm text-card-h3-sm text-secondary font-bold">100% Escrowed</span>
+<span class="font-caption text-caption text-outline block mt-0.5">TDS, Advance Tax &amp; GST ring-fenced</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 9: TRUST & COMPLIANCE (NEUTRAL NOTE, NOT A BADGE) -->
+<section class="max-w-[1152px] mx-auto px-gutter py-space-section">
+<div class="p-space-xl rounded-2xl bg-surface-container-lowest shadow-md">
+<div class="flex items-center gap-2 mb-space-sm">
+<span class="material-symbols-outlined text-outline text-[20px]">gavel</span>
+<span class="font-eyebrow text-eyebrow text-outline uppercase tracking-[0.2em]">Statutory Notice &amp; Operational Boundary</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-sm">Compliance and Regulatory Boundaries</h3>
+<p class="font-body-md text-caption text-on-surface-variant max-w-4xl mb-space-md leading-relaxed">
+          Kavi Solutions provides engineering management, internal process architecture, numerical reconciliation, and analytical operational support. We hold high internal standards for workpaper precision and financial transparency.
+        </p>
+<!-- The Neutral Regulatory Boundary Note -->
+<div class="p-space-md rounded-xl bg-surface-container-low text-outline font-caption text-caption leading-relaxed">
+<strong class="text-on-surface font-medium">Regulatory Notice:</strong> Kavi Solutions is not a registered investment adviser (SEBI RIA), a chartered accounting firm (ICAI member firm), or an enrolled GST practitioner in its own corporate capacity. Where services require statutory sign-offs, official audit attestations, tax representation before tax authorities, or licensed investment recommendations, those components are delivered exclusively through independent, appropriately qualified, and licensed practicing professionals.
+        </div>
+</div>
+</section>
+<!-- SECTION 10: CLIENT TYPES (CHIPS) -->
+<section class="max-w-[1152px] mx-auto px-gutter py-space-section">
+<div class="text-center max-w-[700px] mx-auto mb-space-xl">
+<span class="font-eyebrow text-eyebrow text-tertiary tracking-[0.2em] uppercase">Tailored Alignment</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight mt-1">Who We Work With</h2>
+<p class="font-body-md text-caption text-outline mt-2">Focused operational engagement models for specific financial profiles.</p>
+</div>
+<div class="flex flex-wrap items-center justify-center gap-space-md">
+<!-- Chip 1 -->
+<div class="flex items-center gap-3 px-6 py-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-all shadow-sm">
+<span class="material-symbols-outlined text-tertiary text-[24px]">terminal</span>
+<div class="text-left">
+<span class="font-card-h3-sm text-card-h3-sm text-on-surface block leading-tight">Tech Founders</span>
+<span class="font-caption text-caption text-outline">Cap table math, early burn &amp; round prep</span>
+</div>
+</div>
+<!-- Chip 2 -->
+<div class="flex items-center gap-3 px-6 py-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-all shadow-sm">
+<span class="material-symbols-outlined text-primary text-[24px]">work_outline</span>
+<div class="text-left">
+<span class="font-card-h3-sm text-card-h3-sm text-on-surface block leading-tight">Freelancers &amp; Consultants</span>
+<span class="font-caption text-outline text-caption">Section 44ADA, cross-border receipts &amp; invoices</span>
+</div>
+</div>
+<!-- Chip 3 -->
+<div class="flex items-center gap-3 px-6 py-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-all shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[24px]">domain</span>
+<div class="text-left">
+<span class="font-card-h3-sm text-card-h3-sm text-on-surface block leading-tight">MSMEs &amp; Boutique Agencies</span>
+<span class="font-caption text-outline text-caption">Full bookkeeping, payroll &amp; regular GST pipeline</span>
+</div>
+</div>
+<!-- Chip 4 -->
+<div class="flex items-center gap-3 px-6 py-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-all shadow-sm">
+<span class="material-symbols-outlined text-on-surface text-[24px]">account_balance</span>
+<div class="text-left">
+<span class="font-card-h3-sm text-card-h3-sm text-on-surface block leading-tight">High-Income Salaried</span>
+<span class="font-caption text-outline text-caption">ESOP vesting, capital gains &amp; dual tax regime choice</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 11: ENQUIRY CARD WITH TABS & PREVIEWS -->
+<section class="max-w-[1152px] mx-auto px-gutter py-space-section" id="enquiry-section">
+<div class="bg-surface-container-low/90 backdrop-blur-md rounded-2xl p-space-xl shadow-xl max-w-[896px] mx-auto relative">
+<div class="text-center mb-space-xl">
+<span class="font-eyebrow text-eyebrow text-tertiary tracking-[0.2em] uppercase">Initiate Engagement</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight mt-1">Consultation Request</h2>
+<p class="font-body-md text-caption text-on-surface-variant mt-2">
+            Submit your profile details for an initial discovery and scoping evaluation.
+          </p>
+</div>
+<!-- Track Selector Tabs -->
+<div class="flex justify-center mb-space-xl">
+<div class="bg-surface-container-lowest p-1 rounded-xl flex gap-1 shadow-inner">
+<button class="px-6 py-2.5 rounded-lg font-caption text-caption font-medium transition-all bg-surface-container text-on-surface shadow-sm" id="tab-btn-individual" onclick="switchFormTab('individual')">
+              Individual Track
+            </button>
+<button class="px-6 py-2.5 rounded-lg font-caption text-caption font-medium transition-all text-on-surface-variant hover:text-on-surface" id="tab-btn-business" onclick="switchFormTab('business')">
+              Business Track
+            </button>
+</div>
+</div>
+<!-- Form Container -->
+<form class="space-y-space-md" id="enquiry-form" onsubmit="handleFormSubmit(event)">
+<!-- Common Fields -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div>
+<label class="font-eyebrow text-eyebrow tracking-wider text-outline uppercase block mb-2">Full Name</label>
+<input class="w-full h-12 rounded-xl bg-surface-container-lowest px-4 text-on-surface placeholder:text-outline font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="e.g. Anand Sharma" required="" type="text">
+</div>
+<div>
+<label class="font-eyebrow text-eyebrow tracking-wider text-outline uppercase block mb-2">Email Address</label>
+<input class="w-full h-12 rounded-xl bg-surface-container-lowest px-4 text-on-surface placeholder:text-outline font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="anand@domain.com" required="" type="email">
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div>
+<label class="font-eyebrow text-eyebrow tracking-wider text-outline uppercase block mb-2">Phone Number</label>
+<input class="w-full h-12 rounded-xl bg-surface-container-lowest px-4 text-on-surface placeholder:text-outline font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="+91 98000 00000" required="" type="tel">
+</div>
+<!-- Individual Tab Specific: Service & FY -->
+<div class="grid grid-cols-2 gap-2" id="individual-fields">
+<div>
+<label class="font-eyebrow text-eyebrow tracking-wider text-outline uppercase block mb-2">Service</label>
+<select class="w-full h-12 rounded-xl bg-surface-container-lowest px-3 text-on-surface font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>ITR Filing</option>
+<option>Tax Planning</option>
+<option>Budgeting</option>
+<option>Financial Planning</option>
+</select>
+</div>
+<div>
+<label class="font-eyebrow text-eyebrow tracking-wider text-outline uppercase block mb-2">FY Target</label>
+<select class="w-full h-12 rounded-xl bg-surface-container-lowest px-3 text-on-surface font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>FY 2024–25 (AY 2025–26)</option>
+<option>FY 2023–24 (AY 2024–25)</option>
+<option>Prior / Multiple Years</option>
+</select>
+</div>
+</div>
+<!-- Business Tab Specific (Hidden initially) -->
+<div class="hidden grid-cols-2 gap-2" id="business-fields">
+<div>
+<label class="font-eyebrow text-eyebrow tracking-wider text-outline uppercase block mb-2">Entity Type</label>
+<select class="w-full h-12 rounded-xl bg-surface-container-lowest px-3 text-on-surface font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>Private Limited</option>
+<option>LLP</option>
+<option>Partnership</option>
+<option>Sole Proprietorship</option>
+</select>
+</div>
+<div>
+<label class="font-eyebrow text-eyebrow tracking-wider text-outline uppercase block mb-2">Service</label>
+<select class="w-full h-12 rounded-xl bg-surface-container-lowest px-3 text-on-surface font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>Monthly Bookkeeping</option>
+<option>GST Management</option>
+<option>Payroll &amp; TDS</option>
+<option>13-Week Cash Flow</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Business Additional Field (Org Name) -->
+<div class="hidden" id="business-org-row">
+<label class="font-eyebrow text-eyebrow tracking-wider text-outline uppercase block mb-2">Organisation Name</label>
+<input class="w-full h-12 rounded-xl bg-surface-container-lowest px-4 text-on-surface placeholder:text-outline font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="e.g. Acme Technologies LLP" type="text">
+</div>
+<!-- Message -->
+<div>
+<label class="font-eyebrow text-eyebrow tracking-wider text-outline uppercase block mb-2">Engagement Context &amp; Scope Needs</label>
+<textarea class="w-full rounded-xl bg-surface-container-lowest p-4 text-on-surface placeholder:text-outline font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner resize-none" placeholder="Outline your current situation, statutory filing status, or timeline requirements..." rows="3"></textarea>
+</div>
+<!-- Strict Caution Note -->
+<div class="p-space-sm rounded-xl bg-surface-container-lowest flex items-center gap-3">
+<span class="material-symbols-outlined text-outline text-[20px] shrink-0">lock</span>
+<p class="font-caption text-caption text-outline leading-tight">
+<strong class="text-on-surface-variant font-medium">Privacy Shield:</strong> Please do not send PAN, Aadhaar, bank details, or financial documents through this initial web form. Verification files are shared via secure workspace only after mutual confirmation.
+            </p>
+</div>
+<!-- Submit Button -->
+<div class="pt-space-sm">
+<button class="w-full py-4 rounded-xl bg-gradient-to-r from-[#10B981] to-[#14B8A6] hover:from-[#0fa674] hover:to-[#119e8f] text-on-tertiary font-body-medium text-body-md transition-all shadow-lg shadow-tertiary/20 flex items-center justify-center gap-2" id="submit-btn" type="submit">
+<span id="btn-text">Submit Consultation Request</span>
+<span class="hidden material-symbols-outlined text-[18px] animate-spin" id="btn-spinner">progress_activity</span>
+</button>
+</div>
+</form>
+<!-- State Previews Ribbon (Demonstration Preview of 4 Interactive States) -->
+<div class="mt-space-xl pt-space-lg">
+<div class="flex items-center justify-between mb-3">
+<span class="font-eyebrow text-eyebrow text-outline uppercase tracking-wider">Form Lifecycle Simulation Preview</span>
+<div class="flex gap-2">
+<button class="px-2.5 py-1 rounded bg-surface-container font-caption text-[11px] text-on-surface-variant hover:text-on-surface" onclick="setPreviewState('idle')">Idle</button>
+<button class="px-2.5 py-1 rounded bg-surface-container font-caption text-[11px] text-on-surface-variant hover:text-on-surface" onclick="setPreviewState('sending')">Sending</button>
+<button class="px-2.5 py-1 rounded bg-surface-container font-caption text-[11px] text-tertiary hover:bg-surface-container-high" onclick="setPreviewState('sent')">Sent</button>
+<button class="px-2.5 py-1 rounded bg-surface-container font-caption text-[11px] text-error hover:bg-surface-container-high" onclick="setPreviewState('error')">Error</button>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container font-caption text-caption text-outline flex items-center justify-between" id="state-banner">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline" id="state-dot"></span>
+<span id="state-label">State: Idle (Form ready for user input)</span>
+</div>
+<span class="font-mono text-[11px] text-outline">HTTP 200 Ready</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 12: REGULATORY & SCOPE FAQ -->
+<section class="max-w-[1152px] mx-auto px-gutter py-space-section pb-space-section-xl">
+<div class="text-center max-w-[700px] mx-auto mb-space-2xl">
+<span class="font-eyebrow text-eyebrow text-tertiary tracking-[0.2em] uppercase">Clear Answers</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight mt-1">Frequently Asked Questions</h2>
+<p class="font-body-md text-caption text-outline mt-2">Clear answers on operational limits, professional registration, and data security.</p>
+</div>
+<div class="space-y-space-sm max-w-[896px] mx-auto">
+<!-- FAQ 1 -->
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm">
+<button class="w-full p-space-md text-left flex items-center justify-between text-on-surface font-card-h3-sm text-card-h3-sm focus:outline-none" onclick="toggleFaq(1)">
+<span>Are you a registered Chartered Accountancy (CA) firm?</span>
+<span class="material-symbols-outlined text-outline transition-transform" id="faq-icon-1">expand_more</span>
+</button>
+<div class="hidden px-space-md pb-space-md text-on-surface-variant font-caption text-caption leading-relaxed" id="faq-content-1">
+            No. Kavi Solutions is an engineering and operational studio. Where accounting, audits, formal representations, or statutory returns require a certified sign-off under ICAI or tax department bylaws, the work is reviewed and delivered through independent, appropriately registered Chartered Accountants and licensed practitioners.
+          </div>
+</div>
+<!-- FAQ 2 -->
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm">
+<button class="w-full p-space-md text-left flex items-center justify-between text-on-surface font-card-h3-sm text-card-h3-sm focus:outline-none" onclick="toggleFaq(2)">
+<span>Do you offer guaranteed returns or tax refund guarantees?</span>
+<span class="material-symbols-outlined text-outline transition-transform" id="faq-icon-2">expand_more</span>
+</button>
+<div class="hidden px-space-md pb-space-md text-on-surface-variant font-caption text-caption leading-relaxed" id="faq-content-2">
+            No. We do not offer or advertise guaranteed returns, artificial tax shelter schemes, or promised refund timelines. Tax computations are based strictly on Indian and relevant foreign tax statutes. Final assessments and refund processing are determined by the respective tax authorities.
+          </div>
+</div>
+<!-- FAQ 3 -->
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm">
+<button class="w-full p-space-md text-left flex items-center justify-between text-on-surface font-card-h3-sm text-card-h3-sm focus:outline-none" onclick="toggleFaq(3)">
+<span>How do you handle confidential documents and PAN/Aadhaar details?</span>
+<span class="material-symbols-outlined text-outline transition-transform" id="faq-icon-3">expand_more</span>
+</button>
+<div class="hidden px-space-md pb-space-md text-on-surface-variant font-caption text-caption leading-relaxed" id="faq-content-3">
+            We never request sensitive documents over public email or open forms. Once an engagement scope is formally approved, clients receive access to an encrypted, access-restricted workspace. All documents are stored in zero-knowledge environments and retained solely for statutory documentation requirements.
+          </div>
+</div>
+<!-- FAQ 4 -->
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm">
+<button class="w-full p-space-md text-left flex items-center justify-between text-on-surface font-card-h3-sm text-card-h3-sm focus:outline-none" onclick="toggleFaq(4)">
+<span>Can you support cross-border equity, RSUs, and foreign income?</span>
+<span class="material-symbols-outlined text-outline transition-transform" id="faq-icon-4">expand_more</span>
+</button>
+<div class="hidden px-space-md pb-space-md text-on-surface-variant font-caption text-caption leading-relaxed" id="faq-content-4">
+            Yes. We routinely model complex personal balance sheets involving US/overseas RSUs, ESPPs, capital gains tax credits under Double Tax Avoidance Agreements (DTAA), Form 67 filings, and mandatory Schedule FA disclosures.
+          </div>
+</div>
+</div>
+</section>
+</div>
+<!-- INLINE VANILLA JS FOR ACCORDIONS, TABS & FORM STATE SIMULATION -->
+<script>
+    function switchFormTab(track) {
+      const btnInd = document.getElementById('tab-btn-individual');
+      const btnBiz = document.getElementById('tab-btn-business');
+      const fieldsInd = document.getElementById('individual-fields');
+      const fieldsBiz = document.getElementById('business-fields');
+      const orgRow = document.getElementById('business-org-row');
+
+      if (track === 'individual') {
+        btnInd.className = 'px-6 py-2.5 rounded-lg font-caption text-caption font-medium transition-all bg-surface-container text-on-surface shadow-sm';
+        btnBiz.className = 'px-6 py-2.5 rounded-lg font-caption text-caption font-medium transition-all text-on-surface-variant hover:text-on-surface';
+        fieldsInd.classList.remove('hidden');
+        fieldsInd.classList.add('grid');
+        fieldsBiz.classList.remove('grid');
+        fieldsBiz.classList.add('hidden');
+        orgRow.classList.add('hidden');
+      } else {
+        btnBiz.className = 'px-6 py-2.5 rounded-lg font-caption text-caption font-medium transition-all bg-surface-container text-on-surface shadow-sm';
+        btnInd.className = 'px-6 py-2.5 rounded-lg font-caption text-caption font-medium transition-all text-on-surface-variant hover:text-on-surface';
+        fieldsBiz.classList.remove('hidden');
+        fieldsBiz.classList.add('grid');
+        fieldsInd.classList.remove('grid');
+        fieldsInd.classList.add('hidden');
+        orgRow.classList.remove('hidden');
+      }
+    }
+
+    function toggleFaq(id) {
+      const content = document.getElementById(`faq-content-${id}`);
+      const icon = document.getElementById(`faq-icon-${id}`);
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        icon.style.transform = 'rotate(180deg)';
+      } else {
+        content.classList.add('hidden');
+        icon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    function setPreviewState(state) {
+      const banner = document.getElementById('state-banner');
+      const dot = document.getElementById('state-dot');
+      const label = document.getElementById('state-label');
+      const btnText = document.getElementById('btn-text');
+      const btnSpinner = document.getElementById('btn-spinner');
+
+      if (state === 'idle') {
+        dot.className = 'w-2 h-2 rounded-full bg-outline';
+        label.innerText = 'State: Idle (Form ready for user input)';
+        btnText.innerText = 'Submit Consultation Request';
+        btnSpinner.classList.add('hidden');
+      } else if (state === 'sending') {
+        dot.className = 'w-2 h-2 rounded-full bg-primary animate-pulse';
+        label.innerText = 'State: Sending (Transmitting encrypted payload...)';
+        btnText.innerText = 'Encrypting & Dispatching...';
+        btnSpinner.classList.remove('hidden');
+      } else if (state === 'sent') {
+        dot.className = 'w-2 h-2 rounded-full bg-tertiary';
+        label.innerText = 'State: Sent (Request logged. A discovery docket has been created.)';
+        btnText.innerText = 'Request Dispatched ✓';
+        btnSpinner.classList.add('hidden');
+      } else if (state === 'error') {
+        dot.className = 'w-2 h-2 rounded-full bg-error';
+        label.innerText = 'State: Error (Required field omitted or transmission timeout.)';
+        btnText.innerText = 'Retry Submission';
+        btnSpinner.classList.add('hidden');
+      }
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      setPreviewState('sending');
+      setTimeout(() => {
+        setPreviewState('sent');
+      }, 1200);
+    }
+  </script>
+</div></main><footer class="w-full bg-[#06060F] text-on-surface-variant pt-space-section pb-space-2xl"><div class="max-w-[1152px] mx-auto px-gutter"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-xl pb-space-2xl"><div class="lg:col-span-2 space-y-space-md pr-space-md"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary via-inverse-primary to-tertiary flex items-center justify-center"><span class="font-card-h3-sm text-card-h3-sm font-bold text-surface-container-lowest leading-none select-none">K</span></div><span class="font-card-h3-sm text-card-h3-sm font-semibold tracking-tight text-on-surface">Kavi Solutions</span></div><p class="font-body-md text-caption text-outline max-w-sm">High-assurance digital product engineering. Architecting calibrated software primitives, cloud pipelines, and cognitive intelligence systems for modern enterprises.</p><div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-container-low"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="font-eyebrow text-eyebrow tracking-widest text-on-surface-variant uppercase">All Core Systems Operational</span></div></div><div><p class="font-eyebrow text-eyebrow uppercase text-on-surface tracking-widest mb-space-md">Disciplines</p><ul class="space-y-2 font-caption text-caption"><li class="text-outline hover:text-on-surface transition-colors">Web Platforms</li><li class="text-outline hover:text-on-surface transition-colors">Mobile Native</li><li class="text-outline hover:text-on-surface transition-colors">Product Systems</li><li class="text-outline hover:text-on-surface transition-colors">Growth &amp; Marketing</li><li class="text-outline hover:text-on-surface transition-colors">Applied AI &amp; Models</li><li class="text-outline hover:text-on-surface transition-colors">Fellowship Research</li></ul></div><div><p class="font-eyebrow text-eyebrow uppercase text-on-surface tracking-widest mb-space-md">Navigation</p><ul class="space-y-2 font-caption text-caption"><li><a class="text-outline hover:text-on-surface transition-colors" data-path="showcase" href="#">Showcase</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="services" href="#">Services Portfolio</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="projects" href="#">Client Index</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="fellowship" href="#">Engineering Fellowship</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="team" href="#">Principals &amp; Team</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="verification" href="#">Credential Verification</a></li></ul></div><div><p class="font-eyebrow text-eyebrow uppercase text-on-surface tracking-widest mb-space-md">Directives</p><ul class="space-y-2 font-caption text-caption"><li><a class="text-outline hover:text-on-surface transition-colors" data-path="contact" href="#">Initiate Brief</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="login" href="#">Client Portal</a></li><li class="text-outline hover:text-on-surface transition-colors">Security Matrix</li><li class="text-outline hover:text-on-surface transition-colors">Privacy Telemetry</li></ul></div></div><div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md font-caption text-caption text-outline"><p>© 2025 Kavi Solutions Digital Product Studio. All rights reserved.</p><p class="font-eyebrow text-eyebrow uppercase tracking-widest text-outline-variant">Precision Hardware • Engineering Monitors</p></div></div></footer>
+
+</body></html>

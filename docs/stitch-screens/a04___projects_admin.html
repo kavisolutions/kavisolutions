@@ -1,0 +1,661 @@
+<!DOCTYPE html><html class="light" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"primary-fixed-dim":"#b4c5ff","surface-tint":"#0053db","background":"#faf8ff","primary":"#004ac6","surface":"#faf8ff","on-primary":"#ffffff","on-primary-container":"#eeefff","on-error-container":"#93000a","primary-fixed":"#dbe1ff","on-tertiary-fixed":"#002113","on-surface":"#131b2e","on-primary-fixed":"#00174b","tertiary-container":"#007d55","on-secondary-fixed":"#001e2f","surface-container-high":"#e2e7ff","surface-bright":"#faf8ff","secondary-fixed-dim":"#89ceff","inverse-on-surface":"#eef0ff","outline":"#737686","surface-container-low":"#f2f3ff","on-secondary-fixed-variant":"#004c6e","tertiary-fixed-dim":"#4edea3","surface-variant":"#dae2fd","inverse-surface":"#283044","error-container":"#ffdad6","secondary-fixed":"#c9e6ff","surface-container-lowest":"#ffffff","outline-variant":"#c3c6d7","error":"#ba1a1a","primary-container":"#2563eb","surface-dim":"#d2d9f4","on-primary-fixed-variant":"#003ea8","secondary":"#006591","on-error":"#ffffff","secondary-container":"#39b8fd","surface-container-highest":"#dae2fd","on-surface-variant":"#434655","tertiary-fixed":"#6ffbbe","on-background":"#131b2e","on-secondary":"#ffffff","on-tertiary":"#ffffff","inverse-primary":"#b4c5ff","tertiary":"#006242","surface-container":"#eaedff","on-tertiary-fixed-variant":"#005236","on-tertiary-container":"#bdffdb","on-secondary-container":"#004666"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"margin":"1rem","space-md":"0.75rem","margin-desktop":"1.5rem","gutter":"1rem","space-sm":"0.5rem","space-xs":"0.25rem","space-lg":"1rem","gutter-desktop":"1.5rem","space-xl":"1.5rem"},"fontFamily":{"headline-lg-mobile":["Space Grotesk"],"body-sm":["Geist"],"label-md":["Geist"],"headline-md":["Space Grotesk"],"body-md":["Geist"],"headline-lg":["Space Grotesk"],"headline-sm":["Space Grotesk"],"body-lg":["Geist"],"label-sm":["Geist"],"code-sm":["Geist"]},"fontSize":{"headline-lg-mobile":["24px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-sm":["13px",{"lineHeight":"18px","fontWeight":"400"}],"label-md":["13px",{"lineHeight":"16px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"headline-lg":["30px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"-0.005em","fontWeight":"600"}],"body-lg":["15px",{"lineHeight":"22px","fontWeight":"400"}],"label-sm":["12px",{"lineHeight":"16px","fontWeight":"500"}],"code-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest flex flex-col z-50 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-lg flex items-center justify-between border-b border-surface-container-high"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-container to-secondary-container flex items-center justify-center text-on-primary font-headline-sm text-headline-sm font-bold shadow-sm">K</div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight leading-none">Kavi Solutions</span><div class="flex items-center gap-1.5 mt-1"><span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-[10px] leading-none">Admin Console</span></div></div></div></div><div class="px-space-md pt-space-lg pb-space-xs"><span class="px-space-sm font-label-sm text-label-sm text-outline tracking-wider uppercase font-semibold text-[11px]">Workspace</span></div><nav class="flex-1 px-space-md py-space-xs space-y-1 overflow-y-auto" data-active-classes="bg-surface-container-high text-primary font-medium rounded-lg"><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="team-members" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">group</span><span class="font-label-md text-label-md">Team members</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">12</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="roles" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">badge</span><span class="font-label-md text-label-md">Roles</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">4</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="teams" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">diversity_3</span><span class="font-label-md text-label-md">Teams</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">3</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg bg-surface-container-high text-primary font-medium" data-path="projects" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">folder</span><span class="font-label-md text-label-md">Projects</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">8</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="certificates" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">verified</span><span class="font-label-md text-label-md">Certificates</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">24</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="surveyors" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">engineering</span><span class="font-label-md text-label-md">Surveyors</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">15</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="social-agent" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">share</span><span class="font-label-md text-label-md">Social agent</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="administrators" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">admin_panel_settings</span><span class="font-label-md text-label-md">Administrators</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px]">2</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="settings" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">settings</span><span class="font-label-md text-label-md">Settings</span></div></a></nav><div class="p-space-md border-t border-surface-container-high"><div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low"><div class="flex items-center gap-space-sm min-w-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="text-on-primary font-headline-sm text-headline-sm font-bold text-xs">KR</span></div><div class="flex flex-col min-w-0"><span class="font-label-sm text-label-sm text-on-surface font-medium truncate leading-tight">raman@kavisolutions.in</span><span class="font-body-sm text-body-sm text-on-surface-variant text-[11px] leading-tight">Administrator</span></div></div><a aria-label="Log out" class="p-1 text-on-surface-variant hover:text-error hover:bg-surface-container-high rounded transition-colors shrink-0" data-path="login" href="#"><span class="material-symbols-outlined text-[18px]">logout</span></a></div></div></aside><div class="pl-64 flex flex-col min-h-screen bg-background"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl border-b border-surface-container-high z-40 px-space-xl flex items-center justify-between"><div class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant"><span class="text-outline hover:text-on-surface transition-colors cursor-pointer">Kavi Solutions</span><span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span><span class="text-outline hover:text-on-surface transition-colors cursor-pointer">Workspace</span><span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span><div class="flex items-center gap-1.5"><span class="px-1.5 py-0.5 rounded text-[11px] font-code-sm bg-primary-fixed text-primary font-bold">A04</span><span class="text-on-surface font-medium">Projects</span></div></div><div class="flex items-center gap-space-md"><button aria-label="Toggle Theme" class="w-9 h-9 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">light_mode</span></button><a class="h-9 px-space-md flex items-center gap-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface hover:bg-surface-container hover:text-on-surface transition-colors" href="#"><span>Live projects page</span><span class="material-symbols-outlined text-[14px]">north_east</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 flex-1"><div class="flex flex-col w-full">
+<!-- Interactive View Script to update Shell Breadcrumbs & Nav Selection -->
+<script>
+    (function syncShell() {
+      // Sync Topbar Breadcrumb & Action Button
+      const headerBreadcrumb = document.querySelector('header .text-on-surface');
+      if (headerBreadcrumb) {
+        headerBreadcrumb.textContent = 'Projects';
+      }
+      const liveLink = document.querySelector('header a[href="#"] span');
+      if (liveLink && liveLink.textContent.includes('Live')) {
+        liveLink.textContent = 'Live projects page';
+      }
+      // Highlight "Projects" in sidebar
+      const navLinks = document.querySelectorAll('aside nav a');
+      navLinks.forEach(link => {
+        const path = link.getAttribute('data-path');
+        if (path === 'projects') {
+          link.className = 'flex items-center justify-between px-space-sm py-2 rounded-lg bg-surface-container-high text-primary font-medium';
+        } else if (link.classList.contains('bg-surface-container-high')) {
+          link.className = 'flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors';
+        }
+      });
+    })();
+  </script>
+<!-- Workspace Canvas -->
+<div class="w-full max-w-[1152px] mx-auto px-space-xl py-space-xl space-y-space-xl">
+<!-- PAGE HEADER -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div class="flex flex-col space-y-1">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-outline tracking-wider uppercase font-semibold text-[11px]">WORKSPACE / ADMINISTRATION</span>
+<span class="text-outline text-xs">/</span>
+<span class="font-code-sm text-code-sm text-primary font-medium tracking-tight">KAV-PROJ-V2</span>
+</div>
+<div class="flex items-center gap-2.5"><h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Projects</h1><span class="px-2 py-0.5 rounded-lg text-xs font-code-sm font-bold bg-primary-fixed text-primary tracking-wide">[A04]</span></div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+          Manage featured work, tech stacks, and live links across web, mobile, and AI systems.
+        </p>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<div class="h-9 px-space-md rounded-lg bg-surface-container-high text-on-surface flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-label-md text-label-md font-semibold text-primary">8 projects</span>
+</div>
+<button class="h-9 px-space-lg rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all flex items-center gap-1.5 shadow-sm active:scale-95" id="openModalBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span class="font-label-md text-label-md font-medium">Add project</span>
+</button>
+</div>
+</div>
+<!-- METRICS OVERVIEW STRIP -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-space-md">
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase font-semibold text-outline text-[11px]">Production Systems</span>
+<span class="material-symbols-outlined text-primary text-[20px]">terminal</span>
+</div>
+<div class="mt-3 flex items-baseline justify-between">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">8</span>
+<span class="font-label-sm text-label-sm text-tertiary-container font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span> 100% online
+          </span>
+</div>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase font-semibold text-outline text-[11px]">AI / ML Engines</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">neurology</span>
+</div>
+<div class="mt-3 flex items-baseline justify-between">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">3</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">Enterprise Tier</span>
+</div>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase font-semibold text-outline text-[11px]">Cross-Platform Mobile</span>
+<span class="material-symbols-outlined text-tertiary text-[20px]">phone_iphone</span>
+</div>
+<div class="mt-3 flex items-baseline justify-between">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">4</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">iOS + Android</span>
+</div>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase font-semibold text-outline text-[11px]">Global Endpoints</span>
+<span class="material-symbols-outlined text-outline text-[20px]">public</span>
+</div>
+<div class="mt-3 flex items-baseline justify-between">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">14</span>
+<span class="font-label-sm text-label-sm text-tertiary-container font-medium flex items-center gap-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span> CDN Latency &lt;30ms
+          </span>
+</div>
+</div>
+</div>
+<!-- MAIN DATA TABLE CONTAINER -->
+<div class="rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden flex flex-col">
+<!-- CONTROLS & FILTER BAR -->
+<div class="p-space-md bg-surface-container-lowest flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<!-- Search Field -->
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full h-9 pl-9 pr-space-md rounded-lg bg-surface-container-low text-body-sm font-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search projects by title, stack, or client..." type="text">
+</div>
+<!-- Filter Selects & Secondary Actions -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<div class="relative">
+<select class="h-9 pl-space-md pr-8 rounded-lg bg-surface-container-low text-on-surface font-label-md text-label-md appearance-none focus:outline-none cursor-pointer hover:bg-surface-container transition-colors">
+<option>All types (Web, App, AI)</option>
+<option>Web Platform</option>
+<option>Mobile App</option>
+<option>Enterprise AI</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline text-[16px] pointer-events-none">expand_more</span>
+</div>
+<div class="relative">
+<select class="h-9 pl-space-md pr-8 rounded-lg bg-surface-container-low text-on-surface font-label-md text-label-md appearance-none focus:outline-none cursor-pointer hover:bg-surface-container transition-colors">
+<option>Active / Live</option>
+<option>Staging</option>
+<option>Archived</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline text-[16px] pointer-events-none">expand_more</span>
+</div>
+<button class="h-9 px-space-md rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5" title="Export CSV" type="button">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span class="font-label-md text-label-md">Columns</span>
+</button>
+</div>
+</div>
+<!-- High Density Table -->
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="h-9 bg-surface-container-low text-outline font-label-sm text-[11px] uppercase tracking-wider select-none">
+<th class="pl-space-lg pr-space-sm w-12 font-semibold">#</th>
+<th class="px-space-md min-w-[280px] font-semibold">Project &amp; Description</th>
+<th class="px-space-md min-w-[150px] font-semibold">Types</th>
+<th class="px-space-md min-w-[230px] font-semibold">Tech Stack</th>
+<th class="px-space-md min-w-[140px] font-semibold">Links</th>
+<th class="px-space-md w-20 text-center font-semibold">Order</th>
+<th class="pr-space-lg pl-space-sm w-24 text-right font-semibold">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container text-body-sm font-body-sm text-on-surface">
+<!-- ROW 1 -->
+<tr class="h-12 hover:bg-surface-container-low/60 transition-colors group">
+<td class="pl-space-lg pr-space-sm text-outline font-code-sm text-code-sm">01</td>
+<td class="px-space-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface truncate">Apex Financial Ledger</span>
+<span class="text-body-sm text-on-surface-variant truncate text-[12px] leading-tight">Institutional high-throughput reconciliation engine with automated audit trails.</span>
+</div>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-surface-container-high text-primary">WEB</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-primary-fixed text-on-primary-fixed-variant">ENTERPRISE</span>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">Next.js</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">Go</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">Postgres</span>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-2">
+<a class="inline-flex items-center gap-1 text-[12px] font-label-md text-primary hover:underline" href="#">
+<span>Web</span>
+<span class="material-symbols-outlined text-[13px]">arrow_outward</span>
+</a>
+</div>
+</td>
+<td class="px-space-md text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container font-code-sm text-[11px] text-on-surface-variant font-semibold">01</span>
+</td>
+<td class="pr-space-lg pl-space-sm text-right">
+<div class="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Edit project" type="button">
+<span class="material-symbols-outlined text-[17px]">edit</span>
+</button>
+<button class="p-1 rounded text-on-surface-variant hover:text-error hover:bg-surface-container transition-colors" title="Delete project" type="button">
+<span class="material-symbols-outlined text-[17px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 2 -->
+<tr class="h-12 hover:bg-surface-container-low/60 transition-colors group">
+<td class="pl-space-lg pr-space-sm text-outline font-code-sm text-code-sm">02</td>
+<td class="px-space-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container/15 flex items-center justify-center text-tertiary-container shrink-0">
+<span class="material-symbols-outlined text-[18px]">neurology</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface truncate">Pulse Health AI</span>
+<span class="text-body-sm text-on-surface-variant truncate text-[12px] leading-tight">Clinical diagnostic assistant with multimodal EHR ingestion and triage prioritization.</span>
+</div>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-tertiary-fixed text-on-tertiary-fixed-variant">AI</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-surface-container-high text-primary">WEB</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-secondary-fixed text-on-secondary-fixed-variant">APP</span>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">Python</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">PyTorch</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">FastAPI</span>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-2">
+<a class="inline-flex items-center gap-1 text-[12px] font-label-md text-primary hover:underline" href="#">
+<span>Web</span>
+<span class="material-symbols-outlined text-[13px]">arrow_outward</span>
+</a>
+<span class="text-outline text-xs">•</span>
+<a class="inline-flex items-center gap-1 text-[12px] font-label-md text-secondary hover:underline" href="#">
+<span>App</span>
+<span class="material-symbols-outlined text-[13px]">arrow_outward</span>
+</a>
+</div>
+</td>
+<td class="px-space-md text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container font-code-sm text-[11px] text-on-surface-variant font-semibold">02</span>
+</td>
+<td class="pr-space-lg pl-space-sm text-right">
+<div class="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">edit</span>
+</button>
+<button class="p-1 rounded text-on-surface-variant hover:text-error hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 3 -->
+<tr class="h-12 hover:bg-surface-container-low/60 transition-colors group">
+<td class="pl-space-lg pr-space-sm text-outline font-code-sm text-code-sm">03</td>
+<td class="px-space-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-secondary-fixed flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[18px]">satellite_alt</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface truncate">Orbit SaaS Telemetry</span>
+<span class="text-body-sm text-on-surface-variant truncate text-[12px] leading-tight">Real-time edge event ingestion engine managing 400M+ micro-traces daily.</span>
+</div>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-surface-container-high text-primary">WEB</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-primary-fixed text-on-primary-fixed-variant">ENTERPRISE</span>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">Rust</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">ClickHouse</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">React</span>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-2">
+<a class="inline-flex items-center gap-1 text-[12px] font-label-md text-primary hover:underline" href="#">
+<span>Web</span>
+<span class="material-symbols-outlined text-[13px]">arrow_outward</span>
+</a>
+</div>
+</td>
+<td class="px-space-md text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container font-code-sm text-[11px] text-on-surface-variant font-semibold">03</span>
+</td>
+<td class="pr-space-lg pl-space-sm text-right">
+<div class="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">edit</span>
+</button>
+<button class="p-1 rounded text-on-surface-variant hover:text-error hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 4 -->
+<tr class="h-12 hover:bg-surface-container-low/60 transition-colors group">
+<td class="pl-space-lg pr-space-sm text-outline font-code-sm text-code-sm">04</td>
+<td class="px-space-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[18px]">explore</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface truncate">FieldGrid Pan-India</span>
+<span class="text-body-sm text-on-surface-variant truncate text-[12px] leading-tight">Offline-first geo-spatial survey app with sync primitives for 15,000 field inspectors.</span>
+</div>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-secondary-fixed text-on-secondary-fixed-variant">APP</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-primary-fixed text-on-primary-fixed-variant">ENTERPRISE</span>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">React Native</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">SQLite</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">Kotlin</span>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-2">
+<a class="inline-flex items-center gap-1 text-[12px] font-label-md text-secondary hover:underline" href="#">
+<span>App Store</span>
+<span class="material-symbols-outlined text-[13px]">arrow_outward</span>
+</a>
+</div>
+</td>
+<td class="px-space-md text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container font-code-sm text-[11px] text-on-surface-variant font-semibold">04</span>
+</td>
+<td class="pr-space-lg pl-space-sm text-right">
+<div class="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">edit</span>
+</button>
+<button class="p-1 rounded text-on-surface-variant hover:text-error hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 5 -->
+<tr class="h-12 hover:bg-surface-container-low/60 transition-colors group">
+<td class="pl-space-lg pr-space-sm text-outline font-code-sm text-code-sm">05</td>
+<td class="px-space-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface shrink-0">
+<span class="material-symbols-outlined text-[18px]">account_balance</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface truncate">Zenith GovPortal</span>
+<span class="text-body-sm text-on-surface-variant truncate text-[12px] leading-tight">Universal public distribution scheme management portal with Aadhaar e-KYC.</span>
+</div>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-surface-container-high text-primary">WEB</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-primary-fixed text-on-primary-fixed-variant">ENTERPRISE</span>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">Next.js</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">Java Spring</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">Redis</span>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-2">
+<a class="inline-flex items-center gap-1 text-[12px] font-label-md text-primary hover:underline" href="#">
+<span>Web</span>
+<span class="material-symbols-outlined text-[13px]">arrow_outward</span>
+</a>
+</div>
+</td>
+<td class="px-space-md text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container font-code-sm text-[11px] text-on-surface-variant font-semibold">05</span>
+</td>
+<td class="pr-space-lg pl-space-sm text-right">
+<div class="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">edit</span>
+</button>
+<button class="p-1 rounded text-on-surface-variant hover:text-error hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 6 -->
+<tr class="h-12 hover:bg-surface-container-low/60 transition-colors group">
+<td class="pl-space-lg pr-space-sm text-outline font-code-sm text-code-sm">06</td>
+<td class="px-space-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-variant flex items-center justify-center text-primary-container shrink-0">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface truncate">Chrono Crypto Vault</span>
+<span class="text-body-sm text-on-surface-variant truncate text-[12px] leading-tight">Multi-signature MPC digital asset custodian with timelock verification protocols.</span>
+</div>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-surface-container-high text-primary">WEB</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-secondary-fixed text-on-secondary-fixed-variant">APP</span>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">Rust</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">Solidity</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant font-code-sm">Flutter</span>
+</div>
+</td>
+<td class="px-space-md">
+<div class="flex items-center gap-2">
+<a class="inline-flex items-center gap-1 text-[12px] font-label-md text-primary hover:underline" href="#">
+<span>Web</span>
+<span class="material-symbols-outlined text-[13px]">arrow_outward</span>
+</a>
+<span class="text-outline text-xs">•</span>
+<a class="inline-flex items-center gap-1 text-[12px] font-label-md text-secondary hover:underline" href="#">
+<span>App</span>
+<span class="material-symbols-outlined text-[13px]">arrow_outward</span>
+</a>
+</div>
+</td>
+<td class="px-space-md text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container font-code-sm text-[11px] text-on-surface-variant font-semibold">06</span>
+</td>
+<td class="pr-space-lg pl-space-sm text-right">
+<div class="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1 rounded text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">edit</span>
+</button>
+<button class="p-1 rounded text-on-surface-variant hover:text-error hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- TABLE FOOTER -->
+<div class="h-12 px-space-lg bg-surface-container-low/40 flex items-center justify-between text-body-sm text-on-surface-variant">
+<span class="font-label-sm text-label-sm text-outline">Showing 6 of 8 total system projects</span>
+<div class="flex items-center gap-2">
+<button class="h-8 px-2.5 rounded bg-surface-container-lowest text-outline opacity-50 cursor-not-allowed text-xs font-label-md" disabled="" type="button">Previous</button>
+<span class="font-code-sm text-code-sm font-semibold text-primary px-2">Page 1 of 2</span>
+<button class="h-8 px-2.5 rounded bg-surface-container-lowest hover:bg-surface-container text-on-surface text-xs font-label-md transition-colors" type="button">Next</button>
+</div>
+</div>
+</div>
+</div>
+<!-- ============================================================== -->
+<!-- MODAL PREVIEW OVERLAY: Add / Edit Project (640px wide) -->
+<!-- ============================================================== -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-space-md bg-inverse-surface/40 backdrop-blur-sm transition-opacity duration-200" id="projectModal">
+<div class="w-full max-w-[640px] bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
+<!-- MODAL HEADER -->
+<div class="px-space-xl py-space-lg bg-surface-container-low/50 flex items-center justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold">Edit Project</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm bg-primary-fixed text-primary font-semibold">#02</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Configure metadata, endpoints, and technology taxonomy.
+          </p>
+</div>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-on-surface hover:bg-surface-container transition-colors" id="closeModalBtn" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- MODAL BODY / FORM -->
+<div class="p-space-xl space-y-space-md max-h-[75vh] overflow-y-auto">
+<!-- Field 1: Project Name -->
+<div class="space-y-1.5">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold uppercase tracking-wider text-[11px]">
+            Project Name <span class="text-error">*</span>
+</label>
+<input class="w-full h-9 px-space-md rounded-lg bg-surface-container-low text-body-md font-body-md text-on-surface focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all" placeholder="e.g. Apex Financial Ledger" type="text" value="Pulse Health AI">
+</div>
+<!-- Field 2: Description -->
+<div class="space-y-1.5">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold uppercase tracking-wider text-[11px]">
+            Description <span class="text-error">*</span>
+</label>
+<textarea class="w-full p-space-md rounded-lg bg-surface-container-low text-body-md font-body-md text-on-surface focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all resize-none leading-relaxed" placeholder="Summary of scope, operational architecture, and business metrics..." rows="3">Clinical diagnostic assistant with multimodal EHR ingestion and triage prioritization engine.</textarea>
+<span class="font-code-sm text-[11px] text-outline block text-right">86 / 160 characters</span>
+</div>
+<!-- Field 3: Project Type Checkboxes -->
+<div class="space-y-2 pt-1">
+<div class="flex items-center justify-between">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold uppercase tracking-wider text-[11px]">
+              Project Types
+            </label>
+<span class="font-label-sm text-label-sm text-primary text-[11px]">Controls client badges &amp; action triggers</span>
+</div>
+<div class="grid grid-cols-3 gap-space-sm">
+<label class="flex items-center gap-2 p-2.5 rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors">
+<input checked="" class="w-4 h-4 rounded text-primary-container focus:ring-primary accent-primary" type="checkbox">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-medium text-on-surface">Web Platform</span>
+<span class="text-[11px] text-outline font-body-sm">Browser App</span>
+</div>
+</label>
+<label class="flex items-center gap-2 p-2.5 rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors">
+<input checked="" class="w-4 h-4 rounded text-primary-container focus:ring-primary accent-primary" type="checkbox">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-medium text-on-surface">Mobile App</span>
+<span class="text-[11px] text-outline font-body-sm">iOS / Android</span>
+</div>
+</label>
+<label class="flex items-center gap-2 p-2.5 rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors">
+<input checked="" class="w-4 h-4 rounded text-primary-container focus:ring-primary accent-primary" type="checkbox">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-medium text-on-surface">AI System</span>
+<span class="text-[11px] text-outline font-body-sm">ML Pipeline</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Field 4 & 5: Live URLs -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md pt-1">
+<div class="space-y-1.5">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold uppercase tracking-wider text-[11px]">
+              Web URL
+            </label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[16px]">link</span>
+<input class="w-full h-9 pl-9 pr-space-md rounded-lg bg-surface-container-low text-body-sm font-body-sm text-on-surface focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all" placeholder="https://..." type="url" value="https://pulsehealth.kavisolutions.in">
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold uppercase tracking-wider text-[11px]">
+              App Store / Play URL
+            </label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[16px]">shop</span>
+<input class="w-full h-9 pl-9 pr-space-md rounded-lg bg-surface-container-low text-body-sm font-body-sm text-on-surface focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all" placeholder="https://apps.apple.com/..." type="url" value="https://apps.apple.com/app/pulsehealth">
+</div>
+</div>
+</div>
+<!-- Field 6: Skills / Tech Stack Chips -->
+<div class="space-y-2 pt-1">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold uppercase tracking-wider text-[11px]">
+            Skills / Tech Stack
+          </label>
+<div class="p-2.5 rounded-lg bg-surface-container-low space-y-2">
+<div class="flex flex-wrap items-center gap-1.5" id="chipContainer">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-lowest text-on-surface font-code-sm text-[12px] shadow-sm">
+                Python
+                <button class="text-outline hover:text-error ml-0.5" type="button"><span class="material-symbols-outlined text-[13px]">close</span></button>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-lowest text-on-surface font-code-sm text-[12px] shadow-sm">
+                PyTorch
+                <button class="text-outline hover:text-error ml-0.5" type="button"><span class="material-symbols-outlined text-[13px]">close</span></button>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-lowest text-on-surface font-code-sm text-[12px] shadow-sm">
+                FastAPI
+                <button class="text-outline hover:text-error ml-0.5" type="button"><span class="material-symbols-outlined text-[13px]">close</span></button>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-lowest text-on-surface font-code-sm text-[12px] shadow-sm">
+                React Native
+                <button class="text-outline hover:text-error ml-0.5" type="button"><span class="material-symbols-outlined text-[13px]">close</span></button>
+</span>
+</div>
+<div class="flex items-center gap-2 pt-1">
+<input class="flex-1 h-8 px-space-md rounded bg-surface-container-lowest text-body-sm font-body-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary/40 placeholder:text-outline" placeholder="Type tech name and press enter..." type="text">
+<button class="h-8 px-3 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm font-medium transition-colors shrink-0" type="button">
+                + Add skill
+              </button>
+</div>
+</div>
+</div>
+<!-- Field 7: Sort Order -->
+<div class="space-y-1.5 pt-1">
+<div class="flex items-center justify-between">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold uppercase tracking-wider text-[11px]">
+              Sort Order
+            </label>
+<span class="font-body-sm text-[11px] text-outline">Ascending priority on live portfolio</span>
+</div>
+<div class="flex items-center gap-3">
+<input class="w-24 h-9 px-space-md rounded-lg bg-surface-container-low text-body-md font-code-sm text-on-surface font-semibold focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all" max="99" min="1" type="number" value="2">
+<span class="font-body-sm text-[12px] text-on-surface-variant">Position 2 among 8 active public showcases.</span>
+</div>
+</div>
+<!-- Helper Notice Callout -->
+<div class="p-space-md rounded-lg bg-surface-container-high/60 flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">info</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+<strong class="text-on-surface font-semibold">Note:</strong> App and Web selections control badges and action CTA buttons rendered directly on the public Projects view.
+          </p>
+</div>
+</div>
+<!-- MODAL FOOTER -->
+<div class="px-space-xl py-space-md bg-surface-container-low flex items-center justify-between">
+<button class="h-9 px-space-md rounded-lg text-error hover:bg-error-container/40 font-label-md text-label-md transition-colors flex items-center gap-1" id="modalDeleteBtn" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+<span>Delete</span>
+</button>
+<div class="flex items-center gap-space-sm">
+<button class="h-9 px-space-lg rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label-md text-label-md transition-colors" id="cancelModalBtn" type="button">
+            Cancel
+          </button>
+<button class="h-9 px-space-xl rounded-lg bg-primary-container text-on-primary hover:bg-primary font-label-md text-label-md font-medium transition-all shadow-sm active:scale-95" id="saveModalBtn" type="button">
+            Save project
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Inline Script for UI Modal Interactions -->
+<script>
+    (function modalController() {
+      const modal = document.getElementById('projectModal');
+      const openBtn = document.getElementById('openModalBtn');
+      const closeBtn = document.getElementById('closeModalBtn');
+      const cancelBtn = document.getElementById('cancelModalBtn');
+      const saveBtn = document.getElementById('saveModalBtn');
+
+      function closeModal() {
+        modal.classList.add('hidden');
+      }
+
+      function openModal() {
+        modal.classList.remove('hidden');
+      }
+
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+      if (saveBtn) saveBtn.addEventListener('click', closeModal);
+      if (openBtn) openBtn.addEventListener('click', openModal);
+
+      // Close on escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+          closeModal();
+        }
+      });
+    })();
+  </script>
+</div></main></div>
+
+</body></html>

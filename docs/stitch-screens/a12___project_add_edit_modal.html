@@ -1,0 +1,407 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Space+Grotesk:wght@600;700&amp;family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "on-secondary-container": "#97b8ff",
+          "on-background": "#dce2f6",
+          "on-tertiary-fixed": "#002114",
+          "primary-fixed-dim": "#b1c5ff",
+          "on-secondary-fixed-variant": "#1b4588",
+          "on-primary-container": "#d7e0ff",
+          "on-surface-variant": "#c3c6d6",
+          "error": "#ffb4ab",
+          "on-primary-fixed": "#001847",
+          "surface-dim": "#0c1321",
+          "surface": "#0c1321",
+          "on-tertiary-fixed-variant": "#005137",
+          "inverse-surface": "#dce2f6",
+          "on-error": "#690005",
+          "on-tertiary": "#003825",
+          "on-secondary-fixed": "#001a42",
+          "tertiary-fixed-dim": "#45dfa4",
+          "secondary": "#aec6ff",
+          "on-error-container": "#ffdad6",
+          "outline": "#8d909f",
+          "on-tertiary-container": "#66fabd",
+          "on-primary-fixed-variant": "#0040a0",
+          "tertiary": "#45dfa4",
+          "primary": "#b1c5ff",
+          "secondary-fixed-dim": "#aec6ff",
+          "on-surface": "#dce2f6",
+          "surface-container-highest": "#2e3544",
+          "surface-tint": "#b1c5ff",
+          "surface-container-low": "#151b2a",
+          "surface-container-high": "#232a39",
+          "background": "#0c1321",
+          "secondary-fixed": "#d8e2ff",
+          "surface-bright": "#323949",
+          "inverse-on-surface": "#2a3040",
+          "on-secondary": "#002e6a",
+          "tertiary-container": "#00724f",
+          "surface-variant": "#2e3544",
+          "error-container": "#93000a",
+          "on-primary": "#002c72",
+          "inverse-primary": "#0957ce",
+          "surface-container-lowest": "#070e1c",
+          "outline-variant": "#424654",
+          "primary-fixed": "#dae2ff",
+          "primary-container": "#175cd3",
+          "secondary-container": "#1e478b",
+          "tertiary-fixed": "#68fcbf",
+          "surface-container": "#19202e"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "space-section-xl": "8rem",
+          "space-lg": "1.5rem",
+          "margin-desktop": "auto",
+          "space-xl": "2rem",
+          "space-section": "6rem",
+          "space-xs": "0.25rem",
+          "gutter": "1.5rem",
+          "gutter-mobile": "1rem",
+          "margin": "1.5rem",
+          "space-sm": "0.5rem",
+          "space-3xl": "4rem",
+          "space-2xl": "3rem",
+          "space-md": "1rem"
+        },
+        "fontFamily": {
+          "section-h2": ["Space Grotesk"],
+          "page-h1": ["Space Grotesk"],
+          "body-medium": ["Geist"],
+          "hero-h1-tablet": ["Space Grotesk"],
+          "card-h3-sm": ["Space Grotesk"],
+          "page-h1-mobile": ["Space Grotesk"],
+          "body-lg": ["Geist"],
+          "eyebrow": ["Geist"],
+          "caption": ["Geist"],
+          "card-h3": ["Space Grotesk"],
+          "hero-h1-mobile": ["Space Grotesk"],
+          "hero-h1": ["Space Grotesk"],
+          "body-md": ["Geist"],
+          "section-h2-mobile": ["Space Grotesk"]
+        },
+        "fontSize": {
+          "section-h2": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+          "page-h1": ["60px", {"lineHeight": "1.15", "letterSpacing": "-0.025em", "fontWeight": "600"}],
+          "body-medium": ["16px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "500"}],
+          "hero-h1-tablet": ["60px", {"lineHeight": "1.1", "letterSpacing": "-0.025em", "fontWeight": "700"}],
+          "card-h3-sm": ["18px", {"lineHeight": "1.35", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+          "page-h1-mobile": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+          "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "-0.005em", "fontWeight": "400"}],
+          "eyebrow": ["11px", {"lineHeight": "1", "letterSpacing": "0.2em", "fontWeight": "600"}],
+          "caption": ["13px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "400"}],
+          "card-h3": ["22px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+          "hero-h1-mobile": ["36px", {"lineHeight": "1.15", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+          "hero-h1": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+          "body-md": ["16px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400"}],
+          "section-h2-mobile": ["30px", {"lineHeight": "1.25", "letterSpacing": "-0.015em", "fontWeight": "600"}]
+        }
+      }
+    }
+  };</script></head><body class="bg-surface text-on-surface font-body-md text-body-md antialiased selection:bg-primary-container selection:text-on-primary-container"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-40 flex flex-col justify-between py-6"><div class="flex flex-col gap-8"><div class="px-6 flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-on-primary-container text-[20px]">terminal</span></div><div><span class="font-card-h3-sm text-card-h3-sm text-on-surface tracking-tight block">KAVI</span><span class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-wider block">Solutions</span></div></div><nav class="flex flex-col gap-1 px-3" data-active-classes="bg-primary-container text-on-primary-container font-medium"><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="overview" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-body-medium text-body-medium">Overview</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="configuration-modal" href="#"><span class="material-symbols-outlined text-[20px]">tune</span><span class="font-body-medium text-body-medium">Configuration</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="access-policy-dialog" href="#"><span class="material-symbols-outlined text-[20px]">shield</span><span class="font-body-medium text-body-medium">Access Control</span></a><a aria-current="page" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary-container font-medium" data-path="system-parameters" href="#"><span class="material-symbols-outlined text-[20px]">settings_input_component</span><span class="font-body-medium text-body-medium">Parameters</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="audit-telemetry" href="#"><span class="material-symbols-outlined text-[20px]">monitoring</span><span class="font-body-medium text-body-medium">Telemetry</span></a></nav></div><div class="px-6 flex flex-col gap-4"><div class="bg-surface-container-lowest p-3 rounded-lg"><div class="flex items-center gap-2 mb-1"><span class="w-2 h-2 rounded-full bg-tertiary"></span><span class="font-eyebrow text-eyebrow text-tertiary uppercase">CORE ONLINE</span></div><span class="font-caption text-caption text-on-surface-variant block">Node cluster us-east-4a</span></div></div></aside><div class="pl-64 flex flex-col min-h-screen"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/80 backdrop-blur-xl z-30 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="w-full h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-3"><span class="font-eyebrow text-eyebrow uppercase text-on-surface-variant bg-surface-container-high px-2 py-1 rounded">KAVI-OS / ADM-882</span><span class="text-outline text-xs font-caption text-caption">v4.18.2</span></div><div class="flex items-center gap-4"><button class="w-9 h-9 rounded-lg bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[18px]">search</span></button><button class="w-9 h-9 rounded-lg bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[18px]">notifications</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative pt-16 w-full flex-1 bg-surface"><div class="flex flex-col w-full relative">
+<!-- Backdrop Context: Simulated Active Studio Dashboard Workspace -->
+<div aria-hidden="true" class="w-full px-gutter py-space-xl opacity-30 pointer-events-none select-none blur-[2px]">
+<div class="max-w-[1152px] mx-auto flex flex-col gap-6">
+<div class="flex items-center justify-between pb-4">
+<div>
+<span class="font-eyebrow text-eyebrow text-tertiary tracking-widest uppercase">WORKSPACE REPOSITORY</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface">Client Deployments</h2>
+</div>
+<div class="flex items-center gap-3">
+<div class="h-10 px-4 rounded-lg bg-surface-container-high flex items-center text-on-surface-variant font-caption text-caption">8 ACTIVE INSTANCES</div>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-6">
+<div class="col-span-8 bg-surface-container-low rounded-xl p-6 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="font-card-h3-sm text-card-h3-sm text-on-surface">Cluster Telemetry Nodes</span>
+<span class="text-tertiary font-caption text-caption flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>SYNCHRONIZED</span>
+</div>
+<svg class="w-full h-32 text-primary" fill="none" viewBox="0 0 600 120">
+<path class="opacity-80" d="M0,80 Q75,20 150,60 T300,40 T450,90 T600,30" fill="none" stroke="currentColor" stroke-width="2"></path>
+<path class="opacity-10" d="M0,80 Q75,20 150,60 T300,40 T450,90 T600,30 L600,120 L0,120 Z" fill="currentColor"></path>
+</svg>
+</div>
+<div class="col-span-4 bg-surface-container-low rounded-xl p-6 flex flex-col justify-between">
+<div>
+<span class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-wider block mb-2">SECURITY LAYER</span>
+<div class="font-card-h3 text-card-h3 text-on-surface">ED25519 Verified</div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-lg text-secondary font-caption text-caption">0x8F9C...44A2 SIGNED</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Screen Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-container-lowest/70 backdrop-blur-md">
+<!-- Centered 640px Modal Container (Level 3 Glass Surface) -->
+<div class="relative w-full max-w-[640px] bg-surface-container-high/95 backdrop-blur-2xl rounded-lg shadow-2xl flex flex-col overflow-hidden max-h-[942px]">
+<!-- Top Subtle Atmospheric Gradient Glow -->
+<div class="absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-32 bg-primary-container/20 rounded-full blur-[64px] pointer-events-none"></div>
+<!-- Modal Header -->
+<div class="relative px-6 pt-6 pb-4 flex items-start justify-between">
+<div class="flex items-start gap-4">
+<div class="w-11 h-11 rounded-lg bg-primary-container/20 flex items-center justify-center flex-shrink-0 text-primary-fixed">
+<span class="material-symbols-outlined text-[24px]">rocket_launch</span>
+</div>
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-2">
+<h2 class="font-card-h3 text-card-h3 text-on-surface tracking-tight">Add Project</h2><span class="font-eyebrow text-eyebrow text-secondary bg-surface-container-highest px-2 py-0.5 rounded tracking-wider uppercase font-medium">[A12]</span>
+<span class="font-eyebrow text-eyebrow text-primary-fixed bg-surface-container-highest px-2 py-0.5 rounded uppercase">NEW RECORD</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant">Configure featured work, tech stacks, and live public client links.</p>
+</div>
+</div>
+<button aria-label="Close dialog" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" viewBox="0 0 16 16">
+<path d="M3 3l10 10M13 3L3 13"></path>
+</svg>
+</button>
+</div>
+<!-- Informational Callout / Helper Notice -->
+<div class="mx-6 mb-2 px-4 py-3 bg-surface-container-lowest rounded-lg flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">info</span>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+<strong class="text-on-surface font-medium">App</strong> and <strong class="text-on-surface font-medium">Web</strong> control the badges and interactive launch buttons shown on the public Projects directory.
+        </p>
+</div>
+<!-- Scrollable Form Body -->
+<form class="overflow-y-auto px-6 py-4 flex flex-col gap-5 flex-1" id="project-form">
+<!-- Field 1: Project Name -->
+<div class="flex flex-col gap-1.5">
+<label class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-widest flex items-center justify-between" for="project-name">
+<span>Project Name</span>
+<span class="text-outline font-caption text-caption lowercase">required</span>
+</label>
+<div class="relative">
+<input class="w-full h-11 bg-surface-container-lowest rounded-lg px-3.5 font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-low transition-colors" id="project-name" placeholder="e.g. Distributed Core Engine" type="text" value="State Telemetry Gateway">
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-tertiary material-symbols-outlined text-[18px]">verified</span>
+</div>
+</div>
+<!-- Field 2: Description Textarea (3 lines) -->
+<div class="flex flex-col gap-1.5">
+<label class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-widest" for="project-desc">
+            Description
+          </label>
+<textarea class="w-full bg-surface-container-lowest rounded-lg p-3 font-body-md text-body-md text-on-surface placeholder:text-outline resize-none focus:outline-none focus:bg-surface-container-low transition-colors leading-relaxed" id="project-desc" placeholder="Provide architectural summary..." rows="3">Distributed multi-region telemetry ingestion network with deterministic cryptographic state sync and sub-50ms validation.</textarea>
+</div>
+<!-- Field 3: Project Types Checkboxes (Custom Toggles) -->
+<div class="flex flex-col gap-2">
+<span class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-widest">Deployment Platforms</span>
+<div class="grid grid-cols-2 gap-3">
+<!-- App Toggle -->
+<label class="cursor-pointer group select-none">
+<input checked="" class="peer sr-only" id="type-app" type="checkbox">
+<div class="p-3 rounded-lg bg-surface-container-lowest peer-checked:bg-surface-container-highest transition-all flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container peer-checked:bg-primary/20 flex items-center justify-center text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">phone_iphone</span>
+</div>
+<div>
+<span class="font-card-h3-sm text-card-h3-sm text-on-surface block">App</span>
+<span class="font-caption text-caption text-on-surface-variant block">Native Mobile / PWA</span>
+</div>
+</div>
+<div class="w-5 h-5 rounded bg-surface-container-high peer-checked:bg-primary-container flex items-center justify-center text-on-primary-container transition-colors">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 14 14">
+<polyline points="2.5 7 5.5 10 11.5 4"></polyline>
+</svg>
+</div>
+</div>
+</label>
+<!-- Web Toggle -->
+<label class="cursor-pointer group select-none">
+<input checked="" class="peer sr-only" id="type-web" type="checkbox">
+<div class="p-3 rounded-lg bg-surface-container-lowest peer-checked:bg-surface-container-highest transition-all flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container peer-checked:bg-secondary/20 flex items-center justify-center text-secondary transition-colors">
+<span class="material-symbols-outlined text-[18px]">language</span>
+</div>
+<div>
+<span class="font-card-h3-sm text-card-h3-sm text-on-surface block">Web</span>
+<span class="font-caption text-caption text-on-surface-variant block">Cloud Web Platform</span>
+</div>
+</div>
+<div class="w-5 h-5 rounded bg-surface-container-high peer-checked:bg-primary-container flex items-center justify-center text-on-primary-container transition-colors">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 14 14">
+<polyline points="2.5 7 5.5 10 11.5 4"></polyline>
+</svg>
+</div>
+</div>
+</label>
+</div>
+</div>
+<!-- URL Endpoints Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Field 4: Live Application URL -->
+<div class="flex flex-col gap-1.5">
+<label class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-widest flex items-center gap-1.5" for="app-url">
+<span class="material-symbols-outlined text-[14px]">link</span>
+              Live App URL
+            </label>
+<input class="w-full h-11 bg-surface-container-lowest rounded-lg px-3 font-caption text-caption text-secondary placeholder:text-outline focus:outline-none focus:bg-surface-container-low transition-colors" id="app-url" type="url" value="https://telemetry.kavisolutions.in">
+</div>
+<!-- Field 5: Case Study URL -->
+<div class="flex flex-col gap-1.5">
+<label class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-widest flex items-center gap-1.5" for="study-url">
+<span class="material-symbols-outlined text-[14px]">terminal</span>
+              Case Study URL
+            </label>
+<input class="w-full h-11 bg-surface-container-lowest rounded-lg px-3 font-caption text-caption text-secondary placeholder:text-outline focus:outline-none focus:bg-surface-container-low transition-colors" id="study-url" type="url" value="https://kavi.solutions/projects/telemetry">
+</div>
+</div>
+<!-- Field 6: Skills & Tech Stack Chip Editor -->
+<div class="flex flex-col gap-2">
+<label class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-widest">
+            Skills &amp; Tech Stack Taxonomy
+          </label>
+<div class="p-3 bg-surface-container-lowest rounded-lg flex flex-col gap-3">
+<div class="flex flex-wrap gap-2" id="chip-container">
+<!-- Active Chips -->
+<span class="chip inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest text-on-surface font-caption text-caption">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                Next.js 14
+                <button aria-label="Remove Next.js 14" class="text-outline hover:text-on-surface ml-0.5" onclick="this.parentElement.remove()" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 12 12"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"></path></svg>
+</button>
+</span>
+<span class="chip inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest text-on-surface font-caption text-caption">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Rust Core
+                <button aria-label="Remove Rust Core" class="text-outline hover:text-on-surface ml-0.5" onclick="this.parentElement.remove()" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 12 12"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"></path></svg>
+</button>
+</span>
+<span class="chip inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest text-on-surface font-caption text-caption">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                WebSockets
+                <button aria-label="Remove WebSockets" class="text-outline hover:text-on-surface ml-0.5" onclick="this.parentElement.remove()" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 12 12"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"></path></svg>
+</button>
+</span>
+<span class="chip inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest text-on-surface font-caption text-caption">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-fixed-dim"></span>
+                TimescaleDB
+                <button aria-label="Remove TimescaleDB" class="text-outline hover:text-on-surface ml-0.5" onclick="this.parentElement.remove()" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 12 12"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"></path></svg>
+</button>
+</span>
+<span class="chip inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest text-on-surface font-caption text-caption">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                TailwindCSS
+                <button aria-label="Remove TailwindCSS" class="text-outline hover:text-on-surface ml-0.5" onclick="this.parentElement.remove()" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 12 12"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"></path></svg>
+</button>
+</span>
+</div>
+<!-- Inline Input & Add Action -->
+<div class="flex items-center gap-2 pt-2 bg-surface-container-lowest">
+<input class="flex-1 h-9 bg-surface-container rounded-lg px-3 font-caption text-caption text-on-surface placeholder:text-outline focus:outline-none" id="skill-input" placeholder="Add skill (e.g. gRPC, GraphQL)..." type="text">
+<button class="h-9 px-3.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-body-medium text-caption flex items-center gap-1 transition-colors" id="add-skill-btn" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+                Add
+              </button>
+</div>
+</div>
+</div>
+<!-- Field 7 & 8: Sort Order & Cover Asset Dual Panel -->
+<div class="grid grid-cols-12 gap-4">
+<!-- Field 7: Sort Order Numerical -->
+<div class="col-span-4 flex flex-col gap-1.5">
+<label class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-widest" for="sort-order">
+              Sort Order
+            </label>
+<div class="relative">
+<input class="w-full h-11 bg-surface-container-lowest rounded-lg px-3.5 font-card-h3-sm text-card-h3-sm text-on-surface text-center tracking-wider focus:outline-none" id="sort-order" type="text" value="01">
+<span class="absolute right-2.5 top-1/2 -translate-y-1/2 font-eyebrow text-eyebrow text-tertiary">HIGH</span>
+</div>
+<span class="font-caption text-caption text-outline">01 = Highest priority rank</span>
+</div>
+<!-- Field 8: Thumbnail Preview & Trigger -->
+<div class="col-span-8 flex flex-col gap-1.5">
+<label class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-widest flex items-center justify-between">
+<span>Cover Asset</span>
+<span class="text-tertiary font-caption text-caption">1280 × 720 Optimized</span>
+</label>
+<div class="relative h-20 w-full rounded-lg bg-surface-container-lowest overflow-hidden flex items-center justify-between p-2.5 group">
+<!-- Thumbnail Imagery -->
+<img class="w-24 h-full rounded object-cover opacity-85 group-hover:opacity-100 transition-opacity" data-alt="Technical architectural diagram preview of distributed high speed data pipeline with glowing deep blue connection nodes, deep navy background and green telemetry status indicators in technical minimalism style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOdxjCxfxKv2zidxc3HoqMDOqk_6BYIGzK2MgEXtHehYnHc4-yml9Q9S379tGYJvJ2oM5WPCUmFO8uZMuihmn_nf6ffbweL-g68iAZ49s_43PFrzJcGkweaMygyTSzOmMRHnk-wl_QwWv1LaHXJ6tAoIP7k6k0spoCKvA2FLIiDfkadKtP4OhYPOtZm9tQz7RONEpIgmDHsPmBGolLeHfU6yqI6WTDjNTWb7nrwGo">
+<div class="flex-1 px-3 min-w-0">
+<span class="font-card-h3-sm text-card-h3-sm text-on-surface truncate block">gateway_v4_cover.webp</span>
+<span class="font-caption text-caption text-on-surface-variant block">418 KB • WebP Matrix</span>
+</div>
+<button class="h-8 px-3 rounded bg-surface-container hover:bg-surface-container-highest text-primary font-caption text-caption font-medium flex items-center gap-1.5 transition-colors flex-shrink-0" type="button">
+<span class="material-symbols-outlined text-[16px]">cloud_upload</span>
+                Change cover
+              </button>
+</div>
+</div>
+</div>
+</form>
+<!-- Modal Footer -->
+<div class="px-6 py-4 bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-eyebrow text-eyebrow text-on-surface-variant uppercase">SYNCHRONIZER READY</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-body-medium text-body-medium transition-colors" type="button">
+            Cancel
+          </button>
+<button class="px-5 py-2.5 rounded-lg bg-primary-container hover:bg-primary-container/80 text-on-primary-container font-body-medium text-body-medium flex items-center gap-2 transition-colors shadow-lg shadow-primary-container/20" type="button">
+<span class="material-symbols-outlined text-[20px]">save</span>
+            Save project
+          </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+    // Micro-interaction for adding skill chips inline
+    const skillInput = document.getElementById('skill-input');
+    const addBtn = document.getElementById('add-skill-btn');
+    const chipContainer = document.getElementById('chip-container');
+
+    function addChip() {
+      if (!skillInput || !chipContainer) return;
+      const text = skillInput.value.trim();
+      if (!text) return;
+
+      const chip = document.createElement('span');
+      chip.className = 'chip inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest text-on-surface font-caption text-caption';
+      chip.innerHTML = `
+        <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+        ${text}
+        <button type="button" class="text-outline hover:text-on-surface ml-0.5" aria-label="Remove ${text}">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"/></svg>
+        </button>
+      `;
+
+      chip.querySelector('button').addEventListener('click', () => chip.remove());
+      chipContainer.appendChild(chip);
+      skillInput.value = '';
+    }
+
+    if (addBtn && skillInput) {
+      addBtn.addEventListener('click', addChip);
+      skillInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addChip();
+        }
+      });
+    }
+  </script>
+</div></main></div>
+
+</body></html>

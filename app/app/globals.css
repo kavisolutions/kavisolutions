@@ -23,6 +23,12 @@
   --input: 214.3 31.8% 88%;
   --ring: 221.2 83.2% 53.3%;
   --radius: 0.625rem;
+
+  --app-ink: #f8fafc;
+  --app-ink-soft: #ffffff;
+  --app-mist: #475569;
+  --app-fog: #64748b;
+  --app-text: #0f172a;
 }
 
 :root[data-theme="dark"],
@@ -46,6 +52,12 @@
   --border: 217.2 32.6% 18%;
   --input: 217.2 32.6% 22%;
   --ring: 217.2 91.2% 59.8%;
+
+  --app-ink: #0b1220;
+  --app-ink-soft: #111c2e;
+  --app-mist: #a5b3c7;
+  --app-fog: #7889a0;
+  --app-text: #f7f9fc;
 }
 
 @theme inline {
@@ -74,10 +86,10 @@
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
 
-  --color-ink: #0b1220;
-  --color-ink-soft: #111c2e;
-  --color-mist: #a5b3c7;
-  --color-fog: #7889a0;
+  --color-ink: var(--app-ink);
+  --color-ink-soft: var(--app-ink-soft);
+  --color-mist: var(--app-mist);
+  --color-fog: var(--app-fog);
 
   --animate-float: float 9s ease-in-out infinite;
   --animate-float-slow: float 14s ease-in-out infinite;
@@ -119,9 +131,10 @@ html {
 
 body {
   background: var(--color-ink);
-  color: #f7f9fc;
+  color: var(--app-text);
   font-family: var(--font-sans);
   overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 ::selection {
@@ -204,4 +217,159 @@ body {
 .admin-app[data-theme="dark"],
 .admin-app.dark {
   color-scheme: dark;
+}
+
+/* ==========================================================================
+   Universal Light Mode Overrides for Public Pages & Components
+   ========================================================================== */
+
+html:not(.dark),
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+html:not(.dark) body {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+/* Page containers & text resets */
+html:not(.dark) main,
+html:not(.dark) main.text-white,
+html:not(.dark) div.min-h-screen.text-white,
+html[data-theme="light"] main,
+html[data-theme="light"] main.text-white,
+html[data-theme="light"] div.min-h-screen.text-white {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+/* Typography Hierarchy */
+html:not(.dark) .text-\[\#F7F9FC\],
+html[data-theme="light"] .text-\[\#F7F9FC\] {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .text-\[\#A5B3C7\],
+html:not(.dark) .text-mist,
+html[data-theme="light"] .text-\[\#A5B3C7\],
+html[data-theme="light"] .text-mist {
+  color: #475569 !important;
+}
+
+html:not(.dark) .text-\[\#7889A0\],
+html:not(.dark) .text-fog,
+html[data-theme="light"] .text-\[\#7889A0\],
+html[data-theme="light"] .text-fog {
+  color: #64748b !important;
+}
+
+html:not(.dark) .text-\[\#91B4FF\],
+html[data-theme="light"] .text-\[\#91B4FF\] {
+  color: #175cd3 !important;
+}
+
+html:not(.dark) .text-gradient {
+  color: #175cd3 !important;
+}
+
+/* Glass Surfaces & Navbars */
+html:not(.dark) .glass,
+html[data-theme="light"] .glass {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(226, 232, 240, 0.95) !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06) !important;
+}
+
+html:not(.dark) [class*="bg-[rgba(18,29,47"],
+html[data-theme="light"] [class*="bg-[rgba(18,29,47"] {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+}
+
+/* Card Surfaces */
+html:not(.dark) .bg-ink,
+html:not(.dark) [class*="bg-[#0B1220]"],
+html[data-theme="light"] .bg-ink,
+html[data-theme="light"] [class*="bg-[#0B1220]"] {
+  background-color: #f8fafc !important;
+}
+
+html:not(.dark) [class*="bg-[#121D2F]"],
+html[data-theme="light"] [class*="bg-[#121D2F]"] {
+  background-color: #ffffff !important;
+}
+
+html:not(.dark) [class*="bg-[#151B2A]"],
+html[data-theme="light"] [class*="bg-[#151B2A]"] {
+  background-color: #ffffff !important;
+}
+
+html:not(.dark) [class*="bg-[#19202E]"],
+html[data-theme="light"] [class*="bg-[#19202E]"] {
+  background-color: #f1f5f9 !important;
+}
+
+html:not(.dark) [class*="bg-[#06060F]"],
+html[data-theme="light"] [class*="bg-[#06060F]"] {
+  background-color: #ffffff !important;
+}
+
+/* Card borders & dividers */
+html:not(.dark) [class*="border-[rgba(148,163,184"],
+html:not(.dark) [class*="border-[rgba(255,255,255,0.14)"],
+html:not(.dark) [class*="border-white/10"],
+html:not(.dark) [class*="border-white/5"],
+html[data-theme="light"] [class*="border-[rgba(148,163,184"],
+html[data-theme="light"] [class*="border-[rgba(255,255,255,0.14)"],
+html[data-theme="light"] [class*="border-white/10"],
+html[data-theme="light"] [class*="border-white/5"] {
+  border-color: rgba(226, 232, 240, 0.95) !important;
+}
+
+/* Hover effects */
+html:not(.dark) [class*="hover:bg-[#19202E]"]:hover,
+html[data-theme="light"] [class*="hover:bg-[#19202E]"]:hover {
+  background-color: #f1f5f9 !important;
+}
+
+html:not(.dark) [class*="hover:bg-white/5"]:hover,
+html:not(.dark) [class*="hover:bg-white/10"]:hover,
+html[data-theme="light"] [class*="hover:bg-white/5"]:hover,
+html[data-theme="light"] [class*="hover:bg-white/10"]:hover {
+  background-color: rgba(241, 245, 249, 0.9) !important;
+}
+
+/* Form Inputs */
+html:not(.dark) input,
+html:not(.dark) textarea,
+html:not(.dark) select,
+html[data-theme="light"] input,
+html[data-theme="light"] textarea,
+html[data-theme="light"] select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder,
+html[data-theme="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Glowing ambient orbs soften in light mode */
+html:not(.dark) .glow-orb,
+html[data-theme="light"] .glow-orb {
+  opacity: 0.28 !important;
+}
+
+/* Shadows in light mode */
+html:not(.dark) .shadow-lift,
+html[data-theme="light"] .shadow-lift {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 12px 30px -15px rgba(0, 0, 0, 0.08) !important;
+}
+
+html:not(.dark) .card-sheen::after {
+  background: linear-gradient(105deg, transparent 40%, rgba(0, 0, 0, 0.03) 50%, transparent 60%);
 }

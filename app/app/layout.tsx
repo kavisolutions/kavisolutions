@@ -3,6 +3,7 @@ import { Geist, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { ThreeDProvider } from "@/components/motion";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,15 +24,43 @@ export const metadata: Metadata = {
   },
 };
 
+const themeInitScript = `
+(function() {
+  try {
+    var stored = localStorage.getItem("kavi-theme") || localStorage.getItem("kavi-admin-theme");
+    var theme = stored === "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = theme;
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  } catch (e) {}
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${spaceGrotesk.variable} dark`}>
-      <body className="bg-ink text-[#F7F9FC] antialiased selection:bg-blue-600/30 selection:text-white">
-        <AuthProvider>
-          <ThreeDProvider>{children}</ThreeDProvider>
-        </AuthProvider>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${spaceGrotesk.variable} dark`}
+    >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: themeInitScript,
+          }}
+        />
+      </head>
+      <body className="bg-ink text-[#F7F9FC] antialiased selection:bg-blue-600/30 selection:text-white transition-colors duration-200">
+        <ThemeProvider>
+          <AuthProvider>
+            <ThreeDProvider>{children}</ThreeDProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

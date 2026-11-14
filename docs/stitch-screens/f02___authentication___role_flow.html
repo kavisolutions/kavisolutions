@@ -1,0 +1,489 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_blank" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-container": "#175cd3", "on-secondary-container": "#97b8ff", "inverse-primary": "#0957ce", "on-tertiary": "#003825", "tertiary": "#45dfa4", "surface-container-high": "#232a39", "tertiary-fixed": "#68fcbf", "background": "#0c1321", "secondary-fixed-dim": "#aec6ff", "secondary": "#aec6ff", "secondary-container": "#1e478b", "surface-container-low": "#151b2a", "error-container": "#93000a", "surface": "#0c1321", "surface-dim": "#0c1321", "surface-container-lowest": "#070e1c", "on-error-container": "#ffdad6", "outline-variant": "#424654", "inverse-surface": "#dce2f6", "on-tertiary-fixed-variant": "#005137", "on-primary-fixed-variant": "#0040a0", "on-primary-fixed": "#001847", "on-primary": "#002c72", "on-error": "#690005", "on-secondary": "#002e6a", "secondary-fixed": "#d8e2ff", "surface-variant": "#2e3544", "on-secondary-fixed-variant": "#1b4588", "on-tertiary-container": "#66fabd", "on-secondary-fixed": "#001a42", "on-surface": "#dce2f6", "on-primary-container": "#d7e0ff", "primary-fixed-dim": "#b1c5ff", "inverse-on-surface": "#2a3040", "surface-bright": "#323949", "surface-tint": "#b1c5ff", "on-tertiary-fixed": "#002114", "primary": "#b1c5ff", "surface-container": "#19202e", "tertiary-container": "#00724f", "surface-container-highest": "#2e3544", "error": "#ffb4ab", "outline": "#8d909f", "tertiary-fixed-dim": "#45dfa4", "on-surface-variant": "#c3c6d6", "primary-fixed": "dae2ff", "on-background": "#dce2f6" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-2xl": "3rem", "space-xs": "0.25rem", "space-section": "6rem", "margin": "1.5rem", "space-xl": "2rem", "gutter": "1.5rem", "space-3xl": "4rem", "space-section-xl": "8rem", "space-md": "1rem", "margin-desktop": "auto", "space-sm": "0.5rem", "space-lg": "1.5rem", "gutter-mobile": "1rem" }, "fontFamily": { "body-md": ["Geist"], "page-h1": ["Space Grotesk"], "hero-h1": ["Space Grotesk"], "section-h2": ["Space Grotesk"], "page-h1-mobile": ["Space Grotesk"], "body-lg": ["Geist"], "eyebrow": ["Geist"], "caption": ["Geist"], "card-h3": ["Space Grotesk"], "section-h2-mobile": ["Space Grotesk"], "body-medium": ["Geist"], "hero-h1-tablet": ["Space Grotesk"], "card-h3-sm": ["Space Grotesk"], "hero-h1-mobile": ["Space Grotesk"] }, "fontSize": { "body-md": ["16px", { "lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400" }], "page-h1": ["60px", { "lineHeight": "1.15", "letterSpacing": "-0.025em", "fontWeight": "600" }], "hero-h1": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.03em", "fontWeight": "700" }], "section-h2": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }], "page-h1-mobile": ["36px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }], "body-lg": ["18px", { "lineHeight": "1.6", "letterSpacing": "-0.005em", "fontWeight": "400" }], "eyebrow": ["11px", { "lineHeight": "1", "letterSpacing": "0.2em", "fontWeight": "600" }], "caption": ["13px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "400" }], "card-h3": ["22px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }], "section-h2-mobile": ["30px", { "lineHeight": "1.25", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-medium": ["16px", { "lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "500" }], "hero-h1-tablet": ["60px", { "lineHeight": "1.1", "letterSpacing": "-0.025em", "fontWeight": "700" }], "card-h3-sm": ["18px", { "lineHeight": "1.35", "letterSpacing": "-0.01em", "fontWeight": "600" }], "hero-h1-mobile": ["36px", { "lineHeight": "1.15", "letterSpacing": "-0.02em", "fontWeight": "700" }] } } } };</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><main class="min-h-screen w-full flex items-center justify-center p-gutter bg-surface"><div class="flex flex-col w-full text-on-surface">
+<!-- Top Protocol Meta Header -->
+<header class="w-full max-w-[1152px] mx-auto pt-6 pb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-eyebrow text-eyebrow uppercase tracking-widest"><span style="font-family: &quot;Space Grotesk&quot;, monospace; font-size: 11px; font-weight: 700; background: rgba(37, 99, 235, 0.2); border: 1px solid rgba(145, 180, 255, 0.4); color: rgb(145, 180, 255); padding: 2px 8px; border-radius: 9999px; letter-spacing: 0.08em; display: inline-flex; align-items: center; margin-right: 8px;">[F02]</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+          SYS-SPEC // F02
+        </span>
+<span class="text-caption font-caption text-on-surface-variant tracking-wider uppercase">Authentication &amp; Role Engine</span>
+</div>
+<h1 class="font-page-h1 text-page-h1 text-on-surface tracking-tight"><span style="font-family: &quot;Space Grotesk&quot;, monospace; font-size: 11px; font-weight: 700; background: rgba(37, 99, 235, 0.2); border: 1px solid rgba(145, 180, 255, 0.4); color: rgb(145, 180, 255); padding: 2px 8px; border-radius: 9999px; letter-spacing: 0.08em; display: inline-flex; align-items: center; margin-right: 8px; vertical-align: middle;">[F02]</span>Access Control &amp; Routing Topology</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+        Deterministic multi-branch auth execution tree. Validates hardware security keys, mints enclave session claims, and branches by tenant privilege hierarchy.
+      </p>
+</div>
+<!-- Live Telemetry Badge -->
+<div class="flex items-center gap-4 px-4 py-2.5 rounded-xl bg-surface-container-low shadow-sm">
+<div class="flex flex-col">
+<span class="text-eyebrow font-eyebrow uppercase text-outline">Enclave Protocol</span>
+<span class="text-caption font-caption text-on-surface font-mono">ED25519_JWKS_V4</span>
+</div>
+<div class="w-px h-8 bg-surface-container-highest"></div>
+<div class="flex flex-col">
+<span class="text-eyebrow font-eyebrow uppercase text-outline">Cluster Latency</span>
+<span class="text-caption font-caption text-tertiary font-mono">14.2ms avg</span>
+</div>
+</div>
+</header>
+<!-- Flow Matrix Canvas Container -->
+<div class="w-full max-w-[1152px] mx-auto flex flex-col items-center relative">
+<!-- STEP 1: INITIAL LOGIN VIEW -->
+<section class="w-full flex flex-col items-center relative z-10">
+<div class="flex items-center gap-2 mb-3">
+<span class="px-2.5 py-0.5 rounded-full bg-primary-container text-white font-eyebrow text-eyebrow tracking-widest uppercase">[F02] STAGE 01</span>
+<span class="text-caption font-caption text-on-surface-variant font-mono">IDP_CHALLENGE_REQUEST</span>
+</div>
+<!-- Login Glass Card -->
+<div class="w-full max-w-[448px] rounded-2xl bg-surface-container-high/90 backdrop-blur-md p-8 shadow-xl flex flex-col gap-6 relative group hover:shadow-2xl transition-all duration-300">
+<!-- Ambient radial glow behind card -->
+<div class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex items-start justify-between">
+<div class="flex flex-col gap-1">
+<h2 class="font-card-h3 text-card-h3 text-on-surface font-semibold">Sign In</h2>
+<p class="text-caption font-caption text-on-surface-variant">Authenticate to access Kavi Solutions network</p>
+</div>
+<div class="w-9 h-9 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">key</span>
+</div>
+</div>
+<form class="flex flex-col gap-4" onsubmit="event.preventDefault();">
+<div class="flex flex-col gap-1.5">
+<label class="text-caption font-caption text-on-surface uppercase tracking-wider font-medium">Work Identity</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[18px]">alternate_email</span>
+<input class="w-full h-12 pl-10 pr-4 rounded-xl bg-surface-container-lowest text-on-surface text-body-md font-body-md focus:outline-none focus:ring-2 focus:ring-primary/60 transition-all shadow-inner" readonly="" type="email" value="member@kavisolutions.in">
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="text-caption font-caption text-on-surface uppercase tracking-wider font-medium">Security Token / Passkey</label>
+<a class="text-caption font-caption text-primary hover:underline" href="#reset">Trouble?</a>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[18px]">lock</span>
+<input class="w-full h-12 pl-10 pr-10 rounded-xl bg-surface-container-lowest text-on-surface text-body-md font-body-md tracking-widest focus:outline-none focus:ring-2 focus:ring-primary/60 transition-all shadow-inner" readonly="" type="password" value="••••••••••••••••">
+<span class="material-symbols-outlined absolute right-3.5 text-outline text-[18px] cursor-pointer">visibility_off</span>
+</div>
+</div>
+<button class="w-full h-12 mt-2 rounded-xl bg-primary-container text-white font-body-medium text-body-medium flex items-center justify-center gap-2 hover:bg-secondary-container transition-all active:scale-[0.99] shadow-md shadow-primary-container/25" type="button">
+<span>Sign in</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</form>
+<div class="relative flex items-center justify-center my-1">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full h-px bg-surface-container-highest"></div>
+</div>
+<span class="relative px-3 bg-surface-container-high text-caption font-caption text-outline uppercase tracking-wider">or continue with</span>
+</div>
+<button class="w-full h-12 rounded-xl bg-surface-container-lowest hover:bg-surface-variant text-on-surface font-body-medium text-body-medium flex items-center justify-center gap-3 transition-all active:scale-[0.99]" type="button">
+<!-- Official Google SVG Logo Mark -->
+<svg class="w-4 h-4" viewBox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"></path>
+</svg>
+<span>Continue with Google</span>
+</button>
+<!-- Security posture sublabel -->
+<div class="flex items-center justify-center gap-1.5 pt-1 text-outline">
+<span class="material-symbols-outlined text-[14px] text-tertiary">verified_user</span>
+<span class="text-caption font-caption tracking-normal text-[11px]">Hardware-bound FIDO2 credential validation active</span>
+</div>
+</div>
+</section>
+<!-- CONNECTOR VECTOR: Step 1 to Step 2 -->
+<div class="w-full flex justify-center py-2 relative">
+<svg class="w-6 h-12 text-primary" fill="none" viewBox="0 0 24 48">
+<path class="opacity-40" d="M12 0 L12 40" stroke="currentColor" stroke-dasharray="4 4" stroke-width="2"></path>
+<polygon fill="currentColor" points="8,40 16,40 12,48"></polygon>
+</svg>
+</div>
+<!-- STEP 2: LOADING WORKSPACE & ENCLAVE RESOLUTION -->
+<section class="w-full flex flex-col items-center relative z-10">
+<div class="flex items-center gap-2 mb-3">
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-eyebrow text-eyebrow tracking-widest uppercase">[F02] STAGE 02</span>
+<span class="text-caption font-caption text-on-surface-variant font-mono">TOKEN_MINT_&amp;_RBAC_EVALUATION</span>
+</div>
+<!-- Loading Ambient Container -->
+<div class="w-full max-w-[512px] rounded-2xl bg-surface-container-high/70 backdrop-blur-md p-6 shadow-xl relative overflow-hidden flex items-center gap-5">
+<!-- Pulsing radial backdrop -->
+<div class="absolute -right-10 -bottom-10 w-40 h-40 bg-secondary-container/40 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Glowing Dual-Ring Circular Spinner -->
+<div class="relative w-14 h-14 shrink-0 flex items-center justify-center">
+<div class="absolute inset-0 rounded-full bg-primary/10 animate-ping opacity-30"></div>
+<svg class="w-14 h-14 animate-spin text-primary" viewBox="0 0 56 56">
+<circle class="opacity-20" cx="28" cy="28" fill="none" r="22" stroke="currentColor" stroke-width="3"></circle>
+<path class="opacity-90" d="M 28 6 A 22 22 0 0 1 50 28" fill="none" stroke="currentColor" stroke-dasharray="45 120" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<span class="material-symbols-outlined text-[20px] text-primary">lock_clock</span>
+</div>
+<div class="flex flex-col gap-1 min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-card-h3-sm text-card-h3-sm text-on-surface font-semibold">Loading workspace…</span>
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+</div>
+<p class="text-caption font-caption text-on-surface-variant leading-relaxed">
+            Initializing secure enclave session and fetching role entitlements from tenant cluster <span class="font-mono text-secondary">in-south-mum-01</span>.
+          </p>
+</div>
+</div>
+</section>
+<!-- CONNECTOR VECTOR: Step 2 Branching Splitter -->
+<div class="w-full max-w-[1040px] h-20 relative my-2 hidden md:block">
+<svg class="w-full h-full text-outline-variant" fill="none" viewBox="0 0 1040 80">
+<!-- Main spine down -->
+<path class="opacity-40" d="M 520 0 L 520 28" stroke="currentColor" stroke-width="2"></path>
+<!-- Horizontal distributor bar -->
+<path class="opacity-40" d="M 173 28 L 867 28" stroke="currentColor" stroke-width="2"></path>
+<!-- Branch A (Left) -->
+<path class="opacity-40" d="M 173 28 L 173 70" stroke="currentColor" stroke-width="2"></path>
+<polygon fill="#175cd3" points="169,70 177,70 173,78"></polygon>
+<!-- Branch B (Middle) -->
+<path class="opacity-40" d="M 520 28 L 520 70" stroke="currentColor" stroke-width="2"></path>
+<polygon fill="#ffb4ab" points="516,70 524,70 520,78"></polygon>
+<!-- Branch C (Right) -->
+<path class="opacity-40" d="M 867 28 L 867 70" stroke="currentColor" stroke-width="2"></path>
+<polygon fill="#45dfa4" points="863,70 871,70 867,78"></polygon>
+</svg>
+</div>
+<!-- Mobile Vertical Spacing Alternative -->
+<div class="w-full py-4 flex flex-col items-center gap-1 md:hidden">
+<div class="w-0.5 h-8 bg-surface-container-highest"></div>
+<span class="text-eyebrow font-eyebrow text-outline uppercase">Branch Decision Tree</span>
+<div class="w-0.5 h-8 bg-surface-container-highest"></div>
+</div>
+<!-- BRANCHES ROW: Three Dynamic Output Pathways -->
+<div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start mt-2 mb-16">
+<!-- ================= BRANCH A: ADMIN CONSOLE ================= -->
+<div class="lg:col-span-5 flex flex-col gap-3">
+<!-- Branch Badge Header -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-primary-container text-white font-eyebrow text-eyebrow uppercase tracking-widest">[F02] BRANCH A</span>
+<span class="text-caption font-caption text-secondary font-mono">ROLE: ADMIN</span>
+</div>
+<span class="flex items-center gap-1 text-caption font-caption text-tertiary">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+            Elevated Granted
+          </span>
+</div>
+<!-- High Density Admin Card -->
+<div class="w-full rounded-2xl bg-surface-container-low shadow-xl p-5 flex flex-col gap-4 relative overflow-hidden">
+<!-- Top Breadcrumb & Status -->
+<div class="flex items-center justify-between pb-3 bg-surface-container-lowest/40 -mx-5 -mt-5 p-5">
+<div class="flex items-center gap-2">
+<span class="text-caption font-caption text-outline uppercase font-mono">[F02] BRANCH A</span>
+<span class="text-caption font-caption text-outline">/</span>
+<span class="text-caption font-caption text-on-surface font-semibold font-mono tracking-wide">ADMINISTRATION</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-tertiary-container/30 text-tertiary-fixed font-eyebrow text-eyebrow uppercase tracking-wider">
+              Superadmin Mode
+            </span>
+</div>
+<!-- Console Layout: Miniature Sidebar + Main Work area -->
+<div class="grid grid-cols-12 gap-3 pt-1">
+<!-- Persistent Left Mini Navigation Sidebar -->
+<div class="col-span-4 rounded-xl bg-surface-container-lowest p-2.5 flex flex-col gap-1.5">
+<div class="flex items-center gap-2 px-2 py-1.5 text-outline text-eyebrow font-eyebrow uppercase">
+<span class="material-symbols-outlined text-[14px]">[F02] BRANCH A</span>
+<span>Console</span>
+</div>
+<!-- Active Pill Indicator -->
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-primary-container text-white font-body-medium text-caption shadow-sm">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px]">group</span>
+<span>Team</span>
+</div>
+<span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container text-caption transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[15px]">policy</span>
+<span>RBAC Engine</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container text-caption transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[15px]">database</span>
+<span>Data Clusters</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container text-caption transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[15px]">security</span>
+<span>Audit Logs</span>
+</div>
+</div>
+<!-- Team Members Directory Work Area -->
+<div class="col-span-8 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface">Team Directory</h3>
+<span class="text-caption font-caption text-outline">12 active engineers authenticated</span>
+</div>
+<button class="px-2 py-1 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface text-caption font-caption flex items-center gap-1 transition-all" type="button">
+<span class="material-symbols-outlined text-[14px]">person_add</span>
+<span>Invite</span>
+</button>
+</div>
+<!-- 12 Member Badges Grid -->
+<div class="grid grid-cols-3 gap-2">
+<!-- Badge 1 (Lead) -->
+<div class="p-2 rounded-lg bg-surface-container-high/80 flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-container text-white flex items-center justify-center font-mono text-[10px] font-bold">AK</div>
+<div class="flex flex-col min-w-0">
+<span class="text-caption font-caption text-on-surface truncate font-medium">A. Kumar</span>
+<span class="text-[9px] font-mono text-tertiary">SysArch</span>
+</div>
+</div>
+<!-- Badge 2 -->
+<div class="p-2 rounded-lg bg-surface-container-high/80 flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-mono text-[10px] font-bold">RP</div>
+<div class="flex flex-col min-w-0">
+<span class="text-caption font-caption text-on-surface truncate font-medium">R. Patel</span>
+<span class="text-[9px] font-mono text-outline">Kernel</span>
+</div>
+</div>
+<!-- Badge 3 -->
+<div class="p-2 rounded-lg bg-surface-container-high/80 flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-mono text-[10px] font-bold">SM</div>
+<div class="flex flex-col min-w-0">
+<span class="text-caption font-caption text-on-surface truncate font-medium">S. Menon</span>
+<span class="text-[9px] font-mono text-outline">SecOps</span>
+</div>
+</div>
+<!-- Badge 4 -->
+<div class="p-2 rounded-lg bg-surface-container-high/80 flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-mono text-[10px] font-bold">DV</div>
+<div class="flex flex-col min-w-0">
+<span class="text-caption font-caption text-on-surface truncate font-medium">D. Verma</span>
+<span class="text-[9px] font-mono text-outline">DevRel</span>
+</div>
+</div>
+<!-- Badge 5 -->
+<div class="p-2 rounded-lg bg-surface-container-high/80 flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-mono text-[10px] font-bold">NK</div>
+<div class="flex flex-col min-w-0">
+<span class="text-caption font-caption text-on-surface truncate font-medium">N. Kaur</span>
+<span class="text-[9px] font-mono text-outline">Frontend</span>
+</div>
+</div>
+<!-- Badge 6 -->
+<div class="p-2 rounded-lg bg-surface-container-high/80 flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-mono text-[10px] font-bold">TB</div>
+<div class="flex flex-col min-w-0">
+<span class="text-caption font-caption text-on-surface truncate font-medium">T. Bose</span>
+<span class="text-[9px] font-mono text-outline">Storage</span>
+</div>
+</div>
+<!-- Badge 7 -->
+<div class="p-2 rounded-lg bg-surface-container-high/80 flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-mono text-[10px] font-bold">VJ</div>
+<div class="flex flex-col min-w-0">
+<span class="text-caption font-caption text-on-surface truncate font-medium">V. Joshi</span>
+<span class="text-[9px] font-mono text-outline">Infra</span>
+</div>
+</div>
+<!-- Badge 8 -->
+<div class="p-2 rounded-lg bg-surface-container-high/80 flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-mono text-[10px] font-bold">MA</div>
+<div class="flex flex-col min-w-0">
+<span class="text-caption font-caption text-on-surface truncate font-medium">M. Ali</span>
+<span class="text-[9px] font-mono text-outline">SRE</span>
+</div>
+</div>
+<!-- Badge 9 -->
+<div class="p-2 rounded-lg bg-surface-container-high/80 flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-mono text-[10px] font-bold">PL</div>
+<div class="flex flex-col min-w-0">
+<span class="text-caption font-caption text-on-surface truncate font-medium">P. Lal</span>
+<span class="text-[9px] font-mono text-outline">CI/CD</span>
+</div>
+</div>
+<!-- Badge 10 -->
+<div class="p-2 rounded-lg bg-surface-container-high/80 flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-mono text-[10px] font-bold">CS</div>
+<div class="flex flex-col min-w-0">
+<span class="text-caption font-caption text-on-surface truncate font-medium">C. Shah</span>
+<span class="text-[9px] font-mono text-outline">Network</span>
+</div>
+</div>
+<!-- Badge 11 -->
+<div class="p-2 rounded-lg bg-surface-container-high/80 flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-mono text-[10px] font-bold">AG</div>
+<div class="flex flex-col min-w-0">
+<span class="text-caption font-caption text-on-surface truncate font-medium">A. Ghosh</span>
+<span class="text-[9px] font-mono text-outline">Compute</span>
+</div>
+</div>
+<!-- Badge 12 -->
+<div class="p-2 rounded-lg bg-surface-container-high/80 flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-mono text-[10px] font-bold">ZR</div>
+<div class="flex flex-col min-w-0">
+<span class="text-caption font-caption text-on-surface truncate font-medium">Z. Roy</span>
+<span class="text-[9px] font-mono text-outline">Crypt</span>
+</div>
+</div>
+</div>
+<!-- Terminal Diagnostic Stream Output -->
+<div class="mt-2 rounded-lg bg-surface-container-lowest p-3 flex flex-col gap-1.5 font-mono text-[11px]">
+<div class="flex items-center justify-between text-outline">
+<span>AUDIT_STREAM // S-LIVE</span>
+<span class="text-tertiary">STREAM_OK</span>
+</div>
+<div class="text-on-surface-variant truncate">
+                  [14:02:19] JWT_CLAIMS_EVAL: user_id=usr_092 role=org:admin scope=[read,write,exec]
+                </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= BRANCH B: ACCESS DENIED ================= -->
+<div class="lg:col-span-3 flex flex-col gap-3">
+<!-- Branch Badge Header -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-eyebrow text-eyebrow uppercase tracking-widest">[F02] BRANCH B</span>
+<span class="text-caption font-caption text-error font-mono">NON-ADMIN</span>
+</div>
+<span class="flex items-center gap-1 text-caption font-caption text-error">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+            Rejection
+          </span>
+</div>
+<!-- Access Denied Card -->
+<div class="w-full rounded-2xl bg-surface-container-low shadow-xl p-6 flex flex-col items-center text-center gap-4 relative overflow-hidden">
+<div class="absolute -top-12 left-1/2 -translate-x-1/2 w-32 h-32 bg-error-container/30 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Destructive Red Shield Badge -->
+<div class="w-16 h-16 rounded-2xl bg-error-container/40 flex items-center justify-center text-error shadow-lg shadow-error/10 relative mt-2">
+<span class="material-symbols-outlined text-[36px]">gpp_bad</span>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-card-h3 text-card-h3 text-on-surface font-semibold">Access Denied</h3>
+<p class="text-caption font-caption text-on-surface-variant leading-relaxed">
+<span class="font-mono text-on-surface font-medium">member@example.com</span> is not listed as an administrator for Kavi Solutions.
+            </p>
+</div>
+<!-- Error Context Block -->
+<div class="w-full p-3 rounded-xl bg-surface-container-lowest text-left flex flex-col gap-1">
+<span class="text-[10px] font-mono text-outline uppercase">Error Code: E_PRIVILEGE_INSUFFICIENT</span>
+<span class="text-caption font-caption text-outline leading-snug">Requires organization administrative privileges or role escalation.</span>
+</div>
+<!-- Secondary Sign Out and Action Links -->
+<div class="w-full flex flex-col gap-2 pt-2">
+<button class="w-full h-10 rounded-xl bg-surface-container-high hover:bg-surface-variant text-on-surface font-body-medium text-caption flex items-center justify-center gap-2 transition-all active:scale-[0.99]" type="button">
+<span class="material-symbols-outlined text-[16px]">logout</span>
+<span>Sign out</span>
+</button>
+<a class="text-caption font-caption text-secondary hover:text-white transition-colors flex items-center justify-center gap-1 py-1" href="#team">
+<span class="material-symbols-outlined text-[14px]">arrow_back</span>
+<span>Return to public team page</span>
+</a>
+</div>
+</div>
+</div>
+<!-- ================= BRANCH C: MEMBER PROFILE ================= -->
+<div class="lg:col-span-4 flex flex-col gap-3">
+<!-- Branch Badge Header -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-tertiary-container font-eyebrow text-eyebrow uppercase tracking-widest">[F02] BRANCH C</span>
+<span class="text-caption font-caption text-tertiary font-mono">ROLE: MEMBER</span>
+</div>
+<span class="flex items-center gap-1 text-caption font-caption text-on-surface-variant">
+            Self-Service View
+          </span>
+</div>
+<!-- Member Profile Self-Service Card -->
+<div class="w-full rounded-2xl bg-surface-container-low shadow-xl p-6 flex flex-col gap-5">
+<!-- Profile Identity Header -->
+<div class="flex items-center gap-3.5 pb-2">
+<div class="relative">
+<img class="w-14 h-14 rounded-full object-cover ring-2 ring-primary/40" data-alt="Technical headshot portrait of a software engineer wearing minimalist dark work apparel in a sleek, high-tech server room environment with subtle cyan ambient lighting and navy background reflections, hyper-detailed commercial photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAe761uXL8WfO7YHFsLnXQ5wiuzC6AAq9Hi1-jLThfQLMbLJALwnMQpIieacRITrKNcAzEWWeSgzoNqCv5OxTf5ALm773snbepu95oQ2lUiVeRcixQh83hWGIiMuj7ec3I6UCDOoTI1KWgBezjIbAANAM_pgCQFdyQHQM2U9Ntsm5A-k7_XxoO4cvdoJvI_ox6a_fJTzmmq9wFWToFi-L7QKWiwgZAc_Y3tDP-rXQo">
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-tertiary ring-2 ring-surface-container-low"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="font-card-h3-sm text-card-h3-sm text-on-surface font-semibold truncate">Ananya Rao</h3>
+<span class="text-caption font-caption text-on-surface-variant font-mono">ananya@kavisolutions.in</span>
+<span class="text-caption font-caption text-tertiary text-[11px] font-medium">Core Contributor • Verified Passkey</span>
+</div>
+</div>
+<!-- Bio Section -->
+<div class="flex flex-col gap-1.5">
+<label class="text-caption font-caption text-outline uppercase tracking-wider font-medium text-[11px]">Developer Bio</label>
+<div class="p-3 rounded-xl bg-surface-container-lowest text-caption font-caption text-on-surface-variant leading-relaxed">
+              Distributing state across edge micro-clusters. Maintainer of Kavi open-telemetry plugins and encrypted cache proxies.
+            </div>
+</div>
+<!-- Gradient Role Card Selector -->
+<div class="flex flex-col gap-2">
+<label class="text-caption font-caption text-outline uppercase tracking-wider font-medium text-[11px]">Assigned Role Scope</label>
+<div class="grid grid-cols-2 gap-2">
+<!-- Selected Role -->
+<div class="p-3 rounded-xl bg-gradient-to-br from-primary-container/40 via-surface-container to-surface-container-high ring-1 ring-primary/40 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="text-caption font-caption text-white font-medium">Platform Eng</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>
+</div>
+<span class="text-[10px] text-on-surface-variant leading-tight">Write access to dev &amp; staging sandboxes</span>
+</div>
+<!-- Secondary Role -->
+<div class="p-3 rounded-xl bg-surface-container-lowest opacity-60 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="text-caption font-caption text-on-surface font-medium">Billing Lead</span>
+<span class="material-symbols-outlined text-[16px] text-outline">lock</span>
+</div>
+<span class="text-[10px] text-outline leading-tight">Requires finance officer delegation</span>
+</div>
+</div>
+</div>
+<!-- Read-Only Team Assignments -->
+<div class="flex flex-col gap-2 pt-1">
+<label class="text-caption font-caption text-outline uppercase tracking-wider font-medium text-[11px]">Team Assignments (Read-Only)</label>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-highest text-caption font-caption text-on-surface flex items-center gap-1.5 font-mono text-[11px]">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                #cluster-orchestration
+              </span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-highest text-caption font-caption text-on-surface flex items-center gap-1.5 font-mono text-[11px]">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                #tokyo-migration-24
+              </span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-highest text-caption font-caption text-on-surface flex items-center gap-1.5 font-mono text-[11px]">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                #app-layer-perf
+              </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Architectural Spec Legend / Summary Bar -->
+<footer class="w-full max-w-[1152px] rounded-xl bg-surface-container-low p-4 flex flex-col md:flex-row items-center justify-between gap-4 text-caption font-caption text-on-surface-variant mb-12">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]">architecture</span>
+<span>
+<strong class="text-on-surface font-medium">Zero-Trust Pipeline:</strong> Dynamic claims evaluation is resolved server-side via ephemeral Ed25519 tokens.
+        </span>
+</div>
+<div class="flex items-center gap-4 text-[11px] font-mono">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+          AUTH_IDP
+        </span>
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+          ROLE_PRIVILEGED
+        </span>
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+          ROLE_BLOCKED
+        </span>
+</div>
+</footer>
+</div>
+</div></main>
+
+</body></html>

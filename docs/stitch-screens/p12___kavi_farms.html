@@ -1,0 +1,902 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"primary":"#b1c5ff","inverse-primary":"#0957ce","on-tertiary":"#003825","on-error-container":"#ffdad6","on-background":"#dce2f6","on-error":"#690005","surface-container-high":"#232a39","surface-container-highest":"#2e3544","tertiary-fixed-dim":"#45dfa4","on-primary-fixed-variant":"#0040a0","primary-fixed-dim":"#b1c5ff","on-secondary":"#002e6a","surface-container":"#19202e","tertiary":"#45dfa4","on-secondary-container":"#97b8ff","secondary-fixed-dim":"#aec6ff","on-tertiary-fixed":"#002114","error-container":"#93000a","on-primary":"#002c72","inverse-on-surface":"#2a3040","secondary-container":"#1e478b","inverse-surface":"#dce2f6","primary-container":"#175cd3","on-surface":"#dce2f6","outline-variant":"#424654","tertiary-container":"#00724f","secondary-fixed":"#d8e2ff","on-secondary-fixed-variant":"#1b4588","surface-container-low":"#151b2a","tertiary-fixed":"#68fcbf","error":"#ffb4ab","background":"#0c1321","primary-fixed":"#dae2ff","surface-dim":"#0c1321","surface-container-lowest":"#070e1c","on-primary-fixed":"#001847","surface":"#0c1321","secondary":"#aec6ff","outline":"#8d909f","on-tertiary-container":"#66fabd","on-tertiary-fixed-variant":"#005137","on-surface-variant":"#c3c6d6","surface-bright":"#323949","on-primary-container":"#d7e0ff","on-secondary-fixed":"#001a42","surface-variant":"#2e3544","surface-tint":"#b1c5ff"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-3xl":"4rem","space-section":"6rem","space-2xl":"3rem","space-lg":"1.5rem","gutter-mobile":"1rem","margin":"1.5rem","space-sm":"0.5rem","space-xs":"0.25rem","space-md":"1rem","space-xl":"2rem","margin-desktop":"auto","space-section-xl":"8rem","gutter":"1.5rem"},"fontFamily":{"hero-h1-tablet":["Space Grotesk"],"hero-h1":["Space Grotesk"],"caption":["Geist"],"section-h2":["Space Grotesk"],"hero-h1-mobile":["Space Grotesk"],"body-md":["Geist"],"card-h3-sm":["Space Grotesk"],"eyebrow":["Geist"],"card-h3":["Space Grotesk"],"page-h1-mobile":["Space Grotesk"],"section-h2-mobile":["Space Grotesk"],"page-h1":["Space Grotesk"],"body-lg":["Geist"],"body-medium":["Geist"]},"fontSize":{"hero-h1-tablet":["60px",{"lineHeight":"1.1","letterSpacing":"-0.025em","fontWeight":"700"}],"hero-h1":["72px",{"lineHeight":"1.1","letterSpacing":"-0.03em","fontWeight":"700"}],"caption":["13px",{"lineHeight":"1.4","letterSpacing":"0.01em","fontWeight":"400"}],"section-h2":["48px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"600"}],"hero-h1-mobile":["36px",{"lineHeight":"1.15","letterSpacing":"-0.02em","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"1.6","letterSpacing":"0","fontWeight":"400"}],"card-h3-sm":["18px",{"lineHeight":"1.35","letterSpacing":"-0.01em","fontWeight":"600"}],"eyebrow":["11px",{"lineHeight":"1","letterSpacing":"0.2em","fontWeight":"600"}],"card-h3":["22px",{"lineHeight":"1.3","letterSpacing":"-0.01em","fontWeight":"600"}],"page-h1-mobile":["36px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"600"}],"section-h2-mobile":["30px",{"lineHeight":"1.25","letterSpacing":"-0.015em","fontWeight":"600"}],"page-h1":["60px",{"lineHeight":"1.15","letterSpacing":"-0.025em","fontWeight":"600"}],"body-lg":["18px",{"lineHeight":"1.6","letterSpacing":"-0.005em","fontWeight":"400"}],"body-medium":["16px",{"lineHeight":"1.6","letterSpacing":"0","fontWeight":"500"}]}}}}</script></head><body class="bg-[#0B1220] font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-4 left-0 right-0 z-50 px-gutter"><div class="max-w-[1152px] mx-auto h-16 rounded-[12px] bg-[#121d2fd6] backdrop-blur-[16px] px-space-md flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><a class="flex items-center gap-space-sm group" data-path="showcase" href="#"><div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary via-inverse-primary to-tertiary flex items-center justify-center shadow-inner"><span class="font-card-h3 text-card-h3 font-bold text-surface-container-lowest leading-none select-none">K</span></div><div class="flex flex-col"><span class="font-card-h3-sm text-card-h3-sm font-semibold tracking-tight text-on-surface leading-none">Kavi Solutions</span><span class="font-eyebrow text-eyebrow text-outline tracking-[0.2em] uppercase mt-1">Engineering Studio</span></div><span class="font-eyebrow text-eyebrow px-2 py-0.5 rounded bg-surface-container-high text-[#10B981] font-semibold tracking-wider">[P12]</span></a><nav class="hidden lg:flex items-center gap-1 bg-surface-container-lowest/50 p-1 rounded-xl" data-active-classes="text-on-surface bg-surface-container-high font-medium rounded-lg"><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="showcase" href="#">Showcase<span class="font-eyebrow text-eyebrow px-2 py-0.5 rounded bg-surface-container-high text-[#10B981] font-semibold tracking-wider">[P12]</span></a><a aria-current="page" class="px-3 py-1.5 transition-all text-on-surface bg-surface-container-high font-medium rounded-lg" data-path="services" href="#">Services</a><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="projects" href="#">Projects</a><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="fellowship" href="#">Fellowship</a><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="team" href="#">Team</a><a class="px-3 py-1.5 font-caption text-caption text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="verification" href="#">Verification</a></nav><div class="flex items-center gap-space-sm"><a class="hidden sm:inline-flex px-3 py-2 font-caption text-caption text-on-surface-variant hover:text-on-surface transition-colors" data-path="login" href="#">Login</a><a class="px-4 py-2 rounded-xl bg-primary-container hover:bg-[#1849A9] text-[#FFFFFF] font-body-medium text-caption transition-all shadow-[0_1px_12px_rgba(23,92,211,0.25)] focus:ring-2 focus:ring-[#91B4FF] focus:outline-none" data-path="contact" href="#">Let's Talk</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-[#0B1220] min-h-[calc(100vh-280px)]"><div class="flex flex-col w-full text-on-surface">
+<!-- Hero Section -->
+<section class="relative w-full overflow-hidden pb-space-section pt-space-xl">
+<div class="absolute -top-32 left-1/4 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#10B981]/20 to-[#84CC16]/10 blur-[120px] pointer-events-none"></div>
+<div class="absolute top-48 right-10 w-[420px] h-[420px] rounded-full bg-[#10B981]/15 blur-[100px] pointer-events-none"></div>
+<div class="max-w-[1152px] mx-auto px-gutter relative z-10">
+<div class="max-w-[896px] mx-auto text-center flex flex-col items-center">
+<!-- Eyebrow Pill -->
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high/80 backdrop-blur-md mb-space-lg shadow-sm">
+<span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] text-[#84CC16] uppercase font-semibold">[P12] 🌾 KAVI FARMS</span>
+<span class="text-outline-variant font-caption text-caption">|</span>
+<span class="font-caption text-caption text-outline">PALNADU REGENERATIVE ESTATE</span>
+</div>
+<!-- H1 -->
+<h1 class="font-hero-h1 text-hero-h1 tracking-tight text-on-surface leading-[1.1] mb-space-md">
+          From our fields to your table — <span class="text-[#91B4FF]">and back to the village.</span>
+</h1>
+<!-- Subcopy -->
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[720px] mb-space-xl">
+          Farm-grown products and weekend village experiences from Polepalli, Palnadu. Buy seasonal produce directly from the farm, or spend three days living and working alongside the people who grow it.
+        </p>
+<!-- CTA Cluster -->
+<div class="flex flex-wrap items-center justify-center gap-space-md mb-space-2xl">
+<a class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-primary-container text-white font-body-medium text-body-md hover:bg-[#1849A9] shadow-md transition-all" href="#products">
+<span>Explore farm products</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<a class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-surface-container-high/80 text-on-surface font-body-medium text-body-md hover:bg-surface-container-highest transition-all backdrop-blur-sm" href="#tourism">
+<span class="material-symbols-outlined text-[#10B981] text-[20px]">agriculture</span>
+<span>Weekend village experience</span>
+</a>
+</div>
+</div>
+<!-- Hero Metrics Quad -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md mt-space-md">
+<div class="p-space-lg rounded-xl bg-surface-container-low/70 backdrop-blur-md shadow-sm">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-eyebrow text-eyebrow tracking-widest text-[#10B981] uppercase font-semibold">TRACK DUALITY</span>
+<span class="material-symbols-outlined text-outline text-[18px]">swap_horiz</span>
+</div>
+<p class="font-card-h3 text-card-h3 font-semibold text-on-surface">2 Tracks</p>
+<p class="font-caption text-caption text-outline mt-1">Direct products &amp; immersive village tourism</p>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container-low/70 backdrop-blur-md shadow-sm">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-eyebrow text-eyebrow tracking-widest text-[#84CC16] uppercase font-semibold">CADENCE</span>
+<span class="material-symbols-outlined text-outline text-[18px]">calendar_today</span>
+</div>
+<p class="font-card-h3 text-card-h3 font-semibold text-on-surface">3 DAYS</p>
+<p class="font-caption text-caption text-outline mt-1">Authentic agrarian residency</p>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container-low/70 backdrop-blur-md shadow-sm">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-eyebrow text-eyebrow tracking-widest text-primary uppercase font-semibold">ORIGIN ECOSYSTEM</span>
+<span class="material-symbols-outlined text-outline text-[18px]">pin_drop</span>
+</div>
+<p class="font-card-h3 text-card-h3 font-semibold text-on-surface">POLEPALLI</p>
+<p class="font-caption text-caption text-outline mt-1">Palnadu basin, Andhra Pradesh</p>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container-low/70 backdrop-blur-md shadow-sm">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-eyebrow text-eyebrow tracking-widest text-[#10B981] uppercase font-semibold">SUPPLY EQUATION</span>
+<span class="material-symbols-outlined text-outline text-[18px]">all_inclusive</span>
+</div>
+<p class="font-card-h3 text-card-h3 font-semibold text-on-surface">DIRECT</p>
+<p class="font-caption text-caption text-outline mt-1">Zero broker chain: soil to kitchen table</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 1: About the Farm & Village Narrative -->
+<section class="w-full py-space-section bg-surface-container-lowest/80">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+<!-- Left: Contextual Narrative -->
+<div class="lg:col-span-6 flex flex-col space-y-space-md">
+<div class="inline-flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] text-[#84CC16] uppercase font-semibold">TERROIR &amp; STEWARDSHIP</span>
+</div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface leading-tight">
+            Restoring the degraded red loam of the Palnadu scrublands.
+          </h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Polepalli sits in the rain-shadow corridor of Palnadu. Where industrial green-revolution monocultures drained aquifers and depleted microbiological topsoil, Kavi Farms applies hyper-local water catchment trenching, desilted tank recharge beds, and indigenous heirloom multi-cropping.
+          </p>
+<p class="font-body-md text-body-md text-outline">
+            No synthetic nitrogen pellets. No endocrine-disrupting pesticides. We practice bio-diverse agroforestry combining native timber stands, shade pulses, and cold-hardy dryland millets. The village is our living lab; farmers are our senior research engineers.
+          </p>
+<!-- Core Pillars -->
+<div class="grid grid-cols-2 gap-space-md pt-space-xs">
+<div class="p-space-md rounded-lg bg-surface-container-low">
+<span class="font-card-h3-sm text-card-h3-sm font-semibold text-on-surface block mb-1">0% Chemicals</span>
+<span class="font-caption text-caption text-outline">Fermented Jeevamrutha and Neem kernel decoctions only.</span>
+</div>
+<div class="p-space-md rounded-lg bg-surface-container-low">
+<span class="font-card-h3-sm text-card-h3-sm font-semibold text-on-surface block mb-1">Aquifer Recharge</span>
+<span class="font-caption text-caption text-outline">3 contour bund swales capturing 4.2M liters of monsoon runoff.</span>
+</div>
+</div>
+</div>
+<!-- Right: Photographic Visual & Data Strip -->
+<div class="lg:col-span-6 relative">
+<div class="relative rounded-2xl overflow-hidden shadow-xl bg-surface-container">
+<img class="w-full h-[440px] object-cover" data-alt="Dryland agroforestry farm landscape in Polepalli Andhra Pradesh at sunset with terraced bunds, native trees, dry red soil and drip irrigation in deep navy shadows and warm emerald dusk highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1qbUMEj4oB0EZ9C_ordH-bhYCIxqRHHTo2mXgH2WbRH3oJJAIiYITChXuUOU75RIYXFFgFvR4mbSy7Pi6coAw-EjO6Kkr-smlX5Jb8WgCx4ADeql6EJ_zJy3CaoS9ZcwZEa3jjF9ntBXLlkXCL4oMLFQhUaMnI8q1NtX0SEx9fwG7NrW7L-beXTB9L6UgyROSdvk6YBWf3SLBGY5KuLuRDeI6hIaEKfsU0OYtiBo">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6 right-6 p-space-md rounded-xl bg-surface-container-high/90 backdrop-blur-md">
+<div class="flex items-center justify-between mb-2">
+<span class="font-eyebrow text-eyebrow text-[#10B981] tracking-widest uppercase">SOIL PROFILE TELEMETRY</span>
+<span class="font-caption text-caption text-outline">Q1 2025 Audit</span>
+</div>
+<div class="grid grid-cols-3 gap-2 text-center">
+<div>
+<div class="font-card-h3-sm text-card-h3-sm font-bold text-on-surface">1.84%</div>
+<div class="font-caption text-caption text-outline">Soil Organic Carbon</div>
+</div>
+<div>
+<div class="font-card-h3-sm text-card-h3-sm font-bold text-[#84CC16]">680 mm</div>
+<div class="font-caption text-caption text-outline">Rain Retention</div>
+</div>
+<div>
+<div class="font-card-h3-sm text-card-h3-sm font-bold text-primary">Zero</div>
+<div class="font-caption text-caption text-outline">Heavy Metals</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Farm Products -->
+<section class="w-full py-space-section" id="products">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-space-2xl">
+<div>
+<div class="inline-flex items-center gap-2 mb-space-xs">
+<span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] text-[#84CC16] uppercase font-semibold">AGRI HARVEST LINE</span>
+</div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface">Grown here, packed here.</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mt-2">
+            No long storage silos. Hand-harvested, sun-cured, and milled in small artisanal batches right at Polepalli. Prices reflect dynamic yield and logistics cost.
+          </p>
+</div>
+<div class="mt-4 md:mt-0">
+<span class="font-caption text-caption px-3 py-1.5 rounded-full bg-surface-container-high text-outline">
+            Hand-sorted • Unpolished • Single Origin
+          </span>
+</div>
+</div>
+<!-- Products Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-lg">
+<!-- Product 1 -->
+<div class="flex flex-col rounded-2xl bg-surface-container-low overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-md">
+<div class="relative h-48 w-full bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Coarse raw heritage foxtail and pearl millets in clay bowls placed on dark reclaimed village wood with rustic warm tone lighting and dry farm background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9gaZs1bAgkQxS3CEwlRKRfRmylZkE9iIdbyVd56__5EEvCPzPHXQqjkWsobRajNr9WjwVDt1-a1NSPGvYmafjtkUH403oRK9pBWma85G-bDdlzeaUtZM5Mz7I3BTTBf5y3bX9ZB2ZNvjGJa_ag2H8aABEc64odG84xxkmLX0KNfagI9W9kelVx6uz9BMhBamtbTBV6Eb2qdhpzmlCyK3GCUzVz-7vWmwgQQchmdA">
+<span class="absolute top-3 right-3 px-2 py-0.5 rounded-full font-eyebrow text-eyebrow bg-surface-container-lowest/80 text-[#84CC16] uppercase">Heirloom</span>
+</div>
+<div class="p-space-lg flex-1 flex flex-col justify-between">
+<div>
+<span class="font-eyebrow text-eyebrow text-outline tracking-wider uppercase">Grains &amp; Millets</span>
+<h3 class="font-card-h3-sm text-card-h3-sm font-semibold text-on-surface mt-1">Korra (Foxtail) &amp; Sajjalu</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-2">
+                Unpolished, low-glycemic, drought-adapted millet grains harvested post-monsoon. Hand-winnowed by village elders.
+              </p>
+</div>
+<div class="pt-space-md mt-space-md flex items-center justify-between">
+<div>
+<span class="font-caption text-caption text-outline block">Batch #24-F</span>
+<span class="font-body-medium text-body-medium text-[#84CC16]">Price on enquiry</span>
+</div>
+<a class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary transition-colors" href="#enquiry" title="Request Batch">
+<span class="material-symbols-outlined text-[20px]">chat_bubble_outline</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="flex flex-col rounded-2xl bg-surface-container-low overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-md">
+<div class="relative h-48 w-full bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Raw sun-dried indigenous red gram and black gram pulses spread on jute mats in rural courtyard setting with natural sun flare and high contrast textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKpNewK_stCIjcCztCMEezuqJQeQI9_BAlmbrDgDylT1v19rzJAxUtj-FrfTWhDLwQLvsvUa4acaYx33oJcPjMhbE6EPlhS5O4NmGUWJSCs-W7hD_cYZ55-MBh1vUAgMN7VADtyT3JKOkJO1PP7V97RZQCa1eXIe10pRABRj782y_U6ZwYAmrnNLtEMMm3MVOLHHG_FJGD5Q5ycpBPiKnJA4W96mAKv93fFaZssjU">
+<span class="absolute top-3 right-3 px-2 py-0.5 rounded-full font-eyebrow text-eyebrow bg-surface-container-lowest/80 text-[#10B981] uppercase">Single Estate</span>
+</div>
+<div class="p-space-lg flex-1 flex flex-col justify-between">
+<div>
+<span class="font-eyebrow text-eyebrow text-outline tracking-wider uppercase">Pulses</span>
+<h3 class="font-card-h3-sm text-card-h3-sm font-semibold text-on-surface mt-1">Native Desi Toor &amp; Urad</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-2">
+                Intercropped within rainfed red soil. Retains nutrient-dense fibrous husks, free from industrial talc polishing.
+              </p>
+</div>
+<div class="pt-space-md mt-space-md flex items-center justify-between">
+<div>
+<span class="font-caption text-caption text-outline block">Batch #24-P</span>
+<span class="font-body-medium text-body-medium text-[#84CC16]">Price on enquiry</span>
+</div>
+<a class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary transition-colors" href="#enquiry" title="Request Batch">
+<span class="material-symbols-outlined text-[20px]">chat_bubble_outline</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="flex flex-col rounded-2xl bg-surface-container-low overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-md">
+<div class="relative h-48 w-full bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Golden cold pressed groundnut and amber sesame oils in thick clear glass bottles with cork stoppers standing in front of traditional stone oil mill." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyUb1G8HG8MGqP_DVZ2bQScKWEpvK2-SrC5uLexi6QdcV8kvlnjr-ipaF_rCeNuTAiKQ0loSTYl8EDWgdZcIqzhGy9yByFmYuCQqr0lW0NXGt1B4DVaFvSvTAy6L9Arw21q8YG1r4mSnppeQikJr95xgb4AK6b7s1E5-IMk6oMZ5Hn4XfnH1axzRMjRiH-BIkdkW_0dXgyXzvG0_m5SRcquF56LD5B8LxPA1rys-8">
+<span class="absolute top-3 right-3 px-2 py-0.5 rounded-full font-eyebrow text-eyebrow bg-surface-container-lowest/80 text-primary uppercase">Stone Pressed</span>
+</div>
+<div class="p-space-lg flex-1 flex flex-col justify-between">
+<div>
+<span class="font-eyebrow text-eyebrow text-outline tracking-wider uppercase">Cold-Pressed Oils</span>
+<h3 class="font-card-h3-sm text-card-h3-sm font-semibold text-on-surface mt-1">Wood-Ghani Sesame &amp; Groundnut</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-2">
+                Extracted under 38°C on wood-and-granite rotaries without solvent bleaching. Sediment settled naturally.
+              </p>
+</div>
+<div class="pt-space-md mt-space-md flex items-center justify-between">
+<div>
+<span class="font-caption text-caption text-outline block">Batch #25-O</span>
+<span class="font-body-medium text-body-medium text-[#84CC16]">Price on enquiry</span>
+</div>
+<a class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary transition-colors" href="#enquiry" title="Request Batch">
+<span class="material-symbols-outlined text-[20px]">chat_bubble_outline</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Product 4 -->
+<div class="flex flex-col rounded-2xl bg-surface-container-low overflow-hidden hover:-translate-y-1 transition-transform duration-300 shadow-md">
+<div class="relative h-48 w-full bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Freshly harvested farm basket overflowing with Palnadu drumsticks, country tomatoes, bitter gourds, and wild leafy greens in early morning sunlight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKHaoruzVulE95jmgMrrOIh1dyrpeLOIW95jJmHKDrvvxMFosyZkVrDPVPUaRdHPSr2-oepz1AN9RvnPHDvbQQ3TTrMN0n3Eyo7zNVHGILfMcrL8ssD0si7O43r0GADQY2LhvOOIMn1VPc4PUJLIuO8A9llmTSqJS05gbqTcpX7f0QlQrSPgq7h2WwxJJOp2iZX3EAtYK251gmXvoTpRxYapbidESVGSOwo0GMBJc">
+<span class="absolute top-3 right-3 px-2 py-0.5 rounded-full font-eyebrow text-eyebrow bg-surface-container-lowest/80 text-[#84CC16] uppercase">Seasonal Box</span>
+</div>
+<div class="p-space-lg flex-1 flex flex-col justify-between">
+<div>
+<span class="font-eyebrow text-eyebrow text-outline tracking-wider uppercase">Fresh Field Greens</span>
+<h3 class="font-card-h3-sm text-card-h3-sm font-semibold text-on-surface mt-1">Country Vegetable Crates</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-2">
+                Seasonal field baskets: Guntur varieties of chili, desi tomatoes, drumstick pods, and native Palnadu greens.
+              </p>
+</div>
+<div class="pt-space-md mt-space-md flex items-center justify-between">
+<div>
+<span class="font-caption text-caption text-outline block">Weekly Allocation</span>
+<span class="font-body-medium text-body-medium text-[#84CC16]">Price on enquiry</span>
+</div>
+<a class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary transition-colors" href="#enquiry" title="Request Batch">
+<span class="material-symbols-outlined text-[20px]">chat_bubble_outline</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Trust Indicator Bar -->
+<div class="mt-space-xl p-space-md rounded-xl bg-surface-container-high/60 backdrop-blur flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#10B981]">local_shipping</span>
+<span class="font-caption text-caption text-on-surface">Direct dispatches to Hyderabad, Vijayawada, and Guntur twice weekly.</span>
+</div>
+<div class="font-eyebrow text-eyebrow tracking-widest text-outline uppercase">
+          Zero plastic packing • Jute and unbleached kraft wraps
+        </div>
+</div>
+</div>
+</section>
+<!-- Section 3: Farm Tourism Package & Honest Limits -->
+<section class="w-full py-space-section bg-surface-container-lowest/60" id="tourism">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<div class="max-w-2xl mb-space-2xl">
+<div class="inline-flex items-center gap-2 mb-space-xs">
+<span class="w-2 h-2 rounded-full bg-[#84CC16]"></span>
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] text-[#10B981] uppercase font-semibold">AGRARIAN RESIDENCY</span>
+</div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface leading-tight">
+          Three days in a real village.
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">
+          This is an unvarnished working village, not an eco-resort masquerading as rural life. You stay alongside families, eat what we harvest from the field that noon, and work the ground.
+        </p>
+</div>
+<!-- Dual Comparison Matrix: Inclusions vs Honest Boundaries -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- Package Features (7 Cols) -->
+<div class="lg:col-span-7 rounded-2xl bg-surface-container p-space-xl flex flex-col justify-between shadow-lg">
+<div>
+<div class="flex items-center justify-between pb-space-md">
+<div>
+<span class="font-eyebrow text-eyebrow tracking-widest text-[#84CC16] uppercase">IMMERSION SPECIFICATION</span>
+<h3 class="font-card-h3 text-card-h3 text-on-surface font-semibold mt-1">Village Residency Tier</h3>
+</div>
+<span class="px-3 py-1 rounded-full bg-[#10B981]/15 text-[#10B981] font-caption text-caption font-medium">3 Days / 2 Nights</span>
+</div>
+<div class="space-y-space-md py-space-md">
+<div class="flex items-start gap-4">
+<div class="p-2 rounded-lg bg-surface-container-high text-[#10B981] shrink-0">
+<span class="material-symbols-outlined text-[20px]">cottage</span>
+</div>
+<div>
+<h4 class="font-card-h3-sm text-card-h3-sm font-semibold text-on-surface">Cots in Clay-Lime Homesteads</h4>
+<p class="font-caption text-caption text-outline mt-1">Naturally ventilated mud-brick and tiled homes. Coir woven cots with clean cotton linens. Ceiling fans and mosquito nets.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="p-2 rounded-lg bg-surface-container-high text-[#84CC16] shrink-0">
+<span class="material-symbols-outlined text-[20px]">soup_kitchen</span>
+</div>
+<div>
+<h4 class="font-card-h3-sm text-card-h3-sm font-semibold text-on-surface">Hearth &amp; Earthen Pot Cooking</h4>
+<p class="font-caption text-caption text-outline mt-1">Three daily communal meals cooked over wood ash hearths by our village collective: hand-pounded millets, spicy gongura pachadi, cold curds, field greens.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="p-2 rounded-lg bg-surface-container-high text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">handyman</span>
+</div>
+<div>
+<h4 class="font-card-h3-sm text-card-h3-sm font-semibold text-on-surface">Field Participation Tracks</h4>
+<p class="font-caption text-caption text-outline mt-1">Participate in daily field routines: de-weeding, pulse collection, water channel repairs, livestock feeding, or oil mill grinding.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-space-md mt-space-md flex items-center justify-between">
+<span class="font-caption text-caption text-outline">Max 8 visitors per weekend to minimize village disruption</span>
+<a class="px-5 py-2.5 rounded-xl bg-[#10B981] text-surface-container-lowest font-body-medium text-caption font-semibold hover:bg-[#84CC16] transition-colors" href="#enquiry">
+              Request Weekend Dates
+            </a>
+</div>
+</div>
+<!-- Honest Realities Card (5 Cols) -->
+<div class="lg:col-span-5 rounded-2xl bg-surface-container-low p-space-xl flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center gap-2 pb-space-sm">
+<span class="material-symbols-outlined text-[#ffb4ab] text-[20px]">info</span>
+<span class="font-eyebrow text-eyebrow tracking-widest text-[#ffb4ab] uppercase font-semibold">HONEST REALITY CHECK</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface font-semibold">What this is not.</h3>
+<p class="font-caption text-caption text-outline mt-2 mb-space-md">
+              We want people who respect the land and rural pace. Please review our baseline constraints before planning a visit:
+            </p>
+<ul class="space-y-space-sm font-caption text-caption text-on-surface-variant">
+<li class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-outline text-[16px] mt-0.5">close</span>
+<span><strong class="text-on-surface">No room service or air conditioning:</strong> Days are dry and warm; nights are breezy and starry under open roofs.</span>
+</li>
+<li class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-outline text-[16px] mt-0.5">close</span>
+<span><strong class="text-on-surface">No guaranteed waterfalls:</strong> Streams flow during and after monsoons. Dry months are scorched red rock and scrub.</span>
+</li>
+<li class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-outline text-[16px] mt-0.5">close</span>
+<span><strong class="text-on-surface">Simple sanitation:</strong> Clean, private western-style toilets and hot well water in bucket baths. No bathtubs or spas.</span>
+</li>
+<li class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-outline text-[16px] mt-0.5">close</span>
+<span><strong class="text-on-surface">Intermittent cellular data:</strong> BSNL and Jio work near high ground; internal rooms offer near-complete digital silence.</span>
+</li>
+</ul>
+</div>
+<div class="mt-space-md p-space-sm rounded-lg bg-surface-container-high/50 text-outline text-caption font-caption">
+            • Open strictly to mindful families, curious students, and environmental stewards.
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: 3-Day Itinerary -->
+<section class="w-full py-space-section">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<div class="text-center max-w-xl mx-auto mb-space-2xl">
+<div class="inline-flex items-center gap-2 mb-space-xs">
+<span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] text-[#84CC16] uppercase font-semibold">THE CHRONOLOGY</span>
+</div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface">Three Days on the Land</h2>
+<p class="font-body-md text-body-md text-outline mt-2">
+          From unscripted sunrise walks to dusk storytelling around fire pits.
+        </p>
+</div>
+<!-- Timeline Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg relative">
+<!-- Day 1 -->
+<div class="p-space-xl rounded-2xl bg-surface-container relative overflow-hidden shadow-md flex flex-col justify-between">
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#10B981] to-[#84CC16]"></div>
+<div>
+<div class="flex items-baseline justify-between mb-space-md">
+<span class="font-eyebrow text-eyebrow tracking-widest text-[#10B981] uppercase font-bold">DAY 01</span>
+<span class="font-caption text-caption text-outline">Afternoon Arrival</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface font-semibold mb-2">Arrival &amp; Soil Walk</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md">
+              Reach Polepalli by 2:00 PM. Settle into village quarters with freshly crushed lemon grass herbal tea.
+            </p>
+<ul class="space-y-2 font-caption text-caption text-outline">
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+                Orientation walk across the farm contour bunds
+              </li>
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+                Observing the soil microbiome and organic bio-mixes
+              </li>
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+                Sunset dinner in the communal veranda
+              </li>
+</ul>
+</div>
+<div class="mt-space-lg pt-space-md font-caption text-caption text-[#84CC16]">
+            Night: Open-sky stargazing without urban light glow
+          </div>
+</div>
+<!-- Day 2 -->
+<div class="p-space-xl rounded-2xl bg-surface-container relative overflow-hidden shadow-md flex flex-col justify-between">
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#84CC16] to-primary"></div>
+<div>
+<div class="flex items-baseline justify-between mb-space-md">
+<span class="font-eyebrow text-eyebrow tracking-widest text-[#84CC16] uppercase font-bold">DAY 02</span>
+<span class="font-caption text-caption text-outline">Full Daylight Cycle</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface font-semibold mb-2">Morning Harvest &amp; Hearth</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md">
+              Wake before sunrise to the temple gong. Join the farm hands in the morning dew harvest.
+            </p>
+<ul class="space-y-2 font-caption text-caption text-outline">
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-[#84CC16]"></span>
+                Harvesting seasonal drumsticks and country greens
+              </li>
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-[#84CC16]"></span>
+                Traditional oil expelling at the stone rotaries
+              </li>
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-[#84CC16]"></span>
+                Cooking class: roasting flatbreads on earthen tavas
+              </li>
+</ul>
+</div>
+<div class="mt-space-lg pt-space-md font-caption text-caption text-[#84CC16]">
+            Dusk: Folk singing and agrarian oral histories
+          </div>
+</div>
+<!-- Day 3 -->
+<div class="p-space-xl rounded-2xl bg-surface-container relative overflow-hidden shadow-md flex flex-col justify-between">
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-[#10B981]"></div>
+<div>
+<div class="flex items-baseline justify-between mb-space-md">
+<span class="font-eyebrow text-eyebrow tracking-widest text-primary uppercase font-bold">DAY 03</span>
+<span class="font-caption text-caption text-outline">Reflective Morning</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface font-semibold mb-2">Community &amp; Temple Trail</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md">
+              A peaceful trail through the village perimeter and an 800-year-old stone Shiva shrine.
+            </p>
+<ul class="space-y-2 font-caption text-caption text-outline">
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                Walk to the catchment pond &amp; ancient stone shrine
+              </li>
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                Interaction with traditional village cotton weavers
+              </li>
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                Communal parting lunch &amp; dispatch parcel packing
+              </li>
+</ul>
+</div>
+<div class="mt-space-lg pt-space-md font-caption text-caption text-[#84CC16]">
+            Departure: 2:30 PM with freshly harvested crates
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: Local Destinations -->
+<section class="w-full py-space-section bg-surface-container-lowest/80">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-space-2xl">
+<div>
+<div class="inline-flex items-center gap-2 mb-space-xs">
+<span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] text-[#84CC16] uppercase font-semibold">GEOGRAPHIC ENCLAVE</span>
+</div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface">Local Heritage &amp; Topography</h2>
+<p class="font-body-md text-body-md text-outline max-w-lg mt-2">
+            The landscape surrounding Polepalli is layered with ancient stone carving, seasonal creek channels, and age-old artisanal craft.
+          </p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+<!-- Destination 1 -->
+<div class="group rounded-2xl bg-surface-container overflow-hidden shadow-md flex flex-col">
+<div class="relative h-60 w-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Ancient rustic stone temple of Lord Shiva carved from granite sitting quietly near dry shrub hills in Andhra Pradesh with moody dusk lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCc5JjwtAxz1jCVskON6e_DXCkBZdZLIjfhKSpDuEAfxOiaQOR4ssl41E4YLz_VzB06_kJtympa3eSoZkGZ00XzGaabuJp0tvM6Fxfl6tclmjcnArCzrEEQYIDh-nAgz0nY8u1ZoJoSSOMJ6Kax_tT75ZnYE2B9vLnk1AbY-tMd-NjhiDvZBEiqp-8fVURe5u4-c68OwinHVgQhfp1qWtbbJyU1iL5Pl5zXqSR1Xrw">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent"></div>
+<span class="absolute top-4 left-4 px-2.5 py-1 rounded-md bg-surface-container-lowest/90 font-eyebrow text-eyebrow text-[#84CC16] tracking-wider uppercase">0.8 KM WALK</span>
+</div>
+<div class="p-space-lg flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-card-h3-sm text-card-h3-sm font-semibold text-on-surface">Kakatiya-Era Shiva Shrine</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-2">
+                A non-commercial, weathered granite temple dedicated to Mallikarjuna. No queues, no commercial tickets—just stone slabs cool beneath your feet and chirping swallows.
+              </p>
+</div>
+<div class="mt-space-md pt-space-xs font-caption text-caption text-outline flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-[#10B981]">explore</span>
+              Accessible on foot from farm gate
+            </div>
+</div>
+</div>
+<!-- Destination 2 -->
+<div class="group rounded-2xl bg-surface-container overflow-hidden shadow-md flex flex-col">
+<div class="relative h-60 w-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Scenic monsoon stream and check dam catchment lake surrounded by rocky red soil outcrops and acacia trees in Palnadu region under overcast clouds." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-IECjjJ8Ehr7fp_7XASSGIL_rt9O8dKquupl6mJM9I8Km2J4dAngHIdnj7k0g5D2zCvpHWfdI12k31S6aT23TGVxk-GxXgEc0OwXEZryrBqJOg-_Ad8QeIj5ipZlaFbfbSfxt1htP8mpuBDKn-bPsObtldud0llV-sjLRO__eSaKABGyx3IEnVyRMSuZVJWY9OOvOOmZ-MC4uBOJz5vznfkNBphSX0k7rnU1NvOg">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent"></div>
+<span class="absolute top-4 left-4 px-2.5 py-1 rounded-md bg-surface-container-lowest/90 font-eyebrow text-eyebrow text-[#10B981] tracking-wider uppercase">1.5 KM TRAIL</span>
+</div>
+<div class="p-space-lg flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-card-h3-sm text-card-h3-sm font-semibold text-on-surface">The Hill Stream Catchment</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-2">
+                Where rain runoff descends from the low Palnadu ridges. An ideal location for solitary morning reflection, bird watching, and understanding our watershed geometry.
+              </p>
+</div>
+<div class="mt-space-md pt-space-xs font-caption text-caption text-outline flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-[#10B981]">water_drop</span>
+              Active water body from August to January
+            </div>
+</div>
+</div>
+<!-- Destination 3 -->
+<div class="group rounded-2xl bg-surface-container overflow-hidden shadow-md flex flex-col">
+<div class="relative h-60 w-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Artisanal handloom pit weaver working in a dim village home with raw cotton yarns stretched across wooden beams in traditional Andhra village." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkibpTzK55Oq4L3rLX-cWNA23nF1Sj-KUwxgTxgdkYTR3zrsoSwOMbSdbcDxmEB7Rljel9Ni1D8pVLU08TmZKXC5WDQ3cOBy11_No2lfTog20ePv-g_4fDJC46P4_Hy-4zpXLQfPAFTzg9S-eB80VlpxWlYTem8uGQFlCPiqIsJN2RIjdmOEcQ3HRBDVSzY2XpTIWWSoIjPZ-BE8jE9gvl4zC-galvXhRIu9Z4LJw">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent"></div>
+<span class="absolute top-4 left-4 px-2.5 py-1 rounded-md bg-surface-container-lowest/90 font-eyebrow text-eyebrow text-primary tracking-wider uppercase">VILLAGE CORE</span>
+</div>
+<div class="p-space-lg flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-card-h3-sm text-card-h3-sm font-semibold text-on-surface">Weaver Hearth Lanes</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-2">
+                Polepalli preserves six working pit-loom weaver households spinning coarse count khadi towels and yardage. Guests can observe bobbin winding and warp preparation.
+              </p>
+</div>
+<div class="mt-space-md pt-space-xs font-caption text-caption text-outline flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-[#10B981]">inventory_2</span>
+              Fair trade purchases directly with weavers
+            </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 6: Minimalist Photographic Gallery -->
+<section class="w-full py-space-section">
+<div class="max-w-[1152px] mx-auto px-gutter">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-space-xl">
+<div>
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] text-[#84CC16] uppercase font-semibold block mb-1">DOCUMENTATION</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface">Glimpses of Daily Rhythm</h2>
+</div>
+<span class="font-caption text-caption text-outline mt-2 md:mt-0">Unfiltered agrarian routine. No staged photos.</span>
+</div>
+<!-- Bento-style Photographic Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-md">
+<!-- Tile 1 (Large) -->
+<div class="md:col-span-8 relative h-[360px] rounded-2xl overflow-hidden group bg-surface-container shadow-md">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Sun rising over rural Palnadu Andhra Pradesh field workers carrying hand woven baskets filled with freshly picked organic pulses and sorghum under misty dawn sky." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXQGA3aVii8SmW6FGDwVWF4wWvvc13l8SgKgSaVjJDg-ucTlHLFtDJnnrzhaWnv5vIq2g52eOPcDjzNzorOgkM6rkvpqqG7yJzHa7FcqPYb4mpaQ6OVpbvXvvjd0MciLQbUzzli_v5ZkNkX6iLxp9XoKBmGJbWal0zIhXQnzNFd5V3L1gov1BC_fCxaXerSPW6lpOMgUBvdkwr9ENRLv5HapB61b8WmYkjAVxEfow">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 via-surface-container-lowest/20 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<span class="font-eyebrow text-eyebrow text-[#84CC16] uppercase tracking-widest block">06:15 AM</span>
+<p class="font-card-h3-sm text-card-h3-sm font-semibold text-white">Field harvest at dawn</p>
+</div>
+</div>
+<!-- Tile 2 -->
+<div class="md:col-span-4 relative h-[360px] rounded-2xl overflow-hidden group bg-surface-container shadow-md">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Traditional wood and granite cold press oil mill in Polepalli with dark stone pestle and crushed groundnut oil running into brass container." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRtvlmsvUJGERhF85u24_Z0nOoJP5DBEWamjdl43bW-pEn9XhDozmJvV1Pt3Hsv92Mwo4RX-7hY8S0SCmt4FpooJy3VS-IQngxOKHKtv2bkOWx6Px9rAofYfx3ELTwUYawU_76lSEKYTRHBdMaGUghAPpudJvwz5H6HUttn7YL4gk9kYdNF_laGvwE548QgCAS-Jw_ifvLunE8_XKipKz3YlPPI5Ox7KnDVB5JXd8">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 via-surface-container-lowest/20 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<span class="font-eyebrow text-eyebrow text-[#10B981] uppercase tracking-widest block">11:30 AM</span>
+<p class="font-card-h3-sm text-card-h3-sm font-semibold text-white">Cold-press stone mill</p>
+</div>
+</div>
+<!-- Tile 3 -->
+<div class="md:col-span-4 relative h-[300px] rounded-2xl overflow-hidden group bg-surface-container shadow-md">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Sunlit village home courtyard with terracotta tiled roof, woven rope cots, earthenware water pots and stray farm cat sleeping in warm sunlight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIRPicsVgqpRqiT8HFZpeX8y5yHE3LAEFXFGhx7aS3emOVNa93nop-sScPy01jvhcWbSmtUwH-94JbtuwBS3TxG5-bf6Z4GHdQjFUsNTjy0aDe9khPiaNi5oAlzObmuDqmzwgeKJ2u_dHTCDuFuPiCl4PAo_jDVllvzzYtgZTDhpUh9eEhcCcCM4CUBfM9chwpCjc5uBCgt_JR7aj3y8wS_HVsOT_5e7xUEf31vWw">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 via-surface-container-lowest/20 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<span class="font-eyebrow text-eyebrow text-primary uppercase tracking-widest block">02:00 PM</span>
+<p class="font-card-h3-sm text-card-h3-sm font-semibold text-white">Village courtyard</p>
+</div>
+</div>
+<!-- Tile 4 -->
+<div class="md:col-span-4 relative h-[300px] rounded-2xl overflow-hidden group bg-surface-container shadow-md">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Communal village hearth with fire burning beneath black seasoned mud pot cooking traditional pearl millet porridge with wood smoke curling gently." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoCPplN0kPQgxhJz5qp5UUxh-BT42M-n_qsPVWLS59jsAWtRz33akAjXawe9UVvdmmSEJeJpDkvJb1-hQpoAgoIYU_qhSNq0-LnlAGBi9BfSz-52v66nbKUafo19ZOg3LhTIQ5HJFk7enKk9U0Ut3egSvokJjcT8Rv5E5dcgIQViTvB15zayrXBrZRb3aCQbzXvWNmkZ9fh66tqDsg6j5NT6yQjq8A4dfWyik8mqI">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 via-surface-container-lowest/20 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<span class="font-eyebrow text-eyebrow text-[#84CC16] uppercase tracking-widest block">05:45 PM</span>
+<p class="font-card-h3-sm text-card-h3-sm font-semibold text-white">Earthen pot hearth cooking</p>
+</div>
+</div>
+<!-- Tile 5 -->
+<div class="md:col-span-4 relative h-[300px] rounded-2xl overflow-hidden group bg-surface-container shadow-md">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Contour rainwater harvesting trench carved across sloping red farm soil with young neem saplings planted along banks under stormy indigo monsoon sky." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKWfsf5DyYnaOua20rscfPjMlbe7FcCcn7LRpdAqGlks-KogtAbFGmm1LodE_RjlDI8Z8MZtd2N3FVJwbpJVvpp7x5qfkbAswTVTGXY4sgxb4MDy5hnDz0yDHchP5tbvmvIGHryL5oGMsNv0POANoDzBVmHl-B5GSiXYAv86lcQV1YtShFfiEqHCxZ7rEuuyMl4pO7WF3RiKVx_CVlyfUjaXwtcSbX6F-cJ61Q98s">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 via-surface-container-lowest/20 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<span class="font-eyebrow text-eyebrow text-[#10B981] uppercase tracking-widest block">ECOLOGY</span>
+<p class="font-card-h3-sm text-card-h3-sm font-semibold text-white">Water recharge swales</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 7: FAQ ("Before You Book") -->
+<section class="w-full py-space-section bg-surface-container-lowest/60">
+<div class="max-w-[896px] mx-auto px-gutter">
+<div class="text-center mb-space-2xl">
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] text-[#84CC16] uppercase font-semibold block mb-1">CLARITY FIRST</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface">Before You Book or Inquire</h2>
+<p class="font-body-md text-body-md text-outline mt-2">
+          Direct, honest answers about visiting our village and buying our farm yields.
+        </p>
+</div>
+<div class="space-y-space-md" id="faq-accordion">
+<!-- FAQ 1 -->
+<div class="rounded-xl bg-surface-container-low overflow-hidden shadow-sm">
+<button class="w-full p-space-lg text-left flex items-center justify-between text-on-surface hover:text-[#10B981] transition-colors focus:outline-none" onclick="toggleFaq(this)" type="button">
+<span class="font-card-h3-sm text-card-h3-sm font-semibold">How do we reach Polepalli from Hyderabad or Vijayawada?</span>
+<span class="material-symbols-outlined text-outline transition-transform duration-200">keyboard_arrow_down</span>
+</button>
+<div class="px-space-lg pb-space-lg pt-0 text-on-surface-variant font-caption text-caption hidden">
+            Polepalli is located approximately 3.5 hours drive from Hyderabad (ORR exit via Nagarjuna Sagar highway) and 2 hours from Vijayawada / Guntur. The final 6 kilometers are single-lane tarred rural roads that lead straight to the village commons. We share exact live GPS pins upon confirmed booking.
+          </div>
+</div>
+<!-- FAQ 2 -->
+<div class="rounded-xl bg-surface-container-low overflow-hidden shadow-sm">
+<button class="w-full p-space-lg text-left flex items-center justify-between text-on-surface hover:text-[#10B981] transition-colors focus:outline-none" onclick="toggleFaq(this)" type="button">
+<span class="font-card-h3-sm text-card-h3-sm font-semibold">Why is there no instant online checkout or fixed price for produce?</span>
+<span class="material-symbols-outlined text-outline transition-transform duration-200">keyboard_arrow_down</span>
+</button>
+<div class="px-space-lg pb-space-lg pt-0 text-on-surface-variant font-caption text-caption hidden">
+            We are not an e-commerce aggregation platform with inventory warehouses. All grains, oils, and seasonal vegetables are harvested in real-time batches based on weather and harvest maturity. Pricing covers strictly fair farmer remuneration, cold-pressing labor, and non-plastic freight costs. Inquiring lets us tell you exactly what is freshly harvested this week.
+          </div>
+</div>
+<!-- FAQ 3 -->
+<div class="rounded-xl bg-surface-container-low overflow-hidden shadow-sm">
+<button class="w-full p-space-lg text-left flex items-center justify-between text-on-surface hover:text-[#10B981] transition-colors focus:outline-none" onclick="toggleFaq(this)" type="button">
+<span class="font-card-h3-sm text-card-h3-sm font-semibold">Is the village visit safe for young children and elderly family members?</span>
+<span class="material-symbols-outlined text-outline transition-transform duration-200">keyboard_arrow_down</span>
+</button>
+<div class="px-space-lg pb-space-lg pt-0 text-on-surface-variant font-caption text-caption hidden">
+            Yes, provided they enjoy authentic rural settings. Children often find the open fields, farm animals, and stone mills immensely educational. However, please note that terrain includes uneven red soil, steps, and unpaved paths. While Western toilets are fitted in the quarters, there are no medical centers within 12km, so carry essential personal prescriptions.
+          </div>
+</div>
+<!-- FAQ 4 -->
+<div class="rounded-xl bg-surface-container-low overflow-hidden shadow-sm">
+<button class="w-full p-space-lg text-left flex items-center justify-between text-on-surface hover:text-[#10B981] transition-colors focus:outline-none" onclick="toggleFaq(this)" type="button">
+<span class="font-card-h3-sm text-card-h3-sm font-semibold">What meals are served during the 3-day residency?</span>
+<span class="material-symbols-outlined text-outline transition-transform duration-200">keyboard_arrow_down</span>
+</button>
+<div class="px-space-lg pb-space-lg pt-0 text-on-surface-variant font-caption text-caption hidden">
+            Meals are strictly regional Telugu vegetarian country fare prepared in clean earthen vessels. Breakfast typically features steamed millet idlis or ragi ambali. Lunches and dinners feature red gram dal, hand-harvested wild greens (thotakura, gongura), unpolished rice or jowar rotis, and country churned curds. No commercial sodas or processed junk foods are served on the premises.
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 8: Interactive Enquiry System with Dual Tabs & State Switchers -->
+<section class="w-full py-space-section" id="enquiry">
+<div class="max-w-[896px] mx-auto px-gutter">
+<div class="text-center mb-space-xl">
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] text-[#10B981] uppercase font-semibold block mb-1">GET IN TOUCH</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface">Initiate an Allocation or Visit</h2>
+<p class="font-body-md text-body-md text-outline mt-2">
+          Tell us whether you seek clean single-origin nutrition or wish to spend a weekend on the soil.
+        </p>
+</div>
+<!-- Main Glass Form Card -->
+<div class="rounded-3xl bg-surface-container-high/80 backdrop-blur-xl p-space-lg md:p-space-xl shadow-2xl relative">
+<!-- Tab Nav -->
+<div class="flex items-center gap-2 p-1.5 rounded-xl bg-surface-container-lowest/80 mb-space-xl max-w-md mx-auto">
+<button class="flex-1 py-2.5 rounded-lg text-caption font-body-medium transition-all bg-primary-container text-white shadow-sm" id="tab-product-btn" onclick="switchTab('product')" type="button">
+<span class="flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+<span>Farm Products</span>
+</span>
+</button>
+<button class="flex-1 py-2.5 rounded-lg text-caption font-body-medium text-outline hover:text-on-surface transition-all" id="tab-tourism-btn" onclick="switchTab('tourism')" type="button">
+<span class="flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">nature_people</span>
+<span>Village Visit</span>
+</span>
+</button>
+</div>
+<!-- Form Wrapper -->
+<form class="space-y-space-md" id="kavi-enquiry-form" onsubmit="handleFormSubmit(event)">
+<!-- Common Fields -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div>
+<label class="block font-eyebrow text-eyebrow uppercase tracking-wider text-outline mb-2">Your Name *</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="e.g. Sravan Reddy" required="" type="text">
+</div>
+<div>
+<label class="block font-eyebrow text-eyebrow uppercase tracking-wider text-outline mb-2">Email Address *</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="sravan@example.com" required="" type="email">
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div>
+<label class="block font-eyebrow text-eyebrow uppercase tracking-wider text-outline mb-2">Phone / WhatsApp *</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="+91 98490 00000" required="" type="tel">
+</div>
+<div>
+<label class="block font-eyebrow text-eyebrow uppercase tracking-wider text-outline mb-2">Delivery City / Origin *</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="e.g. Hyderabad / Guntur" required="" type="text">
+</div>
+</div>
+<!-- Product Tab Context -->
+<div class="space-y-space-md pt-2" id="product-fields">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div>
+<label class="block font-eyebrow text-eyebrow uppercase tracking-wider text-outline mb-2">Product Interest</label>
+<select class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>Heritage Millets &amp; Grains (Korra / Sajjalu)</option>
+<option>Native Desi Pulses (Toor &amp; Urad)</option>
+<option>Wood-Ghani Cold-Pressed Groundnut Oil</option>
+<option>Wood-Ghani Cold-Pressed Sesame Oil</option>
+<option>Weekly Seasonal Field Greens Box</option>
+<option>Assorted Estate Combo Basket</option>
+</select>
+</div>
+<div>
+<label class="block font-eyebrow text-eyebrow uppercase tracking-wider text-outline mb-2">Tentative Quantity</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="e.g. 5kg millets + 2L groundnut oil" type="text">
+</div>
+</div>
+</div>
+<!-- Tourism Tab Context (Hidden by default) -->
+<div class="space-y-space-md pt-2 hidden" id="tourism-fields">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<div>
+<label class="block font-eyebrow text-eyebrow uppercase tracking-wider text-outline mb-2">Preferred Month</label>
+<select class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>November - December (Pleasant / Green)</option>
+<option>January - February (Harvest Festivities)</option>
+<option>March - April (Summer Dry Bloom)</option>
+<option>July - October (Monsoon Sowing)</option>
+</select>
+</div>
+<div>
+<label class="block font-eyebrow text-eyebrow uppercase tracking-wider text-outline mb-2">Group Size</label>
+<select class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>Solo Traveler (1 person)</option>
+<option>Couple / Pair (2 persons)</option>
+<option>Small Family (3-4 persons)</option>
+<option>Small Cohort (5-8 persons max)</option>
+</select>
+</div>
+<div>
+<label class="block font-eyebrow text-eyebrow uppercase tracking-wider text-outline mb-2">Primary Interest</label>
+<select class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-on-surface font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>General Agrarian Immersion</option>
+<option>Soil &amp; Watershed Regenerative Study</option>
+<option>Culinary Hearth &amp; Millet Cooking</option>
+<option>Silent Digital Detox &amp; Stargazing</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Shared Message Area -->
+<div>
+<label class="block font-eyebrow text-eyebrow uppercase tracking-wider text-outline mb-2">Notes or Dietary / Accessibility Inquiries</label>
+<textarea class="w-full p-4 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="Tell us about your expectations, specific requests, or questions regarding our harvest timeline..." rows="3"></textarea>
+</div>
+<!-- Submit Button & State Preview Area -->
+<div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<button class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#10B981] to-[#84CC16] text-[#070e1c] font-body-medium text-body-md font-semibold hover:opacity-95 shadow-lg transition-all flex items-center justify-center gap-2" id="form-submit-btn" type="submit">
+<span>Send Farm Enquiry</span>
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+<!-- State Selector For Interactive Preview -->
+<div class="flex items-center gap-1.5 p-1 rounded-lg bg-surface-container-lowest text-outline font-eyebrow text-eyebrow">
+<span class="px-2 uppercase text-[10px] tracking-wider text-outline-variant">Preview State:</span>
+<button class="px-2 py-1 rounded hover:bg-surface-container-high transition-colors" onclick="setFormState('idle')" title="Default idle form" type="button">Idle</button>
+<button class="px-2 py-1 rounded hover:bg-surface-container-high transition-colors" onclick="setFormState('sending')" title="Simulate sending state" type="button">Sending</button>
+<button class="px-2 py-1 rounded hover:bg-surface-container-high transition-colors" onclick="setFormState('sent')" title="Simulate success message" type="button">Sent</button>
+<button class="px-2 py-1 rounded hover:bg-surface-container-high transition-colors" onclick="setFormState('error')" title="Simulate submission error" type="button">Error</button>
+</div>
+</div>
+</form>
+<!-- Dynamic State Banners (Embedded below form) -->
+<div class="hidden mt-space-md p-space-md rounded-xl transition-all" id="status-banner">
+<div class="flex items-center gap-3" id="status-content">
+<!-- Injected dynamically via JS -->
+</div>
+</div>
+</div>
+<!-- Trust Note Footer -->
+<div class="mt-space-lg text-center font-caption text-caption text-outline">
+        Kavi Farms is an ecological experiment stewarded under the Kavi Solutions engineering collective. We respond personally to every inquiry within 24 hours.
+      </div>
+</div>
+</section>
+<!-- Interactive Script for Tabs, States & FAQ Accordions -->
+<script>
+    function switchTab(type) {
+      const prodBtn = document.getElementById('tab-product-btn');
+      const tourBtn = document.getElementById('tab-tourism-btn');
+      const prodFields = document.getElementById('product-fields');
+      const tourFields = document.getElementById('tourism-fields');
+      const submitBtn = document.getElementById('form-submit-btn');
+
+      if (type === 'product') {
+        prodBtn.className = "flex-1 py-2.5 rounded-lg text-caption font-body-medium transition-all bg-primary-container text-white shadow-sm";
+        tourBtn.className = "flex-1 py-2.5 rounded-lg text-caption font-body-medium text-outline hover:text-on-surface transition-all";
+        prodFields.classList.remove('hidden');
+        tourFields.classList.add('hidden');
+        submitBtn.innerHTML = `<span>Send Product Enquiry</span><span class="material-symbols-outlined text-[18px]">send</span>`;
+      } else {
+        tourBtn.className = "flex-1 py-2.5 rounded-lg text-caption font-body-medium transition-all bg-primary-container text-white shadow-sm";
+        prodBtn.className = "flex-1 py-2.5 rounded-lg text-caption font-body-medium text-outline hover:text-on-surface transition-all";
+        tourFields.classList.remove('hidden');
+        prodFields.classList.add('hidden');
+        submitBtn.innerHTML = `<span>Request Village Residency</span><span class="material-symbols-outlined text-[18px]">event_available</span>`;
+      }
+    }
+
+    function toggleFaq(button) {
+      const content = button.nextElementSibling;
+      const icon = button.querySelector('.material-symbols-outlined');
+      const isHidden = content.classList.contains('hidden');
+
+      if (isHidden) {
+        content.classList.remove('hidden');
+        icon.style.transform = 'rotate(180deg)';
+      } else {
+        content.classList.add('hidden');
+        icon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    function setFormState(state) {
+      const banner = document.getElementById('status-banner');
+      const content = document.getElementById('status-content');
+      const submitBtn = document.getElementById('form-submit-btn');
+
+      banner.classList.remove('hidden', 'bg-surface-container-high', 'bg-[#10B981]/15', 'bg-[#93000a]/20');
+
+      if (state === 'idle') {
+        banner.classList.add('hidden');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+      } else if (state === 'sending') {
+        banner.classList.add('bg-surface-container-high');
+        content.innerHTML = `
+          <span class="material-symbols-outlined text-primary animate-spin text-[20px]">sync</span>
+          <span class="font-caption text-caption text-on-surface">Transmitting allocation dispatch parameters to Polepalli registry...</span>
+        `;
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-60', 'cursor-not-allowed');
+      } else if (state === 'sent') {
+        banner.classList.add('bg-[#10B981]/15');
+        content.innerHTML = `
+          <span class="material-symbols-outlined text-[#10B981] text-[22px]">check_circle</span>
+          <div>
+            <span class="font-card-h3-sm text-card-h3-sm font-semibold text-[#84CC16] block">Enquiry Dispatched</span>
+            <span class="font-caption text-caption text-on-surface-variant">We have received your coordinates. A farm steward will contact you via WhatsApp/Email within 24 hours with allocation details.</span>
+          </div>
+        `;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+      } else if (state === 'error') {
+        banner.classList.add('bg-[#93000a]/20');
+        content.innerHTML = `
+          <span class="material-symbols-outlined text-[#ffb4ab] text-[22px]">error</span>
+          <div>
+            <span class="font-card-h3-sm text-card-h3-sm font-semibold text-[#ffb4ab] block">Transmission Interrupted</span>
+            <span class="font-caption text-caption text-on-surface-variant">Rural telemetry connection timed out. Please check your network or message us directly on WhatsApp at +91 98490 00000.</span>
+          </div>
+        `;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+      }
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      setFormState('sending');
+      setTimeout(() => {
+        setFormState('sent');
+      }, 1200);
+    }
+  </script>
+</div></main><footer class="w-full bg-[#06060F] text-on-surface-variant pt-space-section pb-space-2xl"><div class="max-w-[1152px] mx-auto px-gutter"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-xl pb-space-2xl"><div class="lg:col-span-2 space-y-space-md pr-space-md"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary via-inverse-primary to-tertiary flex items-center justify-center"><span class="font-card-h3-sm text-card-h3-sm font-bold text-surface-container-lowest leading-none select-none">K</span></div><span class="font-card-h3-sm text-card-h3-sm font-semibold tracking-tight text-on-surface">Kavi Solutions</span></div><p class="font-body-md text-caption text-outline max-w-sm">High-assurance digital product engineering. Architecting calibrated software primitives, cloud pipelines, and cognitive intelligence systems for modern enterprises.</p><div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-container-low"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="font-eyebrow text-eyebrow tracking-widest text-on-surface-variant uppercase">All Core Systems Operational</span></div></div><div><p class="font-eyebrow text-eyebrow uppercase text-on-surface tracking-widest mb-space-md">Disciplines</p><ul class="space-y-2 font-caption text-caption"><li class="text-outline hover:text-on-surface transition-colors">Web Platforms</li><li class="text-outline hover:text-on-surface transition-colors">Mobile Native</li><li class="text-outline hover:text-on-surface transition-colors">Product Systems</li><li class="text-outline hover:text-on-surface transition-colors">Growth &amp; Marketing</li><li class="text-outline hover:text-on-surface transition-colors">Applied AI &amp; Models</li><li class="text-outline hover:text-on-surface transition-colors">Fellowship Research</li></ul></div><div><p class="font-eyebrow text-eyebrow uppercase text-on-surface tracking-widest mb-space-md">Navigation</p><ul class="space-y-2 font-caption text-caption"><li><a class="text-outline hover:text-on-surface transition-colors" data-path="showcase" href="#">Showcase</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="services" href="#">Services Portfolio</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="projects" href="#">Client Index</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="fellowship" href="#">Engineering Fellowship</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="team" href="#">Principals &amp; Team</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="verification" href="#">Credential Verification</a></li></ul></div><div><p class="font-eyebrow text-eyebrow uppercase text-on-surface tracking-widest mb-space-md">Directives</p><ul class="space-y-2 font-caption text-caption"><li><a class="text-outline hover:text-on-surface transition-colors" data-path="contact" href="#">Initiate Brief</a></li><li><a class="text-outline hover:text-on-surface transition-colors" data-path="login" href="#">Client Portal</a></li><li class="text-outline hover:text-on-surface transition-colors">Security Matrix</li><li class="text-outline hover:text-on-surface transition-colors">Privacy Telemetry</li></ul></div></div><div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md font-caption text-caption text-outline"><p>© 2025 Kavi Solutions Digital Product Studio. All rights reserved.</p><p class="font-eyebrow text-eyebrow uppercase tracking-widest text-outline-variant">Precision Hardware • Engineering Monitors</p></div></div></footer>
+
+</body></html>

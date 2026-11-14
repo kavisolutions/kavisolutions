@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import FellowshipPage from "@/components/FellowshipPage";
 
 export const metadata: Metadata = {
@@ -8,5 +10,13 @@ export const metadata: Metadata = {
 };
 
 export default function Fellowship() {
-  return <FellowshipPage />;
+  return (
+    <div className="min-h-screen bg-ink font-sans text-[#F7F9FC] flex flex-col justify-between">
+      <Navbar />
+      <div className="flex-grow">
+        <FellowshipPage />
+      </div>
+      <Footer />
+    </div>
+  );
 }

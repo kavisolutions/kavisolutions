@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { authClient, useAuth } from "@/lib/auth-context";
 import GradientPicker from "@/components/GradientPicker";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import type { OrgRole, OrgTeam } from "@/lib/team";
 
 type MeResponse = {
@@ -178,15 +180,15 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-ink px-6 py-12 text-white">
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-8 text-center">
-          <Link href="/" className="font-display text-xl font-semibold tracking-tight">
-            Kavi<span className="text-gradient">Solutions</span>
-          </Link>
-          <h1 className="mt-3 font-display text-3xl font-bold">My Profile</h1>
-          <p className="text-xs text-mist">Signed in as {session.user.email}</p>
-        </div>
+    <div className="min-h-screen bg-ink font-sans text-[#F7F9FC] flex flex-col justify-between">
+      <Navbar />
+
+      <main className="px-6 pt-36 pb-20 flex-grow">
+        <div className="mx-auto max-w-2xl">
+          <div className="mb-8 text-center">
+            <h1 className="font-display text-3xl font-bold">My Profile</h1>
+            <p className="text-xs text-mist">Signed in as {session.user.email}</p>
+          </div>
 
         <div className="rounded-3xl glass p-6">
           <div className="mb-5 flex items-center gap-4">
@@ -301,6 +303,9 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

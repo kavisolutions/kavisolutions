@@ -1,0 +1,816 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-background":"#dce2f6","tertiary":"#45dfa4","on-secondary-container":"#97b8ff","surface-container-highest":"#2e3544","on-error":"#690005","tertiary-container":"#00724f","inverse-primary":"#0957ce","surface-container-high":"#232a39","primary-fixed":"#dae2ff","on-tertiary-fixed-variant":"#005137","error":"#ffb4ab","surface-variant":"#2e3544","inverse-on-surface":"#2a3040","background":"#0c1321","error-container":"#93000a","tertiary-fixed":"#68fcbf","surface-tint":"#b1c5ff","on-surface-variant":"#c3c6d6","on-primary-fixed-variant":"#0040a0","on-secondary-fixed":"#001a42","surface-container-lowest":"#070e1c","on-tertiary-fixed":"#002114","secondary-fixed":"#d8e2ff","surface-container":"#19202e","on-primary":"#002c72","on-tertiary-container":"#66fabd","on-error-container":"#ffdad6","on-primary-container":"#d7e0ff","primary-fixed-dim":"#b1c5ff","on-primary-fixed":"#001847","primary":"#b1c5ff","secondary-container":"#1e478b","tertiary-fixed-dim":"#45dfa4","outline":"#8d909f","surface-dim":"#0c1321","surface-bright":"#323949","on-secondary":"#002e6a","secondary":"#aec6ff","on-surface":"#dce2f6","secondary-fixed-dim":"#aec6ff","inverse-surface":"#dce2f6","on-tertiary":"#003825","surface":"#0c1321","outline-variant":"#424654","primary-container":"#175cd3","on-secondary-fixed-variant":"#1b4588","surface-container-low":"#151b2a"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-sm":"0.5rem","space-2xl":"3rem","space-xs":"0.25rem","space-lg":"1.5rem","space-xl":"2rem","gutter":"1.5rem","space-md":"1rem","space-section-xl":"8rem","space-3xl":"4rem","gutter-mobile":"1rem","space-section":"6rem","margin-desktop":"auto","margin":"1.5rem"},fontFamily:{"hero-h1-tablet":["Space Grotesk"],"section-h2-mobile":["Space Grotesk"],"hero-h1-mobile":["Space Grotesk"],"caption":["Geist"],"body-lg":["Geist"],"hero-h1":["Space Grotesk"],"card-h3-sm":["Space Grotesk"],"card-h3":["Space Grotesk"],"body-medium":["Geist"],"page-h1-mobile":["Space Grotesk"],"eyebrow":["Geist"],"page-h1":["Space Grotesk"],"body-md":["Geist"],"section-h2":["Space Grotesk"]},fontSize:{"hero-h1-tablet":["60px",{"lineHeight":"1.1","letterSpacing":"-0.025em","fontWeight":"700"}],"section-h2-mobile":["30px",{"lineHeight":"1.25","letterSpacing":"-0.015em","fontWeight":"600"}],"hero-h1-mobile":["36px",{"lineHeight":"1.15","letterSpacing":"-0.02em","fontWeight":"700"}],"caption":["13px",{"lineHeight":"1.4","letterSpacing":"0.01em","fontWeight":"400"}],"body-lg":["18px",{"lineHeight":"1.6","letterSpacing":"-0.005em","fontWeight":"400"}],"hero-h1":["72px",{"lineHeight":"1.1","letterSpacing":"-0.03em","fontWeight":"700"}],"card-h3-sm":["18px",{"lineHeight":"1.35","letterSpacing":"-0.01em","fontWeight":"600"}],"card-h3":["22px",{"lineHeight":"1.3","letterSpacing":"-0.01em","fontWeight":"600"}],"body-medium":["16px",{"lineHeight":"1.6","letterSpacing":"0","fontWeight":"500"}],"page-h1-mobile":["36px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"600"}],"eyebrow":["11px",{"lineHeight":"1","letterSpacing":"0.2em","fontWeight":"600"}],"page-h1":["60px",{"lineHeight":"1.15","letterSpacing":"-0.025em","fontWeight":"600"}],"body-md":["16px",{"lineHeight":"1.6","letterSpacing":"0","fontWeight":"400"}],"section-h2":["48px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 px-gutter"><div class="w-full max-w-[1152px] h-16 rounded-xl bg-[rgba(18,29,47,0.84)] backdrop-blur-[16px] border border-[rgba(148,163,184,0.14)] px-space-lg flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.2)]"><a class="flex items-center gap-space-sm group" data-path="showcase" href="#"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 mr-2 tracking-wider">P04</span><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary via-primary-container to-secondary flex items-center justify-center font-card-h3 text-card-h3 text-on-primary font-bold shadow-inner">K</div><span class="font-card-h3-sm text-card-h3-sm text-on-surface tracking-tight group-hover:text-primary transition-colors">Kavi Solutions</span></a><nav class="hidden md:flex items-center gap-space-xs rounded-lg p-space-xs" data-active-classes="text-on-surface font-medium bg-surface-container-high/60"><a class="px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface font-body-md text-caption transition-colors" data-path="showcase" href="#"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 mr-2 tracking-wider">P04</span>Showcase</a><a class="px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface font-body-md text-caption transition-colors" data-path="services" href="#">Services</a><a class="px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface font-body-md text-caption transition-colors" data-path="projects" href="#">Projects</a><a aria-current="page" class="px-space-md py-space-xs rounded-lg transition-colors text-on-surface font-medium bg-surface-container-high/60" data-path="fellowship" href="#">Fellowship</a><a class="px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface font-body-md text-caption transition-colors" data-path="team" href="#">Team</a></nav><div class="flex items-center gap-space-md"><a class="hidden sm:inline-block font-body-md text-caption text-on-surface-variant hover:text-on-surface transition-colors" data-path="login" href="#">Login</a><a class="px-space-md py-space-sm bg-primary-container hover:bg-[#1849A9] text-[#FFFFFF] rounded-xl font-body-medium text-caption transition-all focus:outline-none focus:ring-2 focus:ring-primary shadow-sm" data-path="contact" href="#">Let's Talk</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-surface min-h-[calc(100vh-20rem)]"><div class="flex flex-col w-full text-on-surface">
+<!-- ======================================================== -->
+<!-- HERO SECTION                                             -->
+<!-- ======================================================== -->
+<section class="relative w-full overflow-hidden py-space-section lg:py-space-section-xl flex justify-center">
+<!-- Atmospheric Ambient Glow Orbs -->
+<div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[720px] h-[380px] bg-gradient-to-r from-[#7C3AED]/20 to-[#0EA5E9]/20 blur-[120px] pointer-events-none rounded-full"></div>
+<div class="absolute top-48 left-12 w-80 h-80 bg-[#7C3AED]/15 blur-[96px] pointer-events-none rounded-full"></div>
+<div class="absolute top-64 right-12 w-96 h-96 bg-[#0EA5E9]/15 blur-[110px] pointer-events-none rounded-full"></div>
+<div class="relative w-full max-w-[1152px] px-gutter flex flex-col items-center text-center">
+<!-- Eyebrow Pill -->
+<div class="inline-flex items-center gap-space-sm px-space-md py-space-xs rounded-full bg-surface-container-high/80 border-0 shadow-md backdrop-blur-md mb-space-lg"><span class="font-mono text-caption text-primary font-semibold">[P04]</span><span class="text-caption">🎓</span><span class="font-eyebrow text-eyebrow tracking-[0.2em] uppercase text-primary">Kavi Fellowship</span></div>
+<!-- Headline -->
+<h1 class="font-hero-h1 text-hero-h1 text-on-surface max-w-[896px] tracking-tight mb-space-lg">
+        Eleven months to build a life you can <span class="text-[#91B4FF]">stand behind.</span>
+</h1>
+<!-- Subcopy -->
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[760px] mb-space-xl">
+        A cohort-based fellowship for diploma students, final-year students, graduates and people returning to work. Learn by doing real projects, sit with silence, lead in the field and leave with a portfolio — not just a certificate.
+      </p>
+<!-- Action Buttons -->
+<div class="flex flex-wrap items-center justify-center gap-space-md mb-space-2xl">
+<a class="px-space-xl py-space-md bg-primary-container hover:bg-[#1849A9] text-[#FFFFFF] rounded-xl font-body-medium text-body-md transition-all duration-200 shadow-lg hover:shadow-primary-container/20 flex items-center gap-space-sm" href="#cohorts">
+<span>Register your interest</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<a class="px-space-xl py-space-md bg-surface-container-high/60 hover:bg-surface-bright/80 text-on-surface rounded-xl font-body-medium text-body-md backdrop-blur-md transition-all duration-200 shadow-sm flex items-center gap-space-sm" href="#curriculum">
+<span>See the 11-month journey</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">timeline</span>
+</a>
+</div>
+<!-- Visual Metric Strip Container -->
+<div class="w-full max-w-[960px] rounded-2xl bg-surface-container-lowest/80 p-2 shadow-xl backdrop-blur-xl">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+<div class="p-space-lg rounded-xl bg-surface-container/60 flex flex-col text-left transition-all hover:bg-surface-container-high/60">
+<span class="font-eyebrow text-eyebrow text-primary uppercase tracking-[0.2em] mb-1">Duration</span>
+<span class="font-card-h3 text-card-h3 text-on-surface mb-0.5">11 Months</span>
+<span class="font-caption text-caption text-on-surface-variant">Full intensive journey</span>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container/60 flex flex-col text-left transition-all hover:bg-surface-container-high/60">
+<span class="font-eyebrow text-eyebrow text-tertiary uppercase tracking-[0.2em] mb-1">Foundations</span>
+<span class="font-card-h3 text-card-h3 text-on-surface mb-0.5">3 Practices</span>
+<span class="font-caption text-caption text-on-surface-variant">Craft, silence &amp; field</span>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container/60 flex flex-col text-left transition-all hover:bg-surface-container-high/60">
+<span class="font-eyebrow text-eyebrow text-secondary uppercase tracking-[0.2em] mb-1">Language</span>
+<span class="font-card-h3 text-card-h3 text-on-surface mb-0.5">EN + TE</span>
+<span class="font-caption text-caption text-on-surface-variant">English primary, Telugu support</span>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container/60 flex flex-col text-left transition-all hover:bg-surface-container-high/60">
+<span class="font-eyebrow text-eyebrow text-[#0EA5E9] uppercase tracking-[0.2em] mb-1">Format</span>
+<span class="font-card-h3 text-card-h3 text-on-surface mb-0.5">Cohort</span>
+<span class="font-caption text-caption text-on-surface-variant">Learn with a resilient team</span>
+</div>
+</div>
+</div>
+<!-- Footnote Badge -->
+<div class="mt-space-md flex items-center gap-space-sm text-caption font-caption text-outline">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>English primary · Telugu support · Honest standard: No placement guarantee</span>
+</div>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- WHO IT'S FOR                                             -->
+<!-- ======================================================== -->
+<section class="w-full py-space-section flex justify-center bg-surface-container-lowest/50 relative">
+<div class="w-full max-w-[1152px] px-gutter">
+<div class="max-w-[720px] mb-space-2xl">
+<div class="flex items-center gap-space-sm mb-space-sm">
+<span class="w-2.5 h-2.5 rounded-sm bg-primary"></span>
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] uppercase text-primary">Eligibility &amp; Philosophy</span>
+</div>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight">
+          If you are willing to do the work, the door is open.
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-space-sm">
+          We do not screen for prestigious pedigrees, polished accents, or privileged family connections. We screen for grit, humility, and the quiet persistence required to build durable skills.
+        </p>
+</div>
+<!-- 6 Glass Profile Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+<!-- Profile 1 -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md flex flex-col justify-between hover:bg-surface-container-high/80 transition-all group">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center mb-space-md text-primary group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[24px]">school</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-xs">Diploma Graduates</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Graduated with practical technical inclinations but caught between low-value service desks and inaccessible four-year universities. You need production leverage.
+            </p>
+</div>
+<div class="pt-space-md mt-space-md flex items-center gap-2 text-caption font-caption text-primary">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Focus: Deep systems fundamentals</span>
+</div>
+</div>
+<!-- Profile 2 -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md flex flex-col justify-between hover:bg-surface-container-high/80 transition-all group">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center mb-space-md text-secondary group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[24px]">trending_up</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-xs">Final-Year Students</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Tired of rote college syllabi disconnected from industrial practice. You want to spend your final year shipping software that real people use.
+            </p>
+</div>
+<div class="pt-space-md mt-space-md flex items-center gap-2 text-caption font-caption text-secondary">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Focus: Production codebases</span>
+</div>
+</div>
+<!-- Profile 3 -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md flex flex-col justify-between hover:bg-surface-container-high/80 transition-all group">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center mb-space-md text-tertiary group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[24px]">explore</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-xs">Graduates Without Direction</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Holding a degree in hand but unable to clear technical screens or produce convincing independent projects. Reset and build true muscle.
+            </p>
+</div>
+<div class="pt-space-md mt-space-md flex items-center gap-2 text-caption font-caption text-tertiary">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Focus: Architectural craftsmanship</span>
+</div>
+</div>
+<!-- Profile 4 -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md flex flex-col justify-between hover:bg-surface-container-high/80 transition-all group">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center mb-space-md text-[#0EA5E9] group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[24px]">autorenew</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-xs">Women Returning to Work</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Navigating career breaks after caregiving or life transitions. An intensive, respectful structure designed to regain professional authority.
+            </p>
+</div>
+<div class="pt-space-md mt-space-md flex items-center gap-2 text-caption font-caption text-[#0EA5E9]">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Focus: Modern workflow integration</span>
+</div>
+</div>
+<!-- Profile 5 -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md flex flex-col justify-between hover:bg-surface-container-high/80 transition-all group">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center mb-space-md text-primary-fixed-dim group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[24px]">handshake</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-xs">Discontinued Formal Education</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Circumstances forced you to step away from the traditional degree conveyor belt. We care about your discipline and work ethic, not past paper trails.
+            </p>
+</div>
+<div class="pt-space-md mt-space-md flex items-center gap-2 text-caption font-caption text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Focus: Execution discipline</span>
+</div>
+</div>
+<!-- Profile 6 -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md flex flex-col justify-between hover:bg-surface-container-high/80 transition-all group">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center mb-space-md text-tertiary-fixed group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[24px]">swap_horiz</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-xs">Professionals Re-skilling</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Trapped in repetitive call center, data entry, or generic IT support roles. Rebuild your stack to tackle real engineering, design, or ops challenges.
+            </p>
+</div>
+<div class="pt-space-md mt-space-md flex items-center gap-2 text-caption font-caption text-tertiary-fixed">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Focus: Hard industrial tooling</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- THREE PILLARS                                            -->
+<!-- ======================================================== -->
+<section class="w-full py-space-section lg:py-space-section-xl flex justify-center relative overflow-hidden">
+<!-- Subtle gradient glow behind pillars -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-gradient-to-r from-[#7C3AED]/15 via-[#0EA5E9]/10 to-transparent blur-[140px] pointer-events-none"></div>
+<div class="w-full max-w-[1152px] px-gutter relative">
+<div class="text-center max-w-[720px] mx-auto mb-space-2xl">
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] uppercase text-tertiary block mb-space-xs">The Triad System</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight">
+          Three Non-Negotiable Pillars
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-space-sm">
+          Technical competence alone crumbles under stress. We cultivate equal parts psychological stillness, group command, and grounded field grit.
+        </p>
+</div>
+<!-- 3 Hero Cards -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-lg">
+<!-- Pillar 1: Vipassana -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-xl backdrop-blur-xl relative overflow-hidden flex flex-col justify-between group hover:bg-surface-container-high/70 transition-all">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none group-hover:bg-primary/20 transition-all"></div>
+<div>
+<div class="w-14 h-14 rounded-2xl bg-[#7C3AED]/20 text-primary flex items-center justify-center mb-space-lg shadow-inner">
+<span class="material-symbols-outlined text-[30px]" style="font-variation-settings: 'FILL' 1;">self_improvement</span>
+</div>
+<div class="flex items-center gap-space-xs mb-space-xs">
+<span class="font-eyebrow text-eyebrow text-primary tracking-[0.2em] uppercase">Pillar 01</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="font-eyebrow text-eyebrow text-on-surface-variant tracking-[0.2em] uppercase">Internal</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-sm">Vipassana Practice</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-space-md">
+              Silence and rigorous self-awareness. Fellows train the mind to observe without reactivity, cultivating unshakeable mental endurance, clarity under high stress, and continuous deep focus in complex architectural debugging.
+            </p>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-lowest/80 text-caption font-caption text-on-surface-variant">
+<span class="text-on-surface font-semibold">Core outcome:</span> Elimination of distraction paralysis, 4+ hours uninterrupted deep work cycles.
+          </div>
+</div>
+<!-- Pillar 2: YLTP -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-xl backdrop-blur-xl relative overflow-hidden flex flex-col justify-between group hover:bg-surface-container-high/70 transition-all">
+<div class="absolute top-0 right-0 w-32 h-32 bg-[#0EA5E9]/10 rounded-full blur-2xl pointer-events-none group-hover:bg-[#0EA5E9]/20 transition-all"></div>
+<div>
+<div class="w-14 h-14 rounded-2xl bg-[#0EA5E9]/20 text-[#0EA5E9] flex items-center justify-center mb-space-lg shadow-inner">
+<span class="material-symbols-outlined text-[30px]" style="font-variation-settings: 'FILL' 1;">groups_3</span>
+</div>
+<div class="flex items-center gap-space-xs mb-space-xs">
+<span class="font-eyebrow text-eyebrow text-[#0EA5E9] tracking-[0.2em] uppercase">Pillar 02</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#0EA5E9]"></span>
+<span class="font-eyebrow text-eyebrow text-on-surface-variant tracking-[0.2em] uppercase">Relational</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-sm">YLTP Framework</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-space-md">
+              Youth Leadership Training Programme. A structured immersion into team synchronization, emotional maturity, active listening, and conflict de-escalation inside tight engineering deadlines and complex cross-functional groups.
+            </p>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-lowest/80 text-caption font-caption text-on-surface-variant">
+<span class="text-on-surface font-semibold">Core outcome:</span> Psychological safety, high-velocity alignment, egoless code reviews.
+          </div>
+</div>
+<!-- Pillar 3: DSN -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-xl backdrop-blur-xl relative overflow-hidden flex flex-col justify-between group hover:bg-surface-container-high/70 transition-all">
+<div class="absolute top-0 right-0 w-32 h-32 bg-tertiary/10 rounded-full blur-2xl pointer-events-none group-hover:bg-tertiary/20 transition-all"></div>
+<div>
+<div class="w-14 h-14 rounded-2xl bg-tertiary/20 text-tertiary flex items-center justify-center mb-space-lg shadow-inner">
+<span class="material-symbols-outlined text-[30px]" style="font-variation-settings: 'FILL' 1;">volunteer_activism</span>
+</div>
+<div class="flex items-center gap-space-xs mb-space-xs">
+<span class="font-eyebrow text-eyebrow text-tertiary tracking-[0.2em] uppercase">Pillar 03</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span class="font-eyebrow text-eyebrow text-on-surface-variant tracking-[0.2em] uppercase">Field Action</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-space-sm">DSN Field Immersion</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-space-md">
+              "Do Something Now". Radical dismantling of comfort zones and social hesitation. Fellows execute demanding community service tasks and grassroots logistics where failure is public and excuses cannot be accommodated.
+            </p>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-lowest/80 text-caption font-caption text-on-surface-variant">
+<span class="text-on-surface font-semibold">Core outcome:</span> Ruthless initiative, public speaking courage, genuine social empathy.
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- CURRICULUM TIMELINE                                      -->
+<!-- ======================================================== -->
+<section class="w-full py-space-section flex justify-center bg-surface-container-lowest/30" id="curriculum">
+<div class="w-full max-w-[1152px] px-gutter">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-3xl">
+<div>
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] uppercase text-primary block mb-space-xs">The 11-Month Progression</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight">
+            From foundation to a public capstone
+          </h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+          Structured in cumulative cycles. Each phase strips away abstractions until you operate with full technical agency.
+        </p>
+</div>
+<!-- Vertical 5-Phase Timeline -->
+<div class="relative pl-6 md:pl-10 space-y-space-2xl">
+<!-- Vertical connecting line -->
+<div class="absolute top-4 bottom-4 left-[11px] md:left-[19px] w-0.5 bg-gradient-to-b from-primary via-[#0EA5E9] to-tertiary"></div>
+<!-- Phase 1 -->
+<div class="relative flex items-start gap-space-lg group">
+<div class="absolute -left-6 md:-left-10 w-6 h-6 md:w-10 md:h-10 rounded-full bg-surface-container-highest flex items-center justify-center shadow-md">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+</div>
+<div class="w-full p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md hover:bg-surface-container-high/80 transition-all">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="px-2.5 py-1 rounded-full bg-primary/10 text-primary font-caption text-caption font-semibold">Phase 01</span>
+<h3 class="font-card-h3 text-card-h3 text-on-surface">Foundation</h3>
+</div>
+<span class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-[0.2em]">Months 1–2 · 8 Weeks</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md max-w-3xl">
+              De-mystify the machine. Terminal fluency, Unix permissions, memory concepts, Git branches &amp; PR dynamics, modern semantic web foundations, and personal schedule conditioning.
+            </p>
+<div class="flex flex-wrap gap-2">
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">Linux Bash</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">Git &amp; GitHub</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">Vanilla TS / ECMAScript</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">Vipassana Orientation</span>
+</div>
+</div>
+</div>
+<!-- Phase 2 -->
+<div class="relative flex items-start gap-space-lg group">
+<div class="absolute -left-6 md:-left-10 w-6 h-6 md:w-10 md:h-10 rounded-full bg-surface-container-highest flex items-center justify-center shadow-md">
+<span class="w-2.5 h-2.5 rounded-full bg-[#0EA5E9]"></span>
+</div>
+<div class="w-full p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md hover:bg-surface-container-high/80 transition-all">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="px-2.5 py-1 rounded-full bg-[#0EA5E9]/10 text-[#0EA5E9] font-caption text-caption font-semibold">Phase 02</span>
+<h3 class="font-card-h3 text-card-h3 text-on-surface">Craft &amp; Systems</h3>
+</div>
+<span class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-[0.2em]">Months 3–5 · 12 Weeks</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md max-w-3xl">
+              Relational schemas, ACID guarantees, RESTful contract design, caching tiers, data validation, clean layer architecture, and unit testing as a standard deliverable.
+            </p>
+<div class="flex flex-wrap gap-2">
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">PostgreSQL</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">Go / Node.js</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">Redis</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">YLTP Lab 1</span>
+</div>
+</div>
+</div>
+<!-- Phase 3 -->
+<div class="relative flex items-start gap-space-lg group">
+<div class="absolute -left-6 md:-left-10 w-6 h-6 md:w-10 md:h-10 rounded-full bg-surface-container-highest flex items-center justify-center shadow-md">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+</div>
+<div class="w-full p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md hover:bg-surface-container-high/80 transition-all">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="px-2.5 py-1 rounded-full bg-secondary/10 text-secondary font-caption text-caption font-semibold">Phase 03</span>
+<h3 class="font-card-h3 text-card-h3 text-on-surface">Real Production Practice</h3>
+</div>
+<span class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-[0.2em]">Months 6–8 · 12 Weeks</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md max-w-3xl">
+              Working directly on live studio staging codebases. Fellows handle bug tickets, write regression tests, handle staging rollouts, and undergo relentless weekly reviews by principal engineers.
+            </p>
+<div class="flex flex-wrap gap-2">
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">Docker / Containers</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">CI/CD Pipelines</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">Telemetry &amp; Logs</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">DSN Field Immersion</span>
+</div>
+</div>
+</div>
+<!-- Phase 4 -->
+<div class="relative flex items-start gap-space-lg group">
+<div class="absolute -left-6 md:-left-10 w-6 h-6 md:w-10 md:h-10 rounded-full bg-surface-container-highest flex items-center justify-center shadow-md">
+<span class="w-2.5 h-2.5 rounded-full bg-[#7C3AED]"></span>
+</div>
+<div class="w-full p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md hover:bg-surface-container-high/80 transition-all">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="px-2.5 py-1 rounded-full bg-[#7C3AED]/10 text-primary font-caption text-caption font-semibold">Phase 04</span>
+<h3 class="font-card-h3 text-card-h3 text-on-surface">Specialisation</h3>
+</div>
+<span class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-[0.2em]">Months 9–10 · 8 Weeks</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md max-w-3xl">
+              Divergence into high-demand technical vectors: Distributed backend infrastructure, AI tooling &amp; LLM agent pipelines, or native mobile engineering. Deep vertical expertise.
+            </p>
+<div class="flex flex-wrap gap-2">
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">LLM Orchestration</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">Distributed Queues</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">React Native / Swift</span>
+</div>
+</div>
+</div>
+<!-- Phase 5 -->
+<div class="relative flex items-start gap-space-lg group">
+<div class="absolute -left-6 md:-left-10 w-6 h-6 md:w-10 md:h-10 rounded-full bg-surface-container-highest flex items-center justify-center shadow-md">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+</div>
+<div class="w-full p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md hover:bg-surface-container-high/80 transition-all">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="px-2.5 py-1 rounded-full bg-tertiary/10 text-tertiary font-caption text-caption font-semibold">Phase 05</span>
+<h3 class="font-card-h3 text-card-h3 text-on-surface">Capstone &amp; Launch</h3>
+</div>
+<span class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-[0.2em]">Month 11 · 4 Weeks</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md max-w-3xl">
+              Public shipping. Fellows author, test, and deploy an original production application with live traffic, exhaustive documentation, open-source audit, and public demonstration to hiring engineers.
+            </p>
+<div class="flex flex-wrap gap-2">
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">Live Production URL</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">Architectural Defense</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-caption font-caption text-on-surface-variant">Public Demo Day</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- WEEKLY RHYTHM                                            -->
+<!-- ======================================================== -->
+<section class="w-full py-space-section flex justify-center">
+<div class="w-full max-w-[1152px] px-gutter">
+<div class="mb-space-2xl text-center md:text-left">
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] uppercase text-secondary block mb-space-xs">Daily Discipline</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight">
+          A week that has a shape
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mt-space-xs">
+          Chaotic learning yields shallow retention. Our calendar enforces rhythmic focus, physical grounding, and deliberate reflection.
+        </p>
+</div>
+<!-- 7-Column Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
+<!-- Monday -->
+<div class="p-space-md rounded-xl bg-surface-container/70 shadow-sm flex flex-col justify-between hover:bg-surface-container-high/80 transition-all">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-eyebrow text-eyebrow text-primary uppercase">Mon</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</div>
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-1">Learning Sprint</h4>
+<p class="font-caption text-caption text-on-surface-variant leading-snug">
+              Architecture deep dive, concept breakdowns, spec handoffs, and target assignments.
+            </p>
+</div>
+<div class="mt-space-md pt-space-xs text-[11px] font-caption text-outline">
+            08:30 – 17:30
+          </div>
+</div>
+<!-- Tuesday -->
+<div class="p-space-md rounded-xl bg-surface-container/70 shadow-sm flex flex-col justify-between hover:bg-surface-container-high/80 transition-all">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-eyebrow text-eyebrow text-primary uppercase">Tue</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</div>
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-1">Deep Build</h4>
+<p class="font-caption text-caption text-on-surface-variant leading-snug">
+              Uninterrupted implementation block. Strict no-notification silent engineering sessions.
+            </p>
+</div>
+<div class="mt-space-md pt-space-xs text-[11px] font-caption text-outline">
+            09:00 – 18:00
+          </div>
+</div>
+<!-- Wednesday -->
+<div class="p-space-md rounded-xl bg-surface-container/70 shadow-sm flex flex-col justify-between hover:bg-surface-container-high/80 transition-all">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-eyebrow text-eyebrow text-secondary uppercase">Wed</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</div>
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-1">Mentor Review</h4>
+<p class="font-caption text-caption text-on-surface-variant leading-snug">
+              Line-by-line pull request audits, benchmarking checks, and design architecture defenses.
+            </p>
+</div>
+<div class="mt-space-md pt-space-xs text-[11px] font-caption text-outline">
+            10:00 – 17:00
+          </div>
+</div>
+<!-- Thursday -->
+<div class="p-space-md rounded-xl bg-surface-container/70 shadow-sm flex flex-col justify-between hover:bg-surface-container-high/80 transition-all">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-eyebrow text-eyebrow text-secondary uppercase">Thu</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</div>
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-1">Build / Field</h4>
+<p class="font-caption text-caption text-on-surface-variant leading-snug">
+              Complex feature wiring paired with external user testing and field validation.
+            </p>
+</div>
+<div class="mt-space-md pt-space-xs text-[11px] font-caption text-outline">
+            09:00 – 18:00
+          </div>
+</div>
+<!-- Friday -->
+<div class="p-space-md rounded-xl bg-surface-container/70 shadow-sm flex flex-col justify-between hover:bg-surface-container-high/80 transition-all">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-eyebrow text-eyebrow text-[#0EA5E9] uppercase">Fri</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#0EA5E9]"></span>
+</div>
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-1">Leadership Lab</h4>
+<p class="font-caption text-caption text-on-surface-variant leading-snug">
+              YLTP exercises, public project demonstrations, constructive peer critique cycles.
+            </p>
+</div>
+<div class="mt-space-md pt-space-xs text-[11px] font-caption text-outline">
+            13:00 – 18:30
+          </div>
+</div>
+<!-- Saturday -->
+<div class="p-space-md rounded-xl bg-surface-container/70 shadow-sm flex flex-col justify-between hover:bg-surface-container-high/80 transition-all">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-eyebrow text-eyebrow text-tertiary uppercase">Sat</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+</div>
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface mb-1">Reflection &amp; Vipassana</h4>
+<p class="font-caption text-caption text-on-surface-variant leading-snug">
+              Silent sitting meditation, cohort dialogue, community service tasks, and weekly journals.
+            </p>
+</div>
+<div class="mt-space-md pt-space-xs text-[11px] font-caption text-outline">
+            07:00 – 13:00
+          </div>
+</div>
+<!-- Sunday -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest/90 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-eyebrow text-eyebrow text-outline uppercase">Sun</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+</div>
+<h4 class="font-card-h3-sm text-card-h3-sm text-on-surface-variant mb-1">Rest &amp; Unplug</h4>
+<p class="font-caption text-caption text-outline leading-snug">
+              Total digital disconnection. Physical recovery, family grounding, zero screen time.
+            </p>
+</div>
+<div class="mt-space-md pt-space-xs text-[11px] font-caption text-outline">
+            Full Off-grid
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- SPECIALISATION TRACKS                                    -->
+<!-- ======================================================== -->
+<section class="w-full py-space-section flex justify-center bg-surface-container-lowest/40">
+<div class="w-full max-w-[1152px] px-gutter">
+<div class="mb-space-2xl">
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] uppercase text-primary block mb-space-xs">Diverse Pathways</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight">
+          Four Core Studio Tracks
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mt-space-xs">
+          While everyone grounds in shared systems and discipline, fellows specialize in tracks suited to their native aptitude.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-lg">
+<!-- Track 1 -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md flex flex-col justify-between hover:bg-surface-container-high/80 transition-all">
+<div>
+<span class="text-caption font-mono text-primary font-bold">01 / TECH</span>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mt-space-sm mb-space-xs">Engineering</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md">
+              Full-stack backend, database optimization, distributed microservices, and high-performance user interfaces.
+            </p>
+</div>
+<div class="text-caption font-caption text-on-surface-variant space-y-1 border-0">
+<div>• Go, TypeScript, Rust basics</div>
+<div>• PostgreSQL, Redis, Kafka</div>
+<div>• Docker &amp; Cloud deploy</div>
+</div>
+</div>
+<!-- Track 2 -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md flex flex-col justify-between hover:bg-surface-container-high/80 transition-all">
+<div>
+<span class="text-caption font-mono text-[#0EA5E9] font-bold">02 / OPS</span>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mt-space-sm mb-space-xs">Field Research</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md">
+              User interviews, grassroots operational audits, qualitative metrics, and usability testing in underserved regions.
+            </p>
+</div>
+<div class="text-caption font-caption text-on-surface-variant space-y-1 border-0">
+<div>• Ground truth surveying</div>
+<div>• Field telemetry analysis</div>
+<div>• Logistics coordination</div>
+</div>
+</div>
+<!-- Track 3 -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md flex flex-col justify-between hover:bg-surface-container-high/80 transition-all">
+<div>
+<span class="text-caption font-mono text-tertiary font-bold">03 / COMM</span>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mt-space-sm mb-space-xs">Marketing &amp; Comms</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md">
+              Technical storytelling, clear product documentation, case study synthesis, and ethical growth systems.
+            </p>
+</div>
+<div class="text-caption font-caption text-on-surface-variant space-y-1 border-0">
+<div>• Deep technical writing</div>
+<div>• Open source docs</div>
+<div>• Case study authoring</div>
+</div>
+</div>
+<!-- Track 4 -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md flex flex-col justify-between hover:bg-surface-container-high/80 transition-all">
+<div>
+<span class="text-caption font-mono text-secondary font-bold">04 / FIN</span>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mt-space-sm mb-space-xs">Finance &amp; Ops</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md">
+              Budgets, resource forecasting, cloud billing optimization, process pipelines, and unit economics.
+            </p>
+</div>
+<div class="text-caption font-caption text-on-surface-variant space-y-1 border-0">
+<div>• Unit economic models</div>
+<div>• AWS/GCP Cost governance</div>
+<div>• Studio project planning</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- COHORTS                                                  -->
+<!-- ======================================================== -->
+<section class="w-full py-space-section lg:py-space-section-xl flex justify-center" id="cohorts">
+<div class="w-full max-w-[1152px] px-gutter">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-2xl">
+<div>
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] uppercase text-primary block mb-space-xs">Admissions Schedule</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight">
+            The next intake
+          </h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm">
+          Intakes are strictly capped at 24 fellows per cohort to ensure direct 1:1 engineering mentorship.
+        </p>
+</div>
+<!-- Cohort Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+<!-- Cohort 1: Closed -->
+<div class="p-space-xl rounded-2xl bg-surface-container-lowest/60 shadow-md backdrop-blur-md opacity-75 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="px-2.5 py-1 rounded-full bg-surface-container text-outline font-caption text-caption">Closed</span>
+<span class="font-mono text-caption text-outline">Cohort #03</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-1">January 2027</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-lg">
+              Currently in Phase 03: Real Production Practice. Applications are fully closed.
+            </p>
+</div>
+<div class="pt-space-md text-caption font-caption text-outline">
+            In session · 22 Fellows
+          </div>
+</div>
+<!-- Cohort 2: Applications Open (Featured) -->
+<div class="p-space-xl rounded-2xl bg-surface-container-high/90 shadow-2xl backdrop-blur-xl relative overflow-hidden flex flex-col justify-between group">
+<div class="absolute top-0 right-0 w-36 h-36 bg-primary/20 rounded-full blur-2xl pointer-events-none"></div>
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="px-3 py-1 rounded-full bg-tertiary/20 text-tertiary font-caption text-caption font-semibold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+                Applications Open
+              </span>
+<span class="font-mono text-caption text-primary font-bold">Cohort #04</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-1">May 2027</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-lg">
+              Primary intake. 11 months full-time residential &amp; lab environment. Initial screenings underway.
+            </p>
+<div class="p-space-md rounded-xl bg-surface-container-lowest/90 mb-space-lg space-y-1.5 text-caption font-caption">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Deadline:</span>
+<span class="text-on-surface font-medium">April 15, 2027</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Available seats:</span>
+<span class="text-primary font-bold">9 of 24 remaining</span>
+</div>
+</div>
+</div>
+<a class="w-full py-space-sm text-center rounded-xl bg-primary-container hover:bg-[#1849A9] text-[#FFFFFF] font-body-medium text-caption transition-all shadow-md" href="#apply">
+            Apply for May Cohort
+          </a>
+</div>
+<!-- Cohort 3: Waitlist -->
+<div class="p-space-xl rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md flex flex-col justify-between hover:bg-surface-container-high/80 transition-all">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="px-2.5 py-1 rounded-full bg-secondary-container/60 text-secondary font-caption text-caption">Upcoming</span>
+<span class="font-mono text-caption text-on-surface-variant">Cohort #05</span>
+</div>
+<h3 class="font-card-h3 text-card-h3 text-on-surface mb-1">September 2027</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-lg">
+              Autumn intake. Accepting early registry for syllabus review and pre-course preparation.
+            </p>
+</div>
+<a class="w-full py-space-sm text-center rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface font-body-medium text-caption transition-all" href="#apply">
+            Join the waitlist
+          </a>
+</div>
+</div>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- FAQ ACCORDION                                            -->
+<!-- ======================================================== -->
+<section class="w-full py-space-section flex justify-center bg-surface-container-lowest/50">
+<div class="w-full max-w-[896px] px-gutter">
+<div class="text-center mb-space-2xl">
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] uppercase text-primary block mb-space-xs">Total Transparency</span>
+<h2 class="font-section-h2 text-section-h2 text-on-surface tracking-tight">
+          The honest answers
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">
+          No polished marketing claims. Exactly how the fellowship works, without sugarcoating.
+        </p>
+</div>
+<div class="space-y-space-md" id="faq-container">
+<!-- FAQ 1 -->
+<div class="rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md overflow-hidden transition-all faq-item">
+<button class="w-full p-space-lg text-left flex items-center justify-between gap-space-md faq-trigger">
+<span class="font-card-h3-sm text-card-h3-sm text-on-surface">Do you guarantee a job placement or high starting salary?</span>
+<span class="material-symbols-outlined text-primary transition-transform duration-300 faq-icon">expand_more</span>
+</button>
+<div class="px-space-lg pb-space-lg text-body-md font-body-md text-on-surface-variant hidden faq-content">
+            No. We do not offer placement guarantees, tie-ups with shady subcontracting firms, or inflated package claims. What we guarantee is rigorous skill acquisition: you will leave with deep systems comprehension and a verified, publicly inspectable production portfolio. In the technology market, authentic skill outlasts any placement promise.
+          </div>
+</div>
+<!-- FAQ 2 -->
+<div class="rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md overflow-hidden transition-all faq-item">
+<button class="w-full p-space-lg text-left flex items-center justify-between gap-space-md faq-trigger">
+<span class="font-card-h3-sm text-card-h3-sm text-on-surface">Is the Vipassana meditation component really mandatory?</span>
+<span class="material-symbols-outlined text-primary transition-transform duration-300 faq-icon">expand_more</span>
+</button>
+<div class="px-space-lg pb-space-lg text-body-md font-body-md text-on-surface-variant hidden faq-content">
+            Yes, completely non-negotiable. Modern engineering demands prolonged cognitive endurance and ego dissolution. If you cannot sit in quiet observation with yourself for hours, you will struggle to handle multi-day production regressions or difficult system architecture bottlenecks. Inner silence is our foundation for technical excellence.
+          </div>
+</div>
+<!-- FAQ 3 -->
+<div class="rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md overflow-hidden transition-all faq-item">
+<button class="w-full p-space-lg text-left flex items-center justify-between gap-space-md faq-trigger">
+<span class="font-card-h3-sm text-card-h3-sm text-on-surface">How does the fee structure and financial model work?</span>
+<span class="material-symbols-outlined text-primary transition-transform duration-300 faq-icon">expand_more</span>
+</button>
+<div class="px-space-lg pb-space-lg text-body-md font-body-md text-on-surface-variant hidden faq-content">
+            The studio charges a transparent, cost-subsidized tuition that covers hardware workstation upkeep, dedicated cloud infrastructure credits, and direct architect mentorship hours. We provide need-based deferred payment covenants for candidates from economically marginalized backgrounds. We never hold back certificates or work code.
+          </div>
+</div>
+<!-- FAQ 4 -->
+<div class="rounded-2xl bg-surface-container/70 shadow-md backdrop-blur-md overflow-hidden transition-all faq-item">
+<button class="w-full p-space-lg text-left flex items-center justify-between gap-space-md faq-trigger">
+<span class="font-card-h3-sm text-card-h3-sm text-on-surface">My English is broken. Will I be rejected during intake?</span>
+<span class="material-symbols-outlined text-primary transition-transform duration-300 faq-icon">expand_more</span>
+</button>
+<div class="px-space-lg pb-space-lg text-body-md font-body-md text-on-surface-variant hidden faq-content">
+            No. While our curriculum and code repositories are written in English, full conceptual instruction and daily mentoring are bilingual with dedicated Telugu support. We help you gradually build confident technical English communication during your 11 months without ever penalizing your background.
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- CTA / APPLY SECTION                                      -->
+<!-- ======================================================== -->
+<section class="w-full py-space-section lg:py-space-section-xl flex justify-center relative" id="apply">
+<div class="w-full max-w-[1152px] px-gutter">
+<!-- Solid Primary Elevated Container -->
+<div class="w-full rounded-3xl bg-primary-container p-space-2xl md:p-space-3xl text-center flex flex-col items-center justify-center relative overflow-hidden shadow-2xl">
+<!-- Subtle internal light accents -->
+<div class="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-[#FFFFFF]/10 blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-[#001847]/30 blur-2xl pointer-events-none"></div>
+<span class="font-eyebrow text-eyebrow tracking-[0.2em] uppercase text-on-primary-container mb-space-sm relative z-10">Application Cycle 2027</span>
+<h2 class="font-section-h2 text-section-h2 text-[#FFFFFF] tracking-tight max-w-[760px] mb-space-md relative z-10">
+          Give the next eleven months a direction.
+        </h2>
+<p class="font-body-lg text-body-lg text-[#FFFFFF]/80 max-w-[640px] mb-space-2xl relative z-10">
+          No shortcuts, no inflated expectations. An intensive, grounded fellowship designed to build lasting technical ability and personal sovereignty.
+        </p>
+<!-- CTAs -->
+<div class="flex flex-wrap items-center justify-center gap-space-md relative z-10">
+<a class="px-space-xl py-space-md bg-[#FFFFFF] hover:bg-[#F0F4FF] text-on-primary rounded-xl font-body-medium text-body-md transition-all shadow-md flex items-center gap-space-sm group" href="#">
+<span>Register your interest</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+<a class="px-space-xl py-space-md bg-transparent hover:bg-[#FFFFFF]/10 text-[#FFFFFF] rounded-xl font-body-medium text-body-md border-0 transition-all flex items-center gap-space-sm" href="mailto:fellowship@kavisolutions.com">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+<span>Email the team</span>
+</a>
+</div>
+<p class="mt-space-lg text-caption font-caption text-[#FFFFFF]/60 relative z-10">
+          Response within 3 working days · All applications reviewed by human engineers
+        </p>
+</div>
+</div>
+</section>
+</div>
+<script>
+  // Simple Accordion Behavior for FAQ
+  document.querySelectorAll('.faq-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const parent = trigger.parentElement;
+      const content = parent.querySelector('.faq-content');
+      const icon = trigger.querySelector('.faq-icon');
+      
+      const isOpen = !content.classList.contains('hidden');
+      
+      // Close all
+      document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
+      document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('rotate-180'));
+      
+      if (!isOpen) {
+        content.classList.remove('hidden');
+        icon.classList.add('rotate-180');
+      }
+    });
+  });
+</script></main><footer class="w-full bg-[#0B1220] border-t border-[rgba(255,255,255,0.08)] py-space-2xl"><div class="max-w-[1152px] mx-auto px-gutter"><div class="flex flex-col lg:flex-row justify-between items-start gap-space-2xl pb-space-2xl border-b border-[rgba(255,255,255,0.08)]"><div class="max-w-md space-y-space-md"><div class="flex items-center gap-space-sm"><div class="w-7 h-7 rounded-lg bg-gradient-to-br from-primary via-primary-container to-secondary flex items-center justify-center font-card-h3-sm text-card-h3-sm text-on-primary font-bold">K</div><span class="font-card-h3 text-card-h3 text-on-surface tracking-tight">Kavi Solutions</span></div><p class="font-eyebrow text-eyebrow text-tertiary tracking-[0.2em] uppercase">Web · Mobile · Product · Marketing · AI · Fellowship</p><p class="font-body-md text-caption text-on-surface-variant">Engineering-led digital product studio crafting resilient architectures, bespoke interfaces, and specialized tech intelligence.</p></div><div class="grid grid-cols-2 sm:grid-cols-3 gap-space-2xl lg:gap-space-3xl"><div class="space-y-space-md"><span class="font-eyebrow text-eyebrow text-on-surface-variant tracking-[0.2em] uppercase block">Services</span><ul class="space-y-space-sm"><li class="font-body-md text-caption"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="services" href="#">Web Engineering</a></li><li class="font-body-md text-caption"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="services" href="#">Mobile Products</a></li><li class="font-body-md text-caption"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="services" href="#">Cloud &amp; Systems</a></li><li class="font-body-md text-caption"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="services" href="#">AI Tooling</a></li></ul></div><div class="space-y-space-md"><span class="font-eyebrow text-eyebrow text-on-surface-variant tracking-[0.2em] uppercase block">Company</span><ul class="space-y-space-sm"><li class="font-body-md text-caption"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="projects" href="#">Projects</a></li><li class="font-body-md text-caption"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="fellowship" href="#">Fellowship</a></li><li class="font-body-md text-caption"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="team" href="#">Studio Team</a></li><li class="font-body-md text-caption"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="contact" href="#">Contact</a></li></ul></div><div class="space-y-space-md"><span class="font-eyebrow text-eyebrow text-on-surface-variant tracking-[0.2em] uppercase block">Legal</span><ul class="space-y-space-sm"><li class="font-body-md text-caption"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="privacy-policy" href="#">Privacy Policy</a></li><li class="font-body-md text-caption"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="terms-of-service" href="#">Terms of Service</a></li><li class="font-body-md text-caption"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="security-protocols" href="#">Security Protocol</a></li></ul></div></div></div><div class="pt-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md"><p class="font-body-md text-caption text-outline">© 2025 Kavi Solutions Inc. Precision Engineering &amp; Digital Products. All rights reserved.</p><div class="flex items-center gap-space-sm"><div class="w-2 h-2 rounded-full bg-tertiary"></div><span class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-[0.2em]">Systems Operational</span></div></div></div></footer>
+
+</body></html>

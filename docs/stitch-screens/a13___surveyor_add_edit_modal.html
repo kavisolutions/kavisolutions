@@ -1,0 +1,457 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Space+Grotesk:wght@600;700&amp;family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "on-secondary-container": "#97b8ff",
+          "on-background": "#dce2f6",
+          "on-tertiary-fixed": "#002114",
+          "primary-fixed-dim": "#b1c5ff",
+          "on-secondary-fixed-variant": "#1b4588",
+          "on-primary-container": "#d7e0ff",
+          "on-surface-variant": "#c3c6d6",
+          "error": "#ffb4ab",
+          "on-primary-fixed": "#001847",
+          "surface-dim": "#0c1321",
+          "surface": "#0c1321",
+          "on-tertiary-fixed-variant": "#005137",
+          "inverse-surface": "#dce2f6",
+          "on-error": "#690005",
+          "on-tertiary": "#003825",
+          "on-secondary-fixed": "#001a42",
+          "tertiary-fixed-dim": "#45dfa4",
+          "secondary": "#aec6ff",
+          "on-error-container": "#ffdad6",
+          "outline": "#8d909f",
+          "on-tertiary-container": "#66fabd",
+          "on-primary-fixed-variant": "#0040a0",
+          "tertiary": "#45dfa4",
+          "primary": "#b1c5ff",
+          "secondary-fixed-dim": "#aec6ff",
+          "on-surface": "#dce2f6",
+          "surface-container-highest": "#2e3544",
+          "surface-tint": "#b1c5ff",
+          "surface-container-low": "#151b2a",
+          "surface-container-high": "#232a39",
+          "background": "#0c1321",
+          "secondary-fixed": "#d8e2ff",
+          "surface-bright": "#323949",
+          "inverse-on-surface": "#2a3040",
+          "on-secondary": "#002e6a",
+          "tertiary-container": "#00724f",
+          "surface-variant": "#2e3544",
+          "error-container": "#93000a",
+          "on-primary": "#002c72",
+          "inverse-primary": "#0957ce",
+          "surface-container-lowest": "#070e1c",
+          "outline-variant": "#424654",
+          "primary-fixed": "#dae2ff",
+          "primary-container": "#175cd3",
+          "secondary-container": "#1e478b",
+          "tertiary-fixed": "#68fcbf",
+          "surface-container": "#19202e"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "space-section-xl": "8rem",
+          "space-lg": "1.5rem",
+          "margin-desktop": "auto",
+          "space-xl": "2rem",
+          "space-section": "6rem",
+          "space-xs": "0.25rem",
+          "gutter": "1.5rem",
+          "gutter-mobile": "1rem",
+          "margin": "1.5rem",
+          "space-sm": "0.5rem",
+          "space-3xl": "4rem",
+          "space-2xl": "3rem",
+          "space-md": "1rem"
+        },
+        "fontFamily": {
+          "section-h2": ["Space Grotesk"],
+          "page-h1": ["Space Grotesk"],
+          "body-medium": ["Geist"],
+          "hero-h1-tablet": ["Space Grotesk"],
+          "card-h3-sm": ["Space Grotesk"],
+          "page-h1-mobile": ["Space Grotesk"],
+          "body-lg": ["Geist"],
+          "eyebrow": ["Geist"],
+          "caption": ["Geist"],
+          "card-h3": ["Space Grotesk"],
+          "hero-h1-mobile": ["Space Grotesk"],
+          "hero-h1": ["Space Grotesk"],
+          "body-md": ["Geist"],
+          "section-h2-mobile": ["Space Grotesk"]
+        },
+        "fontSize": {
+          "section-h2": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+          "page-h1": ["60px", {"lineHeight": "1.15", "letterSpacing": "-0.025em", "fontWeight": "600"}],
+          "body-medium": ["16px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "500"}],
+          "hero-h1-tablet": ["60px", {"lineHeight": "1.1", "letterSpacing": "-0.025em", "fontWeight": "700"}],
+          "card-h3-sm": ["18px", {"lineHeight": "1.35", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+          "page-h1-mobile": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+          "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "-0.005em", "fontWeight": "400"}],
+          "eyebrow": ["11px", {"lineHeight": "1", "letterSpacing": "0.2em", "fontWeight": "600"}],
+          "caption": ["13px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "400"}],
+          "card-h3": ["22px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+          "hero-h1-mobile": ["36px", {"lineHeight": "1.15", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+          "hero-h1": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+          "body-md": ["16px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400"}],
+          "section-h2-mobile": ["30px", {"lineHeight": "1.25", "letterSpacing": "-0.015em", "fontWeight": "600"}]
+        }
+      }
+    }
+  };</script></head><body class="bg-surface text-on-surface font-body-md text-body-md antialiased selection:bg-primary-container selection:text-on-primary-container"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-40 flex flex-col justify-between py-6"><div class="flex flex-col gap-8"><div class="px-6 flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-on-primary-container text-[20px]">terminal</span></div><div><span class="font-card-h3-sm text-card-h3-sm text-on-surface tracking-tight block">KAVI</span><span class="font-eyebrow text-eyebrow text-on-surface-variant uppercase tracking-wider block">Solutions</span></div></div><nav class="flex flex-col gap-1 px-3" data-active-classes="bg-primary-container text-on-primary-container font-medium"><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="overview" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-body-medium text-body-medium">Overview</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="configuration-modal" href="#"><span class="material-symbols-outlined text-[20px]">tune</span><span class="font-body-medium text-body-medium">Configuration</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="access-policy-dialog" href="#"><span class="material-symbols-outlined text-[20px]">shield</span><span class="font-body-medium text-body-medium">Access Control</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="system-parameters" href="#"><span class="material-symbols-outlined text-[20px]">settings_input_component</span><span class="font-body-medium text-body-medium">Parameters</span></a><a aria-current="page" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary-container font-medium" data-path="audit-telemetry" href="#"><span class="material-symbols-outlined text-[20px]">monitoring</span><span class="font-body-medium text-body-medium">Telemetry</span></a></nav></div><div class="px-6 flex flex-col gap-4"><div class="bg-surface-container-lowest p-3 rounded-lg"><div class="flex items-center gap-2 mb-1"><span class="w-2 h-2 rounded-full bg-tertiary"></span><span class="font-eyebrow text-eyebrow text-tertiary uppercase">CORE ONLINE</span></div><span class="font-caption text-caption text-on-surface-variant block">Node cluster us-east-4a</span></div></div></aside><div class="pl-64 flex flex-col min-h-screen"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/80 backdrop-blur-xl z-30 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="w-full h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-3"><span class="font-eyebrow text-eyebrow uppercase text-on-surface-variant bg-surface-container-high px-2 py-1 rounded">KAVI-OS / ADM-882</span><span class="text-outline text-xs font-caption text-caption">v4.18.2</span></div><div class="flex items-center gap-4"><button class="w-9 h-9 rounded-lg bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[18px]">search</span></button><button class="w-9 h-9 rounded-lg bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[18px]">notifications</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative pt-16 w-full flex-1 bg-surface"><div class="flex flex-col w-full relative min-h-full">
+<!-- Underlying Active Admin Workspace Canvas Backdrop -->
+<div class="w-full px-gutter py-space-xl max-w-[1152px] mx-auto filter blur-[2px] opacity-40 pointer-events-none select-none transition-all duration-300">
+<div class="flex items-center justify-between pb-space-lg">
+<div class="flex items-center gap-3">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+<span class="font-section-h2 text-card-h3 text-on-surface">Surveyor Management Enclave</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="h-9 px-4 rounded-lg bg-surface-container-high text-on-surface-variant flex items-center gap-2 font-caption text-caption">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+          Filter Hierarchy
+        </div>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-space-lg mb-space-lg">
+<div class="p-space-lg rounded-xl bg-surface-container-low shadow-sm">
+<span class="font-eyebrow text-eyebrow uppercase text-on-surface-variant">Active Field Cadre</span>
+<p class="font-section-h2 text-section-h2 text-on-surface mt-2">1,248</p>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container-low shadow-sm">
+<span class="font-eyebrow text-eyebrow uppercase text-tertiary">Dispatch Readiness</span>
+<p class="font-section-h2 text-section-h2 text-tertiary mt-2">99.4%</p>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container-low shadow-sm">
+<span class="font-eyebrow text-eyebrow uppercase text-secondary">Pending Crypt-Audit</span>
+<p class="font-section-h2 text-section-h2 text-secondary mt-2">14</p>
+</div>
+</div>
+<div class="h-64 rounded-xl bg-surface-container-low"></div>
+</div>
+<!-- Ambient Glow Behind Modal Focus -->
+<div class="fixed inset-0 z-40 bg-surface-dim/75 backdrop-blur-[6px] flex items-center justify-center p-4 overflow-y-auto">
+<div class="absolute w-[680px] h-[720px] rounded-full bg-primary-container/10 blur-[90px] pointer-events-none -top-10"></div>
+<!-- Modal Enclave Window (Strict 640px Max Width) -->
+<div class="relative w-full max-w-[640px] bg-surface-container-low rounded-xl shadow-2xl flex flex-col my-auto overflow-hidden ring-1 ring-outline-variant/30" id="surveyor-modal-card">
+<!-- Top Subtle Status Beacon Line -->
+<div class="h-[2px] w-full bg-gradient-to-r from-transparent via-primary to-transparent opacity-80"></div>
+<!-- Header Section -->
+<div class="px-space-xl pt-6 pb-space-md flex flex-col gap-2">
+<div class="flex items-start justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary shadow-inner">
+<span class="material-symbols-outlined text-[22px]">person_pin_circle</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-card-h3 text-card-h3 text-on-surface tracking-tight">Add Surveyor Profile</h2><span class="px-2 py-0.5 rounded font-caption text-caption text-primary bg-primary-container/10 ring-1 ring-primary/30 font-medium tracking-wider">[A13]</span>
+<span class="font-eyebrow text-eyebrow px-2 py-0.5 rounded-full bg-surface-container-highest text-secondary tracking-widest uppercase">ID: SRV-2024-AP</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant mt-0.5">Review field operative qualifications, geographical hubs, and dispatch status.</p>
+</div>
+</div>
+<button aria-label="Close dialog" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" id="modal-close-trigger">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewBox="0 0 16 16">
+<path d="M3 3l10 10M13 3L3 13"></path>
+</svg>
+</button>
+</div>
+<!-- Helper Telemetry Note Box -->
+<div class="mt-2 rounded-lg bg-surface-container-lowest p-3 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[16px] mt-0.5">info</span>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+            New registrations arrive with status <span class="text-on-surface font-medium">'Applied'</span>. Verifying stamps the current timestamp; rejecting returns the profile to Applied or Inactive.
+          </p>
+</div>
+</div>
+<!-- Form Body Grid -->
+<form class="px-space-xl py-space-sm flex flex-col gap-4 max-h-[calc(88vh-200px)] overflow-y-auto pr-space-xl" id="surveyor-form">
+<!-- Row 1: Full Name & Encrypted Terminal Mobile -->
+<div class="grid grid-cols-2 gap-3.5">
+<div class="flex flex-col gap-1.5">
+<label class="font-eyebrow text-eyebrow uppercase text-on-surface-variant tracking-wider flex items-center gap-1">
+              Surveyor Full Name
+              <span class="text-primary">*</span>
+</label>
+<div class="relative flex items-center">
+<input class="w-full h-11 px-3.5 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" type="text" value="Ramesh Babu Varma">
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-eyebrow text-eyebrow uppercase text-on-surface-variant tracking-wider flex items-center justify-between">
+<span>Terminal Mobile</span>
+<span class="text-[10px] text-tertiary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[11px]">lock</span>
+                ENC-256
+              </span>
+</label>
+<div class="relative flex items-center">
+<input class="w-full h-11 px-3.5 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" type="text" value="+91 94401 23890">
+</div>
+</div>
+</div>
+<!-- Row 2: Work Email -->
+<div class="flex flex-col gap-1.5">
+<label class="font-eyebrow text-eyebrow uppercase text-on-surface-variant tracking-wider flex items-center gap-1">
+            Work Email
+            <span class="text-primary">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[16px]">alternate_email</span>
+<input class="w-full h-11 pl-9 pr-3.5 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" type="email" value="ramesh.varma@fieldpulse.in">
+</div>
+</div>
+<!-- Row 3: Primary Location Hub -->
+<div class="flex flex-col gap-1.5">
+<label class="font-eyebrow text-eyebrow uppercase text-on-surface-variant tracking-wider flex items-center gap-1">
+            Primary Location / Geographic Hub
+            <span class="text-primary">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-secondary text-[16px]">location_searching</span>
+<input class="w-full h-11 pl-9 pr-24 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" type="text" value="Vijayawada, Andhra Pradesh (AP-Zone-3)">
+<span class="absolute right-3 font-eyebrow text-[10px] tracking-wider text-tertiary bg-surface-container px-1.5 py-0.5 rounded">GEO-LOK</span>
+</div>
+</div>
+<!-- Row 4: Languages (Interactive Token Chips) -->
+<div class="flex flex-col gap-1.5">
+<label class="font-eyebrow text-eyebrow uppercase text-on-surface-variant tracking-wider">
+            Languages (Comma-Separated Token Stream)
+          </label>
+<div class="w-full min-h-[44px] p-2 rounded-lg bg-surface-container-lowest flex flex-wrap items-center gap-1.5 shadow-inner">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-caption text-[12px]">
+              Telugu (Native)
+              <button class="text-on-surface-variant hover:text-on-surface" type="button">
+<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4L4 12" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path></svg>
+</button>
+</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-caption text-[12px]">
+              English (C1 Fluent)
+              <button class="text-on-surface-variant hover:text-on-surface" type="button">
+<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4L4 12" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path></svg>
+</button>
+</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-caption text-[12px]">
+              Hindi (Working)
+              <button class="text-on-surface-variant hover:text-on-surface" type="button">
+<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4L4 12" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path></svg>
+</button>
+</span>
+<input class="bg-transparent text-on-surface font-caption text-[12px] focus:outline-none flex-1 min-w-[100px] px-1 py-0.5 placeholder:text-outline" placeholder="+ Add language..." type="text">
+</div>
+</div>
+<!-- Row 5: Technical & Field Skills -->
+<div class="flex flex-col gap-1.5">
+<label class="font-eyebrow text-eyebrow uppercase text-on-surface-variant tracking-wider">Technical &amp; Field Skills</label>
+<input class="w-full h-11 px-3.5 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" type="text" value="GIS Mapping, Crop Census, Mobile Telemetry, Socio-Economic Surveys">
+</div>
+<!-- Row 6: Field Experience Narrative (3 rows) -->
+<div class="flex flex-col gap-1.5">
+<label class="font-eyebrow text-eyebrow uppercase text-on-surface-variant tracking-wider">Field Deployment Record &amp; Experience</label>
+<textarea class="w-full p-3 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-primary resize-none shadow-inner leading-relaxed" rows="3">4+ years in agricultural and socio-economic field research across Krishna and Guntur districts. Experienced in offline GPS data capture.</textarea>
+</div>
+<!-- Row 7: Internal Admin Notes -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-eyebrow text-eyebrow uppercase text-on-surface-variant tracking-wider flex items-center gap-1">
+              Internal Admin Crypt-Audit Notes
+            </label>
+<span class="font-eyebrow text-[10px] text-tertiary">CONFIDENTIAL / RESTRICTED</span>
+</div>
+<div class="relative">
+<textarea class="w-full p-3 rounded-lg bg-surface-container-lowest text-secondary-fixed-dim font-body-md text-caption focus:outline-none focus:ring-1 focus:ring-secondary-container resize-none shadow-inner leading-relaxed" rows="2">Identity and Aadhaar cryptographic checksum verified. Hardware beacon key assigned.</textarea>
+</div>
+</div>
+<!-- Row 8: Dispatch Qualification Status Dropdown Selector -->
+<div class="flex flex-col gap-1.5 mb-2">
+<label class="font-eyebrow text-eyebrow uppercase text-on-surface-variant tracking-wider">Enclave Dispatch Status</label>
+<div class="relative">
+<!-- Custom Styled Select Element Container -->
+<div class="relative" id="status-select-wrapper">
+<button class="w-full h-11 px-3.5 rounded-lg bg-surface-container-lowest text-on-surface flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" id="status-menu-btn" type="button">
+<span class="flex items-center gap-2.5 font-caption text-caption" id="selected-status-label">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary ring-2 ring-secondary/20"></span>
+<span class="text-on-surface font-medium">Verified (Sky-Blue)</span>
+<span class="font-eyebrow text-[10px] text-on-surface-variant tracking-wider bg-surface-container px-1.5 py-0.2 rounded">TIMESTAMP SECURED</span>
+</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">unfold_more</span>
+</button>
+<!-- Dropdown Options Menu Panel -->
+<div class="hidden absolute left-0 right-0 bottom-full mb-1 z-30 rounded-lg bg-surface-container-high shadow-2xl p-1.5 flex flex-col gap-1" id="status-options-menu">
+<!-- Applied (Amber) -->
+<button class="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-surface-container-highest transition-colors text-left" data-status="applied" type="button">
+<div class="flex items-center gap-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+<span class="font-caption text-caption text-on-surface">Applied</span>
+</div>
+<span class="font-eyebrow text-[10px] text-on-surface-variant tracking-widest uppercase">Intake</span>
+</button>
+<!-- Verified (Sky-Blue) [Active Selection] -->
+<button class="w-full px-3 py-2 rounded-lg flex items-center justify-between bg-surface-container-highest text-left" data-status="verified" type="button">
+<div class="flex items-center gap-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary ring-2 ring-secondary/20"></span>
+<span class="font-caption text-caption text-secondary font-medium">Verified (Active Selection)</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-[16px]">check</span>
+</button>
+<!-- Active Dispatch (Emerald) -->
+<button class="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-surface-container-highest transition-colors text-left" data-status="active" type="button">
+<div class="flex items-center gap-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+<span class="font-caption text-caption text-on-surface">Active Dispatch</span>
+</div>
+<span class="font-eyebrow text-[10px] text-tertiary tracking-widest uppercase">Field Live</span>
+</button>
+<!-- Inactive (Muted) -->
+<button class="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-surface-container-highest transition-colors text-left" data-status="inactive" type="button">
+<div class="flex items-center gap-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-outline"></span>
+<span class="font-caption text-caption text-on-surface">Inactive</span>
+</div>
+<span class="font-eyebrow text-[10px] text-on-surface-variant tracking-widest uppercase">Standby</span>
+</button>
+<!-- Rejected (Red) -->
+<button class="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-surface-container-highest transition-colors text-left" data-status="rejected" type="button">
+<div class="flex items-center gap-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-error"></span>
+<span class="font-caption text-caption text-error">Rejected</span>
+</div>
+<span class="font-eyebrow text-[10px] text-error tracking-widest uppercase">Flagged</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</form>
+<!-- Modal Footer Action Enclave -->
+<div class="px-space-xl py-space-md bg-surface-container-low flex items-center justify-between gap-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="font-eyebrow text-[10px] tracking-widest text-on-surface-variant uppercase">Hardware Beacon Key Ready</span>
+</div>
+<div class="flex items-center gap-3">
+<!-- Cancel Button -->
+<button class="h-10 px-4 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-body-medium text-caption transition-colors" id="cancel-modal-btn" type="button">
+            Cancel
+          </button>
+<!-- Primary Save Button (#175CD3) with Enclave Badge -->
+<button class="h-10 px-4 rounded-lg bg-primary-container hover:bg-secondary-container text-white font-body-medium text-caption flex items-center gap-2.5 shadow-md shadow-primary-container/20 transition-all active:scale-[0.98]" form="surveyor-form" id="save-surveyor-btn" type="submit">
+<span class="material-symbols-outlined text-[16px]">save</span>
+<span>Save surveyor</span>
+<span class="ml-1 px-1.5 py-0.5 rounded bg-on-primary/30 text-white font-eyebrow text-[9px] tracking-wider uppercase">
+              Enclave Verified
+            </span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function () {
+    const statusBtn = document.getElementById('status-menu-btn');
+    const statusMenu = document.getElementById('status-options-menu');
+    const selectedLabel = document.getElementById('selected-status-label');
+    const closeBtn = document.getElementById('modal-close-trigger');
+    const cancelBtn = document.getElementById('cancel-modal-btn');
+    const form = document.getElementById('surveyor-form');
+    const modalContainer = document.getElementById('surveyor-modal-card');
+
+    if (statusBtn && statusMenu) {
+      statusBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        statusMenu.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!statusMenu.contains(e.target) && !statusBtn.contains(e.target)) {
+          statusMenu.classList.add('hidden');
+        }
+      });
+
+      const options = statusMenu.querySelectorAll('button[data-status]');
+      options.forEach((opt) => {
+        opt.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const status = opt.getAttribute('data-status');
+          
+          if (status === 'applied') {
+            selectedLabel.innerHTML = `
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+              <span class="text-on-surface font-medium">Applied (Amber)</span>
+              <span class="font-eyebrow text-[10px] text-on-surface-variant tracking-wider bg-surface-container px-1.5 py-0.2 rounded">PENDING AUDIT</span>
+            `;
+          } else if (status === 'verified') {
+            selectedLabel.innerHTML = `
+              <span class="w-2.5 h-2.5 rounded-full bg-secondary ring-2 ring-secondary/20"></span>
+              <span class="text-on-surface font-medium">Verified (Sky-Blue)</span>
+              <span class="font-eyebrow text-[10px] text-on-surface-variant tracking-wider bg-surface-container px-1.5 py-0.2 rounded">TIMESTAMP SECURED</span>
+            `;
+          } else if (status === 'active') {
+            selectedLabel.innerHTML = `
+              <span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+              <span class="text-on-surface font-medium">Active Dispatch (Emerald)</span>
+              <span class="font-eyebrow text-[10px] text-tertiary tracking-wider bg-surface-container px-1.5 py-0.2 rounded">ONLINE DISPATCH</span>
+            `;
+          } else if (status === 'inactive') {
+            selectedLabel.innerHTML = `
+              <span class="w-2.5 h-2.5 rounded-full bg-outline"></span>
+              <span class="text-on-surface font-medium">Inactive (Muted)</span>
+              <span class="font-eyebrow text-[10px] text-on-surface-variant tracking-wider bg-surface-container px-1.5 py-0.2 rounded">OFFLINE</span>
+            `;
+          } else if (status === 'rejected') {
+            selectedLabel.innerHTML = `
+              <span class="w-2.5 h-2.5 rounded-full bg-error"></span>
+              <span class="text-error font-medium">Rejected (Red)</span>
+              <span class="font-eyebrow text-[10px] text-error tracking-wider bg-surface-container px-1.5 py-0.2 rounded">DISQUALIFIED</span>
+            `;
+          }
+
+          statusMenu.classList.add('hidden');
+        });
+      });
+    }
+
+    const dismissModal = () => {
+      if (modalContainer) {
+        modalContainer.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+          modalContainer.classList.remove('scale-95', 'opacity-0');
+        }, 600);
+      }
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', dismissModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', dismissModal);
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const submitBtn = document.getElementById('save-surveyor-btn');
+        if (submitBtn) {
+          const original = submitBtn.innerHTML;
+          submitBtn.innerHTML = `
+            <span class="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
+            <span>Committing Hash...</span>
+          `;
+          setTimeout(() => {
+            submitBtn.innerHTML = original;
+          }, 800);
+        }
+      });
+    }
+  })();
+</script></main></div>
+
+</body></html>

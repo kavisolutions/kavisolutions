@@ -207,7 +207,9 @@ export default function AdminPage() {
   const [section, setSection] = useState<SectionKey>("team");
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     if (typeof window === "undefined") return "dark";
-    const stored = window.localStorage.getItem("kavi-admin-theme");
+    const stored =
+      window.localStorage.getItem("kavi-theme") ||
+      window.localStorage.getItem("kavi-admin-theme");
     return stored === "light" ? "light" : "dark";
   });
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -421,6 +423,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     window.localStorage.setItem("kavi-admin-theme", theme);
+    window.localStorage.setItem("kavi-theme", theme);
     document.documentElement.dataset.theme = theme;
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
