@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { getInitials, type TeamMember } from "@/lib/team";
 import LinkedInIcon from "@/components/LinkedInIcon";
-import { motion } from "framer-motion";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { Reveal, RevealItem, RevealStagger, TiltCard } from "@/components/motion";
 
 type TeamResponse = {
   members: TeamMember[];
@@ -45,155 +47,158 @@ export default function TeamPage() {
       });
   }, [session?.user?.id]);
 
-  if (state === "loading" || authLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-ink text-white">
-        Loading...
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-ink px-6 py-16 text-white">
-      <div className="mx-auto max-w-5xl">
-        <div className="mb-12 text-center">
-          <Link href="/" className="mb-6 inline-block">
-            <span className="font-display text-2xl font-semibold tracking-tight">
-              Kavi<span className="text-gradient">Solutions</span>
-            </span>
-          </Link>
-          <h1 className="mt-4 font-display text-4xl font-bold sm:text-5xl">
-            Meet the <span className="text-gradient">Team</span>
-          </h1>
-          <p className="mx-auto mt-4 max-w-lg text-mist">
-            {settings.tagline ||
-              settings.description ||
-              "The people behind Kavi Solutions — a small, senior team obsessed with craft."}
-          </p>
-        </div>
+    <div className="min-h-screen bg-ink font-sans text-white flex flex-col justify-between">
+      <Navbar />
 
-        {state === "error" && (
-          <p className="text-center text-sm text-red-400">{error}</p>
-        )}
-
-        {state === "ready" && members.length === 0 && (
-          <p className="text-center text-sm text-mist">
-            Team details are being updated. Please check back soon.
-          </p>
-        )}
-
-        {members.length > 0 && (
-          <div>
-            <div className="mb-10 flex flex-wrap items-center justify-center gap-4">
-              <div className="rounded-2xl glass px-6 py-4 text-center">
-                <p className="font-display text-2xl font-bold">{members.length}</p>
-                <p className="text-xs uppercase tracking-widest text-mist">Members</p>
-              </div>
-              {isAdmin && (
-                <Link
-                  href="/admin"
-                  className="rounded-2xl bg-gradient-to-r from-violet-600 to-sky-500 px-6 py-4 text-sm font-semibold shadow-glow transition-all hover:scale-[1.02]"
-                >
-                  Manage team →
-                </Link>
-              )}
-              {ownMemberId && !isAdmin && (
-                <Link
-                  href="/profile"
-                  className="rounded-2xl bg-white/5 px-6 py-4 text-sm font-semibold text-mist transition-all hover:bg-white/10 hover:text-white"
-                >
-                  Edit my profile →
-                </Link>
-              )}
+      <main className="px-6 pt-36 pb-20 flex-grow">
+        <div className="mx-auto max-w-[1152px]">
+          <Reveal className="mb-12 text-center">
+            <div className="inline-flex items-center gap-2 mb-3">
+              <span className="h-2 w-2 rounded-full bg-[#3B82F6]" />
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7889A0]">
+                STUDIO LEADERSHIP &amp; CRAFT
+              </span>
             </div>
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#F7F9FC]">
+              Meet the <span className="bg-gradient-to-r from-[#91B4FF] to-[#68FCBF] bg-clip-text text-transparent">Team</span>
+            </h1>
+            <p className="mx-auto mt-4 max-w-lg text-base text-[#A5B3C7]">
+              {settings.tagline ||
+                settings.description ||
+                "The people behind Kavi Solutions — a senior collective of system architects and design engineers."}
+            </p>
+          </Reveal>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {members.map((member, i) => {
-                const gradient = member.gradient;
-                const initials = member.initials || getInitials(member.name || "?");
+          {state === "loading" && (
+            <div className="flex h-64 items-center justify-center text-sm font-mono text-[#7889A0]">
+              Connecting to team registry...
+            </div>
+          )}
 
-                return (
-                  <motion.div
-                    key={member.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: i * 0.1 }}
-                    className="group relative flex h-full flex-col overflow-hidden rounded-3xl glass p-6 text-center shadow-lift transition-all duration-300 hover:-translate-y-2 hover:shadow-glow"
+          {state === "error" && (
+            <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-center text-sm text-red-300">
+              {error}
+            </div>
+          )}
+
+          {state === "ready" && members.length === 0 && (
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center text-sm text-[#A5B3C7]">
+              Team details are being updated. Please check back soon.
+            </div>
+          )}
+
+          {state === "ready" && members.length > 0 && (
+            <div>
+              <div className="mb-10 flex flex-wrap items-center justify-center gap-4">
+                <div className="rounded-full bg-[#19202E] border border-[rgba(148,163,184,0.14)] px-5 py-2 text-center flex items-center gap-2">
+                  <span className="font-mono text-sm font-semibold text-[#F7F9FC]">
+                    {members.length}
+                  </span>
+                  <span className="text-[11px] uppercase tracking-wider text-[#7889A0] font-mono">
+                    Staff &amp; Architects
+                  </span>
+                </div>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="rounded-full bg-[#175CD3] hover:bg-[#1849A9] px-5 py-2 text-xs font-mono font-medium text-white shadow-[0_0_20px_rgba(23,92,211,0.35)] transition-all"
                   >
-                    <div className="relative mx-auto mb-5 h-28 w-28">
-                      {member.imageUrl ? (
-                        <>
-                          <div
-                            className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${gradient} opacity-60 blur-lg transition-all duration-500 group-hover:opacity-90 group-hover:blur-xl`}
-                          />
-                          <img
-                            src={member.imageUrl}
-                            alt={member.name}
-                            className="relative h-28 w-28 rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3"
-                          />
-                        </>
-                      ) : (
-                        <>
-                          <div
-                            className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${gradient} opacity-60 blur-lg transition-all duration-500 group-hover:opacity-90 group-hover:blur-xl`}
-                          />
-                          <div
-                            className={`relative flex h-28 w-28 items-center justify-center rounded-2xl bg-gradient-to-br ${gradient} font-display text-3xl font-bold text-white transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3`}
-                          >
-                            {initials}
-                          </div>
-                        </>
-                      )}
-                    </div>
+                    Manage team console →
+                  </Link>
+                )}
+                {ownMemberId && !isAdmin && (
+                  <Link
+                    href="/profile"
+                    className="rounded-full bg-white/5 border border-white/10 px-5 py-2 text-xs font-mono font-medium text-[#A5B3C7] hover:text-white transition-all"
+                  >
+                    Edit my profile →
+                  </Link>
+                )}
+              </div>
 
-                    <h3 className="font-display text-lg font-semibold leading-snug">
-                      {member.name}
-                    </h3>
-                    {member.role && (
-                      <p className="mx-auto mt-1.5 max-w-[14rem] text-[11px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-gradient">
-                        {member.role}
-                      </p>
-                    )}
-                    {member.teamName && (
-                      <p className="mx-auto mt-1.5">
-                        <span className="inline-block rounded-lg bg-sky-500/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-sky-300">
-                          {member.teamName}
-                        </span>
-                      </p>
-                    )}
-                    {member.bio && (
-                      <p className="mt-3 text-xs leading-relaxed text-mist">{member.bio}</p>
-                    )}
-                    <div className="mt-auto flex items-center justify-center gap-3 pt-4">
-                      {member.linkedinUrl && (
-                        <a
-                          href={member.linkedinUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          aria-label={`${member.name} on LinkedIn`}
-                          className="text-mist transition-colors hover:text-sky-300"
-                        >
-                          <LinkedInIcon className="h-4 w-4" />
-                        </a>
-                      )}
-                      {member.profileUrl ? (
-                        <a
-                          href={member.profileUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-block text-xs text-mist underline-offset-4 transition-colors hover:text-white hover:underline"
-                        >
-                          View portfolio
-                        </a>
-                      ) : null}
-                    </div>
-                  </motion.div>
-                );
-              })}
+              <RevealStagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {members.map((member) => {
+                  const gradient = member.gradient || "from-blue-600 to-indigo-600";
+                  const initials = member.initials || getInitials(member.name || "?");
+
+                  return (
+                    <RevealItem key={member.id}>
+                      <TiltCard
+                        intensity={10}
+                        className="group relative flex h-full flex-col justify-between overflow-hidden rounded-[24px] bg-[rgba(18,29,47,0.85)] backdrop-blur-[16px] border border-[rgba(148,163,184,0.16)] p-6 sm:p-7 text-center shadow-[0_15px_35px_-10px_rgba(0,0,0,0.4)] hover:border-[rgba(148,163,184,0.35)] transition-all"
+                      >
+                        <div className="relative mx-auto mb-5 h-24 w-24">
+                          {member.imageUrl ? (
+                            <img
+                              src={member.imageUrl}
+                              alt={member.name}
+                              className="relative h-24 w-24 rounded-2xl object-cover border border-white/15 shadow-inner"
+                            />
+                          ) : (
+                            <div
+                              className={`relative flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br ${gradient} font-display text-2xl font-bold text-white border border-white/15 shadow-inner`}
+                            >
+                              {initials}
+                            </div>
+                          )}
+                        </div>
+
+                        <div>
+                          <h3 className="font-display text-lg font-semibold text-[#F7F9FC] leading-snug">
+                            {member.name}
+                          </h3>
+                          {member.role && (
+                            <p className="mx-auto mt-1 max-w-[14rem] text-xs font-mono font-medium text-[#91B4FF]">
+                              {member.role}
+                            </p>
+                          )}
+                          {member.teamName && (
+                            <span className="inline-block mt-2 rounded-full bg-[#151B2A] border border-[rgba(148,163,184,0.14)] px-2.5 py-0.5 text-[10px] font-mono text-[#45dfa4]">
+                              {member.teamName}
+                            </span>
+                          )}
+                          {member.bio && (
+                            <p className="mt-3 text-xs leading-relaxed text-[#7889A0]">
+                              {member.bio}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="mt-6 flex items-center justify-center gap-3 pt-3 border-t border-[rgba(148,163,184,0.1)] w-full">
+                          {member.linkedinUrl && (
+                            <a
+                              href={member.linkedinUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              aria-label={`${member.name} on LinkedIn`}
+                              className="text-[#7889A0] hover:text-[#91B4FF] transition-colors"
+                            >
+                              <LinkedInIcon className="h-4 w-4" />
+                            </a>
+                          )}
+                          {member.profileUrl && (
+                            <a
+                              href={member.profileUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs text-[#7889A0] hover:text-white transition-colors"
+                            >
+                              Portfolio
+                            </a>
+                          )}
+                        </div>
+                      </TiltCard>
+                    </RevealItem>
+                  );
+                })}
+              </RevealStagger>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

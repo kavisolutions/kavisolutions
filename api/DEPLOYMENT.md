@@ -36,6 +36,19 @@ Frontend:
 - SMTP_PASS set; contact form verified 201
 - GitHub Actions deploy still targets 161.97.169.66 — must be repointed or disabled
 
+## Runtime env (Env Manager)
+
+Production runtime values are pulled from Env Manager during deploy:
+
+- API: `kavi-solutions-be/be-production` → `api/.env`
+- Web: `kavi-solutions/fe-production` → `app/.env.production`
+- Tokens: `/home/ubuntu/.config/kavi/env-manager-{be,fe}.token` (`0600`)
+- Script: `scripts/env-manager.sh pull production`
+- Emergency fallback: `ENV_PULL=0 ./deploy/deploy.sh --no-pull`
+
+See [`docs/env-manager.md`](../docs/env-manager.md). The repository does not
+contain the values or tokens.
+
 ## Social agent sidecar (optional)
 
 - Code + SQLite data: `/var/www/kavi-solutions/social-agent` (PM2 `kavi-social-agent`, :3300)

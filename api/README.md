@@ -11,7 +11,8 @@ frontend can be switched over with minimal changes:
 ## Quick start
 
 ```bash
-cp .env.example .env          # fill in SMTP/GitHub secrets as needed
+# From the repo root: pull api/.env from Env Manager (or cp .env.example .env)
+../scripts/env-manager.sh pull local
 docker compose up -d          # postgres :5436, minio :9002 (console :9003)
 npm install
 npm run db:migrate

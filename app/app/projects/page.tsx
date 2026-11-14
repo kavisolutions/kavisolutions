@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { ArrowRight, ExternalLink, Smartphone } from "lucide-react";
 import type { Project } from "@/lib/team";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { Reveal, RevealItem, RevealStagger, TiltCard } from "@/components/motion";
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -34,153 +37,165 @@ export default function ProjectsPage() {
       ? projects
       : projects.filter((p) => p.projectTypes.includes(filter));
 
-  if (state === "loading") {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-ink text-white">
-        Loading...
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-ink px-6 py-16 text-white">
-      <div className="mx-auto max-w-5xl">
-        <div className="mb-12 text-center">
-          <Link href="/" className="mb-6 inline-block">
-            <span className="font-display text-2xl font-semibold tracking-tight">
-              Kavi<span className="text-gradient">Solutions</span>
-            </span>
-          </Link>
-          <h1 className="mt-4 font-display text-4xl font-bold sm:text-5xl">
-            Our <span className="text-gradient">Projects</span>
-          </h1>
-          <p className="mx-auto mt-4 max-w-lg text-mist">
-            Products we&apos;ve designed, built and shipped — from web platforms to mobile apps.
-          </p>
-        </div>
+    <div className="min-h-screen bg-ink font-sans text-white">
+      <Navbar />
 
-        {state === "error" && (
-          <p className="text-center text-sm text-red-400">{error}</p>
-        )}
-
-        {state === "ready" && projects.length === 0 && (
-          <p className="text-center text-sm text-mist">
-            Projects are being updated. Please check back soon.
-          </p>
-        )}
-
-        {projects.length > 0 && (
-          <>
-            <div className="mb-10 flex flex-wrap items-center justify-center gap-2">
-              {(["all", "App", "Web"] as const).map((key) => (
-                <button
-                  key={key}
-                  onClick={() => setFilter(key)}
-                  className={`rounded-xl px-4 py-2 text-sm font-semibold transition-colors ${
-                    filter === key
-                      ? "bg-gradient-to-r from-violet-600 to-sky-500 text-white shadow-glow"
-                      : "bg-white/5 text-mist hover:bg-white/10 hover:text-white"
-                  }`}
-                >
-                  {key === "all" ? "All" : key}
-                </button>
-              ))}
+      <main className="px-6 pt-36 pb-20">
+        <div className="mx-auto max-w-[1152px]">
+          <Reveal className="mb-12 text-center">
+            <div className="inline-flex items-center gap-2 mb-3">
+              <span className="h-2 w-2 rounded-full bg-[#175CD3]" />
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#91B4FF]">
+                SHIPPED PRODUCTION WORK
+              </span>
             </div>
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#F7F9FC]">
+              Selected <span className="bg-gradient-to-r from-[#91B4FF] to-[#68FCBF] bg-clip-text text-transparent">Projects</span>
+            </h1>
+            <p className="mx-auto mt-4 max-w-lg text-base text-[#A5B3C7]">
+              Proven software products, platforms, and native apps crafted and deployed for high-growth firms.
+            </p>
+          </Reveal>
 
-            <div className="grid gap-6 sm:grid-cols-2">
-              {visible.map((project, i) => (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: i * 0.08 }}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-3xl glass p-6 shadow-lift transition-all duration-300 hover:-translate-y-2 hover:shadow-glow"
-                >
-                  <div className="mb-4 flex items-start justify-between gap-3">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-purple-500 font-display text-lg font-bold shadow-glow">
-                      🚀
-                    </div>
-                    <div className="flex flex-wrap justify-end gap-1.5">
-                      {project.projectTypes.map((type) => (
-                        <span
-                          key={type}
-                          className="rounded-lg bg-sky-500/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-sky-300"
-                        >
-                          {type}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <h3 className="font-display text-xl font-semibold leading-snug">
-                    {project.name}
-                  </h3>
-                  {project.description && (
-                    <p className="mt-2 text-sm leading-relaxed text-mist">
-                      {project.description}
-                    </p>
-                  )}
-
-                  {project.skills.length > 0 && (
-                    <div className="mt-4 flex flex-wrap gap-1.5">
-                      {project.skills.map((skill) => (
-                        <span
-                          key={skill}
-                          className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-mist"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="mt-auto flex flex-wrap gap-2 pt-5">
-                    {project.webLink && (
-                      <a
-                        href={project.webLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-4 py-2 text-xs font-semibold text-white shadow-glow transition-all hover:scale-[1.03]"
-                      >
-                        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                        </svg>
-                        Visit website
-                      </a>
-                    )}
-                    {project.appLink && (
-                      <a
-                        href={project.appLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-mist transition-all hover:bg-white/10 hover:text-white"
-                      >
-                        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                        </svg>
-                        Open app
-                      </a>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
+          {state === "loading" && (
+            <div className="flex h-64 items-center justify-center text-sm font-mono text-[#7889A0]">
+              Querying production registry...
             </div>
+          )}
 
-            {visible.length === 0 && (
-              <p className="text-center text-sm text-mist">No {filter} projects yet.</p>
-            )}
-          </>
-        )}
+          {state === "error" && (
+            <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-center text-sm text-red-300">
+              {error}
+            </div>
+          )}
 
-        <div className="mt-16 text-center">
-          <Link
-            href="/#contact"
-            className="rounded-xl bg-gradient-to-r from-violet-600 to-sky-500 px-6 py-3 text-sm font-semibold text-white shadow-glow transition-all hover:scale-[1.03]"
-          >
-            Want a project like these? Let&apos;s talk
-          </Link>
+          {state === "ready" && projects.length === 0 && (
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center text-sm text-[#A5B3C7]">
+              Projects are being updated. Please check back soon.
+            </div>
+          )}
+
+          {state === "ready" && projects.length > 0 && (
+            <>
+              {/* Filter Pills */}
+              <div className="mb-10 flex flex-wrap items-center justify-center gap-2">
+                {(["all", "App", "Web"] as const).map((key) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setFilter(key)}
+                    className={`rounded-full px-5 py-2 text-xs font-mono font-medium transition-all ${
+                      filter === key
+                        ? "bg-[#175CD3] text-white shadow-[0_0_20px_rgba(23,92,211,0.4)]"
+                        : "bg-[#19202E] text-[#7889A0] hover:text-[#F7F9FC] border border-[rgba(148,163,184,0.14)]"
+                    }`}
+                  >
+                    {key === "all" ? "All Systems" : `${key} Applications`}
+                  </button>
+                ))}
+              </div>
+
+              {/* Projects Grid with 3D Tilt */}
+              <RevealStagger className="grid gap-6 sm:grid-cols-2">
+                {visible.map((project) => (
+                  <RevealItem key={project.id}>
+                    <TiltCard
+                      intensity={8}
+                      className="group relative flex h-full flex-col justify-between overflow-hidden rounded-[24px] bg-[rgba(18,29,47,0.85)] backdrop-blur-[16px] border border-[rgba(148,163,184,0.16)] p-7 sm:p-8 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] hover:border-[rgba(148,163,184,0.35)] transition-all"
+                    >
+                      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#2563EB] to-[#06B6D4]" />
+
+                      <div>
+                        <div className="mb-5 flex items-start justify-between gap-3">
+                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#19202E] border border-[rgba(148,163,184,0.14)] text-[#91B4FF] group-hover:bg-[#175CD3] group-hover:text-white transition-colors">
+                            <span className="font-mono text-sm font-bold">#</span>
+                          </div>
+                          <div className="flex flex-wrap justify-end gap-1.5">
+                            {project.projectTypes.map((type) => (
+                              <span
+                                key={type}
+                                className="rounded-full bg-[#151B2A] border border-[rgba(148,163,184,0.14)] px-3 py-1 text-[11px] font-mono text-[#91B4FF]"
+                              >
+                                {type}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        <h3 className="font-display text-2xl font-semibold text-[#F7F9FC] mb-2 leading-snug">
+                          {project.name}
+                        </h3>
+                        {project.description && (
+                          <p className="text-[14px] leading-relaxed text-[#A5B3C7] mb-5">
+                            {project.description}
+                          </p>
+                        )}
+
+                        {project.skills.length > 0 && (
+                          <div className="mb-6 flex flex-wrap gap-1.5">
+                            {project.skills.map((skill) => (
+                              <span
+                                key={skill}
+                                className="rounded-md border border-[rgba(148,163,184,0.12)] bg-[#19202E]/60 px-2.5 py-1 text-[11px] font-mono text-[#7889A0]"
+                              >
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap gap-3 pt-5 border-t border-[rgba(148,163,184,0.1)]">
+                        {project.webLink && (
+                          <a
+                            href={project.webLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#175CD3] hover:bg-[#1849A9] px-4 py-2 text-xs font-medium text-white transition-colors"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            <span>Visit website</span>
+                          </a>
+                        )}
+                        {project.appLink && (
+                          <a
+                            href={project.appLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-[10px] border border-[rgba(148,163,184,0.14)] bg-[#19202E] hover:bg-white/10 px-4 py-2 text-xs font-medium text-[#F7F9FC] transition-colors"
+                          >
+                            <Smartphone className="h-3.5 w-3.5 text-[#91B4FF]" />
+                            <span>Open app</span>
+                          </a>
+                        )}
+                      </div>
+                    </TiltCard>
+                  </RevealItem>
+                ))}
+              </RevealStagger>
+
+              {visible.length === 0 && (
+                <p className="mt-8 text-center text-sm font-mono text-[#7889A0]">
+                  No {filter} projects match this criteria.
+                </p>
+              )}
+            </>
+          )}
+
+          <div className="mt-20 text-center">
+            <Link
+              href="/#contact"
+              className="inline-flex items-center gap-2 rounded-[12px] bg-[#175CD3] hover:bg-[#1849A9] px-8 py-3.5 text-sm font-medium text-white shadow-[0_0_24px_rgba(23,92,211,0.4)] transition-all group"
+            >
+              <span>Have a project in mind? Let&apos;s talk</span>
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

@@ -1,87 +1,103 @@
-import { SectionHeading } from "./SectionHeading";
-import { Reveal, RevealItem, RevealStagger } from "./motion";
+"use client";
 
-const tracks = [
+import Link from "next/link";
+import { ArrowRight, Code2, Network, Sparkles, Users } from "lucide-react";
+import { GlowOrb, Reveal, RevealItem, RevealStagger, TiltCard } from "./motion";
+
+const pillars = [
   {
-    icon: "🎓",
+    icon: Users,
     title: "Mentorship",
-    desc: "One-on-one guidance from senior engineers and designers building real products.",
+    desc: "Guided 1-on-1 daily code reviews by staff engineers and seasoned system architects.",
   },
   {
-    icon: "🧑‍💻",
+    icon: Code2,
     title: "Build in public",
-    desc: "Ship a portfolio-worthy project with a team, reviewed weekly by experts.",
+    desc: "Real production repositories with CI/CD deployed for thousands of genuine daily users.",
   },
   {
-    icon: "🤝",
-    title: "Network",
-    desc: "Join a tight community of builders, founders and recruiters.",
+    icon: Network,
+    title: "Studio Network",
+    desc: "Direct working access to leading tech startup founders, alumni leaders, and partners.",
   },
   {
-    icon: "🎁",
+    icon: Sparkles,
     title: "Opportunities",
-    desc: "Top fellows get referrals, internships and early access to Kavi projects.",
+    desc: "Guaranteed interview pipelines into full studio positions and tier-one partner firms.",
   },
 ];
 
-const cohort = ["January 2027", "May 2027", "September 2027"];
-
 export default function Fellowship() {
   return (
-    <section id="fellowship" className="relative overflow-hidden px-6 py-24 sm:py-32">
-      <div className="absolute left-1/2 top-1/2 h-[30rem] w-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-600/10 blur-3xl" />
+    <section id="fellowship" className="relative px-6 py-24 sm:py-32 overflow-hidden">
+      <GlowOrb className="top-1/2 right-1/4 w-[480px] h-[300px] bg-[#175CD3]/12 blur-[110px]" />
 
-      <div className="relative mx-auto max-w-6xl">
-        <SectionHeading
-          tag="Fellowship"
-          title={
-            <>
-              Launch your career with{" "}
-              <span className="text-gradient">Kavi Fellows</span>
-            </>
-          }
-          subtitle="An 11-month cohort programme for diploma students, final-year students, graduates and people returning to work — built around Vipassana, leadership practice, field service and real projects."
-        />
-
-        <Reveal className="mx-auto mb-14 max-w-3xl">
-          <div className="flex flex-wrap items-center justify-center gap-3 rounded-3xl glass p-6 shadow-lift">
-            <span className="text-sm font-semibold text-mist">
-              Next cohorts →
+      <div className="relative mx-auto max-w-[1152px]">
+        {/* Section Header */}
+        <Reveal className="mb-12 text-center flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#19202E] border border-[rgba(148,163,184,0.16)] mb-4">
+            <span className="h-2 w-2 rounded-full bg-[#45dfa4]" />
+            <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#91B4FF]">
+              ACADEMY &amp; RESIDENCY
             </span>
-            {cohort.map((c) => (
-              <span
-                key={c}
-                className="rounded-full bg-gradient-to-r from-violet-600/20 to-sky-500/20 px-4 py-1.5 text-sm font-medium text-white ring-1 ring-violet-400/30"
-              >
-                {c}
-              </span>
-            ))}
+          </div>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[#F7F9FC] mb-4 max-w-2xl">
+            Launch your career with Kavi Fellows
+          </h2>
+          <p className="text-base sm:text-lg leading-relaxed text-[#A5B3C7] max-w-2xl mb-8">
+            An immersive 11-month residency combining high-craft software engineering, Vipassana
+            mindfulness, and grassroots field leadership.
+          </p>
+
+          {/* Cohort Status Timeline Badges */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#34D399]/10 border border-[#34D399]/30 text-xs font-mono font-medium text-[#45dfa4] shadow-sm">
+              <span className="h-2 w-2 rounded-full bg-[#45dfa4] animate-pulse" />
+              January 2027 Cohort · Applications Open
+            </span>
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#19202E] border border-[rgba(148,163,184,0.14)] text-xs font-mono font-medium text-[#7889A0]">
+              May 2027 · Upcoming
+            </span>
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#19202E] border border-[rgba(148,163,184,0.14)] text-xs font-mono font-medium text-[#7889A0]">
+              September 2027 · Upcoming
+            </span>
           </div>
         </Reveal>
 
-        <RevealStagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {tracks.map((t) => (
-            <RevealItem key={t.title}>
-              <div className="group relative h-full overflow-hidden rounded-3xl glass p-6 shadow-lift transition-all duration-300 hover:-translate-y-2 hover:shadow-glow">
-                <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-violet-500/10 blur-2xl transition-all duration-500 group-hover:bg-violet-500/25" />
-                <span className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/30 to-sky-500/30 text-2xl ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-110">
-                  {t.icon}
-                </span>
-                <h3 className="font-display text-lg font-semibold">{t.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-mist">{t.desc}</p>
-              </div>
-            </RevealItem>
-          ))}
+        {/* 4 Glass Cards Grid with 3D Tilt */}
+        <RevealStagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          {pillars.map((item) => {
+            const Icon = item.icon;
+            return (
+              <RevealItem key={item.title}>
+                <TiltCard
+                  intensity={10}
+                  className="h-full rounded-[24px] bg-[rgba(18,29,47,0.85)] backdrop-blur-[16px] border border-[rgba(148,163,184,0.16)] p-6 sm:p-7 flex flex-col justify-start shadow-[0_15px_35px_-10px_rgba(0,0,0,0.4)] hover:border-[rgba(148,163,184,0.35)] transition-all"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-[#19202E] border border-[rgba(148,163,184,0.14)] flex items-center justify-center mb-4 text-[#91B4FF]">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-display text-lg font-semibold text-[#F7F9FC] mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs sm:text-[13px] leading-relaxed text-[#A5B3C7]">
+                    {item.desc}
+                  </p>
+                </TiltCard>
+              </RevealItem>
+            );
+          })}
         </RevealStagger>
 
-        <Reveal className="mt-12 text-center">
-          <a
+        {/* Fellowship CTA */}
+        <Reveal className="flex justify-center">
+          <Link
             href="/fellowship"
-            className="group inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-sky-500 px-7 py-3.5 text-sm font-semibold text-white shadow-glow transition-all hover:scale-105"
+            className="group inline-flex h-12 items-center justify-center gap-2 rounded-[12px] bg-[#175CD3] px-8 text-[15px] font-medium text-white shadow-[0_0_24px_rgba(23,92,211,0.35)] transition-all hover:bg-[#1849A9] focus:outline-none focus:ring-2 focus:ring-[#91B4FF]"
           >
-            Apply for the fellowship
-            <span className="transition-transform group-hover:translate-x-1">→</span>
-          </a>
+            <span>Apply for the 2027 fellowship cohort</span>
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </Reveal>
       </div>
     </section>

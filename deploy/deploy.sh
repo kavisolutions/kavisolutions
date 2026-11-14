@@ -31,6 +31,17 @@ if [ "${PULL}" = "1" ]; then
   git pull --ff-only origin "${BRANCH}"
 fi
 
+# Runtime env comes from Env Manager. The read-only deploy tokens live outside
+# the repository in ~/.config/kavi (0600). Set ENV_PULL=0 only for an emergency
+# deploy that must use the existing .env files.
+ENV_PULL="${ENV_PULL:-1}"
+if [ "${ENV_PULL}" = "1" ]; then
+  echo "==> Pulling runtime env from Env Manager"
+  "${APP_DIR}/scripts/env-manager.sh" pull production
+else
+  echo "==> Env Manager pull skipped (ENV_PULL=0)"
+fi
+
 if ! command -v pm2 >/dev/null 2>&1; then
   echo "==> Installing PM2"
   npm install -g pm2

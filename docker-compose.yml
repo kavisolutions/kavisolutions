@@ -1,0 +1,172 @@
+# Kavi Solutions — local full stack
+#
+#   docker compose up --build
+#
+# Web:      http://localhost:3100
+# API:      http://localhost:3200/api/health
+# Postgres: localhost:5437 (container kavi-solutions-postgres)
+# MinIO:    http://localhost:9004 (console :9005)
+#
+# The API reads runtime secrets from api/.env. Copy api/.env.example first if
+# that file does not exist. Postgres, MinIO and auth URLs are overridden here
+# for the Docker network; do not point them at host-localhost services.
+
+name: kavi-solutions
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: kavi-solutions-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-kavi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kavi}
+      POSTGRES_DB: ${POSTGRES_DB:-kavi_solutions}
+    ports:
+      - "${POSTGRES_PORT:-5437}:5432"
+    volumes:
+      - kavi-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-kavi} -d ${POSTGRES_DB:-kavi_solutions}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: kavi-solutions-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "${MINIO_PORT:-9004}:9000"
+      - "${MINIO_CONSOLE_PORT:-9005}:9001"
+    volumes:
+      - kavi-minio-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "mc ready local || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  minio-init:
+    image: quay.io/minio/mc:latest
+    container_name: kavi-solutions-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
+      mc mb --ignore-existing local/avatars &&
+      mc mb --ignore-existing local/certificates &&
+      mc anonymous set download local/avatars
+      "
+    restart: "no"
+
+  api-migrate:
+    build:
+      context: ./api
+      target: builder
+    container_name: kavi-solutions-api-migrate
+    command: ["npm", "run", "db:migrate"]
+    env_file:
+      - ./api/.env
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER:-kavi}:${POSTGRES_PASSWORD:-kavi}@postgres:5432/${POSTGRES_DB:-kavi_solutions}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build:
+      context: ./api
+      target: runner
+    container_name: kavi-solutions-api
+    env_file:
+      - ./api/.env
+    environment:
+      NODE_ENV: production
+      PORT: "3200"
+      DATABASE_URL: postgres://${POSTGRES_USER:-kavi}:${POSTGRES_PASSWORD:-kavi}@postgres:5432/${POSTGRES_DB:-kavi_solutions}
+      BETTER_AUTH_URL: http://localhost:${WEB_PORT:-3100}
+      FRONTEND_URL: http://localhost:${WEB_PORT:-3100}
+      CORS_ALLOWED_ORIGINS: http://localhost:${WEB_PORT:-3100},http://127.0.0.1:${WEB_PORT:-3100}
+      S3_ENDPOINT: http://minio:9000
+      S3_PUBLIC_URL: http://localhost:${MINIO_PORT:-9004}/avatars
+      S3_FORCE_PATH_STYLE: "true"
+      SOCIAL_AGENT_URL: ${SOCIAL_AGENT_URL:-}
+      SOCIAL_AGENT_ADMIN_TOKEN: ${SOCIAL_AGENT_ADMIN_TOKEN:-}
+    ports:
+      - "${API_PORT:-3200}:3200"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+      api-migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3200/api/health >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./app
+      args:
+        BACKEND_URL: http://api:3200
+    container_name: kavi-solutions-web
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      BACKEND_URL: http://api:3200
+    ports:
+      - "${WEB_PORT:-3100}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+
+  # Optional sidecar. Create social-agent/.env first, then:
+  #   docker compose --profile social up --build
+  social-agent:
+    profiles: ["social"]
+    build:
+      context: ./social-agent
+    container_name: kavi-solutions-social-agent
+    env_file:
+      - path: ./social-agent/.env
+        required: false
+    environment:
+      HOST: 0.0.0.0
+      PORT: "3300"
+    ports:
+      - "${SOCIAL_PORT:-3301}:3300"
+    volumes:
+      - ./social-agent/data:/app/data
+    restart: unless-stopped
+
+volumes:
+  kavi-postgres-data:
+  kavi-minio-data:

@@ -7,6 +7,9 @@ const backendUrl = (
 ).replace(/\/+$/, "");
 
 const nextConfig: NextConfig = {
+  /* The Docker image runs the standalone server, which keeps the runtime
+     image small and avoids shipping the full node_modules tree. */
+  output: "standalone",
   turbopack: {
     root: path.join(__dirname),
   },

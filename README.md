@@ -49,9 +49,11 @@ FSSAI research notes for the farms/licensing work are in
 
 ## Local development
 
-Run the backend first (see `api/README.md`), then:
+Pull runtime env from Env Manager (see [`docs/env-manager.md`](docs/env-manager.md)),
+then run the backend first (see `api/README.md`):
 
 ```bash
+npm run env:pull:local
 npm install --prefix app
 npm run dev        # root script -> npm --prefix app run dev
 ```
@@ -62,6 +64,13 @@ Optional social-agent sidecar (admin image calendar):
 npm install --prefix social-agent
 cp social-agent/.env.example social-agent/.env   # fill in
 npm run dev:social                               # :3300
+```
+
+Prefer containers? A full local stack (web, API, Postgres, MinIO and optional
+social-agent) is documented in [`docs/docker-local.md`](docs/docker-local.md):
+
+```bash
+docker compose up --build   # web :3100, API :3200
 ```
 
 Open http://localhost:3000. `.env.local` must contain `BACKEND_URL`
@@ -97,6 +106,12 @@ On the VPS the deploy does:
 3. `npm run build`
 4. `pm2 startOrReload ecosystem.config.js` + `pm2 save`
 5. a health check against `http://127.0.0.1:3111/`
+
+Before building, `deploy/deploy.sh` pulls the runtime env from Env Manager
+(`kavi-solutions-be/be-production` and `kavi-solutions/fe-production`) and
+writes `api/.env` + `app/.env.production`. Tokens live outside the repo in
+`~/.config/kavi/`; see [`docs/env-manager.md`](docs/env-manager.md). Set
+`ENV_PULL=0` only for an emergency fallback to the existing files.
 
 `deploy/deploy.sh` deploys **both** apps and, when `social-agent/.env` exists,
 the social-agent sidecar: it installs, migrates (`api/npm run db:migrate`),

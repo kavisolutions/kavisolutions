@@ -1,0 +1,284 @@
+{
+  "$schema": "https://design-tokens.org/schema.json",
+  "$description": "Kavi Solutions design tokens. Source of truth: app/app/globals.css, app/components/*, app/app/admin/page.tsx. Colors are intentionally limited to the values already used in the application.",
+  "brand": {
+    "logo": {
+      "$type": "color",
+      "background": { "$value": "#06060F" },
+      "blue": { "$value": "#2563EB" },
+      "cyan": { "$value": "#06B6D4" },
+      "violet": { "$value": "#8B5CF6" }
+    }
+  },
+  "public": {
+    "surface": {
+      "$type": "color",
+      "ink": { "$value": "#0B1220", "$description": "Page background" },
+      "inkSoft": { "$value": "#111C2E", "$description": "Stat tiles, raised panels" },
+      "glass": { "$value": "#121D2FD6", "$description": "rgba(18,29,47,0.84)" },
+      "glassBorder": { "$value": "#94A3B824", "$description": "rgba(148,163,184,0.14)" },
+      "white03": { "$value": "#FFFFFF08" },
+      "white05": { "$value": "#FFFFFF0D" },
+      "white10": { "$value": "#FFFFFF1A" },
+      "white15": { "$value": "#FFFFFF26" },
+      "divider": { "$value": "#FFFFFF0D" }
+    },
+    "text": {
+      "$type": "color",
+      "primary": { "$value": "#F7F9FC" },
+      "mist": { "$value": "#A5B3C7", "$description": "Body copy and secondary labels" },
+      "fog": { "$value": "#7889A0", "$description": "Captions and quiet metadata" },
+      "accent": { "$value": "#91B4FF", "$description": "Highlighted words and text links" }
+    },
+    "action": {
+      "$type": "color",
+      "primary": { "$value": "#175CD3", "$description": "Primary CTA background" },
+      "primaryHover": { "$value": "#1849A9" },
+      "onPrimary": { "$value": "#FFFFFF" },
+      "secondaryBorder": { "$value": "#FFFFFF26" }
+    },
+    "semantic": {
+      "$type": "color",
+      "success": { "$value": "#34D399" },
+      "successSoft": { "$value": "#6EE7B7" },
+      "warning": { "$value": "#FBBF24" },
+      "error": { "$value": "#F87171" },
+      "errorStrong": { "$value": "#EF4444" },
+      "info": { "$value": "#38BDF8" }
+    },
+    "effect": {
+      "glow": { "$value": "0 8px 24px -14px rgba(59,130,246,0.72)" },
+      "lift": { "$value": "0 1px 2px rgba(0,0,0,0.24), 0 18px 42px -24px rgba(0,0,0,0.62)" },
+      "glassBlur": { "$value": "16px" },
+      "orbBlue": { "$value": "#3B82F6" },
+      "orbViolet": { "$value": "#8B5CF6" },
+      "selection": { "$value": "#8B5CF666" }
+    }
+  },
+  "vertical": {
+    "web": {
+      "$type": "color",
+      "from": { "$value": "#8B5CF6" },
+      "to": { "$value": "#A855F7" }
+    },
+    "mobile": {
+      "$type": "color",
+      "from": { "$value": "#0EA5E9" },
+      "to": { "$value": "#06B6D4" }
+    },
+    "product": {
+      "$type": "color",
+      "from": { "$value": "#D946EF" },
+      "to": { "$value": "#EC4899" }
+    },
+    "marketing": {
+      "$type": "color",
+      "from": { "$value": "#10B981" },
+      "to": { "$value": "#14B8A6" }
+    },
+    "aiBlockchain": {
+      "$type": "color",
+      "from": { "$value": "#8B5CF6" },
+      "to": { "$value": "#06B6D4" }
+    },
+    "survey": {
+      "$type": "color",
+      "from": { "$value": "#14B8A6" },
+      "to": { "$value": "#10B981" }
+    },
+    "financial": {
+      "$type": "color",
+      "from": { "$value": "#10B981" },
+      "to": { "$value": "#14B8A6" }
+    },
+    "government": {
+      "$type": "color",
+      "from": { "$value": "#2563EB" },
+      "to": { "$value": "#06B6D4" }
+    },
+    "farms": {
+      "$type": "color",
+      "from": { "$value": "#10B981" },
+      "to": { "$value": "#84CC16" }
+    },
+    "fellowship": {
+      "$type": "color",
+      "from": { "$value": "#7C3AED" },
+      "to": { "$value": "#0EA5E9" }
+    }
+  },
+  "teamCard": {
+    "violet": {
+      "$type": "color",
+      "from": { "$value": "#8B5CF6" },
+      "to": { "$value": "#A855F7" }
+    },
+    "sky": {
+      "$type": "color",
+      "from": { "$value": "#0EA5E9" },
+      "to": { "$value": "#06B6D4" }
+    },
+    "emerald": {
+      "$type": "color",
+      "from": { "$value": "#10B981" },
+      "to": { "$value": "#14B8A6" }
+    },
+    "fuchsia": {
+      "$type": "color",
+      "from": { "$value": "#D946EF" },
+      "to": { "$value": "#EC4899" }
+    },
+    "amber": {
+      "$type": "color",
+      "from": { "$value": "#F59E0B" },
+      "to": { "$value": "#F97316" }
+    },
+    "rose": {
+      "$type": "color",
+      "from": { "$value": "#F43F5E" },
+      "to": { "$value": "#EF4444" }
+    },
+    "indigo": {
+      "$type": "color",
+      "from": { "$value": "#6366F1" },
+      "to": { "$value": "#3B82F6" }
+    },
+    "lime": {
+      "$type": "color",
+      "from": { "$value": "#84CC16" },
+      "to": { "$value": "#22C55E" }
+    }
+  },
+  "admin": {
+    "light": {
+      "surface": {
+        "$type": "color",
+        "background": { "$value": "hsl(210 40% 98%)" },
+        "card": { "$value": "#FFFFFF" },
+        "popover": { "$value": "#FFFFFF" }
+      },
+      "text": {
+        "$type": "color",
+        "foreground": { "$value": "hsl(222.2 47.4% 11.2%)" },
+        "muted": { "$value": "hsl(215.4 16.3% 46.9%)" },
+        "primaryForeground": { "$value": "hsl(210 40% 98%)" }
+      },
+      "action": {
+        "$type": "color",
+        "primary": { "$value": "hsl(221.2 83.2% 53.3%)" },
+        "secondary": { "$value": "hsl(210 40% 96.1%)" },
+        "accent": { "$value": "hsl(210 40% 96.1%)" },
+        "destructive": { "$value": "hsl(0 84.2% 60.2%)" },
+        "ring": { "$value": "hsl(221.2 83.2% 53.3%)" }
+      },
+      "border": {
+        "$type": "color",
+        "default": { "$value": "hsl(214.3 31.8% 91.4%)" },
+        "input": { "$value": "hsl(214.3 31.8% 88%)" }
+      }
+    },
+    "dark": {
+      "surface": {
+        "$type": "color",
+        "background": { "$value": "hsl(222 47% 7%)" },
+        "card": { "$value": "hsl(222 40% 11%)" },
+        "popover": { "$value": "hsl(222 40% 11%)" }
+      },
+      "text": {
+        "$type": "color",
+        "foreground": { "$value": "hsl(210 40% 98%)" },
+        "muted": { "$value": "hsl(215 20.2% 65.1%)" },
+        "primaryForeground": { "$value": "hsl(210 40% 98%)" }
+      },
+      "action": {
+        "$type": "color",
+        "primary": { "$value": "hsl(217.2 91.2% 59.8%)" },
+        "secondary": { "$value": "hsl(217.2 32.6% 16%)" },
+        "accent": { "$value": "hsl(217.2 32.6% 18%)" },
+        "destructive": { "$value": "hsl(0 62.8% 50.6%)" },
+        "ring": { "$value": "hsl(217.2 91.2% 59.8%)" }
+      },
+      "border": {
+        "$type": "color",
+        "default": { "$value": "hsl(217.2 32.6% 18%)" },
+        "input": { "$value": "hsl(217.2 32.6% 22%)" }
+      }
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "$type": "fontFamily",
+      "display": { "$value": ["Space Grotesk", "ui-sans-serif", "system-ui", "sans-serif"] },
+      "body": { "$value": ["Geist", "ui-sans-serif", "system-ui", "sans-serif"] },
+      "mono": { "$value": ["Geist Mono", "ui-monospace", "monospace"] }
+    },
+    "fontWeight": {
+      "$type": "fontWeight",
+      "regular": { "$value": 400 },
+      "medium": { "$value": 500 },
+      "semibold": { "$value": 600 },
+      "bold": { "$value": 700 }
+    },
+    "fontSize": {
+      "$type": "dimension",
+      "eyebrow": { "$value": "11px" },
+      "caption": { "$value": "12px" },
+      "small": { "$value": "14px" },
+      "body": { "$value": "16px" },
+      "bodyLarge": { "$value": "18px" },
+      "cardTitle": { "$value": "18px" },
+      "cardTitleLarge": { "$value": "24px" },
+      "sectionTitleMobile": { "$value": "30px" },
+      "sectionTitle": { "$value": "48px" },
+      "pageTitleMobile": { "$value": "36px" },
+      "pageTitle": { "$value": "60px" },
+      "hero": { "$value": "72px" }
+    },
+    "lineHeight": {
+      "$type": "number",
+      "tight": { "$value": 1.08 },
+      "heading": { "$value": 1.2 },
+      "body": { "$value": 1.7 }
+    },
+    "letterSpacing": {
+      "$type": "dimension",
+      "tight": { "$value": "-0.02em" },
+      "normal": { "$value": "0" },
+      "eyebrow": { "$value": "0.2em" }
+    }
+  },
+  "radius": {
+    "$type": "dimension",
+    "sm": { "$value": "6px" },
+    "md": { "$value": "8px" },
+    "lg": { "$value": "10px" },
+    "xl": { "$value": "12px" },
+    "2xl": { "$value": "16px" },
+    "3xl": { "$value": "24px" },
+    "pill": { "$value": "999px" }
+  },
+  "space": {
+    "$type": "dimension",
+    "1": { "$value": "4px" },
+    "2": { "$value": "8px" },
+    "3": { "$value": "12px" },
+    "4": { "$value": "16px" },
+    "5": { "$value": "20px" },
+    "6": { "$value": "24px" },
+    "8": { "$value": "32px" },
+    "10": { "$value": "40px" },
+    "12": { "$value": "48px" },
+    "16": { "$value": "64px" },
+    "24": { "$value": "96px" },
+    "32": { "$value": "128px" }
+  },
+  "layout": {
+    "$type": "dimension",
+    "contentMax": { "$value": "1152px" },
+    "heroMax": { "$value": "896px" },
+    "adminSidebar": { "$value": "256px" },
+    "adminTopbar": { "$value": "64px" },
+    "mobileFrame": { "$value": "390px" },
+    "desktopFrame": { "$value": "1440px" }
+  }
+}
