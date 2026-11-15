@@ -24,96 +24,124 @@ type DisplayProject = Project & {
   icon?: string;
 };
 
-const STITCH_PROJECTS: DisplayProject[] = [
+const PORTFOLIO_PROJECTS: DisplayProject[] = [
   {
-    id: "apex-financial-ledger",
-    name: "Apex Financial Ledger",
+    id: "kavi-tent-on-rent",
+    name: "Tent on Rent",
     description:
-      "Distributed high-concurrency ledger & fiscal audit system capable of sub-millisecond atomic settlement, multi-tenant balance assertions, and zero-loss recovery journals.",
+      "Multi-vendor tent and event-equipment rental marketplace with date-based inventory, verified owners, advance payments, order lifecycle and an Expo app on top of a NestJS API.",
     appLink: "",
-    webLink: "#",
+    webLink: "https://tentonrent.kavisolutions.in",
     liveLinkType: "web",
     sortOrder: 1,
-    projectTypes: ["Web", "Enterprise"],
-    skills: ["Raft Consensus", "Rust", "TimescaleDB", "gRPC", "Next.js"],
-    metrics: "420k ops/sec",
-    badge: "Raft Quorum 9/9",
-    icon: "terminal",
-  },
-  {
-    id: "pulse-health-ai",
-    name: "Pulse Health AI",
-    description:
-      "Real-time biometric telemetry and clinical triage assistant orchestrating high-fidelity edge signal filtering, predictive escalation, and HIPAA-sealed records.",
-    appLink: "#",
-    webLink: "",
-    liveLinkType: "app",
-    sortOrder: 2,
-    projectTypes: ["App"],
-    skills: ["React Native", "FastAPI", "WebSockets", "TensorFlow Lite", "PostgreSQL"],
-    metrics: "18ms Ingestion",
-    badge: "98.4% Confidence",
-    icon: "activity",
-  },
-  {
-    id: "orbit-saas-telemetry",
-    name: "Orbit SaaS Telemetry",
-    description:
-      "Developer-centric distributed tracing and cloud observability portal with compressed columnar storage, live flamegraphs, and anomaly alerting loops.",
-    appLink: "",
-    webLink: "#",
-    liveLinkType: "web",
-    sortOrder: 3,
-    projectTypes: ["Web"],
-    skills: ["ClickHouse", "Go", "OpenTelemetry", "Tailwind CSS", "TypeScript"],
-    metrics: "2.4B spans/day",
-    badge: "p99 < 42ms",
-    icon: "cpu",
-  },
-  {
-    id: "fieldgrid-pan-india",
-    name: "FieldGrid Pan-India",
-    description:
-      "Offline-first rural census and field surveyor data collection platform engineered to reconcile conflict-free replicated data types across spotty 2G/EDGE nodes.",
-    appLink: "#",
-    webLink: "",
-    liveLinkType: "app",
-    sortOrder: 4,
-    projectTypes: ["App"],
-    skills: ["CRDT Mesh", "Kotlin Multiplatform", "SQLite", "GIS / MapLibre", "Node.js"],
-    metrics: "Local Mesh Sync",
-    badge: "Zero Collision",
+    projectTypes: ["App", "Web"],
+    skills: [
+      "Expo",
+      "React Native",
+      "Next.js",
+      "NestJS",
+      "PostgreSQL",
+      "Redis",
+      "MinIO",
+      "Razorpay",
+    ],
+    metrics: "Live · App + Web",
+    badge: "Marketplace",
     icon: "map-pin",
   },
   {
-    id: "zenith-govportal",
-    name: "Zenith GovPortal",
+    id: "kavi-where-am-i",
+    name: "Where Am I",
     description:
-      "High-capacity public citizen examination registry and certificate verification architecture fortified with rate-limited anti-scraping and biometric validation.",
+      "AI visual inventory that turns cupboard photos into searchable objects, then shows exactly where each item is stored. Live at whereami.kavisolutions.in.",
     appLink: "",
-    webLink: "#",
+    webLink: "https://whereami.kavisolutions.in",
     liveLinkType: "web",
-    sortOrder: 5,
-    projectTypes: ["Web", "GovTech"],
-    skills: ["Next.js App Router", "PostgreSQL", "Redis Sentinel", "Cloudflare WAF"],
-    metrics: "12M Peak Users",
-    badge: "ISO 27001 Compliant",
+    sortOrder: 2,
+    projectTypes: ["Web", "App"],
+    skills: [
+      "Next.js",
+      "Expo",
+      "better-auth",
+      "Drizzle ORM",
+      "PostgreSQL",
+      "pgvector",
+      "MinIO",
+      "Groq",
+    ],
+    metrics: "Live · AI Search",
+    badge: "Computer Vision",
+    icon: "activity",
+  },
+  {
+    id: "kavi-social-agent",
+    name: "Social Agent",
+    description:
+      "Scheduled social publishing sidecar that imports a year of images, writes captions with a vision model, routes every post through Telegram approval and publishes to LinkedIn, Facebook and Instagram.",
+    appLink: "",
+    webLink: "",
+    liveLinkType: "web",
+    sortOrder: 3,
+    projectTypes: ["Web"],
+    skills: [
+      "Fastify",
+      "TypeScript",
+      "SQLite",
+      "Node cron",
+      "LinkedIn API",
+      "Meta Graph API",
+      "Telegram Bot API",
+    ],
+    metrics: "Automation · Internal",
+    badge: "AI Captions",
+    icon: "cpu",
+  },
+  {
+    id: "kavi-certificate-system",
+    name: "Certificate System",
+    description:
+      "Print-ready certificate design system with five templates, QR verification, batch CSV issuing and an audit registry wired to the public /verify page.",
+    appLink: "",
+    webLink: "https://kavisolutions.in/verify",
+    liveLinkType: "web",
+    sortOrder: 4,
+    projectTypes: ["Web"],
+    skills: [
+      "HTML/CSS",
+      "JavaScript",
+      "qrcode",
+      "jsQR",
+      "PDF generation",
+      "QR verification",
+    ],
+    metrics: "Live · Verification",
+    badge: "Print Ready",
     icon: "shield-check",
   },
   {
-    id: "chrono-crypto-vault",
-    name: "Chrono Crypto Vault",
+    id: "kavi-solutions-platform",
+    name: "Kavi Solutions Platform",
     description:
-      "Deterministic smart contract asset custody and multi-sig enterprise vault integrating time-locked governance, formal EVM verification, and audit pipelines.",
+      "This site: a Next.js 16 marketing platform with a NestJS API, Better Auth sign-in, admin-managed team, projects, certificates and surveyors, live page switches and MinIO uploads.",
     appLink: "",
-    webLink: "#",
+    webLink: "https://kavisolutions.in",
     liveLinkType: "web",
-    sortOrder: 6,
-    projectTypes: ["Web"],
-    skills: ["Solidity", "Foundry", "Zero Knowledge Proofs", "Wagmi", "Viem"],
-    metrics: "$1.8B TVL Protected",
-    badge: "Mathematically Proven",
-    icon: "lock",
+    sortOrder: 5,
+    projectTypes: ["Web", "Enterprise"],
+    skills: [
+      "Next.js",
+      "React 19",
+      "TypeScript",
+      "Tailwind CSS",
+      "NestJS",
+      "PostgreSQL",
+      "Drizzle ORM",
+      "Better Auth",
+      "Docker",
+    ],
+    metrics: "Live · Platform",
+    badge: "Production",
+    icon: "terminal",
   },
 ];
 
@@ -137,7 +165,7 @@ function ProjectIcon({ icon }: { icon?: string }) {
 }
 
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState<DisplayProject[]>(STITCH_PROJECTS);
+  const [projects, setProjects] = useState<DisplayProject[]>(PORTFOLIO_PROJECTS);
   const [filter, setFilter] = useState<"all" | "App" | "Web">("all");
 
   useEffect(() => {
@@ -149,7 +177,7 @@ export default function ProjectsPage() {
         }
       })
       .catch(() => {
-        // Fall back to Stitch projects
+        // Keep the built-in portfolio while the API is unavailable.
       });
   }, []);
 
@@ -257,9 +285,20 @@ export default function ProjectsPage() {
                       <span className="h-1.5 w-1.5 rounded-full bg-[#34D399]" />
                       {project.badge || "Production Live"}
                     </span>
-                    <span className="text-[#91B4FF] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
-                      Case Spec <ArrowRight className="h-3 w-3" />
-                    </span>
+                    {project.webLink || project.appLink ? (
+                      <a
+                        href={project.webLink || project.appLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[#91B4FF] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1"
+                      >
+                        Visit live <ExternalLink className="h-3 w-3" />
+                      </a>
+                    ) : (
+                      <span className="text-[#91B4FF] inline-flex items-center gap-1">
+                        Case Spec <ArrowRight className="h-3 w-3" />
+                      </span>
+                    )}
                   </div>
                 </TiltCard>
               </RevealItem>

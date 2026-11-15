@@ -43,6 +43,13 @@
       "when": 1794767615825,
       "tag": "0005_portfolio_projects",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794767877629,
+      "tag": "0006_remove_test_project",
+      "breakpoints": true
     }
   ]
 }
