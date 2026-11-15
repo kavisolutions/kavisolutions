@@ -50,6 +50,13 @@
       "when": 1794767877629,
       "tag": "0006_remove_test_project",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794768708440,
+      "tag": "0007_add_ashok_admin",
+      "breakpoints": true
     }
   ]
 }
