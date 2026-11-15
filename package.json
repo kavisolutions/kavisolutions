@@ -26,6 +26,8 @@
     "test:all": "npm test && npm run test:api",
     "typecheck": "npm --prefix api run type-check",
     "db:migrate": "npm --prefix api run db:migrate",
+    "db:seed": "npm --prefix api run db:seed",
+    "db:seed:demo": "npm --prefix api run db:seed:demo",
     "env:pull:local": "bash scripts/env-manager.sh pull local",
     "env:pull:production": "bash scripts/env-manager.sh pull production",
     "env:check:local": "bash scripts/env-manager.sh check local",

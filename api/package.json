@@ -25,6 +25,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "ts-node -r tsconfig-paths/register scripts/seed.ts",
+    "db:seed:demo": "ts-node -r tsconfig-paths/register scripts/seed-demo.ts",
     "user:create": "ts-node -r tsconfig-paths/register scripts/create-user.ts"
   },
   "dependencies": {

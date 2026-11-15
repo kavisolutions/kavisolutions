@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SurveyPage } from "@/components/SurveyPage";
+import { isPageEnabled } from "@/lib/pages";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +16,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SurveyRoute() {
+  if (!(await isPageEnabled("survey"))) notFound();
+
   return (
     <div className="min-h-screen bg-ink font-sans text-[#F7F9FC] flex flex-col justify-between">
       <Navbar />

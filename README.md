@@ -58,6 +58,16 @@ npm install --prefix app
 npm run dev        # root script -> npm --prefix app run dev
 ```
 
+For a populated local UI, run the API seed once after migrating:
+
+```bash
+npm run db:seed       # baseline roles, teams, admins, settings
+npm run db:seed:demo  # demo team, projects, certificates, surveyors + page switches
+```
+
+The demo seed is local/QA only: every row has a `demo-` ID or a reserved
+`9xxx` certificate serial, and it is safe to re-run.
+
 Optional social-agent sidecar (admin image calendar):
 
 ```bash

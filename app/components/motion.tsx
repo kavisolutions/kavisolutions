@@ -150,14 +150,13 @@ export function RevealItem({
   return (
     <motion.div
       className={className}
-      variants={{
-        hidden: { opacity: 0, y: 36 },
-        show: {
-          opacity: 1,
-          y: 0,
-          transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
-        },
-      }}
+      /* Keep content visible even when IntersectionObserver never fires:
+         only the offset animates, never the opacity. A failed reveal must
+         not leave a whole card grid invisible. */
+      initial={{ opacity: 1, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>
@@ -213,8 +212,8 @@ export function TiltCard({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={`relative ${className ?? ""}`}
-      initial={{ opacity: 0, y: 40 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+      initial={{ opacity: 1, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 1, y: 24 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       style={
         is3DMode

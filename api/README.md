@@ -16,7 +16,8 @@ frontend can be switched over with minimal changes:
 docker compose up -d          # postgres :5436, minio :9002 (console :9003)
 npm install
 npm run db:migrate
-npm run db:seed
+npm run db:seed             # baseline roles, teams, admins, settings
+npm run db:seed:demo        # optional: demo team, projects, certificates, surveyors
 npm run user:create -- --email you@example.com --password 'strong-pass' --name "Admin" --role admin
 npm run start:dev             # http://localhost:3200  (docs: /api/docs)
 ```
@@ -31,6 +32,7 @@ npm run start:dev             # http://localhost:3200  (docs: /api/docs)
 | `npm run db:generate` | Generate migration from `schema.ts` |
 | `npm run db:migrate` | Apply migrations |
 | `npm run db:seed` | Seed roles, teams, admins, settings |
+| `npm run db:seed:demo` | Add demo team, projects, certificates, surveyors and enable public pages (local/QA only) |
 | `npm run user:create -- --email … --password … --role admin` | Create or update a login (first admin) |
 
 ## Endpoints

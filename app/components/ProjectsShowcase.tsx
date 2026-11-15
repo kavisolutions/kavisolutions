@@ -1,74 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowRight,
-  ExternalLink,
-  Terminal,
-  Activity,
-  Cpu,
-  MapPin,
-  Layers,
-  Sparkles,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { GlowOrb, Reveal, RevealItem, RevealStagger, TiltCard } from "./motion";
-
-const featuredProjects = [
-  {
-    id: "apex-financial-ledger",
-    name: "Apex Financial Ledger",
-    category: "High-Concurrency Fintech",
-    description:
-      "Distributed ledger & fiscal audit system capable of sub-millisecond atomic settlement, multi-tenant balance assertions, and zero-loss recovery journals.",
-    skills: ["Raft Consensus", "Rust", "TimescaleDB", "gRPC", "Next.js"],
-    metrics: "420k ops/sec",
-    badge: "Raft Quorum 9/9",
-    icon: Terminal,
-    accent: "text-[#91B4FF]",
-    gradient: "from-[#2563EB] to-[#91B4FF]",
-  },
-  {
-    id: "pulse-health-ai",
-    name: "Pulse Health AI",
-    category: "Edge Biometrics & AI",
-    description:
-      "Real-time biometric telemetry and clinical triage assistant orchestrating high-fidelity edge signal filtering, predictive escalation, and HIPAA-sealed records.",
-    skills: ["React Native", "FastAPI", "WebSockets", "TensorFlow Lite"],
-    metrics: "18ms Ingestion",
-    badge: "98.4% Accuracy",
-    icon: Activity,
-    accent: "text-[#34D399]",
-    gradient: "from-[#10B981] to-[#34D399]",
-  },
-  {
-    id: "orbit-saas-telemetry",
-    name: "Orbit SaaS Telemetry",
-    category: "Cloud Observability",
-    description:
-      "Developer-centric distributed tracing and cloud observability portal with compressed columnar storage, live flamegraphs, and anomaly alerting loops.",
-    skills: ["ClickHouse", "Go", "OpenTelemetry", "Tailwind CSS"],
-    metrics: "2.4B spans/day",
-    badge: "p99 < 42ms",
-    icon: Cpu,
-    accent: "text-[#C084FC]",
-    gradient: "from-[#8B5CF6] to-[#C084FC]",
-  },
-  {
-    id: "fieldgrid-pan-india",
-    name: "FieldGrid Pan-India",
-    category: "Civic Mobile Platform",
-    description:
-      "Offline-first rural census and field surveyor data collection platform engineered to reconcile conflict-free replicated data types across spotty 2G/EDGE nodes.",
-    skills: ["Flutter", "SQLite", "CRDTs", "PostGIS", "Golang"],
-    metrics: "140k+ Surveys",
-    badge: "Offline Replicas",
-    icon: MapPin,
-    accent: "text-[#38BDF8]",
-    gradient: "from-[#0284C7] to-[#38BDF8]",
-  },
-];
+import { useShowcaseProjects, ICON_MAP } from "@/lib/use-showcase";
 
 export default function ProjectsShowcase() {
+  const projects = useShowcaseProjects();
+
   return (
     <section id="projects" className="relative px-6 py-24 sm:py-32 overflow-hidden">
       {/* Ambient background glow */}
@@ -96,8 +35,8 @@ export default function ProjectsShowcase() {
 
         {/* 2x2 Bento Grid of Projects */}
         <RevealStagger className="grid grid-cols-1 md:grid-cols-2 gap-7 mb-12">
-          {featuredProjects.map((p) => {
-            const Icon = p.icon;
+          {projects.map((p) => {
+            const Icon = ICON_MAP[p.icon];
             return (
               <RevealItem key={p.id}>
                 <TiltCard
@@ -135,7 +74,7 @@ export default function ProjectsShowcase() {
                     {/* Metric Box */}
                     <div className="flex items-center justify-between p-3.5 rounded-[16px] bg-[#151B2A]/90 border border-[rgba(148,163,184,0.1)] mb-6">
                       <span className="font-mono text-[11px] text-[#7889A0] uppercase tracking-wider">
-                        Production Benchmark
+                        Live surface
                       </span>
                       <span className="font-mono text-sm font-semibold text-[#F7F9FC]">
                         {p.metrics}

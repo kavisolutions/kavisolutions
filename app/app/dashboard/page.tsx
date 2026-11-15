@@ -146,9 +146,11 @@ export default function DashboardPage() {
     if (authLoading) return;
     if (session) {
       void loadProfile();
-      void lookupCertificate("KV-FEL-2026-0001");
+      /* Do not auto-verify a hard-coded sample ID: on a seeded or empty
+         database it fires a guaranteed 404. The certificates tab verifies
+         when the user asks. */
     }
-  }, [authLoading, session, loadProfile, lookupCertificate]);
+  }, [authLoading, session, loadProfile]);
 
   const handleSignOut = async () => {
     await authClient.signOut();
