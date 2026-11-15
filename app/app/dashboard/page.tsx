@@ -37,6 +37,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import GradientPicker from "@/components/GradientPicker";
 import { GlowOrb, Reveal, RevealItem, RevealStagger, TiltCard } from "@/components/motion";
+import { apiErrorMessage } from "@/lib/api-error";
 import type { OrgRole, OrgTeam } from "@/lib/team";
 
 type MeResponse = {
@@ -174,7 +175,7 @@ export default function DashboardPage() {
       });
       const body = await res.json().catch(() => null);
       if (!res.ok) {
-        setError(body?.message ?? "Image upload failed");
+        setError(apiErrorMessage(body, "Image upload failed"));
         return;
       }
       setImageUrl(body.url);
@@ -211,7 +212,7 @@ export default function DashboardPage() {
 
       const body = await res.json().catch(() => null);
       if (!res.ok) {
-        setError(body?.message ?? "Failed to save profile changes");
+        setError(apiErrorMessage(body, "Failed to save profile changes"));
         return;
       }
 
@@ -806,7 +807,6 @@ export default function DashboardPage() {
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
                       placeholder="e.g. Staff Distributed Systems Engineer"
-                      required
                       className="w-full h-11 px-4 rounded-xl bg-[#06060F] border border-[rgba(148,163,184,0.2)] text-[14px] text-[#F7F9FC] focus:outline-none focus:border-[#91B4FF]"
                     />
                   </div>

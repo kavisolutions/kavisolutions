@@ -6,6 +6,7 @@ import { authClient, useAuth } from "@/lib/auth-context";
 import GradientPicker from "@/components/GradientPicker";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { apiErrorMessage } from "@/lib/api-error";
 import type { OrgRole, OrgTeam } from "@/lib/team";
 
 type MeResponse = {
@@ -92,21 +93,25 @@ export default function ProfilePage() {
     const form = new FormData();
     form.append("file", file);
 
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: form,
-      credentials: "include",
-    });
-    const body = await res.json().catch(() => null);
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: form,
+        credentials: "include",
+      });
+      const body = await res.json().catch(() => null);
 
-    if (!res.ok) {
-      setError(body?.error || "Upload failed");
+      if (!res.ok) {
+        setError(apiErrorMessage(body, "Upload failed"));
+        return;
+      }
+
+      setImageUrl(body.url);
+    } catch {
+      setError("Upload failed");
+    } finally {
       setUploading(false);
-      return;
     }
-
-    setImageUrl(body.url);
-    setUploading(false);
   };
 
   const save = async () => {
@@ -115,23 +120,28 @@ export default function ProfilePage() {
     setError("");
     setMessage("");
 
-    const res = await fetch(`/api/team/${me.member.id}`, {
-      method: "PATCH",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, role, bio, profileUrl, linkedinUrl, gradient, imageUrl }),
-    });
+    try {
+      const res = await fetch(`/api/team/${me.member.id}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, role, bio, profileUrl, linkedinUrl, gradient, imageUrl }),
+      });
 
-    const data = await res.json().catch(() => null);
+      const data = await res.json().catch(() => null);
 
-    if (!res.ok) {
-      setError(data?.error || "Failed to save profile");
+      if (!res.ok) {
+        setError(apiErrorMessage(data, "Failed to save profile"));
+        return;
+      }
+
+      setMessage("Profile updated");
+      await load();
+    } catch {
+      setError("Failed to save profile");
+    } finally {
       setSaving(false);
-      return;
     }
-
-    setMessage("Profile updated");
-    setSaving(false);
   };
 
   if (authLoading || (session && !loaded)) {

@@ -7,6 +7,7 @@ import { authClient, useAuth } from "@/lib/auth-context";
 import GradientPicker from "@/components/GradientPicker";
 import SocialPanel from "@/components/admin/SocialPanel";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { apiErrorMessage } from "@/lib/api-error";
 import { getInitials, type OrgRole, type OrgTeam, type TeamMember, type Project, COMMON_SKILLS } from "@/lib/team";
 import {
   CERTIFICATE_TYPE_LABELS,
@@ -492,7 +493,7 @@ export default function AdminPage() {
     const data = await res.json().catch(() => null);
 
     if (!res.ok) {
-      setFormError(data?.error || "Failed to save member");
+      setFormError(apiErrorMessage(data, "Failed to save member"));
       setSavingMember(false);
       return;
     }
