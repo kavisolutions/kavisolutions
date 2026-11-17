@@ -65,11 +65,21 @@ five acts while the page scrolls:
 5. Capstone — a demo-day stage, arch and audience.
 
 The canvas is one lazy-loaded Three.js scene. Scroll progress moves the
-character along a path; the camera follows, the walk cycle runs between
-stations, and the character switches to waving, handshake, typing and
-presenting poses near each station. Overlay copy changes per act, with a
-progress bar and step dots. The section is decorative storytelling, not a game:
-no keyboard controls, no inventory, no branching. On mobile the same scene
+character along a path; the camera follows with a different framing per act,
+the walk cycle runs between stations, and the character switches to waving,
+handshake, typing and presenting poses near each station. The character has
+jointed limbs, a face, lanyard/badge and a backpack; stations add readable
+signage and props (KAVI Fellowship gate, interview table with laptops and
+papers, Live Project screen, DSN field sign and crops, Demo Day stage, trophy
+and audience). Each station also has an in-scene process callout that fades in
+when the character arrives: Apply (register → choose track → induction),
+Interview (intro → portfolio/track fit → next steps), Learn & Build (brief →
+review → ship), DSN Field (listen → serve → document) and Capstone (build →
+demo → next step). Desktop renders real directional shadows; mobile disables
+the shadow map to keep the scroll smooth. Overlay copy includes three short
+action chips per act, plus a progress bar and step dots. The section is
+decorative storytelling, not a game: no keyboard controls, no inventory, no
+branching. On mobile the same scene
 renders at a reduced pixel ratio and the overlay becomes a bottom card. When
 WebGL is unavailable, a static stage-icon fallback keeps the story readable.
 Under `prefers-reduced-motion`, walk bobbing and particle drift are disabled;

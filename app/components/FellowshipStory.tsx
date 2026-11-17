@@ -25,6 +25,7 @@ const STAGES = [
     copy: "Register interest, meet the team and choose the track you want to build in. No polished CV required — show the willingness to do the work.",
     color: "#3B82F6",
     icon: DoorOpen,
+    bullets: ["Register interest", "Choose a track", "Cohort induction"],
   },
   {
     tag: "INTERVIEW",
@@ -32,6 +33,7 @@ const STAGES = [
     copy: "A real conversation with the team about where you are, what you want to build and what support you need. Not a formality.",
     color: "#06B6D4",
     icon: Handshake,
+    bullets: ["Meet the team", "Share your goals", "Honest fit check"],
   },
   {
     tag: "LEARN & BUILD",
@@ -39,6 +41,7 @@ const STAGES = [
     copy: "Mentor reviews, live briefs and weekly shipping. Fellows learn by owning a deliverable, not by watching slides.",
     color: "#34D399",
     icon: Code2,
+    bullets: ["Live briefs", "Weekly mentor reviews", "Ship every week"],
   },
   {
     tag: "FIELD",
@@ -46,6 +49,7 @@ const STAGES = [
     copy: "DSN immersion with schools, farmers and community organisations. Learn the context you are building for by showing up in it.",
     color: "#FBBF24",
     icon: Sprout,
+    bullets: ["DSN immersion", "Community project", "Documented outcome"],
   },
   {
     tag: "CAPSTONE",
@@ -53,6 +57,7 @@ const STAGES = [
     copy: "Deliver a public capstone, present at demo day and leave with a portfolio and a clear next step.",
     color: "#8B5CF6",
     icon: GraduationCap,
+    bullets: ["Public demo day", "Portfolio case study", "Next-step plan"],
   },
 ];
 
@@ -194,6 +199,20 @@ export default function FellowshipStory() {
               <p className="mt-2.5 text-sm leading-relaxed text-[#A5B3C7]">
                 {active.copy}
               </p>
+              <ul className="mt-3 flex flex-wrap gap-1.5">
+                {active.bullets.map((bullet) => (
+                  <li
+                    key={bullet}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-[9px] font-medium text-[#475569] dark:border-white/10 dark:bg-white/[0.04] dark:text-[#A5B3C7]"
+                  >
+                    <span
+                      className="h-1 w-1 rounded-full"
+                      style={{ backgroundColor: active.color }}
+                    />
+                    {bullet}
+                  </li>
+                ))}
+              </ul>
               {stage === STAGES.length - 1 && (
                 <Link
                   href="/#contact"
