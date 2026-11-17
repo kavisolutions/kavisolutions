@@ -1,17 +1,18 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { Reveal, RevealItem, RevealStagger, TiltCard } from "@/components/motion";
 import FellowshipHero from "@/components/FellowshipHero";
 import FellowshipStory from "@/components/FellowshipStory";
 import FellowshipDetails from "@/components/FellowshipDetails";
+import FellowshipPeople from "@/components/FellowshipPeople";
+import FellowshipOutcomes from "@/components/FellowshipOutcomes";
+import FellowshipApply from "@/components/FellowshipApply";
 import FellowshipCursor from "@/components/FellowshipCursor";
 import FellowshipScrollProgress from "@/components/FellowshipScrollProgress";
 import {
   FELLOWSHIP_AUDIENCE,
   FELLOWSHIP_COHORTS,
-  FELLOWSHIP_CONTACT,
   FELLOWSHIP_FAQ,
   FELLOWSHIP_PHASES,
   FELLOWSHIP_PILLARS,
@@ -229,6 +230,8 @@ export default function FellowshipPage() {
       </section>
 
       {/* COHORTS */}
+      <FellowshipPeople />
+
       <section id="cohorts" className="relative px-6 py-20">
         <div className="mx-auto max-w-4xl">
           <SectionHeading
@@ -259,6 +262,8 @@ export default function FellowshipPage() {
 
       <FellowshipDetails />
 
+      <FellowshipOutcomes />
+
       {/* FAQ */}
       <section className="relative px-6 py-20">
         <div className="mx-auto max-w-3xl">
@@ -281,38 +286,7 @@ export default function FellowshipPage() {
         </div>
       </section>
 
-      {/* APPLY */}
-      <section id="apply" className="relative px-6 pb-28 pt-6">
-        <div className="mx-auto max-w-4xl">
-          <Reveal>
-            <div className="relative overflow-hidden rounded-[28px] border border-[rgba(148,163,184,0.18)] bg-[rgba(18,29,47,0.85)] backdrop-blur-[20px] p-10 sm:p-14 text-center shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)]">
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#2563EB] via-[#91B4FF] to-[#06B6D4]" />
-              <h2 className="font-display text-3xl font-semibold tracking-tight text-[#F7F9FC] sm:text-4xl">
-                Give the next eleven months a direction
-              </h2>
-              <p className="mx-auto mt-4 max-w-xl text-base text-[#A5B3C7] leading-relaxed">
-                Tell us where you are, what you want to build and which track interests you. We will contact you when the next cohort opens.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                <Link
-                  href="/#contact"
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] bg-[#175CD3] hover:bg-[#1849A9] text-white px-8 text-[15px] font-medium transition-all shadow-[0_0_24px_rgba(23,92,211,0.4)]"
-                >
-                  <span>Register your interest</span>
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <a
-                  href={`mailto:${FELLOWSHIP_CONTACT.email}`}
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-[rgba(255,255,255,0.14)] bg-[rgba(18,29,47,0.7)] px-7 text-[15px] font-medium text-[#F7F9FC] backdrop-blur-md transition-all hover:bg-white/[0.08]"
-                >
-                  <span>Email the team</span>
-                </a>
-              </div>
-              <p className="mt-6 text-xs font-mono text-[#7889A0]">{FELLOWSHIP_CONTACT.location}</p>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      <FellowshipApply />
     </div>
   );
 }

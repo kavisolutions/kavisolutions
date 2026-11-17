@@ -215,7 +215,7 @@ export default function FellowshipStory() {
               </ul>
               {stage === STAGES.length - 1 && (
                 <Link
-                  href="/#contact"
+                  href="#apply"
                   className="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-[10px] bg-[#175CD3] px-5 text-[13px] font-medium text-white transition-colors hover:bg-[#1849A9]"
                 >
                   Register your interest

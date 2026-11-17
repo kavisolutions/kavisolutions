@@ -314,12 +314,12 @@ export const FELLOWSHIP_SELECTION_STEPS = [
   {
     step: "01",
     title: "Register interest",
-    detail: "Use the contact form or the next cohort announcement. No payment is required.",
+    detail: "Use the application form or the next cohort announcement. No payment is required.",
   },
   {
     step: "02",
     title: "Application review",
-    detail: "We review your expression of interest, motivation and track fit.",
+    detail: "We review your motivation, track fit and commitment to the full-time programme.",
   },
   {
     step: "03",
@@ -332,6 +332,50 @@ export const FELLOWSHIP_SELECTION_STEPS = [
     detail: "Successful candidates receive the programme terms, dates and cohort-specific details in writing.",
   },
 ] as const;
+
+export const FELLOWSHIP_AT_A_GLANCE = [
+  { label: "Duration", value: "11 months, full-time" },
+  { label: "Format", value: "Cohort + residencies" },
+  { label: "Location", value: "Andhra Pradesh & Telangana" },
+  { label: "Language", value: "English primary · Telugu support" },
+  { label: "Money", value: "No salary · contribution confirmed before offer" },
+  { label: "Certificate", value: "Verifiable completion certificate" },
+  { label: "Placement", value: "Support and introductions · no job guarantee" },
+  { label: "Next intake", value: "January 2027" },
+] as const;
+
+export const FELLOWSHIP_NEXT_STEPS = [
+  {
+    title: "Product and engineering teams",
+    detail:
+      "Use the portfolio and capstone to apply for developer, QA, design or product roles.",
+  },
+  {
+    title: "Kavi project teams",
+    detail:
+      "Where a role and fit exist, fellows can continue on Kavi verticals or partner projects.",
+  },
+  {
+    title: "Freelance practice",
+    detail:
+      "Take client work with mentor references, a case study and a working portfolio.",
+  },
+  {
+    title: "Further study or a venture",
+    detail:
+      "Use demo day, the capstone and references to apply, pitch or launch.",
+  },
+] as const;
+
+export const FELLOWSHIP_MEASURES = [
+  "Deliverables shipped on live projects",
+  "Mentor review attendance and follow-through",
+  "DSN field project with a documented outcome",
+  "Capstone completed and presented publicly",
+  "A written next-step plan before graduation",
+  "Exit feedback from every fellow",
+] as const;
+
 
 export const FELLOWSHIP_NOT_PROMISED = [
   "A job or a salary.",

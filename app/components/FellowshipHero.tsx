@@ -98,7 +98,7 @@ export default function FellowshipHero() {
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Link
-                  href="/#contact"
+                  href="#apply"
                   className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] bg-[#175CD3] px-7 text-[15px] font-medium text-white shadow-[0_0_24px_rgba(23,92,211,0.4)] transition-all hover:bg-[#1849A9]"
                 >
                   <span>Register your interest</span>

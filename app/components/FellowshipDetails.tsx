@@ -12,6 +12,7 @@ import {
   XCircle,
 } from "lucide-react";
 import {
+  FELLOWSHIP_AT_A_GLANCE,
   FELLOWSHIP_DETAILS,
   FELLOWSHIP_NOT_PROMISED,
   FELLOWSHIP_PARENT_FAQ,
@@ -56,6 +57,24 @@ export default function FellowshipDetails() {
             one place. Anything cohort-specific is confirmed in writing before
             you accept an offer.
           </p>
+        </Reveal>
+
+        <Reveal delay={0.05} className="mb-5">
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[20px] border border-[rgba(148,163,184,0.16)] bg-[rgba(148,163,184,0.14)] md:grid-cols-4">
+            {FELLOWSHIP_AT_A_GLANCE.map((item) => (
+              <div
+                key={item.label}
+                className="bg-[rgba(18,29,47,0.92)] px-4 py-3.5 backdrop-blur-[16px]"
+              >
+                <span className="block font-mono text-[9px] uppercase tracking-[0.16em] text-[#7889A0]">
+                  {item.label}
+                </span>
+                <span className="mt-1 block text-xs font-medium leading-relaxed text-[#F7F9FC]">
+                  {item.value}
+                </span>
+              </div>
+            ))}
+          </div>
         </Reveal>
 
         <RevealStagger className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -220,7 +239,14 @@ export default function FellowshipDetails() {
                     Email the team
                   </a>
                   <Link
-                    href="/#contact"
+                    href="/fellowship/guide"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[rgba(148,163,184,0.18)] bg-[rgba(18,29,47,0.7)] px-3 text-[11px] font-medium text-[#F7F9FC] transition-colors hover:bg-white/[0.06]"
+                  >
+                    Programme guide
+                    <ArrowRight className="h-3.5 w-3.5 text-[#91B4FF]" />
+                  </Link>
+                  <Link
+                    href="#apply"
                     className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#175CD3] px-3 text-[11px] font-medium text-white transition-colors hover:bg-[#1849A9]"
                   >
                     Register interest

@@ -11,6 +11,11 @@ for the fellowship; it is a published programme page.
 | Hero + 3D programme map | `app/components/FellowshipHero.tsx` + `app/components/fellowship/FellowshipCanvas.tsx` |
 | Scroll story | `app/components/FellowshipStory.tsx` + `app/components/fellowship/FellowshipStoryCanvas.tsx` |
 | Trust & logistics | `app/components/FellowshipDetails.tsx` + `app/lib/fellowship-data.ts` |
+| Outcomes & next steps | `app/components/FellowshipOutcomes.tsx` |
+| Mentors & partners | `app/components/FellowshipPeople.tsx` |
+| Application form | `app/components/FellowshipApply.tsx` (posts to `/api/contact`) |
+| Programme guide | `app/app/fellowship/guide/page.tsx` |
+| SEO structured data | `app/app/fellowship/page.tsx` |
 | Cursor aura + scroll progress | `app/components/FellowshipCursor.tsx` + `app/components/FellowshipScrollProgress.tsx` |
 | Month-to-phase map | `app/lib/fellowship-journey.ts` |
 | Homepage teaser | `app/components/Fellowship.tsx` |
@@ -100,13 +105,28 @@ candidate/family-facing cards:
 - completion and certificate
 
 It also includes a four-step selection timeline (register interest → application
-review → conversation → written offer), a parents/guardians FAQ, a “what we do
-not promise” panel, and a contact block. Content lives in `FELLOWSHIP_DETAILS`,
+review → conversation → written offer), a compact at-a-glance grid, a
+parents/guardians FAQ, a “what we do not promise” panel, and a contact block.
+Content lives in `FELLOWSHIP_DETAILS`, `FELLOWSHIP_AT_A_GLANCE`,
 `FELLOWSHIP_SELECTION_STEPS`, `FELLOWSHIP_PARENT_FAQ` and
-`FELLOWSHIP_NOT_PROMISED` in `app/lib/fellowship-data.ts`. The section is marked
-as current to November 2026 and says cohort-specific terms are confirmed in
-writing before an offer. Do not add stipend, insurance, accommodation or
-location promises unless the programme team can deliver them.
+`FELLOWSHIP_NOT_PROMISED` in `app/lib/fellowship-data.ts`.
+
+The application section (`FellowshipApply.tsx`) posts a structured expression of
+interest to the existing `/api/contact` endpoint. It does not create a database
+record or an application-status pipeline; applications land in the team inbox.
+The print-friendly programme guide lives at `/fellowship/guide` and covers the
+same details plus the parents/guardians letter. The fellowship route also emits
+`EducationalOccupationalProgram` JSON-LD.
+
+`FellowshipOutcomes.tsx` adds an honest post-fellowship section: four next-step
+paths, the outcome measures that will be published after the first cohort, and a
+clear empty state (“first cohort: January 2027”) instead of invented alumni
+testimonials. `FellowshipPeople.tsx` lists the existing mentors and the partner
+groups and avoids naming unconfirmed partner organisations.
+
+The section is marked as current to November 2026 and says cohort-specific terms
+are confirmed in writing before an offer. Do not add stipend, insurance,
+accommodation or location promises unless the programme team can deliver them.
 
 The detailed month-by-month plan, assessment weights and mentor map live in
 [`fellowship-curriculum.md`](fellowship-curriculum.md).
