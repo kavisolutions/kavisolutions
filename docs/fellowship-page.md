@@ -10,6 +10,7 @@ for the fellowship; it is a published programme page.
 | Page component | `app/components/FellowshipPage.tsx` |
 | Hero + 3D programme map | `app/components/FellowshipHero.tsx` + `app/components/fellowship/FellowshipCanvas.tsx` |
 | Scroll story | `app/components/FellowshipStory.tsx` + `app/components/fellowship/FellowshipStoryCanvas.tsx` |
+| Trust & logistics | `app/components/FellowshipDetails.tsx` + `app/lib/fellowship-data.ts` |
 | Cursor aura + scroll progress | `app/components/FellowshipCursor.tsx` + `app/components/FellowshipScrollProgress.tsx` |
 | Month-to-phase map | `app/lib/fellowship-journey.ts` |
 | Homepage teaser | `app/components/Fellowship.tsx` |
@@ -85,6 +86,27 @@ WebGL is unavailable, a static stage-icon fallback keeps the story readable.
 Under `prefers-reduced-motion`, walk bobbing and particle drift are disabled;
 the scene still follows scroll. The story follows the active theme, including
 light ground/fog and dark overlay copy in light mode.
+
+## Trust and logistics
+
+`FellowshipDetails.tsx` adds a practical section before the FAQ with six
+candidate/family-facing cards:
+
+- who can apply
+- money and support
+- location and residency
+- weekly rhythm and leave
+- safety and conduct
+- completion and certificate
+
+It also includes a four-step selection timeline (register interest → application
+review → conversation → written offer), a parents/guardians FAQ, a “what we do
+not promise” panel, and a contact block. Content lives in `FELLOWSHIP_DETAILS`,
+`FELLOWSHIP_SELECTION_STEPS`, `FELLOWSHIP_PARENT_FAQ` and
+`FELLOWSHIP_NOT_PROMISED` in `app/lib/fellowship-data.ts`. The section is marked
+as current to November 2026 and says cohort-specific terms are confirmed in
+writing before an offer. Do not add stipend, insurance, accommodation or
+location promises unless the programme team can deliver them.
 
 The detailed month-by-month plan, assessment weights and mentor map live in
 [`fellowship-curriculum.md`](fellowship-curriculum.md).

@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Reveal, RevealItem, RevealStagger, TiltCard } from "@/components/motion";
 import FellowshipHero from "@/components/FellowshipHero";
 import FellowshipStory from "@/components/FellowshipStory";
+import FellowshipDetails from "@/components/FellowshipDetails";
 import FellowshipCursor from "@/components/FellowshipCursor";
 import FellowshipScrollProgress from "@/components/FellowshipScrollProgress";
 import {
@@ -255,6 +256,8 @@ export default function FellowshipPage() {
           </RevealStagger>
         </div>
       </section>
+
+      <FellowshipDetails />
 
       {/* FAQ */}
       <section className="relative px-6 py-20">

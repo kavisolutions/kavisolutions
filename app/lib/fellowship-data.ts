@@ -231,6 +231,143 @@ export const FELLOWSHIP_COHORTS = [
   { name: "September 2027", status: "Expression of interest", date: "Sep 2027 – Jul 2028" },
 ] as const;
 
+export const FELLOWSHIP_DETAILS = [
+  {
+    id: "eligibility",
+    icon: "graduation",
+    title: "Who can apply",
+    summary: "A real opportunity, not a polished-CV contest.",
+    points: [
+      "Diploma graduates, final-year students, graduates, women returning to work and career switchers.",
+      "A polished CV or prior work experience is not required. Commitment and willingness to learn are.",
+      "This is a full-time, 11-month programme. It will not fit around a full-time job.",
+      "English is primary and Telugu support is available. The level needed depends on your track.",
+      "Vipassana is compulsory, including the ten-day course.",
+    ],
+  },
+  {
+    id: "money",
+    icon: "wallet",
+    title: "Money and support",
+    summary: "No hidden payment. No salary promise.",
+    points: [
+      "No payment is collected through this website.",
+      "Contribution and scholarship options are explained before an offer and confirmed in writing.",
+      "There is no salary during the learning phase.",
+      "Some live projects may carry a project stipend. It is never guaranteed in advance.",
+      "Mentorship, project experience, portfolio support, demo day and a completion certificate are included.",
+    ],
+  },
+  {
+    id: "location",
+    icon: "map",
+    title: "Location and residency",
+    summary: "Andhra Pradesh and Telangana, allocated by cohort fit.",
+    points: [
+      "The programme operates in Andhra Pradesh and Telangana.",
+      "Cohort residencies are announced per batch.",
+      "A specific city is not guaranteed. Allocation depends on track, project and cohort fit.",
+      "DSN field work and residencies may require travel or staying near the community.",
+    ],
+  },
+  {
+    id: "rhythm",
+    icon: "calendar",
+    title: "Rhythm and leave",
+    summary: "Demanding weekdays, protected rest.",
+    points: [
+      "Sunday is protected rest. There are no scheduled sessions.",
+      "Weekdays combine learning, building, mentor reviews, field work and leadership labs.",
+      "Vipassana includes a ten-day course, with daily practice continuing afterwards.",
+      "Leave or absence outside the published calendar is agreed with the programme team before the cohort begins.",
+      "The exact timetable changes by phase and track.",
+    ],
+  },
+  {
+    id: "safety",
+    icon: "shield",
+    title: "Safety and conduct",
+    summary: "Respect is non-negotiable.",
+    points: [
+      "Fellows, mentors and partners are expected to maintain a respectful, harassment-free environment.",
+      "Zero tolerance for discrimination, harassment or abuse.",
+      "A written code of conduct and grievance process is shared before joining.",
+      "Concerns can be raised with the programme lead or confidentially by email.",
+      "Field work follows partner and community consent protocols.",
+    ],
+  },
+  {
+    id: "completion",
+    icon: "award",
+    title: "Completion and certificate",
+    summary: "A certificate you can verify, not a participation sticker.",
+    points: [
+      "Completion requires attendance, phase reviews, DSN field work and a public capstone.",
+      "Completing fellows receive a verifiable certificate with a unique ID and QR verification link.",
+      "Capstone, portfolio and references support the next step.",
+      "Early-exit terms are stated in the offer. The completion certificate is only for fellows who finish.",
+    ],
+  },
+] as const;
+
+export const FELLOWSHIP_SELECTION_STEPS = [
+  {
+    step: "01",
+    title: "Register interest",
+    detail: "Use the contact form or the next cohort announcement. No payment is required.",
+  },
+  {
+    step: "02",
+    title: "Application review",
+    detail: "We review your expression of interest, motivation and track fit.",
+  },
+  {
+    step: "03",
+    title: "Conversation",
+    detail: "Shortlisted candidates meet the team to discuss commitment, support needs and next steps.",
+  },
+  {
+    step: "04",
+    title: "Written offer",
+    detail: "Successful candidates receive the programme terms, dates and cohort-specific details in writing.",
+  },
+] as const;
+
+export const FELLOWSHIP_NOT_PROMISED = [
+  "A job or a salary.",
+  "A guaranteed city or fixed location.",
+  "A stipend unless a specific project confirms one in writing.",
+  "A completion certificate for partial attendance.",
+] as const;
+
+export const FELLOWSHIP_PARENT_FAQ = [
+  {
+    q: "Is the programme safe?",
+    a: "Fellows, mentors and partners follow a written code of conduct. Concerns can be raised with the programme lead or confidentially by email. Field work follows partner and community consent protocols.",
+  },
+  {
+    q: "Is it residential?",
+    a: "Cohort residencies are announced per batch. Some field phases may require travel or staying near the community. Cohort-specific arrangements are confirmed in writing before an offer.",
+  },
+  {
+    q: "Is it paid?",
+    a: "There is no salary during the learning phase. Some live projects may carry a project stipend, but it is never guaranteed in advance. Contribution and scholarship options are confirmed before an offer.",
+  },
+  {
+    q: "Will my ward get a job?",
+    a: "No job is guaranteed. Fellows get mentor reviews, real project experience, portfolio support, demo day and references. The outcome depends on their work and the market.",
+  },
+  {
+    q: "What about food and accommodation?",
+    a: "These are cohort-specific. Ask for the written cohort details before accepting an offer. Kavi does not collect programme payments through this website.",
+  },
+  {
+    q: "Who can we contact with a concern?",
+    a: "Email kavisolutions1@gmail.com. Concerns are handled by the programme team, and safety or conduct issues are treated confidentially.",
+  },
+] as const;
+
+
 export const FELLOWSHIP_FAQ: FellowshipFaq[] = [
   {
     q: "Who is the fellowship for?",

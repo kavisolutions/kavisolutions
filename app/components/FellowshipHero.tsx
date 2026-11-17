@@ -111,6 +111,14 @@ export default function FellowshipHero() {
                   See the 11-month journey
                 </a>
               </div>
+
+              <a
+                href="#details"
+                className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-[#175CD3] transition-colors hover:text-[#1849A9] dark:text-[#91B4FF] dark:hover:text-white"
+              >
+                Eligibility, costs and safety
+                <ArrowRight className="h-3 w-3" />
+              </a>
             </Reveal>
 
             <Reveal delay={0.15}>
