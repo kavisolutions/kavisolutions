@@ -530,3 +530,58 @@ export async function sendFellowshipApplicationConfirmationEmail(
     `,
   });
 }
+
+const FELLOWSHIP_STAGE_LABELS: Record<string, string> = {
+  applied: "Application received",
+  review: "Under review",
+  interview: "Interview stage",
+  offer: "Offer shared",
+  accepted: "Offer accepted",
+  rejected: "Not selected",
+  withdrawn: "Withdrawn",
+};
+
+export type FellowshipStageUpdateMailInput = {
+  reference: string;
+  name: string;
+  email: string;
+  track: string;
+  cohort: string;
+  stage: string;
+};
+
+/* Stage-change email to the applicant. Internal notes are never included. */
+export async function sendFellowshipStageUpdateEmail(
+  input: FellowshipStageUpdateMailInput,
+): Promise<void> {
+  const label = FELLOWSHIP_STAGE_LABELS[input.stage] ?? input.stage;
+  const closed = input.stage === "rejected" || input.stage === "withdrawn";
+
+  await getTransporter().sendMail({
+    from: `"Kavi Fellowship" <${env.SMTP_USER}>`,
+    to: input.email,
+    subject: `Kavi Fellowship status update — ${input.reference}`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#06060b;color:#e0e0e0;border-radius:12px;">
+        <h2 style="color:#ffffff;margin:0 0 12px;">Application status updated</h2>
+        <p style="margin:0 0 12px;">Hello ${escapeHtml(input.name)},</p>
+        <p style="margin:0 0 12px;line-height:1.6;">
+          Your Kavi Fellowship application (${escapeHtml(input.track)} track,
+          ${escapeHtml(input.cohort)} cohort) is now at:
+        </p>
+        <p style="margin:0 0 16px;font-family:monospace;font-size:18px;color:#91b4ff;">${escapeHtml(label)}</p>
+        <p style="margin:0 0 16px;">
+          <a href="https://kavisolutions.in/fellowship/status" style="color:#22d3ee;">Check the status page</a>
+          with reference ${escapeHtml(input.reference)} and your email.
+        </p>
+        <p style="margin:0;color:#6e6e85;font-size:12px;">
+          ${
+            closed
+              ? "This application is closed. Email kavisolutions1@gmail.com if you believe this is a mistake."
+              : "This is a status update, not an offer unless the stage says Offer shared or Offer accepted."
+          }
+        </p>
+      </div>
+    `,
+  });
+}

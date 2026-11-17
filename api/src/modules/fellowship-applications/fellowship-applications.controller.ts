@@ -14,6 +14,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import {
   sendFellowshipApplicationConfirmationEmail,
   sendFellowshipApplicationEmail,
+  sendFellowshipStageUpdateEmail,
 } from "@/_shared/mailer";
 import { AdminOnly, Public } from "@/auth/auth.decorators";
 import { SettingsService } from "@/modules/settings/settings.service";
@@ -85,6 +86,27 @@ export class FellowshipApplicationsController {
   @AdminOnly()
   @ApiBearerAuth()
   async update(@Param("id") id: string, @Body() body: UpdateFellowshipApplicationDto) {
-    return { application: await this.service.update(id, body) };
+    const result = await this.service.update(id, body);
+
+    if (result.stageChanged) {
+      try {
+        await sendFellowshipStageUpdateEmail({
+          reference: result.application.reference,
+          name: result.application.name,
+          email: result.application.email,
+          track: result.application.track,
+          cohort: result.application.cohort,
+          stage: result.application.stage,
+        });
+      } catch (error) {
+        this.logger.error(
+          `Fellowship stage email failed for ${result.application.reference}: ${
+            error instanceof Error ? error.message : "unknown error"
+          }`,
+        );
+      }
+    }
+
+    return { application: result.application };
   }
 }

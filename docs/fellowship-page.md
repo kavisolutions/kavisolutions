@@ -122,8 +122,9 @@ confirmation, and records the application in `fellowship_applications`. The
 status page at `/fellowship/status` looks up the recorded stage with reference +
 email, without exposing internal notes. Admins move applications through
 `applied → review → interview → offer → accepted` (or `rejected/withdrawn`) and
-keep internal notes at `/admin/fellowship`. A repeat application from an email
-with an active record is rejected with a 409; use the status page instead.
+keep internal notes at `/admin/fellowship`. Stage changes email the applicant;
+internal notes are never sent. A repeat application from an email with an active
+record is rejected with a 409; use the status page instead.
 
 The print-friendly programme guide lives at `/fellowship/guide` and covers the
 same details plus the parents/guardians letter. The fellowship route also emits

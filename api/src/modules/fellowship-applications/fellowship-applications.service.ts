@@ -207,7 +207,11 @@ export class FellowshipApplicationsService {
   async update(
     id: string,
     payload: UpdateFellowshipApplicationDto,
-  ): Promise<FellowshipApplicationAdminDto> {
+  ): Promise<{
+    application: FellowshipApplicationAdminDto;
+    stageChanged: boolean;
+    previousStage: FellowshipApplicationStage;
+  }> {
     const [existing] = await this.db
       .select()
       .from(fellowshipApplications)
@@ -229,6 +233,10 @@ export class FellowshipApplicationsService {
       .where(eq(fellowshipApplications.id, id))
       .returning();
 
-    return toAdmin(row);
+    return {
+      application: toAdmin(row),
+      stageChanged: payload.stage !== undefined && payload.stage !== existing.stage,
+      previousStage: toStage(existing.stage),
+    };
   }
 }
