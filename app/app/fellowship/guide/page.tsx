@@ -15,7 +15,67 @@ export const metadata: Metadata = {
     "Print-friendly Kavi Fellowship guide: eligibility, selection, money, location, safety, completion and parent/guardian questions.",
 };
 
-export default function FellowshipGuide() {
+export const dynamic = "force-dynamic";
+
+type Policy = {
+  fee: string;
+  scholarship: string;
+  stipend: string;
+  accommodation: string;
+  insurance: string;
+  eligibility: string;
+  leave: string;
+  cohortNote: string;
+  nextIntake: string;
+  seats: string;
+};
+
+const DEFAULT_POLICY: Policy = {
+  fee: "No payment is collected through this website. Contribution and scholarship options are confirmed in writing before an offer.",
+  scholarship: "Scholarship options are discussed before an offer and recorded in the cohort terms.",
+  stipend: "There is no salary during the learning phase. A project stipend is paid only when confirmed in writing for a specific project.",
+  accommodation: "Accommodation and food arrangements are cohort-specific. Ask for the written cohort terms before accepting an offer.",
+  insurance: "Insurance or medical support is cohort-specific. Ask for the written cohort terms before accepting an offer.",
+  eligibility:
+    "Diploma graduates, final-year students, graduates, women returning to work and career switchers can apply. The programme is full-time for 11 months.",
+  leave:
+    "Sunday is protected rest. Leave outside the published calendar is agreed with the programme team before the cohort begins.",
+  cohortNote:
+    "Cohort residencies are announced per batch. A specific city is not guaranteed; allocation depends on track, project and cohort fit.",
+  nextIntake: "January 2027",
+  seats: "Limited seats · confirmed per cohort",
+};
+
+async function getPolicy(): Promise<Policy> {
+  try {
+    const base = (process.env.BACKEND_URL ?? "http://localhost:3200").replace(/\/+$/, "");
+    const response = await fetch(`${base}/api/fellowship-policy`, { cache: "no-store" });
+    if (!response.ok) return DEFAULT_POLICY;
+    const data = (await response.json()) as { policy?: Partial<Policy> };
+    return { ...DEFAULT_POLICY, ...data.policy };
+  } catch {
+    return DEFAULT_POLICY;
+  }
+}
+
+export default async function FellowshipGuide() {
+  const policy = await getPolicy();
+  const glance = FELLOWSHIP_AT_A_GLANCE.map((item) =>
+    item.label === "Next intake" ? { ...item, value: policy.nextIntake } : item,
+  );
+  const policyRows: Array<[string, string]> = [
+    ["Fee / contribution", policy.fee],
+    ["Scholarship", policy.scholarship],
+    ["Stipend", policy.stipend],
+    ["Accommodation & food", policy.accommodation],
+    ["Insurance / medical", policy.insurance],
+    ["Eligibility", policy.eligibility],
+    ["Leave", policy.leave],
+    ["Next intake", policy.nextIntake],
+    ["Seats", policy.seats],
+    ["Location / residency", policy.cohortNote],
+  ];
+
   return (
     <main className="min-h-screen bg-white px-5 py-10 text-slate-900 print:px-0 print:py-0">
       <div className="mx-auto max-w-3xl">
@@ -51,13 +111,29 @@ export default function FellowshipGuide() {
         <section className="mt-8">
           <h2 className="text-lg font-semibold">At a glance</h2>
           <dl className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 sm:grid-cols-4">
-            {FELLOWSHIP_AT_A_GLANCE.map((item) => (
+            {glance.map((item) => (
               <div key={item.label} className="bg-white p-3">
                 <dt className="font-mono text-[8px] uppercase tracking-wider text-slate-500">
                   {item.label}
                 </dt>
                 <dd className="mt-0.5 text-[11px] font-medium leading-snug">
                   {item.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        <section className="mt-8">
+          <h2 className="text-lg font-semibold">Cohort terms</h2>
+          <dl className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+            {policyRows.map(([label, value]) => (
+              <div key={label}>
+                <dt className="font-mono text-[8px] uppercase tracking-wider text-slate-500">
+                  {label}
+                </dt>
+                <dd className="mt-0.5 text-[11px] leading-relaxed text-slate-600">
+                  {value}
                 </dd>
               </div>
             ))}

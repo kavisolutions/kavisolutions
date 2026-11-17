@@ -7,29 +7,35 @@ import type { MotionValue } from "framer-motion";
 const PAGE_BG = 0x0b1220;
 
 const STATIONS = [
-  { x: -16, color: 0x3b82f6, label: "01 · APPLY" },
-  { x: -8.5, color: 0x06b6d4, label: "02 · INTERVIEW" },
-  { x: -1, color: 0x34d399, label: "03 · BUILD" },
-  { x: 6.5, color: 0xfbbf24, label: "04 · FIELD" },
-  { x: 14, color: 0x8b5cf6, label: "05 · CAPSTONE" },
+  { x: -24, color: 0x3b82f6, label: "01 · APPLY" },
+  { x: -15.5, color: 0x06b6d4, label: "02 · INTERVIEW" },
+  { x: -7, color: 0xf59e0b, label: "03 · OFFER" },
+  { x: 1.5, color: 0x34d399, label: "04 · BUILD" },
+  { x: 10, color: 0xfbbf24, label: "05 · FIELD" },
+  { x: 18.5, color: 0x8b5cf6, label: "06 · CAPSTONE" },
+  { x: 27, color: 0x0ea5e9, label: "07 · ALUMNI" },
 ];
 
 const PATH_KEYS = [
-  { p: 0, x: -18 },
-  { p: 0.1, x: -16 },
-  { p: 0.3, x: -8.5 },
-  { p: 0.5, x: -1 },
-  { p: 0.7, x: 6.5 },
-  { p: 0.9, x: 14 },
-  { p: 1, x: 16 },
+  { p: 0, x: -26 },
+  { p: 0.071, x: -24 },
+  { p: 0.214, x: -15.5 },
+  { p: 0.357, x: -7 },
+  { p: 0.5, x: 1.5 },
+  { p: 0.643, x: 10 },
+  { p: 0.786, x: 18.5 },
+  { p: 0.929, x: 27 },
+  { p: 1, x: 29 },
 ];
 
 const CAMERA_SHOTS = [
   { x: -4.4, y: 3.0, z: 8.3, lookX: 0.2, lookY: 1.6 },
   { x: -3.0, y: 2.8, z: 7.2, lookX: -0.3, lookY: 1.3 },
+  { x: -3.4, y: 2.9, z: 7.4, lookX: 0, lookY: 1.4 },
   { x: -3.2, y: 3.0, z: 7.6, lookX: -0.6, lookY: 1.5 },
   { x: -4.3, y: 3.3, z: 8.6, lookX: 0.1, lookY: 1.2 },
   { x: -3.6, y: 2.6, z: 7.0, lookX: 0.1, lookY: 1.55 },
+  { x: -4.6, y: 3.1, z: 8.4, lookX: 0.3, lookY: 1.3 },
 ];
 
 const STATION_PROCESS = [
@@ -46,22 +52,34 @@ const STATION_PROCESS = [
     offset: { x: 0, y: 2.65, z: 0.6 },
   },
   {
-    title: "03 · LEARN & BUILD",
+    title: "03 · OFFER",
+    color: "#F59E0B",
+    steps: ["Written offer", "Review cohort terms", "Accept and join"],
+    offset: { x: 2.0, y: 2.6, z: 0.4 },
+  },
+  {
+    title: "04 · LEARN & BUILD",
     color: "#34D399",
     steps: ["Live brief", "Weekly mentor review", "Ship the deliverable"],
     offset: { x: 2.2, y: 2.65, z: 0.4 },
   },
   {
-    title: "04 · DSN FIELD",
+    title: "05 · DSN FIELD",
     color: "#FBBF24",
     steps: ["Listen to community", "Serve with a project", "Document the outcome"],
     offset: { x: 0, y: 2.8, z: 0.4 },
   },
   {
-    title: "05 · CAPSTONE",
+    title: "06 · CAPSTONE",
     color: "#8B5CF6",
     steps: ["Build the capstone", "Present at demo day", "Plan the next step"],
     offset: { x: 2.4, y: 2.4, z: 0.4 },
+  },
+  {
+    title: "07 · ALUMNI",
+    color: "#0EA5E9",
+    steps: ["Portfolio and references", "Next-step support", "Alumni network"],
+    offset: { x: 2.6, y: 2.5, z: 0.4 },
   },
 ];
 
@@ -502,8 +520,8 @@ function dampAngle(current: number, target: number, lambda: number, delta: numbe
 
 function addStationMarkers(scene: THREE.Scene) {
   const pathGeometry = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(-19, 0.02, 0),
-    new THREE.Vector3(17, 0.02, 0),
+    new THREE.Vector3(-28, 0.02, 0),
+    new THREE.Vector3(31, 0.02, 0),
   ]);
   scene.add(
     new THREE.Line(
@@ -607,6 +625,31 @@ function buildInterviewStation() {
   addBox(group, 0.4, 0.02, 0.5, 0xf8fafc, -0.15, 1.005, -0.92);
   addCylinder(group, 0.05, 0.1, 0xe2e8f0, 1.3, 1.04, -0.72);
   addCylinder(group, 0.05, 0.1, 0xe2e8f0, -1.25, 1.04, -0.72);
+
+  return group;
+}
+
+function buildOfferStation() {
+  const group = new THREE.Group();
+  group.position.x = STATIONS[2].x;
+
+  addBox(group, 2.4, 0.12, 1.0, 0x233047, 0, 0.92, -0.8);
+  addBox(group, 0.12, 0.9, 0.8, 0x1a2638, -1.05, 0.46, -0.8);
+  addBox(group, 0.12, 0.9, 0.8, 0x1a2638, 1.05, 0.46, -0.8);
+
+  addBox(group, 0.58, 0.025, 0.4, 0xf8fafc, -0.15, 1.0, -0.78);
+  addBox(group, 0.48, 0.02, 0.3, 0xe2e8f0, -0.12, 1.02, -0.76);
+  addBox(group, 0.03, 0.03, 0.24, 0x0f172a, 0.38, 1.01, -0.7);
+
+  const lead = createPerson(0x0ea5e9, {
+    seated: true,
+    skin: 0xa86f4c,
+    hair: 0x1f2937,
+  });
+  lead.group.position.set(0, -0.1, -1.9);
+  group.add(lead.group);
+
+  addSign(group, "OFFER", 1.5, 0.36, 0, 2.4, -2.2, "#fde68a");
 
   return group;
 }
@@ -801,6 +844,36 @@ function buildCapstoneStation() {
   return group;
 }
 
+function buildAlumniStation() {
+  const group = new THREE.Group();
+  group.position.x = STATIONS[6].x;
+
+  addBox(group, 2.6, 0.1, 0.8, 0x233047, 0, 0.92, -1.2);
+  addBox(group, 0.12, 0.9, 0.65, 0x1a2638, -1.15, 0.46, -1.2);
+  addBox(group, 0.12, 0.9, 0.65, 0x1a2638, 1.15, 0.46, -1.2);
+  addBox(group, 0.5, 0.03, 0.3, 0x0f172a, -0.55, 1.0, -1.1);
+  addBox(group, 0.5, 0.03, 0.3, 0x0f172a, 0.55, 1.0, -1.1);
+  addCylinder(group, 0.05, 0.1, 0xe2e8f0, 0, 1.03, -1.0);
+
+  const alumniShirts = [0x2563eb, 0x0ea5e9, 0x8b5cf6];
+  for (const [index, shirt] of alumniShirts.entries()) {
+    const person = createPerson(shirt, {
+      skin: index === 1 ? 0xa86f4c : 0xc98b5e,
+      pants: 0x1e293b,
+      hair: index === 2 ? 0x111827 : 0x1f2937,
+    });
+    const x = index === 0 ? -2.2 : index === 1 ? 2.2 : 0;
+    const z = index === 2 ? -2.1 : -0.4;
+    person.group.position.set(x, 0, z);
+    person.group.rotation.y = index === 0 ? 0.5 : index === 1 ? -0.5 : Math.PI;
+    group.add(person.group);
+  }
+
+  addSign(group, "ALUMNI NETWORK", 2.4, 0.42, 0, 2.55, -2.4, "#bae6fd");
+
+  return group;
+}
+
 export default function FellowshipStoryCanvas({
   progress,
   light = false,
@@ -880,27 +953,34 @@ export default function FellowshipStoryCanvas({
     scene.add(fillLight);
 
     const ground = new THREE.Mesh(
-      new THREE.PlaneGeometry(60, 14),
+      new THREE.PlaneGeometry(80, 14),
       material(light ? 0xe2e8f0 : 0x0a101b, { roughness: 1 }),
     );
     ground.rotation.x = -Math.PI / 2;
-    ground.position.set(-2, 0, 0);
+    ground.position.set(4, 0, 0);
     ground.receiveShadow = true;
     scene.add(ground);
     addStationMarkers(scene);
 
-    scene.add(buildApplyStation());
-    scene.add(buildInterviewStation());
-    scene.add(buildLearnStation());
-    scene.add(buildFieldStation());
-    scene.add(buildCapstoneStation());
+    const stationGroups = [
+      buildApplyStation(),
+      buildInterviewStation(),
+      buildOfferStation(),
+      buildLearnStation(),
+      buildFieldStation(),
+      buildCapstoneStation(),
+      buildAlumniStation(),
+    ];
+    stationGroups.forEach((group) => scene.add(group));
 
     for (const [x, radius, height, color] of [
-      [-18, 5.5, 3.2, 0x1e4d3a],
-      [-10, 4.2, 2.4, 0x235c45],
-      [-2, 5.8, 3.4, 0x1d4d3c],
-      [7, 4.6, 2.6, 0x245844],
-      [16, 5.2, 3.0, 0x1f4f3e],
+      [-28, 5.5, 3.2, 0x1e4d3a],
+      [-18, 4.2, 2.4, 0x235c45],
+      [-8, 5.8, 3.4, 0x1d4d3c],
+      [2, 4.6, 2.6, 0x245844],
+      [12, 5.2, 3.0, 0x1f4f3e],
+      [22, 4.8, 2.8, 0x1d4d3c],
+      [32, 5.4, 3.1, 0x1f4f3e],
     ]) {
       addCone(scene, radius, height, color, x, height / 2 - 0.2, -10);
     }
@@ -1044,7 +1124,7 @@ export default function FellowshipStoryCanvas({
       let stationYaw = Math.PI / 2;
       if (stationBlend > 0 && nearestIndex >= 0) {
         stationYaw =
-          nearestIndex === 1 || nearestIndex === 2 ? Math.PI : 0;
+          nearestIndex >= 1 && nearestIndex <= 3 ? Math.PI : 0;
       }
       const targetYaw = THREE.MathUtils.lerp(Math.PI / 2, stationYaw, stationBlend);
       hero.group.rotation.y = dampAngle(
@@ -1055,12 +1135,17 @@ export default function FellowshipStoryCanvas({
       );
 
       const targetY =
-        nearestIndex === 4 && nearestDistance < 2.1 ? 0.26 : 0;
+        nearestIndex === 5 && nearestDistance < 2.1 ? 0.26 : 0;
       const bob = reducedMotion
         ? 0
         : Math.abs(Math.sin(walkPhase)) * 0.035 * walking;
       characterPosition.y = targetY + bob;
       hero.group.position.copy(characterPosition);
+
+      stationGroups.forEach((group, index) => {
+        group.visible =
+          Math.abs(characterPosition.x - STATIONS[index].x) < 6.2;
+      });
 
       const blend = stationBlend;
       const walkFactor = walking * (1 - stationBlend);
@@ -1103,6 +1188,11 @@ export default function FellowshipStoryCanvas({
           leftUpperArmX = THREE.MathUtils.lerp(leftUpperArmX, -0.35, blend);
           leftLowerArmX = THREE.MathUtils.lerp(leftLowerArmX, -0.5, blend);
         } else if (nearestIndex === 2) {
+          rightUpperArmX = THREE.MathUtils.lerp(rightUpperArmX, -0.95, blend);
+          rightLowerArmX = THREE.MathUtils.lerp(rightLowerArmX, -0.55, blend);
+          leftUpperArmX = THREE.MathUtils.lerp(leftUpperArmX, -0.1, blend);
+          leftLowerArmX = THREE.MathUtils.lerp(leftLowerArmX, -0.2, blend);
+        } else if (nearestIndex === 3) {
           leftUpperArmX = THREE.MathUtils.lerp(leftUpperArmX, -0.65, blend);
           rightUpperArmX = THREE.MathUtils.lerp(rightUpperArmX, -0.65, blend);
           leftLowerArmX = THREE.MathUtils.lerp(
@@ -1115,7 +1205,7 @@ export default function FellowshipStoryCanvas({
             -0.95 - Math.sin(elapsed * 7) * 0.06,
             blend,
           );
-        } else if (nearestIndex === 3) {
+        } else if (nearestIndex === 4) {
           rightUpperArmZ = THREE.MathUtils.lerp(
             rightUpperArmZ,
             2.1 + Math.sin(elapsed * 5) * 0.12,
@@ -1124,11 +1214,16 @@ export default function FellowshipStoryCanvas({
           rightLowerArmZ = THREE.MathUtils.lerp(rightLowerArmZ, 0.42, blend);
           leftUpperArmX = THREE.MathUtils.lerp(leftUpperArmX, -0.5, blend);
           leftLowerArmX = THREE.MathUtils.lerp(leftLowerArmX, -0.7, blend);
-        } else if (nearestIndex === 4) {
+        } else if (nearestIndex === 5) {
           rightUpperArmZ = THREE.MathUtils.lerp(rightUpperArmZ, 2.2, blend);
           rightLowerArmZ = THREE.MathUtils.lerp(rightLowerArmZ, 0.25, blend);
           leftUpperArmX = THREE.MathUtils.lerp(leftUpperArmX, -0.3, blend);
           leftLowerArmX = THREE.MathUtils.lerp(leftLowerArmX, -0.2, blend);
+        } else if (nearestIndex === 6) {
+          rightUpperArmX = THREE.MathUtils.lerp(rightUpperArmX, -0.9, blend);
+          rightLowerArmX = THREE.MathUtils.lerp(rightLowerArmX, -0.55, blend);
+          leftUpperArmX = THREE.MathUtils.lerp(leftUpperArmX, -0.25, blend);
+          leftLowerArmX = THREE.MathUtils.lerp(leftLowerArmX, -0.35, blend);
         }
       }
 
@@ -1206,18 +1301,19 @@ export default function FellowshipStoryCanvas({
       );
 
       hero.backpack.visible = nearestIndex === 0 && nearestDistance < 2.4;
-      hero.clipboard.visible = nearestIndex === 3 && nearestDistance < 1.8;
+      hero.clipboard.visible = nearestIndex === 4 && nearestDistance < 1.8;
 
       callouts.forEach((sprite, index) => {
-        const targetOpacity =
-          index === nearestIndex && nearestDistance < 3.4 ? 1 : 0;
+        const isCurrent = index === nearestIndex && nearestDistance < 3.4;
+        const targetOpacity = isCurrent ? 1 : 0;
         const spriteMaterial = sprite.material;
         spriteMaterial.opacity = THREE.MathUtils.clamp(
           damp(spriteMaterial.opacity, targetOpacity, 6, delta),
           0,
           1,
         );
-        sprite.visible = spriteMaterial.opacity > 0.02;
+        sprite.visible = isCurrent;
+        if (!isCurrent) spriteMaterial.opacity = 0;
       });
 
       const baseShot = {

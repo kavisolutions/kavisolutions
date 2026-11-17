@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowRight,
@@ -18,6 +20,7 @@ import {
   FELLOWSHIP_PARENT_FAQ,
   FELLOWSHIP_SELECTION_STEPS,
 } from "@/lib/fellowship-data";
+import { useFellowshipPolicy } from "@/lib/fellowship-policy";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion";
 
 const DETAIL_ICONS = {
@@ -39,6 +42,26 @@ const DETAIL_COLORS = {
 } as const;
 
 export default function FellowshipDetails() {
+  const { policy, loaded } = useFellowshipPolicy();
+  const glance = FELLOWSHIP_AT_A_GLANCE.map((item) =>
+    item.label === "Next intake"
+      ? { ...item, value: loaded ? policy.nextIntake : item.value }
+      : item,
+  );
+
+  const policyRows = [
+    ["Fee / contribution", policy.fee],
+    ["Scholarship", policy.scholarship],
+    ["Stipend", policy.stipend],
+    ["Accommodation & food", policy.accommodation],
+    ["Insurance / medical", policy.insurance],
+    ["Eligibility", policy.eligibility],
+    ["Leave", policy.leave],
+    ["Next intake", policy.nextIntake],
+    ["Seats", policy.seats],
+    ["Location / residency", policy.cohortNote],
+  ] as const;
+
   return (
     <section id="details" className="relative scroll-mt-24 px-6 py-20">
       <div className="mx-auto max-w-[1152px]">
@@ -61,7 +84,7 @@ export default function FellowshipDetails() {
 
         <Reveal delay={0.05} className="mb-5">
           <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[20px] border border-[rgba(148,163,184,0.16)] bg-[rgba(148,163,184,0.14)] md:grid-cols-4">
-            {FELLOWSHIP_AT_A_GLANCE.map((item) => (
+            {glance.map((item) => (
               <div
                 key={item.label}
                 className="bg-[rgba(18,29,47,0.92)] px-4 py-3.5 backdrop-blur-[16px]"
@@ -74,6 +97,33 @@ export default function FellowshipDetails() {
                 </span>
               </div>
             ))}
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.08} className="mb-5">
+          <div className="rounded-[20px] border border-[rgba(148,163,184,0.16)] bg-[rgba(18,29,47,0.85)] p-5 backdrop-blur-[16px] sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-[#91B4FF]">
+                COHORT TERMS
+              </span>
+              <span className="font-mono text-[9px] text-[#7889A0]">
+                {policy.updatedAt
+                  ? `updated ${new Date(policy.updatedAt).toLocaleDateString()}`
+                  : "standard terms"}
+              </span>
+            </div>
+            <dl className="mt-3 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+              {policyRows.map(([label, value]) => (
+                <div key={label}>
+                  <dt className="font-mono text-[8px] uppercase tracking-wider text-[#7889A0]">
+                    {label}
+                  </dt>
+                  <dd className="mt-0.5 text-[11px] leading-relaxed text-[#A5B3C7]">
+                    {value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </Reveal>
 

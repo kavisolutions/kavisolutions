@@ -16,7 +16,8 @@ for the fellowship; it is a published programme page.
 | Application form | `app/components/FellowshipApply.tsx` → `POST /api/fellowship-applications` |
 | Application status | `app/app/fellowship/status/page.tsx` + `FellowshipStatusLookup.tsx` |
 | Admin pipeline | `app/app/admin/fellowship/page.tsx` → `GET/PATCH /api/fellowship-applications` |
-| Fellowship API | `api/src/modules/fellowship-applications/` |
+| Fellowship applications API | `api/src/modules/fellowship-applications/` |
+| Fellowship policy API | `api/src/modules/fellowship-policy/` |
 | Applications table | `api/src/db/drizzle/migrations/0008_colorful_hiroim.sql` |
 | Programme guide | `app/app/fellowship/guide/page.tsx` |
 | SEO structured data | `app/app/fellowship/page.tsx` |
@@ -65,14 +66,16 @@ eleven months.
 
 ## Scroll story
 
-After the hero, a 500vh sticky section follows one low-poly character through
-five acts while the page scrolls:
+After the hero, a 700vh sticky section follows one low-poly character through
+seven acts while the page scrolls:
 
 1. Apply — the cohort gate and sign-up desk.
 2. Interview — the candidate meets two Kavi interviewers at a table.
-3. Learn & build — a working desk, project screen and mentor.
-4. Field — trees, a village hut and community members for DSN immersion.
-5. Capstone — a demo-day stage, arch and audience.
+3. Offer — the candidate receives written cohort terms across a desk.
+4. Learn & build — a working desk, project screen and mentor.
+5. Field — trees, a village hut and community members for DSN immersion.
+6. Capstone — a demo-day stage, arch and audience.
+7. Alumni — graduates gather around the alumni network.
 
 The canvas is one lazy-loaded Three.js scene. Scroll progress moves the
 character along a path; the camera follows with a different framing per act,
@@ -80,21 +83,22 @@ the walk cycle runs between stations, and the character switches to waving,
 handshake, typing and presenting poses near each station. The character has
 jointed limbs, a face, lanyard/badge and a backpack; stations add readable
 signage and props (KAVI Fellowship gate, interview table with laptops and
-papers, Live Project screen, DSN field sign and crops, Demo Day stage, trophy
-and audience). Each station also has an in-scene process callout that fades in
-when the character arrives: Apply (register → choose track → induction),
-Interview (intro → portfolio/track fit → next steps), Learn & Build (brief →
-review → ship), DSN Field (listen → serve → document) and Capstone (build →
-demo → next step). Desktop renders real directional shadows; mobile disables
-the shadow map to keep the scroll smooth. Overlay copy includes three short
-action chips per act, plus a progress bar and step dots. The section is
-decorative storytelling, not a game: no keyboard controls, no inventory, no
-branching. On mobile the same scene
-renders at a reduced pixel ratio and the overlay becomes a bottom card. When
-WebGL is unavailable, a static stage-icon fallback keeps the story readable.
-Under `prefers-reduced-motion`, walk bobbing and particle drift are disabled;
-the scene still follows scroll. The story follows the active theme, including
-light ground/fog and dark overlay copy in light mode.
+papers, offer letter desk, Live Project screen, DSN field sign and crops,
+Demo Day stage, trophy and audience, alumni table). Each station also has an
+in-scene process callout that fades in when the character arrives: Apply
+(register → choose track → induction), Interview (intro → portfolio/track fit
+→ next steps), Offer (written offer → review terms → accept), Learn & Build
+(brief → review → ship), DSN Field (listen → serve → document), Capstone
+(build → demo → next step) and Alumni (portfolio → next step → network).
+Desktop renders real directional shadows; mobile disables the shadow map to
+keep the scroll smooth. Overlay copy includes three short action chips per act,
+plus a progress bar and step dots. The section is decorative storytelling, not
+a game: no keyboard controls, no inventory, no branching. On mobile the same
+scene renders at a reduced pixel ratio and the overlay becomes a bottom card.
+When WebGL is unavailable, a static stage-icon fallback keeps the story
+readable. Under `prefers-reduced-motion`, walk bobbing and particle drift are
+disabled; the scene still follows scroll. The story follows the active theme,
+including light ground/fog and dark overlay copy in light mode.
 
 ## Trust and logistics
 
@@ -125,6 +129,14 @@ email, without exposing internal notes. Admins move applications through
 keep internal notes at `/admin/fellowship`. Stage changes email the applicant;
 internal notes are never sent. A repeat application from an email with an active
 record is rejected with a 409; use the status page instead.
+
+The cohort terms shown in the public “COHORT TERMS” panel and the guide are
+admin-editable under `/admin/fellowship` → **Cohort and policy terms**. They are
+stored in `app_settings` with the `fellowship.` prefix and exposed through
+`GET /api/fellowship-policy`; `PUT /api/fellowship-policy` is admin-only. This
+covers fee, scholarship, stipend, accommodation, insurance, eligibility, leave,
+next intake, seats and location/residency. Do not set promises the programme
+cannot deliver.
 
 The print-friendly programme guide lives at `/fellowship/guide` and covers the
 same details plus the parents/guardians letter. The fellowship route also emits

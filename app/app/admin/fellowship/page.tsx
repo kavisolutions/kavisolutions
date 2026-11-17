@@ -22,6 +22,10 @@ import {
   FELLOWSHIP_STAGE_TONES,
   type FellowshipApplicationStage,
 } from "@/lib/fellowship-application";
+import {
+  FELLOWSHIP_POLICY_DEFAULTS,
+  type FellowshipPolicy,
+} from "@/lib/fellowship-policy";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -68,14 +72,28 @@ export default function FellowshipApplicationsAdmin() {
     cohort: string;
     notes: string;
   } | null>(null);
+  const [policy, setPolicy] = useState<FellowshipPolicy | null>(null);
+  const [policyDraft, setPolicyDraft] = useState<FellowshipPolicy>(
+    FELLOWSHIP_POLICY_DEFAULTS,
+  );
+  const [savingPolicy, setSavingPolicy] = useState(false);
+  const [policyOpen, setPolicyOpen] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
 
     try {
-      const response = await fetch("/api/fellowship-applications", withCookies());
-      if (response.status === 401 || response.status === 403) {
+      const [response, policyResponse] = await Promise.all([
+        fetch("/api/fellowship-applications", withCookies()),
+        fetch("/api/fellowship-policy", withCookies()),
+      ]);
+      if (
+        response.status === 401 ||
+        response.status === 403 ||
+        policyResponse.status === 401 ||
+        policyResponse.status === 403
+      ) {
         setForbidden(true);
         return;
       }
@@ -83,6 +101,17 @@ export default function FellowshipApplicationsAdmin() {
 
       const data = (await response.json()) as { applications?: Application[] };
       setApplications(data.applications ?? []);
+
+      if (policyResponse.ok) {
+        const policyData = (await policyResponse.json()) as {
+          policy?: FellowshipPolicy;
+        };
+        if (policyData.policy) {
+          setPolicy(policyData.policy);
+          setPolicyDraft(policyData.policy);
+        }
+      }
+
       setForbidden(false);
     } catch {
       setError("Could not reach the server. Try again.");
@@ -156,6 +185,40 @@ export default function FellowshipApplicationsAdmin() {
       setError(cause instanceof Error ? cause.message : "Could not save.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const savePolicy = async () => {
+    if (savingPolicy) return;
+    setSavingPolicy(true);
+    setError("");
+    setNotice("");
+
+    try {
+      const response = await fetch(
+        "/api/fellowship-policy",
+        withCookies({
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(policyDraft),
+        }),
+      );
+      const data = (await response.json().catch(() => null)) as {
+        policy?: FellowshipPolicy;
+        message?: string;
+      } | null;
+
+      if (!response.ok || !data?.policy) {
+        throw new Error(apiErrorMessage(data, "Could not save the policy terms."));
+      }
+
+      setPolicy(data.policy);
+      setPolicyDraft(data.policy);
+      setNotice("Cohort terms updated.");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not save.");
+    } finally {
+      setSavingPolicy(false);
     }
   };
 
@@ -235,6 +298,93 @@ export default function FellowshipApplicationsAdmin() {
             {error || notice}
           </div>
         )}
+
+        <Card className="mt-5">
+          <CardHeader className="flex flex-row items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-base">Cohort and policy terms</CardTitle>
+              <p className="mt-1 text-xs text-muted-foreground">
+                These values appear in the public “Cohort terms” panel and guide.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPolicyOpen((current) => !current)}
+            >
+              {policyOpen ? "Hide" : "Edit terms"}
+            </Button>
+          </CardHeader>
+          {policyOpen && (
+            <CardContent>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {(
+                  [
+                    ["fee", "Fee / contribution"],
+                    ["scholarship", "Scholarship"],
+                    ["stipend", "Stipend"],
+                    ["accommodation", "Accommodation and food"],
+                    ["insurance", "Insurance / medical"],
+                    ["eligibility", "Eligibility"],
+                    ["leave", "Leave"],
+                    ["cohortNote", "Location / residency"],
+                  ] as const
+                ).map(([key, label]) => (
+                  <label key={key} className="block">
+                    <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      {label}
+                    </span>
+                    <textarea
+                      value={policyDraft[key]}
+                      onChange={(event) =>
+                        setPolicyDraft({ ...policyDraft, [key]: event.target.value })
+                      }
+                      rows={3}
+                      className="w-full resize-y rounded-lg border border-border bg-background px-2.5 py-2 text-xs"
+                    />
+                  </label>
+                ))}
+                <label className="block">
+                  <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Next intake
+                  </span>
+                  <Input
+                    value={policyDraft.nextIntake}
+                    onChange={(event) =>
+                      setPolicyDraft({ ...policyDraft, nextIntake: event.target.value })
+                    }
+                  />
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Seats
+                  </span>
+                  <Input
+                    value={policyDraft.seats}
+                    onChange={(event) =>
+                      setPolicyDraft({ ...policyDraft, seats: event.target.value })
+                    }
+                  />
+                </label>
+              </div>
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <span className="text-[10px] text-muted-foreground">
+                  {policy?.updatedAt
+                    ? `Last updated ${new Date(policy.updatedAt).toLocaleString()}`
+                    : "Using default terms"}
+                </span>
+                <Button onClick={() => void savePolicy()} disabled={savingPolicy}>
+                  {savingPolicy ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="h-4 w-4" />
+                  )}
+                  Save terms
+                </Button>
+              </div>
+            </CardContent>
+          )}
+        </Card>
 
         <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_380px]">
           <Card>

@@ -10,7 +10,16 @@ import {
   useReducedMotion,
   useScroll,
 } from "framer-motion";
-import { ArrowRight, Code2, DoorOpen, GraduationCap, Handshake, Sprout } from "lucide-react";
+import {
+  ArrowRight,
+  Code2,
+  DoorOpen,
+  FileCheck2,
+  GraduationCap,
+  Handshake,
+  Network,
+  Sprout,
+} from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 
 const FellowshipStoryCanvas = dynamic(
@@ -36,6 +45,14 @@ const STAGES = [
     bullets: ["Meet the team", "Share your goals", "Honest fit check"],
   },
   {
+    tag: "OFFER",
+    title: "Accept the offer",
+    copy: "Shortlisted candidates receive the cohort terms in writing — dates, contribution, scholarship and location — before accepting.",
+    color: "#F59E0B",
+    icon: FileCheck2,
+    bullets: ["Written offer", "Review cohort terms", "Accept and join"],
+  },
+  {
     tag: "LEARN & BUILD",
     title: "Do the work",
     copy: "Mentor reviews, live briefs and weekly shipping. Fellows learn by owning a deliverable, not by watching slides.",
@@ -58,6 +75,14 @@ const STAGES = [
     color: "#8B5CF6",
     icon: GraduationCap,
     bullets: ["Public demo day", "Portfolio case study", "Next-step plan"],
+  },
+  {
+    tag: "ALUMNI",
+    title: "Keep the network",
+    copy: "Graduates join the Kavi alumni network: references, portfolio support, next-step conversations and a community that keeps showing up.",
+    color: "#0EA5E9",
+    icon: Network,
+    bullets: ["Portfolio and references", "Next-step support", "Alumni network"],
   },
 ];
 
@@ -100,7 +125,7 @@ export default function FellowshipStory() {
       id="fellowship-story"
       ref={sectionRef}
       aria-label="Fellowship journey: apply, interview, build, field service, capstone"
-      className="relative h-[500vh] bg-[#F8FAFC] dark:bg-[#07101D]"
+      className="relative h-[700vh] bg-[#F8FAFC] dark:bg-[#07101D]"
     >
       <div className="sticky top-0 h-screen overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_60%,rgba(23,92,211,0.1),transparent_62%)] dark:bg-[radial-gradient(ellipse_at_50%_60%,rgba(23,92,211,0.16),transparent_62%)]" />
