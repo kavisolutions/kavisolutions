@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Sparkles, GraduationCap, Calendar, Clock, MapPin, Users } from "lucide-react";
-import { GlowOrb, Reveal, RevealItem, RevealStagger, TiltCard } from "@/components/motion";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { Reveal, RevealItem, RevealStagger, TiltCard } from "@/components/motion";
+import FellowshipHero from "@/components/FellowshipHero";
+import FellowshipStory from "@/components/FellowshipStory";
+import FellowshipCursor from "@/components/FellowshipCursor";
+import FellowshipScrollProgress from "@/components/FellowshipScrollProgress";
 import {
   FELLOWSHIP_AUDIENCE,
   FELLOWSHIP_COHORTS,
   FELLOWSHIP_CONTACT,
   FELLOWSHIP_FAQ,
-  FELLOWSHIP_HERO,
-  FELLOWSHIP_LANGUAGES,
-  FELLOWSHIP_MENTORS,
   FELLOWSHIP_PHASES,
   FELLOWSHIP_PILLARS,
   FELLOWSHIP_TRACKS,
@@ -47,84 +48,12 @@ function SectionHeading({
 export default function FellowshipPage() {
   return (
     <div className="relative min-h-screen bg-ink font-sans text-[#0F172A] dark:text-white">
-      {/* HERO */}
-      <section className="relative overflow-hidden px-6 pt-36 pb-20">
-        <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-[500px] w-[900px] rounded-full bg-gradient-to-b from-[#175CD3]/20 via-[#8B5CF6]/10 to-transparent blur-[120px]" />
+      <FellowshipScrollProgress />
+      <FellowshipCursor />
 
-        <div className="relative mx-auto max-w-4xl text-center">
-          <Reveal>
-            <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
-              <span className="h-2 w-2 rounded-full bg-[#34D399] animate-pulse" />
-              <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#91B4FF]">
-                {FELLOWSHIP_HERO.eyebrow}
-              </span>
-            </div>
-          </Reveal>
+      <FellowshipHero />
 
-          <Reveal delay={0.1}>
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#F7F9FC] leading-[1.1]">
-              {FELLOWSHIP_HERO.title}{" "}
-              <span className="bg-gradient-to-r from-[#91B4FF] to-[#68FCBF] bg-clip-text text-transparent">
-                {FELLOWSHIP_HERO.highlight}
-              </span>
-            </h1>
-          </Reveal>
-
-          <Reveal delay={0.2}>
-            <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-[#A5B3C7]">
-              {FELLOWSHIP_HERO.description}
-            </p>
-          </Reveal>
-
-          <Reveal delay={0.3}>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-              <Link
-                href="/#contact"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] bg-[#175CD3] hover:bg-[#1849A9] text-white px-8 text-[15px] font-medium transition-all shadow-[0_0_24px_rgba(23,92,211,0.4)]"
-              >
-                <span>Register your interest</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                href="#curriculum"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-[rgba(255,255,255,0.14)] bg-[rgba(18,29,47,0.7)] px-7 text-[15px] font-medium text-[#F7F9FC] backdrop-blur-md transition-all hover:bg-white/[0.08]"
-              >
-                <span>See the 11-month journey</span>
-              </a>
-            </div>
-          </Reveal>
-
-          {/* Metrics Ribbon */}
-          <Reveal delay={0.4} className="mt-14 w-full max-w-3xl mx-auto">
-            <TiltCard
-              intensity={6}
-              className="overflow-hidden rounded-[20px] border border-[rgba(148,163,184,0.18)] bg-[rgba(18,29,47,0.85)] backdrop-blur-[20px] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)]"
-            >
-              <div className="grid grid-cols-2 divide-y divide-[rgba(148,163,184,0.12)] sm:grid-cols-4 sm:divide-y-0 sm:divide-x">
-                {FELLOWSHIP_HERO.metrics.map((metric) => (
-                  <div
-                    key={metric.label}
-                    className="flex flex-col items-center justify-center p-6 text-center"
-                  >
-                    <span className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-[#F7F9FC]">
-                      {metric.value}
-                    </span>
-                    <span className="mt-1 text-[11px] font-mono uppercase tracking-wider text-[#7889A0]">
-                      {metric.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </TiltCard>
-          </Reveal>
-
-          <Reveal delay={0.5} className="mt-6">
-            <p className="text-xs font-mono text-[#7889A0]">
-              {FELLOWSHIP_LANGUAGES.primary} primary · {FELLOWSHIP_LANGUAGES.support} support · No placement guarantee
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <FellowshipStory />
 
       {/* WHO IT'S FOR */}
       <section id="who" className="relative px-6 py-20">

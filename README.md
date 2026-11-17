@@ -1,6 +1,6 @@
 # Kavi Solutions
 
-A premium one-page agency website for **Kavi Solutions**, built with **Next.js 16**, **Tailwind CSS 4** and **Framer Motion**. Dark, animated and production-ready.
+A premium one-page agency website for **Kavi Solutions**, built with **Next.js 16**, **Tailwind CSS 4**, **Framer Motion** and **Three.js** (the interactive fellowship orbit map and scroll-driven character story). Dark, animated and production-ready.
 
 The repository contains both apps:
 

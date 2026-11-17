@@ -273,6 +273,12 @@ html:not(.dark) .text-gradient {
   color: #175cd3 !important;
 }
 
+/* Stronger gradient headline on light backgrounds. */
+html:not(.dark) .fellowship-accent,
+html[data-theme="light"] .fellowship-accent {
+  background-image: linear-gradient(90deg, #175cd3 0%, #047857 100%) !important;
+}
+
 /* Neon & Pastel High-Contrast Light Mode Overrides */
 html:not(.dark) .text-lime-300,
 html:not(.dark) .text-lime-400,
