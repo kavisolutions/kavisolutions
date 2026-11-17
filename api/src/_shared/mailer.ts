@@ -425,3 +425,108 @@ export async function sendFarmsEnquiryEmail(input: FarmsEnquiryMailInput): Promi
     `,
   });
 }
+
+export type FellowshipApplicationMailInput = {
+  reference: string;
+  name: string;
+  email: string;
+  phone: string;
+  city: string;
+  candidateStatus: string;
+  track: string;
+  motivation: string;
+  cohort: string;
+  to: string;
+};
+
+/* Internal notification for a new fellowship application. The public form
+   stores first, so a mail failure never loses an application. */
+export async function sendFellowshipApplicationEmail(
+  input: FellowshipApplicationMailInput,
+): Promise<void> {
+  const rows: Array<[string, string]> = [
+    ["Reference", input.reference],
+    ["Name", input.name],
+    ["Email", input.email],
+    ["Phone", input.phone],
+    ["City / district", input.city || "—"],
+    ["Current status", input.candidateStatus || "—"],
+    ["Track", input.track],
+    ["Cohort", input.cohort],
+  ];
+
+  await getTransporter().sendMail({
+    from: `"Kavi Fellowship" <${env.SMTP_USER}>`,
+    to: input.to,
+    replyTo: input.email,
+    subject: `[Kavi Fellowship] New application — ${input.name} (${input.reference})`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#06060b;color:#e0e0e0;border-radius:12px;">
+        <p style="margin:0 0 4px;color:#175cd3;font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">
+          Fellowship application
+        </p>
+        <h2 style="color:#ffffff;margin:0 0 16px;">New application from kavisolutions.in/fellowship</h2>
+        <table style="width:100%;border-collapse:collapse;">
+          ${rows
+            .map(
+              ([label, value]) => `<tr>
+            <td style="padding:8px 0;color:#a1a1b5;font-weight:bold;width:150px;">${escapeHtml(label)}</td>
+            <td style="padding:8px 0;">${escapeHtml(value)}</td>
+          </tr>`,
+            )
+            .join("")}
+        </table>
+        <div style="margin-top:16px;padding:16px;background:#0b0b14;border-radius:8px;border:1px solid rgba(255,255,255,0.1);">
+          <p style="color:#a1a1b5;font-weight:bold;margin:0 0 8px;">Why they want to join</p>
+          <p style="margin:0;white-space:pre-wrap;">${escapeHtml(input.motivation)}</p>
+        </div>
+        <p style="margin-top:16px;color:#6e6e85;font-size:12px;">
+          Review and move the application through the pipeline in the admin console.
+        </p>
+      </div>
+    `,
+  });
+}
+
+export type FellowshipApplicationConfirmationMailInput = {
+  reference: string;
+  name: string;
+  email: string;
+  track: string;
+  cohort: string;
+};
+
+/* Applicant confirmation. It deliberately promises no offer or timeline; the
+   reference lets them check the recorded status later. */
+export async function sendFellowshipApplicationConfirmationEmail(
+  input: FellowshipApplicationConfirmationMailInput,
+): Promise<void> {
+  await getTransporter().sendMail({
+    from: `"Kavi Fellowship" <${env.SMTP_USER}>`,
+    to: input.email,
+    subject: `Kavi Fellowship application received — ${input.reference}`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#06060b;color:#e0e0e0;border-radius:12px;">
+        <h2 style="color:#ffffff;margin:0 0 12px;">Application received</h2>
+        <p style="margin:0 0 12px;">Hello ${escapeHtml(input.name)},</p>
+        <p style="margin:0 0 12px;line-height:1.6;">
+          We received your expression of interest for the Kavi Fellowship
+          (${escapeHtml(input.track)} track, ${escapeHtml(input.cohort)} cohort).
+          This is not an offer. If you are shortlisted, the team will contact you
+          for a conversation.
+        </p>
+        <p style="margin:0 0 8px;color:#a1a1b5;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Your reference</p>
+        <p style="margin:0 0 16px;font-family:monospace;font-size:20px;color:#91b4ff;">${escapeHtml(input.reference)}</p>
+        <p style="margin:0 0 16px;">
+          Check the recorded status at
+          <a href="https://kavisolutions.in/fellowship/status" style="color:#22d3ee;">kavisolutions.in/fellowship/status</a>
+          using this reference and your email.
+        </p>
+        <p style="margin:0;color:#6e6e85;font-size:12px;">
+          No payment is collected through the website. There is no salary during
+          the learning phase and no job guarantee.
+        </p>
+      </div>
+    `,
+  });
+}

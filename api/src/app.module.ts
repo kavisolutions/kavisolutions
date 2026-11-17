@@ -10,6 +10,7 @@ import { AdminsModule } from "@/modules/admins/admins.module";
 import { CertificatesModule } from "@/modules/certificates/certificates.module";
 import { ContactModule } from "@/modules/contact/contact.module";
 import { FarmsModule } from "@/modules/farms/farms.module";
+import { FellowshipApplicationsModule } from "@/modules/fellowship-applications/fellowship-applications.module";
 import { FinancialModule } from "@/modules/financial/financial.module";
 import { GovernmentModule } from "@/modules/government/government.module";
 import { HealthModule } from "@/modules/health/health.module";
@@ -46,6 +47,7 @@ import { UploadModule } from "@/modules/upload/upload.module";
     SurveyorsModule,
     FinancialModule,
     GovernmentModule,
+    FellowshipApplicationsModule,
     FarmsModule,
     PagesModule,
     SocialModule,

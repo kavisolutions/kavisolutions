@@ -244,6 +244,51 @@ export const surveyors = pgTable(
 );
 
 // ---------------------------------------------------------------------------
+// Fellowship applications — public form, reference lookup and admin pipeline.
+// ---------------------------------------------------------------------------
+
+export const FELLOWSHIP_APPLICATION_STAGES = [
+  "applied",
+  "review",
+  "interview",
+  "offer",
+  "accepted",
+  "rejected",
+  "withdrawn",
+] as const;
+export type FellowshipApplicationStage = (typeof FELLOWSHIP_APPLICATION_STAGES)[number];
+
+export const fellowshipApplications = pgTable(
+  "fellowship_applications",
+  {
+    id: text("id").primaryKey(),
+    reference: text("reference").notNull(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    phone: text("phone").notNull(),
+    city: text("city").notNull().default(""),
+    candidateStatus: text("candidate_status").notNull().default(""),
+    track: text("track").notNull(),
+    motivation: text("motivation").notNull(),
+    fullTime: boolean("full_time").notNull().default(false),
+    vipassana: boolean("vipassana").notNull().default(false),
+    fieldWork: boolean("field_work").notNull().default(false),
+    termsAccepted: boolean("terms_accepted").notNull().default(false),
+    cohort: text("cohort").notNull().default("Unassigned"),
+    stage: text("stage").notNull().default("applied"),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("fellowship_applications_reference_unique").on(table.reference),
+    index("fellowship_applications_stage_idx").on(table.stage),
+    index("fellowship_applications_email_idx").on(table.email),
+    index("fellowship_applications_created_at_idx").on(table.createdAt),
+  ],
+);
+
+// ---------------------------------------------------------------------------
 // Relations
 // ---------------------------------------------------------------------------
 
@@ -295,3 +340,5 @@ export type CertificateRow = typeof certificates.$inferSelect;
 export type CertificateInsert = typeof certificates.$inferInsert;
 export type SurveyorRow = typeof surveyors.$inferSelect;
 export type SurveyorInsert = typeof surveyors.$inferInsert;
+export type FellowshipApplicationRow = typeof fellowshipApplications.$inferSelect;
+export type FellowshipApplicationInsert = typeof fellowshipApplications.$inferInsert;

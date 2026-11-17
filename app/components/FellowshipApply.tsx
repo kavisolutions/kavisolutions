@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, CheckCircle2, Loader2, Mail } from "lucide-react";
 import { FELLOWSHIP_TRACKS } from "@/lib/fellowship-data";
+import { apiErrorMessage } from "@/lib/api-error";
 import { Reveal } from "@/components/motion";
 
 const STATUS_OPTIONS = [
@@ -30,6 +32,7 @@ export default function FellowshipApply() {
   });
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [reference, setReference] = useState("");
   const [error, setError] = useState("");
 
   const update = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) => {
@@ -48,42 +51,45 @@ export default function FellowshipApply() {
     setLoading(true);
 
     try {
-      const message = [
-        "Fellowship application",
-        `Current status: ${form.status}`,
-        `City / district: ${form.city}`,
-        `Track interest: ${form.track}`,
-        "",
-        "Why they want to join:",
-        form.motivation,
-        "",
-        "Commitments confirmed:",
-        "- Full-time, 11-month programme",
-        "- Compulsory Vipassana and daily practice",
-        "- DSN field work and community travel",
-        "- Understands there is no salary or job guarantee",
-      ].join("\n");
-
-      const response = await fetch("/api/contact", {
+      const response = await fetch("/api/fellowship-applications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name,
           email: form.email,
           phone: form.phone,
-          service: `Fellowship application — ${form.track}`,
-          message,
+          city: form.city,
+          candidateStatus: form.status,
+          track: form.track,
+          motivation: form.motivation,
+          fullTime: form.fullTime,
+          vipassana: form.vipassana,
+          fieldWork: form.field,
+          termsAccepted: form.honest,
         }),
       });
 
+      const data = (await response.json().catch(() => null)) as {
+        application?: { reference?: string };
+        message?: string;
+      } | null;
+
       if (!response.ok) {
-        throw new Error("Failed to send application");
+        throw new Error(
+          apiErrorMessage(
+            data,
+            "Could not send the application. Please try again or email kavisolutions1@gmail.com.",
+          ),
+        );
       }
 
+      setReference(data?.application?.reference ?? "");
       setSent(true);
-    } catch {
+    } catch (cause) {
       setError(
-        "Could not send the application. Please try again or email kavisolutions1@gmail.com.",
+        cause instanceof Error
+          ? cause.message
+          : "Could not send the application. Please try again or email kavisolutions1@gmail.com.",
       );
     } finally {
       setLoading(false);
@@ -159,13 +165,38 @@ export default function FellowshipApply() {
                     shortlisted. Nothing is confirmed until you receive written
                     cohort terms.
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => setSent(false)}
-                    className="mt-5 text-xs font-mono text-[#91B4FF] hover:underline"
-                  >
-                    Submit another application
-                  </button>
+                  {reference && (
+                    <div className="mt-5 rounded-xl border border-[rgba(148,163,184,0.18)] bg-[rgba(18,29,47,0.55)] px-5 py-3">
+                      <span className="block font-mono text-[9px] uppercase tracking-[0.16em] text-[#7889A0]">
+                        Application reference
+                      </span>
+                      <span className="mt-1 block font-mono text-lg font-semibold text-[#91B4FF]">
+                        {reference}
+                      </span>
+                    </div>
+                  )}
+                  <p className="mt-3 max-w-md text-[11px] leading-relaxed text-[#7889A0]">
+                    Save this reference. You can check the recorded stage with
+                    your reference and email.
+                  </p>
+                  <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                    <Link
+                      href="/fellowship/status"
+                      className="inline-flex h-9 items-center rounded-lg bg-[#175CD3] px-4 text-xs font-medium text-white transition-colors hover:bg-[#1849A9]"
+                    >
+                      Check status
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSent(false);
+                        setReference("");
+                      }}
+                      className="text-xs font-mono text-[#91B4FF] hover:underline"
+                    >
+                      Submit another application
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">

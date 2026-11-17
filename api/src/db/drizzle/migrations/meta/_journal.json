@@ -57,6 +57,13 @@
       "when": 1794768708440,
       "tag": "0007_add_ashok_admin",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794908819098,
+      "tag": "0008_colorful_hiroim",
+      "breakpoints": true
     }
   ]
 }

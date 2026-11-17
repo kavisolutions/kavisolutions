@@ -13,7 +13,11 @@ for the fellowship; it is a published programme page.
 | Trust & logistics | `app/components/FellowshipDetails.tsx` + `app/lib/fellowship-data.ts` |
 | Outcomes & next steps | `app/components/FellowshipOutcomes.tsx` |
 | Mentors & partners | `app/components/FellowshipPeople.tsx` |
-| Application form | `app/components/FellowshipApply.tsx` (posts to `/api/contact`) |
+| Application form | `app/components/FellowshipApply.tsx` → `POST /api/fellowship-applications` |
+| Application status | `app/app/fellowship/status/page.tsx` + `FellowshipStatusLookup.tsx` |
+| Admin pipeline | `app/app/admin/fellowship/page.tsx` → `GET/PATCH /api/fellowship-applications` |
+| Fellowship API | `api/src/modules/fellowship-applications/` |
+| Applications table | `api/src/db/drizzle/migrations/0008_colorful_hiroim.sql` |
 | Programme guide | `app/app/fellowship/guide/page.tsx` |
 | SEO structured data | `app/app/fellowship/page.tsx` |
 | Cursor aura + scroll progress | `app/components/FellowshipCursor.tsx` + `app/components/FellowshipScrollProgress.tsx` |
@@ -111,9 +115,16 @@ Content lives in `FELLOWSHIP_DETAILS`, `FELLOWSHIP_AT_A_GLANCE`,
 `FELLOWSHIP_SELECTION_STEPS`, `FELLOWSHIP_PARENT_FAQ` and
 `FELLOWSHIP_NOT_PROMISED` in `app/lib/fellowship-data.ts`.
 
-The application section (`FellowshipApply.tsx`) posts a structured expression of
-interest to the existing `/api/contact` endpoint. It does not create a database
-record or an application-status pipeline; applications land in the team inbox.
+The application section (`FellowshipApply.tsx`) stores a structured expression
+of interest through `POST /api/fellowship-applications`. The API returns a
+reference such as `KF-2026-AB12CD34`, sends a team notification and an applicant
+confirmation, and records the application in `fellowship_applications`. The
+status page at `/fellowship/status` looks up the recorded stage with reference +
+email, without exposing internal notes. Admins move applications through
+`applied → review → interview → offer → accepted` (or `rejected/withdrawn`) and
+keep internal notes at `/admin/fellowship`. A repeat application from an email
+with an active record is rejected with a 409; use the status page instead.
+
 The print-friendly programme guide lives at `/fellowship/guide` and covers the
 same details plus the parents/guardians letter. The fellowship route also emits
 `EducationalOccupationalProgram` JSON-LD.
