@@ -656,7 +656,7 @@ function buildOfferStation() {
 
 function buildLearnStation() {
   const group = new THREE.Group();
-  group.position.x = STATIONS[2].x;
+  group.position.x = STATIONS[3].x;
 
   addBox(group, 3.6, 1.9, 0.12, 0x0c1b33, 0, 1.85, -2.5, {
     emissive: 0x0b2a4a,
@@ -710,7 +710,7 @@ function buildLearnStation() {
 
 function buildFieldStation() {
   const group = new THREE.Group();
-  group.position.x = STATIONS[3].x;
+  group.position.x = STATIONS[4].x;
 
   for (const [x, z, height] of [
     [-1.8, -1.6, 2.1],
@@ -766,7 +766,7 @@ function buildFieldStation() {
 
 function buildCapstoneStation() {
   const group = new THREE.Group();
-  group.position.x = STATIONS[4].x;
+  group.position.x = STATIONS[5].x;
 
   addBox(group, 3.2, 0.26, 2.0, 0x1a2638, 0, 0.13, 0);
   addBox(group, 3.25, 0.04, 2.05, 0x8b5cf6, 0, 0.27, 0, {
@@ -1094,9 +1094,12 @@ export default function FellowshipStoryCanvas({
 
       if (contextLost || !inView || document.hidden) return;
 
-      const targetX = pathX(
-        THREE.MathUtils.clamp(progress.get(), 0, 1),
+      const scrollProgress = THREE.MathUtils.clamp(progress.get(), 0, 1);
+      const stageIndex = Math.min(
+        STATIONS.length - 1,
+        Math.floor(scrollProgress * STATIONS.length),
       );
+      const targetX = pathX(scrollProgress);
       const previousX = characterPosition.x;
       characterPosition.x = targetX;
       const moved = Math.abs(characterPosition.x - previousX);
@@ -1143,8 +1146,7 @@ export default function FellowshipStoryCanvas({
       hero.group.position.copy(characterPosition);
 
       stationGroups.forEach((group, index) => {
-        group.visible =
-          Math.abs(characterPosition.x - STATIONS[index].x) < 6.2;
+        group.visible = index === stageIndex;
       });
 
       const blend = stationBlend;
@@ -1304,7 +1306,7 @@ export default function FellowshipStoryCanvas({
       hero.clipboard.visible = nearestIndex === 4 && nearestDistance < 1.8;
 
       callouts.forEach((sprite, index) => {
-        const isCurrent = index === nearestIndex && nearestDistance < 3.4;
+        const isCurrent = index === stageIndex;
         const targetOpacity = isCurrent ? 1 : 0;
         const spriteMaterial = sprite.material;
         spriteMaterial.opacity = THREE.MathUtils.clamp(

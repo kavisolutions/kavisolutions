@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useCallback, useState } from "react";
 import { ArrowRight, CheckCircle2, Move3d } from "lucide-react";
 import {
@@ -67,6 +66,20 @@ export default function FellowshipHero() {
     setPinnedPhase((current) => (current === index ? null : index));
   };
 
+  /* The page is very tall because of the sticky story; smooth-scrolling all
+     the way to the form takes several seconds on production. Jump directly so
+     the primary CTA always feels immediate. */
+  const jumpToApply = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    const target = document.getElementById("apply");
+    if (!target) return;
+
+    const top = target.getBoundingClientRect().top + window.scrollY - 80;
+    window.scrollTo({ top, behavior: "instant" as ScrollBehavior });
+    window.history.replaceState(null, "", "#apply");
+    target.querySelector<HTMLInputElement>("input")?.focus({ preventScroll: true });
+  };
+
   return (
     <section
       id="journey-map"
@@ -97,13 +110,14 @@ export default function FellowshipHero() {
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
-                <Link
+                <a
                   href="#apply"
+                  onClick={jumpToApply}
                   className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] bg-[#175CD3] px-7 text-[15px] font-medium text-white shadow-[0_0_24px_rgba(23,92,211,0.4)] transition-all hover:bg-[#1849A9]"
                 >
                   <span>Register your interest</span>
                   <ArrowRight className="h-4 w-4" />
-                </Link>
+                </a>
                 <a
                   href="#curriculum"
                   className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-[rgba(255,255,255,0.14)] bg-[rgba(18,29,47,0.7)] px-6 text-[15px] font-medium text-[#F7F9FC] backdrop-blur-md transition-all hover:bg-white/[0.08]"
