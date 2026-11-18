@@ -1,6 +1,11 @@
 import Link from "next/link";
 
 import SurveyForms from "@/components/SurveyForms";
+import {
+  SurveyAnalysisVisual,
+  SurveyHeroVisual,
+  SurveyNetworkVisual,
+} from "@/components/SurveyVisuals";
 import { GlowOrb, Reveal, RevealItem, RevealStagger } from "@/components/motion";
 import {
   SURVEY_APPROACH,
@@ -108,6 +113,12 @@ export function SurveyPage() {
                   <span className="text-center text-xs text-fog">{metric.label}</span>
                 </div>
               ))}
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.5} className="mt-12 w-full">
+            <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl border border-white/10 shadow-lift">
+              <SurveyHeroVisual className="h-auto w-full" />
             </div>
           </Reveal>
         </div>
@@ -236,18 +247,23 @@ export function SurveyPage() {
               </ul>
             </Reveal>
             <Reveal delay={0.15}>
-              <div className="h-full rounded-3xl glass p-6">
-                <h3 className="font-display text-lg font-semibold">Network at a glance</h3>
-                <dl className="mt-5 space-y-4">
-                  {SURVEY_FIELD_NETWORK.capabilities.map((capability) => (
-                    <div key={capability.label}>
-                      <dt className="text-[10px] font-bold uppercase tracking-[0.18em] text-teal-300">
-                        {capability.label}
-                      </dt>
-                      <dd className="mt-1 text-sm leading-relaxed text-mist">{capability.detail}</dd>
-                    </div>
-                  ))}
-                </dl>
+              <div className="space-y-6">
+                <div className="overflow-hidden rounded-3xl border border-white/10 shadow-lift">
+                  <SurveyNetworkVisual className="h-auto w-full" />
+                </div>
+                <div className="rounded-3xl glass p-6">
+                  <h3 className="font-display text-lg font-semibold">Network at a glance</h3>
+                  <dl className="mt-5 space-y-4">
+                    {SURVEY_FIELD_NETWORK.capabilities.map((capability) => (
+                      <div key={capability.label}>
+                        <dt className="text-[10px] font-bold uppercase tracking-[0.18em] text-teal-300">
+                          {capability.label}
+                        </dt>
+                        <dd className="mt-1 text-sm leading-relaxed text-mist">{capability.detail}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
               </div>
             </Reveal>
           </div>
@@ -262,6 +278,11 @@ export function SurveyPage() {
             title="From raw responses to a decision"
             description="Collection is half the work. The other half is cleaning, structuring and analysing the data — then presenting it in the form the reader will actually use."
           />
+          <Reveal className="mb-10">
+            <div className="mx-auto max-w-4xl overflow-hidden rounded-3xl border border-white/10 shadow-lift">
+              <SurveyAnalysisVisual className="h-auto w-full" />
+            </div>
+          </Reveal>
           <RevealStagger className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { icon: "🧹", title: "Cleaning & validation", desc: "Duplicate checks, logic validation, outlier review and back-checks against field records." },
@@ -504,6 +525,12 @@ export function SurveyPage() {
               <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-mist">
                 Tell us the question you need answered and the locations involved. We will come
                 back with a proposed method, timeline and cost.
+              </p>
+              <p className="mt-3 text-sm text-mist">
+                {SURVEY_CONTACT.contactRole}:{" "}
+                <span className="font-semibold text-[#0F172A] dark:text-white">
+                  {SURVEY_CONTACT.contactName}
+                </span>
               </p>
               <div className="mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <a

@@ -37,7 +37,8 @@ of the site runs without it.
 built but **not published by default**: they return 404 until an administrator
 switches them on in the admin panel under **Settings → Live pages**. The switch
 takes effect immediately — no rebuild or redeploy. See
-[`docs/survey-page.md`](docs/survey-page.md),
+[`docs/survey-page.md`](docs/survey-page.md) and
+[`docs/survey-templates.md`](docs/survey-templates.md),
 [`docs/financial-page.md`](docs/financial-page.md),
 [`docs/government-page.md`](docs/government-page.md) and
 [`docs/farms-page.md`](docs/farms-page.md) for content and compliance notes.

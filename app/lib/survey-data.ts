@@ -31,7 +31,8 @@ export type SurveyStep = {
 
 export const SURVEY_CONTACT = {
   email: "kavisolutions1@gmail.com",
-  phone: "+91 90000 00000",
+  contactName: "Basha",
+  contactRole: "Business development",
   location: "Hyderabad, India · Field operations across India",
 } as const;
 
@@ -44,7 +45,7 @@ export const SURVEY_HERO = {
   metrics: [
     { value: "6", label: "Research verticals" },
     { value: "5", label: "Engagement models" },
-    { value: "PAN-India", label: "Field network" },
+    { value: "Multi-state", label: "Field network, expanding" },
     { value: "End-to-end", label: "Design to report" },
   ],
 } as const;

@@ -8,10 +8,15 @@ import { isPageEnabled } from "@/lib/pages";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const enabled = await isPageEnabled("survey");
+
   return {
     title: "Survey & Research Solutions | Kavi Solutions",
     description:
       "Field surveys, market research, political and social research, data analysis and reporting across India. End-to-end research execution from questionnaire design to final report.",
+    /* The 404 already prevents indexing, but keep the directive explicit so a
+       crawler that reaches the metadata still sees a hidden page. */
+    robots: enabled ? undefined : { index: false, follow: false },
   };
 }
 

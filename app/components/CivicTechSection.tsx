@@ -31,15 +31,15 @@ const civicPractices = [
     id: "survey",
     number: "CIVIC · 02",
     title: "Survey & Data Research",
-    sub: "High-confidence field data collection, polling, and socio-economic analysis",
-    desc: "Empirical survey collection pipelines with GPS-verified field surveyor tools, offline data caching, statistical anomaly detection, and policy-grade report generation.",
+    sub: "Field surveys, market research and analytics for public and private clients",
+    desc: "End-to-end survey execution: questionnaire design, field data collection, data cleaning and statistical analysis, and policy-grade reports and presentations. The surveyor network is being built district by district.",
     href: "/survey",
-    cta: "Explore Research Lab",
+    cta: "Launching soon",
     icon: BarChart3,
     accent: "text-[#C084FC]",
     gradient: "from-[#7C3AED] to-[#C084FC]",
-    chips: ["Field Telemetry", "Offline GPS", "Statistical Rigor", "Policy Reports"],
-    deliverables: ["Rural Demographic Surveys", "Enumerator Mobile Apps", "Data Validation Engines"],
+    chips: ["Field Surveys", "Market Research", "Data Analysis", "Surveyor Network"],
+    deliverables: ["Household & Public Opinion Surveys", "Market & Brand Studies", "Analytics & Reports"],
   },
   {
     id: "financial",
@@ -159,15 +159,22 @@ export default function CivicTechSection() {
                     </div>
                   </div>
 
-                  {/* CTA Link */}
+                  {/* CTA Link. Survey stays unlinked until the page is published. */}
                   <div className="pt-4 border-t border-[rgba(148,163,184,0.1)]">
-                    <Link
-                      href={item.href}
-                      className="inline-flex items-center gap-2 text-sm font-mono font-medium text-[#175CD3] dark:text-[#91B4FF] hover:text-[#1849A9] dark:hover:text-white transition-colors"
-                    >
-                      <span>{item.cta}</span>
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                    </Link>
+                    {item.id === "survey" ? (
+                      <span className="inline-flex items-center gap-2 text-sm font-mono font-medium text-[#7889A0]">
+                        <Lock className="h-3.5 w-3.5" />
+                        <span>{item.cta}</span>
+                      </span>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="inline-flex items-center gap-2 text-sm font-mono font-medium text-[#175CD3] dark:text-[#91B4FF] hover:text-[#1849A9] dark:hover:text-white transition-colors"
+                      >
+                        <span>{item.cta}</span>
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                      </Link>
+                    )}
                   </div>
                 </TiltCard>
               </RevealItem>

@@ -3573,14 +3573,16 @@ export default function AdminPage() {
                           <p className="text-[11px] text-muted-foreground">{item.blurb}</p>
                         </div>
                         <div className="flex shrink-0 items-center gap-2">
-                          <a
-                            href={item.href}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
-                          >
-                            View
-                          </a>
+                          {enabled && (
+                            <a
+                              href={item.href}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                            >
+                              View
+                            </a>
+                          )}
                           <Button
                             type="button"
                             role="switch"

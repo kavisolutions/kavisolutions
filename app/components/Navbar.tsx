@@ -11,7 +11,6 @@ import {
   Cpu,
   TrendingUp,
   Landmark,
-  BarChart3,
   Layers,
   Sprout,
   ShieldCheck,
@@ -60,9 +59,10 @@ const services = [
   },
 ];
 
+/* `/survey` stays out of navigation until the page is published, otherwise the
+   link 404s. Add it back here when the admin Live pages switch is turned on. */
 const verticals = [
   { label: "GovTech", href: "/government", icon: Landmark },
-  { label: "Research", href: "/survey", icon: BarChart3 },
   { label: "Financial", href: "/financial", icon: Layers },
   { label: "Farms", href: "/farms", icon: Sprout },
   { label: "Verify", href: "/verify", icon: ShieldCheck },

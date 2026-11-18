@@ -27,7 +27,6 @@ import {
   Cpu,
   Sprout,
   Landmark,
-  BarChart3,
   CircleDollarSign,
   Lock,
   GraduationCap,
@@ -1046,13 +1045,6 @@ export default function DashboardPage() {
                   href: "/government",
                   icon: Landmark,
                   color: "text-[#06B6D4]",
-                },
-                {
-                  title: "Survey & Research",
-                  desc: "Pan-India field surveyor network with real-time GPS and photo verification.",
-                  href: "/survey",
-                  icon: BarChart3,
-                  color: "text-[#EC4899]",
                 },
                 {
                   title: "Financial Services",

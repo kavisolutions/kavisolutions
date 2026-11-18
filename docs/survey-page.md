@@ -8,17 +8,24 @@ Status: **built, not launched.** The page 404s until it is explicitly enabled.
 | --- | --- |
 | Page component | `app/components/SurveyPage.tsx` |
 | Enquiry forms (client + surveyor) | `app/components/SurveyForms.tsx` |
+| Vector visuals (field, network, analysis) | `app/components/SurveyVisuals.tsx` |
 | All editable content | `app/lib/survey-data.ts` |
 | Route + launch gate | `app/app/survey/page.tsx` |
 | API endpoint | `api/src/modules/survey/` |
 | Email template | `api/src/_shared/mailer.ts` → `sendSurveyEnquiryEmail` |
+| Reusable questionnaire templates | `docs/survey-templates.md` |
 
 ## Publish the page
 
 Admins switch `/survey` on and off from the admin panel:
 **Settings → Live pages → Survey & Research**. A hidden page returns **404** and
-is marked `noindex, nofollow`; no navigation link exists on the site, so nothing
-points at it either way.
+is marked `noindex, nofollow`.
+
+The public navigation deliberately does **not** link to `/survey` yet. The
+Navbar, mobile menu, dashboard and homepage CivicTech card were cleaned of
+`/survey` links after the page was built, because a hidden route linked from a
+public page is a broken link. Restore them only when the switch is turned on —
+see the launch checklist below.
 
 The switch is stored in `app_settings` (`page_survey_enabled`) and read by the
 API at `GET /api/pages`. `app/app/survey/page.tsx` checks it on every request —
@@ -92,7 +99,7 @@ Almost everything visible is in `app/lib/survey-data.ts`:
 | `SURVEY_OPPORTUNITIES` | Business development list |
 | `SURVEY_CLIENT_QUESTIONS` / `SURVEY_SURVEYOR_QUESTIONS` | The two FAQ blocks |
 | `SURVEY_SERVICE_OPTIONS` | Choices in the client form dropdown |
-| `SURVEY_CONTACT` | Email, phone, location footer |
+| `SURVEY_CONTACT` | Email, named business contact and location footer |
 
 No layout changes are needed for content edits — cards size to their content.
 
@@ -105,13 +112,48 @@ reputational risk.
 
 ## Adding a navigation link
 
-Once launched, add the entry to both nav arrays:
+The page is hidden, so the public site intentionally does not link to it. When
+the switch is enabled, restore the links in all five places:
 
-- `app/components/Navbar.tsx` → `links`
-- `app/components/Footer.tsx` → the services column
+| File | Change |
+| --- | --- |
+| `app/components/Navbar.tsx` | Add `{ label: "Research", href: "/survey", icon: BarChart3 }` back to `verticals` and import `BarChart3` |
+| `app/components/MobileMenu.tsx` | Add `{ href: "/survey", label: "Survey & Research", icon: BarChart3 }` to `serviceLinks` and import `BarChart3` |
+| `app/components/CivicTechSection.tsx` | Change the survey CTA from the `Launching soon` span back to the `<Link href={item.href}>` branch, and set `href: "/survey"` |
+| `app/app/dashboard/page.tsx` | Add the `Survey & Research` card back to the verticals array |
+| `app/components/Footer.tsx` | Add a `Survey & Research` link to the Services column |
 
-Suggested label: `Survey`. Keep it out of the nav until the page is enabled,
-otherwise visitors hit a 404.
+Suggested label: `Research` in the navbar, `Survey & Research` everywhere else.
+Do this only after the admin switch is on, otherwise visitors hit a 404.
+
+## Contact details
+
+`SURVEY_CONTACT` holds the general email (`kavisolutions1@gmail.com`), the named
+business-development contact (`Basha`) and the location line. A phone number is
+deliberately **not** shown: the old `+91 90000 00000` value was a placeholder and
+was removed. Add a confirmed business number to `SURVEY_CONTACT` and render it
+in the contact card when one is available.
+
+## Visual assets
+
+`app/components/SurveyVisuals.tsx` contains three local SVG illustrations:
+field collection/quality/reporting (hero), the district-by-district network
+(field operations) and the analysis dashboard (reporting). They are vectors, so
+they stay sharp on every screen and do not require image optimisation or remote
+hosts. Replace them with real fieldwork photography when the team has images
+that are cleared for publication; keep the same aspect ratio so the layout does
+not shift.
+
+## Launch checklist
+
+1. Confirm the business contact details (email, named contact, phone if used).
+2. Decide the surveyor-data retention and deletion policy (see below).
+3. Run one end-to-end enquiry through production SMTP.
+4. Turn on **Settings → Live pages → Survey & Research**.
+5. Restore the five navigation links listed above and deploy.
+6. Check `/survey` on mobile, tablet and desktop, including both form tabs.
+7. Update the homepage CivicTech card so its CTA and copy match the live page.
+8. Confirm `noindex` is gone and the page is crawlable before announcing it.
 
 ## Future technical dependencies
 
