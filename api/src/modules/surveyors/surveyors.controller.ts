@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, Query, ServiceUnavailableException } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Header, Logger, Param, Patch, Post, Query, ServiceUnavailableException } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { sendSurveyorRegisteredEmail } from "@/_shared/mailer";
 import { AdminOnly, Public } from "@/auth/auth.decorators";
+import { CurrentUser } from "@/auth/auth.guard";
+import type { SessionUser } from "@/auth/auth.types";
 import { SettingsService } from "@/modules/settings/settings.service";
 import { RegisterSurveyorDto, UpdateSurveyorDto } from "@/modules/surveyors/dto/surveyor.dto";
 import { SurveyorsService } from "@/modules/surveyors/surveyors.service";
@@ -51,15 +53,35 @@ export class SurveyorsController {
   @Patch(":id")
   @AdminOnly()
   @ApiBearerAuth()
-  async update(@Param("id") id: string, @Body() body: UpdateSurveyorDto) {
-    return this.service.update(id, body);
+  async update(
+    @Param("id") id: string,
+    @Body() body: UpdateSurveyorDto,
+    @CurrentUser() user: SessionUser | null,
+  ) {
+    return this.service.update(id, body, user?.email ?? "");
   }
 
   @Delete(":id")
   @AdminOnly()
   @ApiBearerAuth()
-  async remove(@Param("id") id: string) {
-    return this.service.remove(id);
+  async remove(@Param("id") id: string, @CurrentUser() user: SessionUser | null) {
+    return this.service.remove(id, user?.email ?? "");
+  }
+
+  @Get("export.csv")
+  @AdminOnly()
+  @ApiBearerAuth()
+  @Header("Content-Type", "text/csv; charset=utf-8")
+  @Header("Content-Disposition", 'attachment; filename="surveyors.csv"')
+  async exportCsv(@Query("status") status?: string, @Query("search") search?: string) {
+    return this.service.exportCsv({ status, search });
+  }
+
+  @Get(":id/audit")
+  @AdminOnly()
+  @ApiBearerAuth()
+  async audit(@Param("id") id: string) {
+    return this.service.listAudit(id);
   }
 
   /* Re-notify a surveyor whose confirmation email failed, without asking them

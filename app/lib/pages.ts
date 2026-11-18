@@ -12,11 +12,14 @@ export type GatedPage = "survey" | "financial" | "government" | "farms";
 
 export type PageVisibility = Record<GatedPage, boolean>;
 
-const backendUrl = (): string =>
+export const apiBaseUrl = (): string =>
   (
     process.env.BACKEND_URL ??
     (process.env.NODE_ENV === "development" ? "http://localhost:3200" : "")
   ).replace(/\/+$/, "");
+
+/* Kept as a local alias so the existing page-visibility code reads naturally. */
+const backendUrl = apiBaseUrl;
 
 /* Wrapped in React's cache so a route that calls this from both
    `generateMetadata` and the page component fetches it once per request. */

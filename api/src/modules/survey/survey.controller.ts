@@ -1,11 +1,26 @@
-import { BadRequestException, Body, Controller, Logger, Post, ServiceUnavailableException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Header,
+  Logger,
+  Param,
+  Patch,
+  Post,
+  Query,
+  ServiceUnavailableException,
+} from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { sendSurveyEnquiryEmail } from "@/_shared/mailer";
 import { sanitizeText } from "@/_shared/text";
-import { Public } from "@/auth/auth.decorators";
+import { AdminOnly, Public } from "@/auth/auth.decorators";
 import { CreateSurveyEnquiryDto } from "@/modules/survey/dto/survey-enquiry.dto";
+import { UpdateSurveyEnquiryDto } from "@/modules/survey/dto/update-survey-enquiry.dto";
+import { SurveyService } from "@/modules/survey/survey.service";
 import { SettingsService } from "@/modules/settings/settings.service";
 
 @ApiTags("survey")
@@ -13,7 +28,10 @@ import { SettingsService } from "@/modules/settings/settings.service";
 export class SurveyController {
   private readonly logger = new Logger(SurveyController.name);
 
-  constructor(private readonly settings: SettingsService) {}
+  constructor(
+    private readonly settings: SettingsService,
+    private readonly service: SurveyService,
+  ) {}
 
   /* Public form behind the survey page. Same throttle budget as /contact:
      this is an unauthenticated mail relay and must not become a spam vector. */
@@ -39,6 +57,22 @@ export class SurveyController {
       throw new BadRequestException("Unexpected fields for a surveyor registration");
     }
 
+    /* Store first. A mail outage must not lose a project enquiry, and the
+       admin inbox is the durable record. Surveyor signups use /surveyors. */
+    let stored = false;
+    if (kind === "client") {
+      try {
+        await this.service.createClient(body);
+        stored = true;
+      } catch (error) {
+        this.logger.error(
+          `Survey enquiry could not be stored: ${
+            error instanceof Error ? error.message : "unknown error"
+          }`,
+        );
+      }
+    }
+
     const to = await this.settings.contactEmail();
 
     try {
@@ -61,11 +95,54 @@ export class SurveyController {
       this.logger.error(
         `Survey enquiry mail failed (${kind}): ${error instanceof Error ? error.message : "unknown error"}`,
       );
+
+      /* If the lead is safely in the admin inbox, do not tell the visitor the
+         submission failed and make them send it twice. */
+      if (stored) return { success: true, notified: false };
+
       throw new ServiceUnavailableException(
         "Could not send your enquiry right now. Please email us directly.",
       );
     }
 
     return { success: true };
+  }
+
+  /* Public list for the opportunities block. Admin-editable, with the page
+     falling back to its bundled defaults when this returns an empty list. */
+  @Get("opportunities")
+  @Public()
+  async opportunities() {
+    return { opportunities: await this.settings.surveyOpportunities() };
+  }
+
+  @Get("enquiries")
+  @AdminOnly()
+  @ApiBearerAuth()
+  async listEnquiries(@Query("status") status?: string, @Query("search") search?: string) {
+    return this.service.listEnquiries({ status, search });
+  }
+
+  @Get("enquiries/export.csv")
+  @AdminOnly()
+  @ApiBearerAuth()
+  @Header("Content-Type", "text/csv; charset=utf-8")
+  @Header("Content-Disposition", 'attachment; filename="survey-enquiries.csv"')
+  async exportEnquiries() {
+    return this.service.exportCsv();
+  }
+
+  @Patch("enquiries/:id")
+  @AdminOnly()
+  @ApiBearerAuth()
+  async updateEnquiry(@Param("id") id: string, @Body() body: UpdateSurveyEnquiryDto) {
+    return this.service.updateEnquiry(id, body);
+  }
+
+  @Delete("enquiries/:id")
+  @AdminOnly()
+  @ApiBearerAuth()
+  async removeEnquiry(@Param("id") id: string) {
+    return this.service.removeEnquiry(id);
   }
 }

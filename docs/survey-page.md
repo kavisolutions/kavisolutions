@@ -1,6 +1,6 @@
 # Kavi Survey & Research Solutions — page handover
 
-Status: **built, not launched.** The page 404s until it is explicitly enabled.
+Status: **published.** The page is live at `/survey`; admins can hide it again from **Settings → Live pages**.
 
 ## What exists
 
@@ -13,6 +13,7 @@ Status: **built, not launched.** The page 404s until it is explicitly enabled.
 | Route + launch gate | `app/app/survey/page.tsx` |
 | API endpoint | `api/src/modules/survey/` |
 | Email template | `api/src/_shared/mailer.ts` → `sendSurveyEnquiryEmail` |
+| Client enquiry inbox | `/admin?section=enquiries` |
 | Reusable questionnaire templates | `docs/survey-templates.md` |
 
 ## Publish the page
@@ -21,11 +22,11 @@ Admins switch `/survey` on and off from the admin panel:
 **Settings → Live pages → Survey & Research**. A hidden page returns **404** and
 is marked `noindex, nofollow`.
 
-The public navigation deliberately does **not** link to `/survey` yet. The
-Navbar, mobile menu, dashboard and homepage CivicTech card were cleaned of
-`/survey` links after the page was built, because a hidden route linked from a
-public page is a broken link. Restore them only when the switch is turned on —
-see the launch checklist below.
+The page is currently **published**. Navigation links exist in the Navbar,
+mobile menu, homepage CivicTech card, dashboard and footer. If the page is
+hidden again, remove those links at the same time — a hidden route linked from a
+public page is a broken link. The exact files are listed in the launch
+checklist below.
 
 The switch is stored in `app_settings` (`page_survey_enabled`) and read by the
 API at `GET /api/pages`. `app/app/survey/page.tsx` checks it on every request —
@@ -110,10 +111,10 @@ clients, and the page says so explicitly. Keep that framing when adding names:
 listing an organisation as a client without an agreement is a legal and
 reputational risk.
 
-## Adding a navigation link
+## Navigation links
 
-The page is hidden, so the public site intentionally does not link to it. When
-the switch is enabled, restore the links in all five places:
+The page is live and linked from all five places. If it is hidden again, remove
+the links and restore them when it is published:
 
 | File | Change |
 | --- | --- |
@@ -124,7 +125,7 @@ the switch is enabled, restore the links in all five places:
 | `app/components/Footer.tsx` | Add a `Survey & Research` link to the Services column |
 
 Suggested label: `Research` in the navbar, `Survey & Research` everywhere else.
-Do this only after the admin switch is on, otherwise visitors hit a 404.
+Only keep the links while the admin switch is on, otherwise visitors hit a 404.
 
 ## Contact details
 
@@ -144,22 +145,44 @@ hosts. Replace them with real fieldwork photography when the team has images
 that are cleared for publication; keep the same aspect ratio so the layout does
 not shift.
 
-## Launch checklist
+## Launch / re-launch checklist
 
 1. Confirm the business contact details (email, named contact, phone if used).
-2. Decide the surveyor-data retention and deletion policy (see below).
-3. Run one end-to-end enquiry through production SMTP.
-4. Turn on **Settings → Live pages → Survey & Research**.
-5. Restore the five navigation links listed above and deploy.
-6. Check `/survey` on mobile, tablet and desktop, including both form tabs.
-7. Update the homepage CivicTech card so its CTA and copy match the live page.
-8. Confirm `noindex` is gone and the page is crawlable before announcing it.
+2. Run one end-to-end enquiry through production SMTP.
+3. Turn on **Settings → Live pages → Survey & Research**.
+4. Restore the five navigation links listed above and deploy.
+5. Check `/survey` on mobile, tablet and desktop, including both form tabs.
+6. Check `/admin?section=enquiries` receives the test enquiry.
+7. Confirm `noindex` is gone and the page is crawlable before announcing it.
+
+The current launch is applied by migration `0014`, which sets
+`page_survey_enabled = true`. Re-running that migration does not undo a later
+hide; the setting is only forced on the first time the migration is applied.
+
+## Client enquiries
+
+Client project enquiries are now stored **and** emailed. The admin inbox lives
+at `/admin?section=enquiries`.
+
+| Piece | Location |
+| --- | --- |
+| Table | `survey_enquiries` (migration `0014`) |
+| Public create | `POST /api/survey/enquiries` |
+| Admin list | `GET /api/survey/enquiries` (`?status=`, `?search=`) |
+| Admin update | `PATCH /api/survey/enquiries/:id` (status + internal notes) |
+| Admin delete | `DELETE /api/survey/enquiries/:id` |
+| CSV export | `GET /api/survey/enquiries/export.csv` |
+
+Statuses: `new` → `contacted` → `closed`, with `archived` for old leads. If the
+database write succeeds but SMTP fails, the visitor still sees success because
+the lead is in the inbox; the API logs the mail failure. If both storage and
+mail fail, the visitor gets a 503 with the direct email address.
 
 ## Future technical dependencies
 
-This page is a brochure with two lead forms, backed by a surveyor registry. The
-task also describes a much larger platform. Nothing below is built; these are
-the pieces that would be needed.
+This page is a brochure with two lead forms, backed by a surveyor registry and a
+client enquiry inbox. The task also describes a much larger platform. Nothing
+below is built; these are the pieces that would be needed.
 
 ### 1. Surveyor registry — **built**
 
@@ -196,6 +219,9 @@ Registrations from the page are stored, not just emailed.
 | Table | `surveyors` (migration `0003_surveyors`) |
 | Public registration | `POST /api/surveyors/register` |
 | Admin list/update/delete | `/api/surveyors` (`GET`, `PATCH /:id`, `DELETE /:id`) |
+| CSV export | `GET /api/surveyors/export.csv` |
+| Audit history | `GET /api/surveyors/:id/audit`, shown in the admin profile |
+| Retention purge | `npm run surveyors:purge` (see below) |
 | Admin screen | `/admin?section=surveyors` |
 | Shared types | `app/lib/surveyors.ts` |
 
@@ -211,26 +237,33 @@ Registrations from the page are stored, not just emailed.
 - Internal `notes` and `verified_at` are never returned by the public
   registration response.
 
-### Privacy note
+### Privacy controls
 
 The registry stores name, email, phone, location, languages, skills and
-experience — personal data about individual field workers. Before this goes
-live, decide:
+experience — personal data about individual field workers.
 
-- who can export it (today every admin can, via the admin API),
-- how long inactive profiles are retained,
-- whether surveyors can request deletion (the delete endpoint exists, but there
-  is no self-service path).
-
-There is no audit log of who verified or deleted a profile yet.
+- **Export:** admin-only CSV at `GET /api/surveyors/export.csv`; every admin can
+  download it.
+- **Audit:** every admin update and delete writes to `surveyor_audit_log` with
+  the actor email, action and status change. The profile history modal reads it.
+- **Retention:** `npm run surveyors:purge` deletes `inactive` and `rejected`
+  profiles older than `SURVEYOR_RETENTION_DAYS` (default 365, minimum 30). Run it
+  with `--dry-run` first. Deletion is logged as `purged` by
+  `system:retention`.
+- **Deletion requests:** there is still no self-service path. A surveyor emails
+  the business contact and an admin deletes the profile; the audit entry records
+  who did it. Decide and publish the retention period before promoting the
+  registry widely.
 
 ## Deliberate privacy decisions
 
 - The form requires a phone number because field follow-up depends on it, and
   states that personal data is used only for the agreed research purpose.
-- No data is persisted in this repo's database; submissions are mailed and not
-  stored. If a CRM or database is added later, a retention policy should be
-  defined at the same time.
+- Client enquiries are stored in `survey_enquiries` and can be exported or
+  deleted by admins. Define a retention period (for example, delete closed and
+  archived enquiries after 24 months); the schema keeps `created_at` for this.
+- Surveyor registrations are stored in `surveyors`; the retention and audit
+  controls are described above.
 - The political/social section states that data collection follows applicable
   privacy, election and data protection requirements. This is a claim the
   contracts must actually support.

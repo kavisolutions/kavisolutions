@@ -243,6 +243,54 @@ export const surveyors = pgTable(
   ],
 );
 
+/* Append-only record of who changed a surveyor profile and what changed.
+   Personal data stays in `surveyors`; this table only keeps the action summary
+   needed to answer "who verified or deleted this profile?". */
+export const surveyorAuditLog = pgTable(
+  "surveyor_audit_log",
+  {
+    id: text("id").primaryKey(),
+    surveyorId: text("surveyor_id").notNull(),
+    action: text("action").notNull(),
+    actorEmail: text("actor_email").notNull().default(""),
+    detail: text("detail").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("surveyor_audit_surveyor_idx").on(table.surveyorId),
+    index("surveyor_audit_created_idx").on(table.createdAt),
+  ],
+);
+
+// ---------------------------------------------------------------------------
+// Client enquiries from the survey page. Stored as well as emailed so a lead
+// is not lost when SMTP is down or the inbox is shared.
+// ---------------------------------------------------------------------------
+
+export const SURVEY_ENQUIRY_STATUSES = ["new", "contacted", "closed", "archived"] as const;
+export type SurveyEnquiryStatus = (typeof SURVEY_ENQUIRY_STATUSES)[number];
+
+export const surveyEnquiries = pgTable(
+  "survey_enquiries",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    phone: text("phone").notNull(),
+    organisation: text("organisation").notNull().default(""),
+    service: text("service").notNull().default(""),
+    message: text("message").notNull(),
+    status: text("status").notNull().default("new"),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("survey_enquiries_status_idx").on(table.status),
+    index("survey_enquiries_created_idx").on(table.createdAt),
+  ],
+);
+
 // ---------------------------------------------------------------------------
 // Fellowship applications — public form, reference lookup and admin pipeline.
 // ---------------------------------------------------------------------------
@@ -675,6 +723,9 @@ export type CertificateRow = typeof certificates.$inferSelect;
 export type CertificateInsert = typeof certificates.$inferInsert;
 export type SurveyorRow = typeof surveyors.$inferSelect;
 export type SurveyorInsert = typeof surveyors.$inferInsert;
+export type SurveyEnquiryRow = typeof surveyEnquiries.$inferSelect;
+export type SurveyEnquiryInsert = typeof surveyEnquiries.$inferInsert;
+export type SurveyorAuditRow = typeof surveyorAuditLog.$inferSelect;
 export type FellowshipApplicationRow = typeof fellowshipApplications.$inferSelect;
 export type FellowshipApplicationInsert = typeof fellowshipApplications.$inferInsert;
 export type FellowshipMentorRow = typeof fellowshipMentors.$inferSelect;

@@ -62,6 +62,11 @@ export default function Footer() {
                     AI &amp; Blockchain
                   </Link>
                 </li>
+                <li>
+                  <Link href="/survey" className="hover:text-white transition-colors">
+                    Survey &amp; Research
+                  </Link>
+                </li>
               </ul>
             </div>
 

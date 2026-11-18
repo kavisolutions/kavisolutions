@@ -12,6 +12,7 @@ import { DATABASE } from "@/db/drizzle/drizzle.module";
 import type { Database } from "@/db/drizzle/drizzle.client";
 import {
   surveyors,
+  surveyorAuditLog,
   SURVEYOR_STATUSES,
   type SurveyorRow,
   type SurveyorStatus,
@@ -175,7 +176,11 @@ export class SurveyorsService {
     return toDto(row);
   }
 
-  async update(id: string, payload: UpdateSurveyorDto): Promise<SurveyorDto> {
+  async update(
+    id: string,
+    payload: UpdateSurveyorDto,
+    actorEmail = "",
+  ): Promise<SurveyorDto> {
     const [existing] = await this.db
       .select()
       .from(surveyors)
@@ -224,16 +229,104 @@ export class SurveyorsService {
       .where(eq(surveyors.id, id))
       .returning();
 
+    await this.audit(id, "updated", actorEmail, statusDetail(existing.status, set.status));
     return toDto(row);
   }
 
-  async remove(id: string): Promise<{ ok: true }> {
+  async remove(id: string, actorEmail = ""): Promise<{ ok: true }> {
     const [row] = await this.db
       .delete(surveyors)
       .where(eq(surveyors.id, id))
-      .returning({ id: surveyors.id });
+      .returning({ id: surveyors.id, name: surveyors.name, email: surveyors.email });
 
     if (!row) throw new NotFoundException("Surveyor not found");
+
+    await this.audit(id, "deleted", actorEmail, `${row.name} <${row.email}> removed from the network`);
     return { ok: true };
   }
+
+  async listAudit(id: string) {
+    const rows = await this.db
+      .select()
+      .from(surveyorAuditLog)
+      .where(eq(surveyorAuditLog.surveyorId, id))
+      .orderBy(desc(surveyorAuditLog.createdAt))
+      .limit(100);
+
+    return {
+      audit: rows.map((row) => ({
+        id: row.id,
+        action: row.action,
+        actorEmail: row.actorEmail,
+        detail: row.detail,
+        createdAt: row.createdAt.toISOString(),
+      })),
+    };
+  }
+
+  async exportCsv(options: { status?: string; search?: string } = {}): Promise<string> {
+    const { surveyors: rows } = await this.list(options);
+    const header = [
+      "Name",
+      "Email",
+      "Phone",
+      "Location",
+      "Languages",
+      "Skills",
+      "Experience",
+      "Status",
+      "Verified at",
+      "Created at",
+    ];
+
+    const csvCell = (value: string): string => {
+      const text = value.replace(/\r?\n/g, " ");
+      const safe = /^[=@]/.test(text) || /^[+-](?![0-9])/.test(text) ? `'${text}` : text;
+      return `"${safe.replace(/"/g, '""')}"`;
+    };
+
+    const lines = rows.map((row) =>
+      [
+        row.name,
+        row.email,
+        row.phone,
+        row.location,
+        row.languages.join("; "),
+        row.skills.join("; "),
+        row.experience,
+        row.status,
+        row.verifiedAt ?? "",
+        row.createdAt,
+      ]
+        .map((value) => csvCell(String(value)))
+        .join(","),
+    );
+
+    return [header.map(csvCell).join(","), ...lines].join("\n");
+  }
+
+  private async audit(
+    surveyorId: string,
+    action: string,
+    actorEmail: string,
+    detail: string,
+  ): Promise<void> {
+    try {
+      await this.db.insert(surveyorAuditLog).values({
+        id: uuid(),
+        surveyorId,
+        action,
+        actorEmail: sanitizeText(actorEmail, 200),
+        detail: sanitizeText(detail, 500),
+      });
+    } catch {
+      /* An audit failure must not roll back the admin action the operator
+         actually asked for. The write is best-effort and logged by the caller. */
+    }
+  }
 }
+
+const statusDetail = (before: string, after: string | undefined): string => {
+  if (!after || after === before) return "Profile details updated";
+  return `Status ${before} → ${after}`;
+};

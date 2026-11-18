@@ -31,6 +31,13 @@ import {
   type SurveyorDraft,
   type SurveyorStatus,
 } from "@/lib/surveyors";
+import {
+  SURVEY_ENQUIRY_STATUSES,
+  SURVEY_ENQUIRY_STATUS_LABELS,
+  SURVEY_ENQUIRY_STATUS_TONES,
+  type SurveyEnquiry,
+  type SurveyEnquiryStatus,
+} from "@/lib/survey-enquiries";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -70,6 +77,9 @@ import {
   FileText,
   FileX,
   Sparkles,
+  Inbox,
+  Download,
+  History,
 } from "lucide-react";
 
 type AdminEntry = { email: string; source: "env" | "db" };
@@ -159,6 +169,7 @@ const sections = [
   { key: "projects", label: "Projects", icon: FolderKanban, description: "Manage featured work, tech stacks, and live links" },
   { key: "certificates", label: "Certificates", icon: Award, description: "Issue, revoke and reinstate verifiable certificates" },
   { key: "surveyors", label: "Surveyors", icon: ClipboardList, description: "Review and verify the field surveyor network" },
+  { key: "enquiries", label: "Survey enquiries", icon: Inbox, description: "Client project enquiries from the survey page" },
   { key: "social", label: "Social agent", icon: Sparkles, description: "Plan a year of images, generate captions and publish on schedule" },
   { key: "admins", label: "Administrators", icon: ShieldCheck, description: "Control workspace access and administrative privileges" },
   { key: "settings", label: "Settings", icon: Settings2, description: "Update company profile and public page metadata" },
@@ -227,6 +238,7 @@ export default function AdminPage() {
   const [tagline, setTagline] = useState("");
   const [description, setDescription] = useState("");
   const [contactEmail, setContactEmail] = useState("");
+  const [surveyOpportunities, setSurveyOpportunities] = useState("");
   const [pageVisibility, setPageVisibility] = useState<PageVisibility | null>(null);
   const [savingPages, setSavingPages] = useState(false);
 
@@ -249,6 +261,18 @@ export default function AdminPage() {
   const [surveyorError, setSurveyorError] = useState("");
   const [surveyorQuery, setSurveyorQuery] = useState("");
   const [surveyorStatusFilter, setSurveyorStatusFilter] = useState("all");
+  const [auditSurveyor, setAuditSurveyor] = useState<Surveyor | null>(null);
+  const [auditEntries, setAuditEntries] = useState<
+    { id: string; action: string; actorEmail: string; detail: string; createdAt: string }[]
+  >([]);
+  const [auditLoading, setAuditLoading] = useState(false);
+
+  const [enquiries, setEnquiries] = useState<SurveyEnquiry[]>([]);
+  const [enquiryQuery, setEnquiryQuery] = useState("");
+  const [enquiryStatusFilter, setEnquiryStatusFilter] = useState("all");
+  const [enquiryDraft, setEnquiryDraft] = useState<SurveyEnquiry | null>(null);
+  const [savingEnquiry, setSavingEnquiry] = useState(false);
+  const [enquiryError, setEnquiryError] = useState("");
 
   const [draft, setDraft] = useState<MemberDraft | null>(null);
   const [savingMember, setSavingMember] = useState(false);
@@ -332,6 +356,29 @@ export default function AdminPage() {
     return counts;
   }, [surveyors]);
 
+  const filteredEnquiries = useMemo(() => {
+    const query = enquiryQuery.trim().toLowerCase();
+
+    return enquiries.filter((enquiry) => {
+      const matchesQuery =
+        !query ||
+        `${enquiry.name} ${enquiry.email} ${enquiry.organisation} ${enquiry.service}`
+          .toLowerCase()
+          .includes(query);
+      const matchesStatus =
+        enquiryStatusFilter === "all" || enquiry.status === enquiryStatusFilter;
+      return matchesQuery && matchesStatus;
+    });
+  }, [enquiries, enquiryQuery, enquiryStatusFilter]);
+
+  const enquiryStatusCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const enquiry of enquiries) {
+      counts[enquiry.status] = (counts[enquiry.status] ?? 0) + 1;
+    }
+    return counts;
+  }, [enquiries]);
+
   const revokedCertificateCount = useMemo(
     () =>
       certificates.filter((certificate) => !certificate.deletedAt && certificate.status === "revoked")
@@ -356,13 +403,14 @@ export default function AdminPage() {
   }, [certificates, certificateDraft]);
 
   const loadAll = useCallback(async () => {
-    const [teamRes, adminsRes, settingsRes, projectsRes, certificatesRes, surveyorsRes, pagesRes] = await Promise.all([
+    const [teamRes, adminsRes, settingsRes, projectsRes, certificatesRes, surveyorsRes, enquiriesRes, pagesRes] = await Promise.all([
       fetch("/api/team", withCookies()),
       fetch("/api/admins", withCookies()),
       fetch("/api/settings", withCookies()),
       fetch("/api/projects", withCookies()),
       fetch("/api/certificates?includeDeleted=true", withCookies()),
       fetch("/api/surveyors", withCookies()),
+      fetch("/api/survey/enquiries", withCookies()),
       fetch("/api/pages", withCookies()),
     ]);
 
@@ -377,6 +425,7 @@ export default function AdminPage() {
     const projectsData = await projectsRes.json().catch(() => null);
     const certificatesData = await certificatesRes.json().catch(() => null);
     const surveyorsData = await surveyorsRes.json().catch(() => null);
+    const enquiriesData = await enquiriesRes.json().catch(() => null);
     const pagesData = await pagesRes.json().catch(() => null);
 
     setIsAdmin(true);
@@ -387,9 +436,11 @@ export default function AdminPage() {
     setProjects(projectsData?.projects ?? []);
     setCertificates(certificatesData?.certificates ?? []);
     setSurveyors(surveyorsData?.surveyors ?? []);
+    setEnquiries(enquiriesData?.enquiries ?? []);
     setTagline(settingsData?.settings?.tagline ?? "");
     setDescription(settingsData?.settings?.description ?? "");
     setContactEmail(settingsData?.settings?.contactEmail ?? "");
+    setSurveyOpportunities(settingsData?.settings?.surveyOpportunities ?? "");
     setPageVisibility(
       pagesData?.pages
         ? {
@@ -872,6 +923,20 @@ export default function AdminPage() {
     await loadAll();
   };
 
+  const openSurveyorAudit = async (surveyor: Surveyor) => {
+    setAuditSurveyor(surveyor);
+    setAuditEntries([]);
+    setAuditLoading(true);
+
+    try {
+      const res = await fetch(`/api/surveyors/${surveyor.id}/audit`, withCookies());
+      const data = await res.json().catch(() => null);
+      if (res.ok) setAuditEntries(data?.audit ?? []);
+    } finally {
+      setAuditLoading(false);
+    }
+  };
+
   const setSurveyorStatus = async (surveyor: Surveyor, status: SurveyorStatus) => {
     setActionError("");
 
@@ -916,6 +981,61 @@ export default function AdminPage() {
     }
 
     setNotice(`${surveyor.name} removed from the network`);
+    await loadAll();
+  };
+
+  const saveEnquiry = async () => {
+    if (!enquiryDraft || savingEnquiry) return;
+    setSavingEnquiry(true);
+    setEnquiryError("");
+
+    try {
+      const res = await fetch(`/api/survey/enquiries/${enquiryDraft.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          status: enquiryDraft.status,
+          notes: enquiryDraft.notes,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        const message = Array.isArray(data?.message) ? data.message.join(" · ") : data?.message;
+        setEnquiryError(message || "Failed to update enquiry");
+        return;
+      }
+
+      setNotice(`${enquiryDraft.name}'s enquiry updated`);
+      setEnquiryDraft(null);
+      await loadAll();
+    } catch {
+      setEnquiryError("Could not reach the server. Try again.");
+    } finally {
+      setSavingEnquiry(false);
+    }
+  };
+
+  const deleteEnquiry = async (enquiry: SurveyEnquiry) => {
+    if (!window.confirm(`Delete the enquiry from ${enquiry.name}? This cannot be undone.`)) {
+      return;
+    }
+    setActionError("");
+
+    const res = await fetch(`/api/survey/enquiries/${enquiry.id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      setActionError(data?.message || "Failed to delete enquiry");
+      return;
+    }
+
+    setNotice("Enquiry deleted");
     await loadAll();
   };
 
@@ -1113,7 +1233,7 @@ export default function AdminPage() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ tagline, description, contactEmail }),
+      body: JSON.stringify({ tagline, description, contactEmail, surveyOpportunities }),
     });
 
     const data = await res.json().catch(() => null);
@@ -1339,6 +1459,7 @@ export default function AdminPage() {
             <ClipboardList className="h-4 w-4" />
             Fellowship programme
           </Link>
+
         </div>
 
         {/* User Account / Footer */}
@@ -3111,6 +3232,58 @@ export default function AdminPage() {
           {/* SECTION: SURVEYORS */}
           {section === "surveyors" && (
             <div className="space-y-4">
+              {/* Audit history modal */}
+              {auditSurveyor && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+                  <div className="relative my-8 w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-2xl sm:p-8">
+                    <div className="mb-5 flex items-start justify-between gap-4 border-b border-border pb-4">
+                      <div>
+                        <h2 className="text-lg font-bold text-foreground">Profile history</h2>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {auditSurveyor.name} · {auditSurveyor.email}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setAuditSurveyor(null)}
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        aria-label="Close audit history"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    {auditLoading ? (
+                      <div className="flex items-center justify-center py-10 text-sm text-muted-foreground">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading history…
+                      </div>
+                    ) : auditEntries.length === 0 ? (
+                      <p className="py-8 text-center text-sm text-muted-foreground">
+                        No recorded changes yet. New verifications and edits appear here.
+                      </p>
+                    ) : (
+                      <ol className="space-y-3">
+                        {auditEntries.map((entry) => (
+                          <li key={entry.id} className="rounded-lg border border-border bg-muted/30 px-3 py-2.5">
+                            <div className="flex items-center justify-between gap-3">
+                              <span className="text-xs font-semibold capitalize text-foreground">
+                                {entry.action}
+                              </span>
+                              <span className="text-[10px] text-muted-foreground">
+                                {new Date(entry.createdAt).toLocaleString("en-IN")}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-xs text-muted-foreground">{entry.detail}</p>
+                            <p className="mt-0.5 text-[10px] text-muted-foreground/80">
+                              by {entry.actorEmail || "system"}
+                            </p>
+                          </li>
+                        ))}
+                      </ol>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Add / Edit Surveyor Modal */}
               {surveyorDraft && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
@@ -3290,6 +3463,12 @@ export default function AdminPage() {
                     ))}
                   </SelectContent>
                 </Select>
+                <a
+                  href="/api/surveyors/export.csv"
+                  className={buttonVariants({ variant: "outline", size: "sm" })}
+                >
+                  <Download className="mr-1.5 h-3.5 w-3.5" /> Export CSV
+                </a>
                 <div className="text-xs text-muted-foreground sm:ml-auto">
                   Showing {filteredSurveyors.length} of {surveyors.length}
                 </div>
@@ -3380,6 +3559,16 @@ export default function AdminPage() {
                               variant="ghost"
                               size="sm"
                               className="h-8 px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                              title="Profile history"
+                              aria-label={`History for ${surveyor.name}`}
+                              onClick={() => void openSurveyorAudit(surveyor)}
+                            >
+                              <History className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
                               title="Edit profile"
                               aria-label={`Edit ${surveyor.name}`}
                               onClick={() => {
@@ -3420,6 +3609,243 @@ export default function AdminPage() {
                 Registrations from the survey page arrive with status <strong>Applied</strong>.
                 Verify a profile after checking references, then mark it active when the person is
                 available for assignment.
+              </p>
+            </div>
+          )}
+
+          {/* SECTION: SURVEY ENQUIRIES */}
+          {section === "enquiries" && (
+            <div className="space-y-4">
+              {enquiryDraft && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+                  <div className="relative my-8 w-full max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-2xl sm:p-8">
+                    <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-4">
+                      <div>
+                        <h2 className="text-lg font-bold text-foreground">Project Enquiry</h2>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          Received {formatCertificateDate(enquiryDraft.createdAt.slice(0, 10))}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setEnquiryDraft(null)}
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        aria-label="Close modal"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Name</p>
+                          <p className="mt-1 text-sm font-medium text-foreground">{enquiryDraft.name}</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Organisation</p>
+                          <p className="mt-1 text-sm text-foreground">{enquiryDraft.organisation || "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Email</p>
+                          <a href={`mailto:${enquiryDraft.email}`} className="mt-1 block text-sm text-primary hover:underline">
+                            {enquiryDraft.email}
+                          </a>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Phone</p>
+                          <a href={`tel:${enquiryDraft.phone}`} className="mt-1 block text-sm text-foreground hover:underline">
+                            {enquiryDraft.phone}
+                          </a>
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Service</p>
+                        <p className="mt-1 text-sm text-foreground">{enquiryDraft.service || "Not specified"}</p>
+                      </div>
+
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Message</p>
+                        <p className="mt-1 whitespace-pre-wrap rounded-lg border border-border bg-muted/40 px-3 py-2.5 text-sm leading-relaxed text-foreground">
+                          {enquiryDraft.message}
+                        </p>
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Status</label>
+                        <Select
+                          value={enquiryDraft.status}
+                          onValueChange={(value) =>
+                            setEnquiryDraft({ ...enquiryDraft, status: value as SurveyEnquiryStatus })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {SURVEY_ENQUIRY_STATUSES.map((status) => (
+                              <SelectItem key={status} value={status}>
+                                {SURVEY_ENQUIRY_STATUS_LABELS[status]}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">Internal notes</label>
+                        <textarea
+                          className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          rows={3}
+                          value={enquiryDraft.notes}
+                          onChange={(e) => setEnquiryDraft({ ...enquiryDraft, notes: e.target.value })}
+                          placeholder="Call outcome, scope discussed, next follow-up. Never shown publicly."
+                        />
+                      </div>
+                    </div>
+
+                    {enquiryError && (
+                      <div className="mt-4 flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive">
+                        <AlertCircle className="h-4 w-4 shrink-0" />
+                        <span>{enquiryError}</span>
+                      </div>
+                    )}
+
+                    <div className="mt-6 flex items-center justify-end gap-3 border-t border-border pt-4">
+                      <Button variant="outline" onClick={() => setEnquiryDraft(null)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={saveEnquiry} disabled={savingEnquiry} className="font-semibold">
+                        {savingEnquiry ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                        Save Enquiry
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="relative flex-1 sm:max-w-sm">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by name, email, organisation…"
+                    value={enquiryQuery}
+                    onChange={(e) => setEnquiryQuery(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+                <Select value={enquiryStatusFilter} onValueChange={setEnquiryStatusFilter}>
+                  <SelectTrigger className="w-full sm:w-[190px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All statuses</SelectItem>
+                    {SURVEY_ENQUIRY_STATUSES.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {SURVEY_ENQUIRY_STATUS_LABELS[status]}
+                        {enquiryStatusCounts[status] ? ` (${enquiryStatusCounts[status]})` : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <a
+                  href="/api/survey/enquiries/export.csv"
+                  className={buttonVariants({ variant: "outline", size: "sm" })}
+                >
+                  <Download className="mr-1.5 h-3.5 w-3.5" /> Export CSV
+                </a>
+                <div className="text-xs text-muted-foreground sm:ml-auto">
+                  Showing {filteredEnquiries.length} of {enquiries.length}
+                </div>
+              </div>
+
+              <Card className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+                <Table>
+                  <TableHeader className="bg-muted/40">
+                    <TableRow className="border-border hover:bg-transparent">
+                      <TableHead className="w-full pl-5 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Enquiry</TableHead>
+                      <TableHead className="whitespace-nowrap font-semibold text-xs uppercase tracking-wider text-muted-foreground">Organisation / service</TableHead>
+                      <TableHead className="whitespace-nowrap font-semibold text-xs uppercase tracking-wider text-muted-foreground">Received</TableHead>
+                      <TableHead className="whitespace-nowrap font-semibold text-xs uppercase tracking-wider text-muted-foreground">Status</TableHead>
+                      <TableHead className="whitespace-nowrap pr-5 text-right font-semibold text-xs uppercase tracking-wider text-muted-foreground">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredEnquiries.map((enquiry) => (
+                      <TableRow key={enquiry.id} className="border-border hover:bg-muted/30 transition-colors">
+                        <TableCell className="pl-5 py-3.5 max-w-0">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                              {getInitials(enquiry.name)}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-semibold text-foreground">{enquiry.name}</p>
+                              <p className="truncate text-xs text-muted-foreground">{enquiry.email}</p>
+                              <p className="truncate text-[11px] text-muted-foreground/80">{enquiry.phone}</p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-3.5 max-w-[260px]">
+                          <p className="truncate text-xs font-medium text-foreground">{enquiry.organisation || "—"}</p>
+                          <p className="truncate text-[11px] text-muted-foreground">{enquiry.service || "Not specified"}</p>
+                          <p className="mt-0.5 truncate text-[11px] text-muted-foreground/80">{enquiry.message}</p>
+                        </TableCell>
+                        <TableCell className="py-3.5 whitespace-nowrap text-xs text-foreground">
+                          {formatCertificateDate(enquiry.createdAt.slice(0, 10))}
+                        </TableCell>
+                        <TableCell className="py-3.5">
+                          <Badge
+                            variant="outline"
+                            className={`text-[10px] font-semibold uppercase tracking-wide ${SURVEY_ENQUIRY_STATUS_TONES[enquiry.status]}`}
+                          >
+                            {SURVEY_ENQUIRY_STATUS_LABELS[enquiry.status]}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="pr-5 py-3.5 text-right">
+                          <div className="flex justify-end gap-1 whitespace-nowrap">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                              title="Open enquiry"
+                              aria-label={`Open enquiry from ${enquiry.name}`}
+                              onClick={() => {
+                                setEnquiryError("");
+                                setEnquiryDraft({ ...enquiry });
+                              }}
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                              title="Delete enquiry"
+                              aria-label={`Delete enquiry from ${enquiry.name}`}
+                              onClick={() => deleteEnquiry(enquiry)}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {filteredEnquiries.length === 0 && (
+                      <TableRow className="hover:bg-transparent">
+                        <TableCell colSpan={5} className="h-32 text-center text-sm text-muted-foreground">
+                          {enquiries.length === 0
+                            ? "No client enquiries yet. Submissions from the survey page appear here."
+                            : "No enquiries match this filter."}
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </Card>
+
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Enquiries are stored before the notification email is sent, so a mail outage does
+                not lose a lead. Internal notes never appear on the public site.
               </p>
             </div>
           )}
@@ -3550,6 +3976,23 @@ export default function AdminPage() {
                     placeholder="contact@kavisolutions.in"
                   />
                   <p className="mt-1 text-[11px] text-muted-foreground">Recipient for customer inquiries submitted through the contact form.</p>
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                    Survey Opportunities
+                  </label>
+                  <textarea
+                    className="flex min-h-[110px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    rows={4}
+                    value={surveyOpportunities}
+                    onChange={(e) => setSurveyOpportunities(e.target.value)}
+                    placeholder={"IFMR | Research institution · exploratory\nGHMC | Greater Hyderabad Municipal Corporation"}
+                  />
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    One per line as <span className="font-mono">Name | short note</span>. Shown as
+                    opportunities under discussion, never as confirmed clients.
+                  </p>
                 </div>
 
                 <div className="space-y-3 border-t border-border pt-4">

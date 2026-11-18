@@ -32,11 +32,13 @@ approval. See [`docs/social-agent.md`](docs/social-agent.md). The admin panel
 talks to it through `/api/admin/social/*`; the sidecar is optional and the rest
 of the site runs without it.
 
-`/survey` (Survey & Research Solutions), `/financial` (Financial Services),
-`/government` (Government Technology Services) and `/farms` (Kavi Farms) are
-built but **not published by default**: they return 404 until an administrator
-switches them on in the admin panel under **Settings → Live pages**. The switch
-takes effect immediately — no rebuild or redeploy. See
+`/survey` (Survey & Research Solutions) is **published**. `/financial`
+(Financial Services), `/government` (Government Technology Services) and
+`/farms` (Kavi Farms) are built but **not published by default**: they return
+404 until an administrator switches them on in the admin panel under
+**Settings → Live pages**. Any page, including `/survey`, can be hidden again
+from the same screen; the switch takes effect immediately — no rebuild or
+redeploy. See
 [`docs/survey-page.md`](docs/survey-page.md) and
 [`docs/survey-templates.md`](docs/survey-templates.md),
 [`docs/financial-page.md`](docs/financial-page.md),

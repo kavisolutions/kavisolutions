@@ -2,6 +2,7 @@ export const TEAM_SETTING_KEYS = {
   tagline: "team_tagline",
   description: "team_description",
   contactEmail: "contact_email",
+  surveyOpportunities: "survey_opportunities",
 } as const;
 
 export const TEAM_GRADIENTS = [

@@ -10,7 +10,25 @@ export type SettingsPayload = {
   tagline?: unknown;
   description?: unknown;
   contactEmail?: unknown;
+  surveyOpportunities?: unknown;
 };
+
+/* One opportunity per line: `Name | short note`. Keeping this as text in the
+   existing settings table avoids a new table for a list that is edited a few
+   times a year. */
+export type SurveyOpportunity = { name: string; note: string };
+
+export const parseSurveyOpportunities = (value: string | null | undefined): SurveyOpportunity[] =>
+  (value ?? "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [name, ...rest] = line.split("|");
+      return { name: name.trim().slice(0, 120), note: rest.join("|").trim().slice(0, 160) };
+    })
+    .filter((item) => item.name)
+    .slice(0, 30);
 
 @Injectable()
 export class SettingsService {
@@ -21,6 +39,7 @@ export class SettingsService {
       TEAM_SETTING_KEYS.tagline,
       TEAM_SETTING_KEYS.description,
       TEAM_SETTING_KEYS.contactEmail,
+      TEAM_SETTING_KEYS.surveyOpportunities,
     ];
 
     const rows = await this.db
@@ -35,6 +54,7 @@ export class SettingsService {
         tagline: map.get(TEAM_SETTING_KEYS.tagline) || "",
         description: map.get(TEAM_SETTING_KEYS.description) || "",
         contactEmail: map.get(TEAM_SETTING_KEYS.contactEmail) || "",
+        surveyOpportunities: map.get(TEAM_SETTING_KEYS.surveyOpportunities) || "",
       },
     };
   }
@@ -67,6 +87,15 @@ export class SettingsService {
       });
     }
 
+    if (payload.surveyOpportunities !== undefined) {
+      const parsed = parseSurveyOpportunities(sanitizeText(payload.surveyOpportunities, 4000));
+      rows.push({
+        key: TEAM_SETTING_KEYS.surveyOpportunities,
+        value: parsed.map((item) => `${item.name} | ${item.note}`.trim()).join("\n"),
+        updatedAt: now,
+      });
+    }
+
     if (rows.length === 0) {
       throw new BadRequestException("Nothing to update");
     }
@@ -94,5 +123,14 @@ export class SettingsService {
     if (value) return value;
 
     return process.env.CONTACT_EMAIL || process.env.SMTP_USER || "";
+  }
+
+  async surveyOpportunities(): Promise<SurveyOpportunity[]> {
+    const [row] = await this.db
+      .select()
+      .from(appSettings)
+      .where(inArray(appSettings.key, [TEAM_SETTING_KEYS.surveyOpportunities]));
+
+    return parseSurveyOpportunities(typeof row?.value === "string" ? row.value : "");
   }
 }

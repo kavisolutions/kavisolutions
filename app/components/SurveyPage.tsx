@@ -59,7 +59,13 @@ function Faq({ items }: { items: { q: string; a: string }[] }) {
   );
 }
 
-export function SurveyPage() {
+type Opportunity = { name: string; note: string };
+
+export function SurveyPage({
+  opportunities = SURVEY_OPPORTUNITIES,
+}: {
+  opportunities?: Opportunity[];
+} = {}) {
   return (
     <div className="relative min-h-screen bg-ink font-sans text-[#0F172A] dark:text-white">
       {/* 1. HERO */}
@@ -450,7 +456,7 @@ export function SurveyPage() {
                 </span>
               </div>
               <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {SURVEY_OPPORTUNITIES.map((opportunity) => (
+                {opportunities.map((opportunity) => (
                   <li
                     key={opportunity.name}
                     className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3"

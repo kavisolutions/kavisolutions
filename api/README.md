@@ -67,10 +67,17 @@ All prefixed with `/api`. Auth routes are Better Auth: `/api/auth/*`.
 | DELETE | `/certificates/:id/pdf` | admin | remove the stored PDF |
 | POST | `/upload` | signed-in | multipart `file`, ≤5 MB, jpeg/png/webp/gif |
 | POST | `/contact` | public, throttled | sends mail to the configured contact address |
-| POST | `/survey/enquiries` | public, throttled | survey page forms (`kind`: `client` \| `surveyor`) |
+| POST | `/survey/enquiries` | public, throttled | client enquiry (stored + emailed) or surveyor form email |
+| GET | `/survey/opportunities` | public | admin-editable business development list |
+| GET | `/survey/enquiries` | admin | client enquiry inbox (`?status=`, `?search=`) |
+| GET | `/survey/enquiries/export.csv` | admin | client enquiry CSV |
+| PATCH | `/survey/enquiries/:id` | admin | status (`new` \| `contacted` \| `closed` \| `archived`) and notes |
+| DELETE | `/survey/enquiries/:id` | admin | delete an enquiry |
 | POST | `/financial/enquiries` | public, throttled | financial page forms (`kind`: `individual` \| `business`) |
 | POST | `/surveyors/register` | public, throttled | surveyor network registration (stored) |
 | GET | `/surveyors` | admin | list (`?status=`, `?search=`) |
+| GET | `/surveyors/export.csv` | admin | surveyor network CSV |
+| GET | `/surveyors/:id/audit` | admin | profile change history |
 | PATCH | `/surveyors/:id` | admin | profile, notes and status workflow |
 | DELETE | `/surveyors/:id` | admin | remove a profile |
 | POST | `/surveyors/:id/resend` | admin | re-send the notification email |

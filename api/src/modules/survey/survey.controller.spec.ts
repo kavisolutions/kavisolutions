@@ -20,9 +20,16 @@ const mockedSend = sendSurveyEnquiryEmail as jest.MockedFunction<typeof sendSurv
 const build = () => {
   const settings = {
     contactEmail: jest.fn(async () => "research@kavisolutions.in"),
+    surveyOpportunities: jest.fn(async () => []),
   };
-  const controller = new SurveyController(settings as unknown as SettingsService);
-  return { controller, settings };
+  const service = {
+    createClient: jest.fn(async () => ({ id: "enquiry-1" })),
+  };
+  const controller = new SurveyController(
+    settings as unknown as SettingsService,
+    service as never,
+  );
+  return { controller, settings, service };
 };
 
 const client = {
@@ -38,11 +45,12 @@ const client = {
 describe("SurveyController.enquiry", () => {
   beforeEach(() => mockedSend.mockReset());
 
-  it("sends a client enquiry to the configured address", async () => {
+  it("stores and emails a client enquiry", async () => {
     mockedSend.mockResolvedValue(undefined);
-    const { controller } = build();
+    const { controller, service } = build();
 
     await expect(controller.enquiry(client)).resolves.toEqual({ success: true });
+    expect(service.createClient).toHaveBeenCalledWith(client);
     expect(mockedSend).toHaveBeenCalledWith(
       expect.objectContaining({ kind: "client", to: "research@kavisolutions.in" }),
     );
@@ -94,10 +102,22 @@ describe("SurveyController.enquiry", () => {
     );
   });
 
-  /* An SMTP outage must not leak as a 500, and the visitor gets a fallback. */
-  it("returns 503 when mail delivery fails", async () => {
+  /* A stored lead is not a failed submission just because SMTP is down. */
+  it("returns success when mail fails but the enquiry was stored", async () => {
     mockedSend.mockRejectedValue(new Error("530 Authentication Required"));
     const { controller } = build();
+
+    await expect(controller.enquiry(client)).resolves.toEqual({
+      success: true,
+      notified: false,
+    });
+  });
+
+  /* If neither storage nor mail worked, the visitor gets a 503 fallback. */
+  it("returns 503 when storage and mail both fail", async () => {
+    mockedSend.mockRejectedValue(new Error("530 Authentication Required"));
+    const { controller, service } = build();
+    service.createClient.mockRejectedValueOnce(new Error("database down"));
 
     await expect(controller.enquiry(client)).rejects.toBeInstanceOf(ServiceUnavailableException);
   });

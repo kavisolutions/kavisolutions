@@ -12,6 +12,7 @@ import {
   Cpu,
   TrendingUp,
   Landmark,
+  BarChart3,
   Layers,
   Sprout,
   ShieldCheck,
@@ -31,7 +32,7 @@ const serviceLinks = [
   { href: "/ai-blockchain", label: "Applied AI & ZK", icon: Cpu },
   { href: "/marketing", label: "Growth Systems", icon: TrendingUp },
   { href: "/government", label: "GovTech", icon: Landmark },
-  /* Survey & Research is added here when the Live pages switch publishes it. */
+  { href: "/survey", label: "Survey & Research", icon: BarChart3 },
   { href: "/financial", label: "Financial Services", icon: Layers },
   { href: "/farms", label: "Kavi Farms", icon: Sprout },
 ];
