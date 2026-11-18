@@ -93,6 +93,8 @@ Almost everything visible is in `app/lib/survey-data.ts`:
 | --- | --- |
 | `SURVEY_HERO` | Hero copy and the four metric tiles |
 | `SURVEY_VERTICALS` | The six service cards and their bullet lists |
+| `SURVEY_SAMPLE_PROJECTS` | The six example survey formats |
+| `SURVEY_PREVIOUS_WORK` | Selected previous survey references |
 | `SURVEY_APPROACH` | The five-step method |
 | `SURVEY_ENGAGEMENT_MODELS` | The five engagement models |
 | `SURVEY_FIELD_NETWORK` | Field network copy, checklist and capability table |
@@ -103,6 +105,10 @@ Almost everything visible is in `app/lib/survey-data.ts`:
 | `SURVEY_CONTACT` | Email, named business contact and location footer |
 
 No layout changes are needed for content edits — cards size to their content.
+
+`SURVEY_PREVIOUS_WORK` uses references supplied by the business (IFMR, World
+Bank, Metro Card, Tata Sky, Smoking study, ITC, Piramal Group). Keep the
+“past work, not current clients/endorsements” disclaimer when editing it.
 
 ## Business-development list
 

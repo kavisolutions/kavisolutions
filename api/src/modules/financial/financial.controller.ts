@@ -42,7 +42,7 @@ export class FinancialController {
       throw new BadRequestException("Unexpected fields for a business enquiry");
     }
 
-    const to = await this.settings.contactEmail();
+    const to = await this.settings.financialEmail();
 
     try {
       await sendFinancialEnquiryEmail({

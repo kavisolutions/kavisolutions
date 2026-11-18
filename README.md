@@ -48,6 +48,11 @@ redeploy. See
 [`docs/financial-page.md`](docs/financial-page.md),
 [`docs/government-page.md`](docs/government-page.md) and
 [`docs/farms-page.md`](docs/farms-page.md) for content and compliance notes.
+Internal proposals for the content engine and the talent marketplace are in
+[`docs/content-engine.md`](docs/content-engine.md) and
+[`docs/talent-marketplace.md`](docs/talent-marketplace.md). The internal
+government-portal tracker is
+[`docs/government-portals.xlsx`](docs/government-portals.xlsx).
 The fellowship programme is documented in
 [`docs/fellowship-page.md`](docs/fellowship-page.md) and
 [`docs/fellowship-curriculum.md`](docs/fellowship-curriculum.md). The operational

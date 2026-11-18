@@ -238,6 +238,7 @@ export default function AdminPage() {
   const [tagline, setTagline] = useState("");
   const [description, setDescription] = useState("");
   const [contactEmail, setContactEmail] = useState("");
+  const [financialEmail, setFinancialEmail] = useState("");
   const [surveyOpportunities, setSurveyOpportunities] = useState("");
   const [pageVisibility, setPageVisibility] = useState<PageVisibility | null>(null);
   const [savingPages, setSavingPages] = useState(false);
@@ -440,6 +441,7 @@ export default function AdminPage() {
     setTagline(settingsData?.settings?.tagline ?? "");
     setDescription(settingsData?.settings?.description ?? "");
     setContactEmail(settingsData?.settings?.contactEmail ?? "");
+    setFinancialEmail(settingsData?.settings?.financialEmail ?? "");
     setSurveyOpportunities(settingsData?.settings?.surveyOpportunities ?? "");
     setPageVisibility(
       pagesData?.pages
@@ -1233,7 +1235,7 @@ export default function AdminPage() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ tagline, description, contactEmail, surveyOpportunities }),
+      body: JSON.stringify({ tagline, description, contactEmail, financialEmail, surveyOpportunities }),
     });
 
     const data = await res.json().catch(() => null);
@@ -3983,6 +3985,21 @@ export default function AdminPage() {
                     placeholder="contact@kavisolutions.in"
                   />
                   <p className="mt-1 text-[11px] text-muted-foreground">Recipient for customer inquiries submitted through the contact form.</p>
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                    Financial Enquiries Email
+                  </label>
+                  <Input
+                    type="email"
+                    value={financialEmail}
+                    onChange={(e) => setFinancialEmail(e.target.value)}
+                    placeholder="hr@kavisolutions.in"
+                  />
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Recipient for financial-services enquiries. Falls back to hr@kavisolutions.in.
+                  </p>
                 </div>
 
                 <div>

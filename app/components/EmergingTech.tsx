@@ -17,11 +17,12 @@ export default function EmergingTech() {
             </span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[#F7F9FC] mb-4">
-            AI and blockchain, without the theatre
+            AI and blockchain, as two separate practices
           </h2>
           <p className="text-base leading-relaxed text-[#A5B3C7]">
-            We don&apos;t pitch buzzwords. We build deterministic, test-covered systems where
-            cryptographic security and machine intelligence provide genuine competitive advantages.
+            AI integration, agentic workflows, RAG and vector search sit in one practice.
+            Smart contracts, public and private chains, Hedera, tokenomics and DeFi sit in another.
+            We build both to production standards, not as experiments.
           </p>
         </Reveal>
 
@@ -75,10 +76,11 @@ export default function EmergingTech() {
               <div>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {[
-                    "LLM apps & agents",
-                    "RAG & Vector Embeddings",
+                    "AI integration",
+                    "Agentic AI",
+                    "RAG & vector DBs",
                     "Document intelligence",
-                    "Self-hosted Models",
+                    "Computer vision",
                   ].map((chip) => (
                     <span
                       key={chip}
@@ -90,10 +92,10 @@ export default function EmergingTech() {
                 </div>
 
                 <Link
-                  href="/ai-blockchain"
+                  href="/ai-blockchain#ai"
                   className="inline-flex items-center gap-2 text-[14px] sm:text-[15px] font-medium text-[#91B4FF] group-hover:text-white transition-colors"
                 >
-                  <span>Review AI architecture benchmarks</span>
+                  <span>Explore AI capabilities</span>
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
@@ -148,10 +150,12 @@ export default function EmergingTech() {
               <div>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {[
-                    "Smart contracts (EVM)",
-                    "Auditable Ledgers",
-                    "Zero-Knowledge Proofs",
-                    "Hardware Integration",
+                    "Smart contracts",
+                    "Ethereum & Bitcoin",
+                    "Polygon private chains",
+                    "Hedera ecosystem",
+                    "Consortium chains",
+                    "Tokenomics & DeFi",
                   ].map((chip) => (
                     <span
                       key={chip}
@@ -163,10 +167,10 @@ export default function EmergingTech() {
                 </div>
 
                 <Link
-                  href="/ai-blockchain"
+                  href="/ai-blockchain#blockchain"
                   className="inline-flex items-center gap-2 text-[14px] sm:text-[15px] font-medium text-[#91B4FF] group-hover:text-white transition-colors"
                 >
-                  <span>Review security verification reports</span>
+                  <span>Explore blockchain capabilities</span>
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>

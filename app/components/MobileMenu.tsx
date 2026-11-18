@@ -30,7 +30,7 @@ import ThemeToggle from "./ThemeToggle";
 const serviceLinks = [
   { href: "/web", label: "Web Systems", icon: Globe },
   { href: "/mobile", label: "Mobile Platforms", icon: Smartphone },
-  { href: "/ai-blockchain", label: "Applied AI & ZK", icon: Cpu },
+  { href: "/ai-blockchain", label: "AI & Blockchain", icon: Cpu },
   { href: "/marketing", label: "Growth Systems", icon: TrendingUp },
   { href: "/government", label: "GovTech", icon: Landmark },
   { href: "/survey", label: "Survey & Research", icon: BarChart3 },

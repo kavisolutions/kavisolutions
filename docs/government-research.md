@@ -120,3 +120,19 @@ Score each area red / amber / green with evidence:
 - Security and privacy observations.
 - Remediation roadmap with owners and sequencing.
 - Handover pack: runbooks, environment notes and training.
+
+
+## Internal portal tracker
+
+The working tracker is kept outside the public site at
+[`government-portals.xlsx`](government-portals.xlsx). It contains 31 AP and
+central government platforms with columns for the problem, proposed
+improvement, approach, official contact, status and priority, plus a reusable
+assessment template.
+
+Rules for using it:
+
+- collect official public contacts; do not guess personal email addresses;
+- do not run intrusive testing without written authorisation;
+- do not describe a platform as a client or partner until an agreement exists;
+- record the source and date for every finding and contact.

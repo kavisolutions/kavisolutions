@@ -9,6 +9,14 @@ export type ServiceData = {
   metrics: { value: string; label: string }[];
   featuresTitle: string;
   features: { icon: string; title: string; desc: string }[];
+  featureGroups?: {
+    id: string;
+    kicker: string;
+    title: string;
+    blurb: string;
+    features: { icon: string; title: string; desc: string }[];
+  }[];
+  contactEmail?: string;
   processTitle: string;
   process: { step: string; title: string; desc: string }[];
   stackTitle: string;
@@ -202,47 +210,70 @@ export const services: Record<string, ServiceData> = {
   },
   "ai-blockchain": {
     slug: "ai-blockchain",
-    tag: "AI & Blockchain",
+    tag: "AI & Blockchain Practices",
     title: "AI and blockchain,",
-    highlight: "built for production.",
-    hero: "We design and ship AI features that work inside real products — retrieval, agents, document intelligence and computer vision — and blockchain systems where auditability and trust actually matter. No demos that die after the pilot.",
+    highlight: "two separate, production-grade practices.",
+    hero: "We build AI that works inside real products — integration, agents, agentic workflows, RAG and vector search, document intelligence and computer vision. Separately, we build blockchain systems where trust and auditability matter: smart contracts, public and private chains, consortium networks, the Hedera ecosystem, tokenomics and DeFi. No demos that die after the pilot.",
     gradient: "from-violet-500 to-cyan-500",
     icon: "🧠",
     metrics: [
-      { value: "LLM", label: "Apps, RAG & agents" },
-      { value: "Vision", label: "Document & image AI" },
-      { value: "Contracts", label: "Smart-contract delivery" },
-      { value: "Audit", label: "Traceable by design" },
+      { value: "AI", label: "Integration, agents & RAG" },
+      { value: "Agentic", label: "Workflow automation" },
+      { value: "Chains", label: "Public, private, consortium" },
+      { value: "Audit", label: "Contracts & traceability" },
     ],
     featuresTitle: "What we build",
-    features: [
-      { icon: "🤖", title: "AI assistants", desc: "Domain assistants grounded in your documents, with citations and guardrails." },
-      { icon: "🔎", title: "RAG systems", desc: "Retrieval pipelines over private knowledge, evaluated for accuracy before launch." },
-      { icon: "🧩", title: "AI integration", desc: "Add classification, extraction or generation to an existing product without a rewrite." },
-      { icon: "📄", title: "Document intelligence", desc: "Extract structured data from invoices, forms, contracts and scanned records." },
-      { icon: "👁️", title: "Computer vision", desc: "Image classification, detection and quality checks trained on your data." },
-      { icon: "⛓️", title: "Smart contracts", desc: "Solidity contracts for escrow, entitlements, provenance and auditable workflows." },
-      { icon: "🔐", title: "Tokenisation & wallets", desc: "Wallet integration, asset representation and permissioned access where it fits." },
-      { icon: "🧾", title: "Audit & traceability", desc: "Immutable event trails for supply chains, certificates and approvals." },
+    features: [],
+    featureGroups: [
+      {
+        id: "ai",
+        kicker: "AI PRACTICE",
+        title: "AI integration, agents and automation",
+        blurb: "Applied AI for products that need to think, extract, classify or act — with evaluation and guardrails before launch.",
+        features: [
+          { icon: "🔌", title: "AI integration", desc: "Add AI to an existing website, product or internal system without a rewrite." },
+          { icon: "🤖", title: "Agents & agentic workflows", desc: "Tool-using agents that complete multi-step work with approval and fallback paths." },
+          { icon: "🔎", title: "RAG & vector databases", desc: "Private knowledge retrieval with citations, access control and measured accuracy." },
+          { icon: "📄", title: "Document intelligence", desc: "Extract structured data from invoices, forms, contracts and scanned records." },
+          { icon: "👁️", title: "Computer vision", desc: "Classification, detection and quality checks trained on your own images." },
+          { icon: "🧪", title: "Evaluation & guardrails", desc: "Test sets, hallucination controls, observability and cost limits before go-live." },
+        ],
+      },
+      {
+        id: "blockchain",
+        kicker: "BLOCKCHAIN PRACTICE",
+        title: "Smart contracts, chains and token systems",
+        blurb: "Blockchain engineering for shared records, programmable settlement and auditability — chosen only when a trusted database is not enough.",
+        features: [
+          { icon: "⛓️", title: "Smart contracts", desc: "Solidity contracts for escrow, entitlements, provenance and auditable workflows." },
+          { icon: "🌐", title: "Public chains", desc: "Bitcoin and Ethereum integration, wallets, indexing and production deployment." },
+          { icon: "🔒", title: "Private & consortium chains", desc: "Polygon and permissioned networks for organisations that need shared control." },
+          { icon: "🟣", title: "Hedera ecosystem", desc: "Hedera services, token creation and application patterns on the Hedera network." },
+          { icon: "🪙", title: "Tokenomics & DeFi", desc: "Token design, distribution, staking and DeFi primitives with compliance review." },
+          { icon: "🧾", title: "Audit & traceability", desc: "Immutable event trails, proofs and reporting for regulated or multi-party processes." },
+        ],
+      },
     ],
     processTitle: "How we de-risk AI and chain work",
     process: [
-      { step: "01", title: "Define the decision", desc: "Start with the decision or record that must improve — not the model." },
-      { step: "02", title: "Build the data path", desc: "Clean, permissions, retrieval and evaluation before UI polish." },
-      { step: "03", title: "Prototype against reality", desc: "Test on your actual documents and edge cases, with a measurable baseline." },
-      { step: "04", title: "Harden", desc: "Guardrails, fallbacks, observability, cost controls and human review where needed." },
-      { step: "05", title: "Ship and monitor", desc: "Deploy with evaluation dashboards and a plan for model or contract upgrades." },
+      { step: "01", title: "Define the decision", desc: "Start with the decision or record that must improve — not the model or the chain." },
+      { step: "02", title: "Build the data path", desc: "Clean data, permissions, retrieval and evaluation before UI or contract polish." },
+      { step: "03", title: "Prototype against reality", desc: "Test on your actual documents, edge cases and transaction flows with a measurable baseline." },
+      { step: "04", title: "Harden", desc: "Guardrails, fallbacks, observability, cost controls, contract review and human approval." },
+      { step: "05", title: "Ship and monitor", desc: "Deploy with evaluation dashboards and a plan for model, key or contract upgrades." },
     ],
     stackTitle: "Tools we work with",
-    stack: ["OpenAI", "Gemini", "Claude", "LangChain", "pgvector", "Python", "TypeScript", "Solidity", "Ethereum", "IPFS", "The Graph", "Hardhat"],
+    stack: ["OpenAI", "Gemini", "Claude", "LangChain", "pgvector", "Python", "TypeScript", "Solidity", "Ethereum", "Bitcoin", "Polygon", "Hedera", "IPFS", "Hardhat"],
     faqTitle: "Common questions",
     faq: [
       { q: "Do you train models from scratch?", a: "Usually no. Most business problems are better solved with retrieval, fine-tuning or classical ML on top of an existing model." },
       { q: "Can AI work with our private data?", a: "Yes, with a clear data-flow design: private storage, access control, redaction where needed and a provider that fits your compliance constraints." },
       { q: "When does blockchain make sense?", a: "When multiple parties need a shared, tamper-evident record without trusting a single administrator. If one trusted database is enough, we will say so." },
+      { q: "Do you work with Hedera and Polygon?", a: "Yes. We build on public EVM chains, Bitcoin and Ethereum integrations, private/consortium networks including Polygon, and the Hedera ecosystem." },
       { q: "How do you measure quality?", a: "We define an evaluation set before build, then track accuracy, failure modes and cost against it — not just a demo that looks good." },
     ],
     ctaTitle: "Put AI or blockchain to work",
-    ctaDesc: "Bring a real workflow, document set or trust problem. We will tell you honestly whether the technology fits.",
+    ctaDesc: "Bring a real workflow, document set, transaction flow or trust problem. We will tell you honestly whether the technology fits.",
+    contactEmail: "hr@kavisolutions.in",
   },
 };

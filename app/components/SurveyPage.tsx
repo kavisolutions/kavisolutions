@@ -16,6 +16,8 @@ import {
   SURVEY_HERO,
   SURVEY_INDUSTRIES,
   SURVEY_OPPORTUNITIES,
+  SURVEY_PREVIOUS_WORK,
+  SURVEY_SAMPLE_PROJECTS,
   SURVEY_SURVEYOR_QUESTIONS,
   SURVEY_VERTICALS,
 } from "@/lib/survey-data";
@@ -186,6 +188,58 @@ export function SurveyPage({
               </RevealItem>
             ))}
           </RevealStagger>
+        </div>
+      </section>
+
+      {/* 4. SAMPLE PROJECTS + PREVIOUS WORK */}
+      <section id="sample-projects" className="relative px-6 py-24">
+        <div className="mx-auto max-w-6xl">
+          <SectionHeading
+            eyebrow="Project examples"
+            title="Survey formats we can run"
+            description="A starting point for scoping a study. Each format is adapted to the decision, language, sample and locations involved."
+          />
+          <RevealStagger className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {SURVEY_SAMPLE_PROJECTS.map((project) => (
+              <RevealItem key={project.title}>
+                <div className="h-full rounded-3xl glass p-6 transition-transform duration-300 hover:-translate-y-1">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-teal-300">
+                    {project.tag}
+                  </span>
+                  <h3 className="mt-3 font-display text-lg font-semibold">{project.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-mist">{project.desc}</p>
+                </div>
+              </RevealItem>
+            ))}
+          </RevealStagger>
+
+          <Reveal className="mt-8">
+            <div className="rounded-3xl glass p-7">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h3 className="font-display text-xl font-semibold">Selected previous survey work</h3>
+                  <p className="mt-1 max-w-2xl text-sm leading-relaxed text-mist">
+                    Assignment references supplied by Kavi Solutions. Names are shown as past
+                    survey work, not as current clients or endorsements.
+                  </p>
+                </div>
+                <span className="shrink-0 rounded-full border border-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-fog">
+                  Past work
+                </span>
+              </div>
+              <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {SURVEY_PREVIOUS_WORK.map((work) => (
+                  <li
+                    key={work.name}
+                    className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3"
+                  >
+                    <p className="text-sm font-semibold text-[#0F172A] dark:text-white">{work.name}</p>
+                    <p className="mt-0.5 text-xs text-fog">{work.note}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
         </div>
       </section>
 

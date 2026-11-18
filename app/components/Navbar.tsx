@@ -43,7 +43,7 @@ const services = [
   },
   {
     title: "Applied AI & Deep Tech",
-    desc: "Deterministic agent runners, LLM safety guardrails & ZK state verification",
+    desc: "Agentic AI, RAG & vector search; smart contracts, Hedera & Polygon",
     href: "/ai-blockchain",
     icon: Cpu,
     tag: "LLM & ZK",

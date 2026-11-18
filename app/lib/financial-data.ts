@@ -20,7 +20,7 @@ export type FinancialStep = {
 };
 
 export const FINANCIAL_CONTACT = {
-  email: "kavisolutions1@gmail.com",
+  email: "hr@kavisolutions.in",
   location: "Hyderabad, India · Remote consultations across India",
 } as const;
 
@@ -29,10 +29,10 @@ export const FINANCIAL_HERO = {
   title: "Tax, planning and cash flow —",
   highlight: "handled properly.",
   description:
-    "Support for individuals and businesses across income tax filing, tax planning, budgeting, cash-flow management and long-term financial planning. Where a service is regulated, it is delivered through appropriately qualified professionals.",
+    "Support for individuals and businesses across income tax filing, tax planning, loans, cash-flow management, debt recovery and long-term financial planning. Where a service is regulated, it is delivered through appropriately qualified professionals.",
   metrics: [
     { value: "2", label: "Tracks: individual & business" },
-    { value: "5", label: "Service areas" },
+    { value: "11", label: "Service areas" },
     { value: "Year-round", label: "Not just filing season" },
     { value: "Documented", label: "Every engagement" },
   ],
@@ -84,6 +84,21 @@ export const INDIVIDUAL_SERVICES: FinancialService[] = [
       "Loan and EMI planning",
       "Education and retirement goal planning",
       "Tax-saving planning integrated with the above",
+    ],
+  },
+  {
+    slug: "loans-credit",
+    icon: "🏦",
+    title: "Loans & credit support",
+    summary:
+      "Understand the options before you borrow. We help with small loans, business loans, home loans and EMI planning, and coordinate with lenders on documentation.",
+    items: [
+      "Small personal and business loan guidance",
+      "Home loan and EMI planning",
+      "Lender and documentation coordination",
+      "Debt consolidation and repayment planning",
+      "Recovery support for overdues",
+      "Coordination with qualified lending partners",
     ],
   },
   {
@@ -152,6 +167,51 @@ export const BUSINESS_SERVICES: FinancialService[] = [
     ],
   },
   {
+    slug: "business-loans",
+    icon: "🏦",
+    title: "Business & home loan support",
+    summary:
+      "Prepare the numbers and documentation lenders ask for, compare options and coordinate the application through to disbursal.",
+    items: [
+      "Business loans and working-capital facilities",
+      "Home loans and secured borrowing",
+      "Project reports and lender documentation",
+      "Eligibility and repayment-capacity review",
+      "Loan application coordination",
+      "Post-disbursal monitoring and support",
+    ],
+  },
+  {
+    slug: "debt-recovery",
+    icon: "📞",
+    title: "Debt recovery & receivables",
+    summary:
+      "Lawful, documented follow-up of overdue receivables, using a calling and field team with clear escalation and reporting.",
+    items: [
+      "Receivables ageing and prioritisation",
+      "Telecalling and payment follow-up",
+      "Payment reminders, reconciliation and receipts",
+      "Settlement coordination within agreed authority",
+      "Escalation to legal partners where required",
+      "Recovery MIS and weekly reporting",
+    ],
+  },
+  {
+    slug: "cash-handling",
+    icon: "🧾",
+    title: "Cash handling & reconciliation guidance",
+    summary:
+      "For cash-intensive businesses: document every movement, reconcile daily and put controls in place. No unrecorded cash handling or tax-evasion support.",
+    items: [
+      "Daily cash reconciliation and closing process",
+      "Cash-to-bank and payment tracking",
+      "Expense vouchers and documentation controls",
+      "Segregation of duties and approval limits",
+      "Monthly cash-flow and variance reporting",
+      "Coordination with accounting and compliance teams",
+    ],
+  },
+  {
     slug: "business-planning",
     icon: "📈",
     title: "Business financial planning",
@@ -167,6 +227,23 @@ export const BUSINESS_SERVICES: FinancialService[] = [
     ],
   },
 ];
+
+/* References supplied by Kavi Solutions for debt-recovery experience. These
+   are past assignments, not current client endorsements. */
+export const FINANCIAL_PREVIOUS_WORK = [
+  { name: "SBI", note: "Debt recovery assignments" },
+  { name: "Axis Bank", note: "Debt recovery assignments" },
+  { name: "Finance companies", note: "Recovery and follow-up support" },
+] as const;
+
+export const FINANCIAL_NEEDS = [
+  "File my ITR",
+  "Plan my taxes",
+  "Set up business accounting",
+  "Get a small / business / home loan",
+  "Recover overdue payments",
+  "Plan savings & investments",
+] as const;
 
 export const FINANCIAL_APPROACH: FinancialStep[] = [
   {
@@ -320,7 +397,8 @@ export const FINANCIAL_SERVICE_OPTIONS: Record<"individual" | "business", string
     "Tax planning",
     "Personal financial planning",
     "Savings & investment guidance",
-    "Loan / EMI planning",
+    "Loan / EMI support",
+    "Debt recovery support",
     "Tax notice support",
     "Not sure yet — need guidance",
   ],
@@ -329,6 +407,9 @@ export const FINANCIAL_SERVICE_OPTIONS: Record<"individual" | "business", string
     "Business tax planning",
     "Accounting & bookkeeping",
     "Cash flow & working capital",
+    "Business / home loan support",
+    "Debt recovery & receivables",
+    "Cash handling & reconciliation",
     "Business financial planning",
     "Compliance coordination",
     "Not sure yet — need guidance",

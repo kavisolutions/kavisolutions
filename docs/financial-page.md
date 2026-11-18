@@ -2,6 +2,16 @@
 
 Status: **built, not launched.** The page 404s until it is explicitly enabled.
 
+## Review links
+
+The page is hidden until an admin enables it.
+
+| Item | Link |
+| --- | --- |
+| Live route | `https://kavisolutions.in/financial` (enable it first) |
+| Code | https://github.com/kavisolutions/kavisolutions/commit/6b8a78d6 |
+| Handover | `docs/financial-page.md` |
+
 ## What exists
 
 | Piece | Location |
@@ -29,8 +39,9 @@ is no longer read; remove it from any server env file or Env Manager entry.
 
 ## Sections built
 
-Hero · Approach (5 steps) · Two tracks · Individual services (4) ·
-Business services (4) · Tax planning · Investment planning · Financial planning
+Hero · Approach (5 steps) · Two tracks · Individual services (5) ·
+Business services (6) · Tax planning · Investment planning · Financial planning ·
+Debt recovery experience · Enquiry
 · Cash flow management · Trust & compliance · Client types · Enquiry + FAQ +
 contact.
 
@@ -89,7 +100,9 @@ confirm each of those statements is true.
 
 - The enquiry form collects name, email, phone, and free-text context. It
   explicitly asks people **not** to send financial documents through it.
-- Nothing is stored in this repo's database; submissions are emailed only.
+- Financial enquiries are emailed to the dedicated financial mailbox
+  (`FINANCIAL_EMAIL`, default `hr@kavisolutions.in`). They are not stored in the
+  database; use the email inbox as the system of record until a CRM is added.
 - No PAN, Aadhaar or bank details are requested anywhere on the page.
 - If a CRM or document portal is added later, define retention and access rules
   before collecting documents.
@@ -101,8 +114,10 @@ Everything visible lives in `app/lib/financial-data.ts`:
 | Export | Controls |
 | --- | --- |
 | `FINANCIAL_HERO` | Hero copy and the four metric tiles |
-| `INDIVIDUAL_SERVICES` | The four individual service cards |
-| `BUSINESS_SERVICES` | The four business service cards |
+| `INDIVIDUAL_SERVICES` | The individual service cards, including loans/credit |
+| `BUSINESS_SERVICES` | The business service cards, including loans, debt recovery and cash handling |
+| `FINANCIAL_PREVIOUS_WORK` | Past debt-recovery assignments (SBI, Axis Bank, finance companies) |
+| `FINANCIAL_NEEDS` | “What are you looking for?” shortcuts to the enquiry form |
 | `FINANCIAL_APPROACH` | The five-step method |
 | `FINANCIAL_AUDIENCES` | The two-track summary cards |
 | `FINANCIAL_COMPLIANCE` | The trust & compliance block — treat as reviewed copy |

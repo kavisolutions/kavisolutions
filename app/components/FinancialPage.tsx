@@ -11,6 +11,8 @@ import {
   FINANCIAL_FAQ,
   FINANCIAL_HERO,
   FINANCIAL_INDUSTRIES,
+  FINANCIAL_NEEDS,
+  FINANCIAL_PREVIOUS_WORK,
   INDIVIDUAL_SERVICES,
   type FinancialService,
 } from "@/lib/financial-data";
@@ -111,6 +113,30 @@ export function FinancialPage() {
                 </div>
               ))}
             </div>
+          </Reveal>
+
+          <Reveal delay={0.5} className="mt-10">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-fog">
+              What are you looking for?
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {FINANCIAL_NEEDS.map((need) => (
+                <a
+                  key={need}
+                  href="#enquiry"
+                  className="rounded-full glass px-4 py-2 text-xs font-medium text-mist transition-colors hover:bg-white/10 hover:text-white"
+                >
+                  {need}
+                </a>
+              ))}
+            </div>
+            <p className="mt-3 text-xs text-fog">
+              All enquiries currently go to{" "}
+              <a href={`mailto:${FINANCIAL_CONTACT.email}`} className="text-emerald-300 hover:underline">
+                {FINANCIAL_CONTACT.email}
+              </a>
+              .
+            </p>
           </Reveal>
         </div>
       </section>
@@ -423,6 +449,31 @@ export function FinancialPage() {
                 {industry}
               </span>
             ))}
+          </Reveal>
+        </div>
+      </section>
+
+      {/* DEBT RECOVERY EXPERIENCE */}
+      <section className="relative px-6 py-24">
+        <div className="mx-auto max-w-6xl">
+          <SectionHeading
+            eyebrow="Recovery experience"
+            title="Debt recovery work with banks and finance companies"
+            description="Our team has handled debt-recovery follow-up assignments with SBI, Axis Bank and finance companies. Work is lawful, documented and reported; we do not use coercive recovery practices."
+          />
+          <Reveal>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {FINANCIAL_PREVIOUS_WORK.map((work) => (
+                <div key={work.name} className="rounded-2xl glass px-5 py-4">
+                  <p className="text-sm font-semibold text-[#0F172A] dark:text-white">{work.name}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-fog">{work.note}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-[11px] leading-relaxed text-fog">
+              References supplied by Kavi Solutions. Past assignments are not current client
+              endorsements or partnerships.
+            </p>
           </Reveal>
         </div>
       </section>

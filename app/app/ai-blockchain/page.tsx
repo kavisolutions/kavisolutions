@@ -6,7 +6,7 @@ import { services } from "@/lib/services-data";
 export const metadata: Metadata = {
   title: "AI & Blockchain Development | Kavi Solutions",
   description:
-    "AI assistants, retrieval, document intelligence, computer vision, smart contracts and auditable blockchain systems — built and shipped for production.",
+    "Two separate practices: AI integration, agentic workflows, RAG and vector search; and blockchain smart contracts, public/private/consortium chains, Hedera, tokenomics and DeFi.",
 };
 
 export default function AiBlockchainPage() {

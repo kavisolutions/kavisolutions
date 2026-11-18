@@ -91,7 +91,50 @@ export function ServicePage({ data }: { data: ServiceData }) {
           </div>
         </section>
 
+        {/* GROUPED PRACTICES (optional, used by AI & Blockchain) */}
+        {data.featureGroups?.map((group) => (
+          <section key={group.id} id={group.id} className="relative px-6 py-20">
+            <div className="mx-auto max-w-[1152px]">
+              <Reveal className="mx-auto mb-14 max-w-3xl text-center">
+                <div className="inline-flex items-center gap-2 mb-3">
+                  <span className="h-2 w-2 rounded-full bg-[#175CD3]" />
+                  <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#91B4FF]">
+                    {group.kicker}
+                  </span>
+                </div>
+                <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[#F7F9FC]">
+                  {group.title}
+                </h2>
+                <p className="mt-4 text-base leading-relaxed text-[#A5B3C7]">{group.blurb}</p>
+              </Reveal>
+
+              <RevealStagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {group.features.map((f, idx) => (
+                  <RevealItem key={f.title}>
+                    <TiltCard
+                      intensity={8}
+                      className="group relative flex h-full flex-col justify-between overflow-hidden rounded-[24px] bg-[rgba(18,29,47,0.85)] backdrop-blur-[16px] border border-[rgba(148,163,184,0.16)] p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] hover:border-[rgba(148,163,184,0.35)] transition-all"
+                    >
+                      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#2563EB] to-[#06B6D4]" />
+                      <div>
+                        <span className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#175CD3]/10 border border-[#175CD3]/20 text-xs font-mono font-semibold text-[#91B4FF] group-hover:bg-[#175CD3] group-hover:text-white transition-colors">
+                          {(idx + 1).toString().padStart(2, "0")}
+                        </span>
+                        <h3 className="font-display text-lg font-semibold text-[#F7F9FC] mb-2">
+                          {f.title}
+                        </h3>
+                        <p className="text-[13px] leading-relaxed text-[#A5B3C7]">{f.desc}</p>
+                      </div>
+                    </TiltCard>
+                  </RevealItem>
+                ))}
+              </RevealStagger>
+            </div>
+          </section>
+        ))}
+
         {/* FEATURES / WHAT WE BUILD */}
+        {data.features.length > 0 && (
         <section id="features" className="relative px-6 py-20">
           <div className="mx-auto max-w-[1152px]">
             <Reveal className="mx-auto mb-14 max-w-3xl text-center">
@@ -129,6 +172,7 @@ export function ServicePage({ data }: { data: ServiceData }) {
             </RevealStagger>
           </div>
         </section>
+        )}
 
         {/* PROCESS */}
         <section className="relative px-6 py-20">
@@ -243,6 +287,14 @@ export function ServicePage({ data }: { data: ServiceData }) {
                     <span>Start your project</span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
+                  {data.contactEmail && (
+                    <a
+                      href={`mailto:${data.contactEmail}?subject=${encodeURIComponent(data.tag + " enquiry")}`}
+                      className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-[rgba(255,255,255,0.14)] bg-[rgba(18,29,47,0.7)] px-7 text-[15px] font-medium text-[#F7F9FC] backdrop-blur-md transition-all hover:bg-white/[0.08]"
+                    >
+                      <span>{data.contactEmail}</span>
+                    </a>
+                  )}
                 </div>
               </div>
             </Reveal>

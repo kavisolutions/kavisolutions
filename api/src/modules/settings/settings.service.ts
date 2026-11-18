@@ -10,6 +10,7 @@ export type SettingsPayload = {
   tagline?: unknown;
   description?: unknown;
   contactEmail?: unknown;
+  financialEmail?: unknown;
   surveyOpportunities?: unknown;
 };
 
@@ -39,6 +40,7 @@ export class SettingsService {
       TEAM_SETTING_KEYS.tagline,
       TEAM_SETTING_KEYS.description,
       TEAM_SETTING_KEYS.contactEmail,
+      TEAM_SETTING_KEYS.financialEmail,
       TEAM_SETTING_KEYS.surveyOpportunities,
     ];
 
@@ -54,6 +56,7 @@ export class SettingsService {
         tagline: map.get(TEAM_SETTING_KEYS.tagline) || "",
         description: map.get(TEAM_SETTING_KEYS.description) || "",
         contactEmail: map.get(TEAM_SETTING_KEYS.contactEmail) || "",
+        financialEmail: map.get(TEAM_SETTING_KEYS.financialEmail) || "",
         surveyOpportunities: map.get(TEAM_SETTING_KEYS.surveyOpportunities) || "",
       },
     };
@@ -83,6 +86,14 @@ export class SettingsService {
       rows.push({
         key: TEAM_SETTING_KEYS.contactEmail,
         value: sanitizeText(payload.contactEmail, 254),
+        updatedAt: now,
+      });
+    }
+
+    if (payload.financialEmail !== undefined) {
+      rows.push({
+        key: TEAM_SETTING_KEYS.financialEmail,
+        value: sanitizeText(payload.financialEmail, 254),
         updatedAt: now,
       });
     }
@@ -123,6 +134,20 @@ export class SettingsService {
     if (value) return value;
 
     return process.env.CONTACT_EMAIL || process.env.SMTP_USER || "";
+  }
+
+  /* Financial enquiries go to a dedicated mailbox. Falls back to the general
+     contact address only when the dedicated one is not configured. */
+  async financialEmail(): Promise<string> {
+    const [row] = await this.db
+      .select()
+      .from(appSettings)
+      .where(inArray(appSettings.key, [TEAM_SETTING_KEYS.financialEmail]));
+
+    const value = typeof row?.value === "string" ? row.value.trim() : "";
+    if (value) return value;
+
+    return process.env.FINANCIAL_EMAIL || "hr@kavisolutions.in";
   }
 
   async surveyOpportunities(): Promise<SurveyOpportunity[]> {

@@ -3,6 +3,17 @@
 Status: **built, not launched.** `/government` returns 404 until an administrator
 enables it under **Settings → Live pages → Government Technology**.
 
+## Review links
+
+The page is hidden until an admin enables it.
+
+| Item | Link |
+| --- | --- |
+| Live route | `https://kavisolutions.in/government` (enable it first) |
+| Code | https://github.com/kavisolutions/kavisolutions/commit/6b8a78d6 |
+| Handover | `docs/government-page.md` |
+| Internal tracker | `docs/government-portals.xlsx` |
+
 ## What exists
 
 | Piece | Location |

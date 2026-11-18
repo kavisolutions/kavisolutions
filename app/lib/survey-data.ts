@@ -163,6 +163,53 @@ export const SURVEY_VERTICALS: SurveyVertical[] = [
   },
 ];
 
+/* Example formats clients ask for. These are capability samples, not claims of
+   completed client projects. */
+export const SURVEY_SAMPLE_PROJECTS = [
+  {
+    tag: "Product",
+    title: "Product & usage survey",
+    desc: "Product feedback, feature validation, usage and adoption, and customer satisfaction across current, lapsed and prospective users.",
+  },
+  {
+    tag: "Political",
+    title: "Political & public opinion poll",
+    desc: "Constituency-level voter sentiment, issue salience, awareness and approval tracking, fielded with consent and election-safe safeguards.",
+  },
+  {
+    tag: "Academic",
+    title: "PhD / thesis fieldwork",
+    desc: "Primary data collection for doctoral and post-graduate research, with questionnaire design, sampling support and a documented dataset.",
+  },
+  {
+    tag: "Academic",
+    title: "Academic research project",
+    desc: "Institutional studies, student and faculty surveys, impact assessments and field coordination for universities and research organisations.",
+  },
+  {
+    tag: "Market",
+    title: "Market & brand study",
+    desc: "Brand awareness, competitor research, consumer preference and market opportunity assessment for private and institutional clients.",
+  },
+  {
+    tag: "Government",
+    title: "Household & beneficiary survey",
+    desc: "Household, community and scheme-beneficiary surveys with back-checks, consent and location-level field supervision.",
+  },
+] as const;
+
+/* References supplied by Kavi Solutions. Listed as previous survey work, not as
+   current clients or endorsements. */
+export const SURVEY_PREVIOUS_WORK = [
+  { name: "IFMR", note: "Research institution · survey assignment" },
+  { name: "World Bank", note: "Socio-economic survey support" },
+  { name: "Metro Card", note: "Commuter and public transport study" },
+  { name: "Tata Sky", note: "Consumer and product feedback" },
+  { name: "Smoking study", note: "Public health and behaviour survey" },
+  { name: "ITC", note: "Consumer and market research" },
+  { name: "Piramal Group", note: "Healthcare and market research" },
+] as const;
+
 export const SURVEY_APPROACH: SurveyStep[] = [
   {
     step: "01",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FINANCIAL_ENTITY_TYPES, FINANCIAL_SERVICE_OPTIONS } from "@/lib/financial-data";
+import { FINANCIAL_CONTACT, FINANCIAL_ENTITY_TYPES, FINANCIAL_SERVICE_OPTIONS } from "@/lib/financial-data";
 
 type Kind = "individual" | "business";
 
@@ -73,7 +73,7 @@ export default function FinancialForms() {
           kind: "error",
           message:
             message ||
-            "Could not send your enquiry. Please email kavisolutions1@gmail.com directly.",
+            `Could not send your enquiry. Please email ${FINANCIAL_CONTACT.email} directly.`,
         });
         return;
       }
