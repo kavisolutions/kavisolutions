@@ -4,13 +4,16 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, inArray, or } from "drizzle-orm";
 
 import { sanitizeText } from "@/_shared/text";
 import { uuid } from "@/_shared/team-helpers";
 import { DATABASE } from "@/db/drizzle/drizzle.module";
 import type { Database } from "@/db/drizzle/drizzle.client";
 import {
+  fellowshipApplications,
+  fellowshipInterviewPanel,
+  fellowshipInterviews,
   fellowshipMentors,
   FELLOWSHIP_MENTOR_STATUSES,
   type FellowshipMentorRow,
@@ -30,6 +33,7 @@ export type FellowshipMentorDto = {
   expertise: string;
   status: FellowshipMentorStatus;
   notes: string;
+  portalToken: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -46,6 +50,7 @@ const toDto = (row: FellowshipMentorRow): FellowshipMentorDto => ({
   expertise: row.expertise ?? "",
   status: isStatus(row.status) ? row.status : "active",
   notes: row.notes ?? "",
+  portalToken: row.portalToken ?? "",
   createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
 });
@@ -92,6 +97,7 @@ export class FellowshipMentorsService {
         expertise: sanitizeText(payload.expertise, 300),
         notes: sanitizeText(payload.notes, 2000),
         status: "active",
+        portalToken: uuid().replace(/-/g, ""),
       })
       .returning();
 
@@ -108,6 +114,7 @@ export class FellowshipMentorsService {
     if (!existing) throw new NotFoundException("Mentor not found");
 
     const set: Partial<FellowshipMentorRow> = { updatedAt: new Date() };
+    if (!existing.portalToken) set.portalToken = uuid().replace(/-/g, "");
     if (payload.name !== undefined) set.name = sanitizeText(payload.name, 120);
     if (payload.phone !== undefined) set.phone = sanitizeText(payload.phone, 30);
     if (payload.title !== undefined) set.title = sanitizeText(payload.title, 120);
@@ -145,5 +152,125 @@ export class FellowshipMentorsService {
 
     if (!row) throw new NotFoundException("Mentor not found");
     return { ok: true };
+  }
+
+  async rotatePortalToken(id: string) {
+    const [row] = await this.db
+      .update(fellowshipMentors)
+      .set({
+        portalToken: uuid().replace(/-/g, ""),
+        updatedAt: new Date(),
+      })
+      .where(eq(fellowshipMentors.id, id))
+      .returning();
+    if (!row) throw new NotFoundException("Mentor not found");
+    return { mentor: toDto(row) };
+  }
+
+  async portal(rawToken: string) {
+    const raw = sanitizeText(rawToken, 80);
+    const [mentor] = await this.db
+      .select()
+      .from(fellowshipMentors)
+      .where(eq(fellowshipMentors.portalToken, raw))
+      .limit(1);
+    if (!mentor) throw new NotFoundException("Mentor portal not found");
+
+    const panelRows = await this.db
+      .select()
+      .from(fellowshipInterviewPanel)
+      .where(
+        or(
+          eq(fellowshipInterviewPanel.mentorId, mentor.id),
+          eq(fellowshipInterviewPanel.email, mentor.email),
+        ),
+      );
+
+    const interviewIds = Array.from(new Set(panelRows.map((row) => row.interviewId)));
+    const interviews = interviewIds.length
+      ? await this.db
+          .select()
+          .from(fellowshipInterviews)
+          .where(inArray(fellowshipInterviews.id, interviewIds))
+      : [];
+    const applications = interviews.length
+      ? await this.db
+          .select()
+          .from(fellowshipApplications)
+          .where(
+            inArray(
+              fellowshipApplications.id,
+              interviews.map((interview) => interview.applicationId),
+            ),
+          )
+      : [];
+    const applicationById = new Map(
+      applications.map((application) => [application.id, application]),
+    );
+    const panelByInterview = new Map(
+      panelRows.map((row) => [row.interviewId, row]),
+    );
+
+    return {
+      mentor: {
+        name: mentor.name,
+        email: mentor.email,
+        title: mentor.title,
+        expertise: mentor.expertise,
+      },
+      assignments: interviews
+        .map((interview) => {
+          const application = applicationById.get(interview.applicationId);
+          const panel = panelByInterview.get(interview.id);
+          if (!application || !panel) return null;
+          return {
+            interviewId: interview.id,
+            reference: application.reference,
+            candidateName: application.name,
+            track: application.track,
+            cohort: application.cohort,
+            scheduledAt: interview.scheduledAt.toISOString(),
+            mode: interview.mode,
+            location: interview.location,
+            meetingUrl: interview.meetingUrl,
+            status: interview.status,
+            candidateConfirmedAt: interview.candidateConfirmedAt
+              ? interview.candidateConfirmedAt.toISOString()
+              : null,
+            rescheduleRequestedAt: interview.rescheduleRequestedAt
+              ? interview.rescheduleRequestedAt.toISOString()
+              : null,
+            rescheduleNote: interview.rescheduleNote,
+            scorecardToken: panel.token,
+            submittedAt: panel.submittedAt ? panel.submittedAt.toISOString() : null,
+            tokenRevokedAt: panel.revokedAt ? panel.revokedAt.toISOString() : null,
+            tokenExpiresAt: panel.tokenExpiresAt
+              ? panel.tokenExpiresAt.toISOString()
+              : null,
+            myScoreAverage: (() => {
+              const values = [
+                panel.motivationScore,
+                panel.commitmentScore,
+                panel.communicationScore,
+                panel.problemScore,
+                panel.fieldScore,
+                panel.fitScore,
+              ].filter((value): value is number => typeof value === "number");
+              return values.length
+                ? Number(
+                    (
+                      values.reduce((sum, value) => sum + value, 0) / values.length
+                    ).toFixed(2),
+                  )
+                : null;
+            })(),
+          };
+        })
+        .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+        .sort(
+          (left, right) =>
+            new Date(left.scheduledAt).getTime() - new Date(right.scheduledAt).getTime(),
+        ),
+    };
   }
 }

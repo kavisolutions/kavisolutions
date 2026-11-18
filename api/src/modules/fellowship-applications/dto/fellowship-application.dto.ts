@@ -1,12 +1,17 @@
 import {
+  ArrayMaxSize,
+  ArrayNotEmpty,
+  IsArray,
   IsBoolean,
   IsDateString,
   IsEmail,
   IsIn,
+  IsInt,
   IsOptional,
   IsString,
   Matches,
   MaxLength,
+  Min,
   MinLength,
 } from "class-validator";
 
@@ -89,4 +94,29 @@ export class UpdateFellowshipApplicationDto {
   @IsOptional()
   @IsDateString()
   offerExpiresAt?: string | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  waitlistPosition?: number | null;
+
+  @IsOptional()
+  @IsDateString()
+  waitlistExpiresAt?: string | null;
+}
+
+export class BulkUpdateFellowshipApplicationsDto {
+  @IsArray()
+  @ArrayNotEmpty()
+  @ArrayMaxSize(100)
+  @IsString({ each: true })
+  ids!: string[];
+
+  @IsIn(FELLOWSHIP_APPLICATION_STAGES)
+  stage!: (typeof FELLOWSHIP_APPLICATION_STAGES)[number];
+}
+
+export class FellowshipOfferResponseDto {
+  @IsIn(["accept", "decline"])
+  decision!: "accept" | "decline";
 }

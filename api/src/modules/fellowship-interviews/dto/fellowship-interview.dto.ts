@@ -114,3 +114,32 @@ export class UpdateFellowshipInterviewDto {
   @IsIn(FELLOWSHIP_INTERVIEW_STATUSES)
   status?: (typeof FELLOWSHIP_INTERVIEW_STATUSES)[number];
 }
+
+export class UpdateFellowshipInterviewPanelDto {
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(8)
+  @IsString({ each: true })
+  mentorIds?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(8)
+  @IsEmail({}, { each: true })
+  adminEmails?: string[];
+}
+
+export class FellowshipPanelTokenDto {
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(90)
+  expiresInDays?: number;
+}
+
+export class FellowshipRescheduleRequestDto {
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  note?: string;
+}

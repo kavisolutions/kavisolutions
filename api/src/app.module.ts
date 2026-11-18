@@ -12,10 +12,16 @@ import { ContactModule } from "@/modules/contact/contact.module";
 import { FarmsModule } from "@/modules/farms/farms.module";
 import { FellowshipAlumniModule } from "@/modules/fellowship-alumni/fellowship-alumni.module";
 import { FellowshipApplicationsModule } from "@/modules/fellowship-applications/fellowship-applications.module";
+import { FellowshipAuditModule } from "@/modules/fellowship-audit/fellowship-audit.module";
+import { FellowshipCasesModule } from "@/modules/fellowship-cases/fellowship-cases.module";
+import { FellowshipDeliveryModule } from "@/modules/fellowship-delivery/fellowship-delivery.module";
 import { FellowshipInterviewsModule } from "@/modules/fellowship-interviews/fellowship-interviews.module";
 import { FellowshipMentorsModule } from "@/modules/fellowship-mentors/fellowship-mentors.module";
 import { FellowshipOnboardingModule } from "@/modules/fellowship-onboarding/fellowship-onboarding.module";
+import { FellowshipOperationsModule } from "@/modules/fellowship-operations/fellowship-operations.module";
 import { FellowshipPolicyModule } from "@/modules/fellowship-policy/fellowship-policy.module";
+import { FellowshipReviewsModule } from "@/modules/fellowship-reviews/fellowship-reviews.module";
+import { FellowshipTemplatesModule } from "@/modules/fellowship-templates/fellowship-templates.module";
 import { FinancialModule } from "@/modules/financial/financial.module";
 import { GovernmentModule } from "@/modules/government/government.module";
 import { HealthModule } from "@/modules/health/health.module";
@@ -58,6 +64,12 @@ import { UploadModule } from "@/modules/upload/upload.module";
     FellowshipInterviewsModule,
     FellowshipOnboardingModule,
     FellowshipAlumniModule,
+    FellowshipReviewsModule,
+    FellowshipDeliveryModule,
+    FellowshipCasesModule,
+    FellowshipOperationsModule,
+    FellowshipAuditModule,
+    FellowshipTemplatesModule,
     FarmsModule,
     PagesModule,
     SocialModule,

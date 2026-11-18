@@ -19,6 +19,8 @@ type ApplicationStatus = {
   cohort: string;
   stage: FellowshipApplicationStage;
   offerExpiresAt: string | null;
+  waitlistPosition: number | null;
+  waitlistExpiresAt: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -172,9 +174,21 @@ export default function FellowshipStatusLookup() {
               {isFellowshipStage(application.stage) &&
                 (application.stage === "waitlisted" ? (
                   <p className="mt-5 rounded-xl border border-amber-500/25 bg-amber-500/10 p-4 text-xs leading-relaxed text-amber-200">
-                    You are on the waitlist. Your interview is complete and your
-                    application stays open. The team will contact you if a seat
-                    becomes available for your track and cohort.
+                    You are on the waitlist
+                    {application.waitlistPosition
+                      ? ` at position ${application.waitlistPosition}`
+                      : ""}
+                    . Your interview is complete and your application stays open. The
+                    team will contact you if a seat becomes available for your track and
+                    cohort.
+                    {application.waitlistExpiresAt
+                      ? ` The team will review your place by ${new Date(
+                          application.waitlistExpiresAt,
+                        ).toLocaleDateString("en-IN", {
+                          dateStyle: "full",
+                          timeZone: "Asia/Kolkata",
+                        })}.`
+                      : ""}
                   </p>
                 ) : application.stage === "rejected" ||
                   application.stage === "withdrawn" ? (

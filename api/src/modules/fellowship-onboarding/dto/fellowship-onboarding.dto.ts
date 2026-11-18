@@ -1,9 +1,13 @@
 import {
   IsBoolean,
+  IsDateString,
+  IsIn,
   IsOptional,
   IsString,
   MaxLength,
 } from "class-validator";
+
+import { FELLOWSHIP_DOCUMENT_STATUSES } from "@/db/drizzle/schema";
 
 export class UpsertFellowshipOnboardingDto {
   @IsOptional()
@@ -51,6 +55,36 @@ export class UpsertFellowshipOnboardingDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(2000)
+  accommodationNotes?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  travelNotes?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  foodNotes?: string;
+
+  @IsOptional()
+  @IsDateString()
+  arrivalAt?: string | null;
+
+  @IsOptional()
+  @IsString()
   @MaxLength(4000)
+  notes?: string;
+}
+
+export class UpdateFellowshipDocumentDto {
+  @IsOptional()
+  @IsIn(FELLOWSHIP_DOCUMENT_STATUSES)
+  status?: (typeof FELLOWSHIP_DOCUMENT_STATUSES)[number];
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
   notes?: string;
 }

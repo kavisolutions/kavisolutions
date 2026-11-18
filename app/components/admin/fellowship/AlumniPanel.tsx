@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   GraduationCap,
   Loader2,
+  Mail,
   Plus,
   RefreshCw,
   Save,
@@ -45,6 +46,10 @@ type AlumniDraft = {
   outcome12m: string;
   mentorWilling: boolean;
   testimonialConsent: boolean;
+  followUpDueAt: string;
+  publicStory: string;
+  storyPublished: boolean;
+  verified: boolean;
   notes: string;
 };
 
@@ -61,6 +66,10 @@ const EMPTY_DRAFT: AlumniDraft = {
   outcome12m: "",
   mentorWilling: false,
   testimonialConsent: false,
+  followUpDueAt: "",
+  publicStory: "",
+  storyPublished: false,
+  verified: false,
   notes: "",
 };
 
@@ -72,6 +81,7 @@ export default function AlumniPanel({
   const [alumni, setAlumni] = useState<FellowshipAlumniRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [runningFollowUps, setRunningFollowUps] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [query, setQuery] = useState("");
@@ -138,6 +148,12 @@ export default function AlumniPanel({
       outcome12m: record.outcome12m,
       mentorWilling: record.mentorWilling,
       testimonialConsent: record.testimonialConsent,
+      followUpDueAt: record.followUpDueAt
+        ? new Date(record.followUpDueAt).toISOString().slice(0, 16)
+        : "",
+      publicStory: record.publicStory,
+      storyPublished: record.storyPublished,
+      verified: Boolean(record.verifiedAt),
       notes: record.notes,
     });
     setFormOpen(true);
@@ -171,11 +187,17 @@ export default function AlumniPanel({
     setError("");
     setNotice("");
     try {
+      const payload = {
+        ...draft,
+        followUpDueAt: draft.followUpDueAt
+          ? new Date(draft.followUpDueAt).toISOString()
+          : null,
+      };
       if (editingID) {
-        await adminRequest(`/api/fellowship-alumni/${editingID}`, jsonPatch(draft));
+        await adminRequest(`/api/fellowship-alumni/${editingID}`, jsonPatch(payload));
         setNotice("Alumni record updated.");
       } else {
-        await adminRequest("/api/fellowship-alumni", jsonBody(draft));
+        await adminRequest("/api/fellowship-alumni", jsonBody(payload));
         setNotice("Alumni record added.");
       }
       setFormOpen(false);
@@ -203,6 +225,28 @@ export default function AlumniPanel({
       setError(
         cause instanceof Error ? cause.message : "Could not delete the record.",
       );
+    }
+  };
+
+  const runFollowUps = async () => {
+    setRunningFollowUps(true);
+    setError("");
+    setNotice("");
+    try {
+      const data = await adminRequest<{ sent: number }>(
+        "/api/fellowship-alumni/follow-ups/run",
+        { method: "POST" },
+      );
+      setNotice(
+        data.sent
+          ? `${data.sent} alumni follow-up email(s) sent.`
+          : "No alumni follow-ups are due.",
+      );
+      await load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not run follow-ups.");
+    } finally {
+      setRunningFollowUps(false);
     }
   };
 
@@ -236,6 +280,19 @@ export default function AlumniPanel({
             <Button variant="outline" size="sm" onClick={() => void load()} disabled={loading}>
               <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               Refresh
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void runFollowUps()}
+              disabled={runningFollowUps}
+            >
+              {runningFollowUps ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Mail className="h-4 w-4" />
+              )}
+              Run follow-ups
             </Button>
             <Button size="sm" onClick={openCreate}>
               <Plus className="h-4 w-4" />
@@ -384,6 +441,53 @@ export default function AlumniPanel({
                 />
                 Testimonial and outcome publication consent
               </label>
+              <label className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-[11px]">
+                <input
+                  type="checkbox"
+                  checked={draft.verified}
+                  onChange={(event) =>
+                    setDraft({ ...draft, verified: event.target.checked })
+                  }
+                />
+                Outcome verified by the programme team
+              </label>
+              <label className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-[11px]">
+                <input
+                  type="checkbox"
+                  checked={draft.storyPublished}
+                  onChange={(event) =>
+                    setDraft({ ...draft, storyPublished: event.target.checked })
+                  }
+                />
+                Publish story on the public fellowship page
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Next follow-up
+                </span>
+                <Input
+                  type="datetime-local"
+                  value={draft.followUpDueAt}
+                  onChange={(event) =>
+                    setDraft({ ...draft, followUpDueAt: event.target.value })
+                  }
+                />
+              </label>
+              <div />
+              <label className="block sm:col-span-2">
+                <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Public story (only shown with consent)
+                </span>
+                <textarea
+                  value={draft.publicStory}
+                  onChange={(event) =>
+                    setDraft({ ...draft, publicStory: event.target.value })
+                  }
+                  rows={4}
+                  className="w-full resize-y rounded-lg border border-border bg-background px-2.5 py-2 text-xs"
+                  placeholder="What changed for this fellow, in their own words. No invented placement claims."
+                />
+              </label>
               <label className="block sm:col-span-2">
                 <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Notes
@@ -471,6 +575,16 @@ export default function AlumniPanel({
                       Publication consent
                     </span>
                   )}
+                  {record.verifiedAt && (
+                    <span className="rounded-full border border-sky-500/30 bg-sky-500/10 px-2 py-1 text-[10px] text-sky-600">
+                      Verified
+                    </span>
+                  )}
+                  {record.storyPublished && (
+                    <span className="rounded-full border border-violet-500/30 bg-violet-500/10 px-2 py-1 text-[10px] text-violet-600">
+                      Story published
+                    </span>
+                  )}
                 </div>
               </div>
               {(record.outcome6m || record.outcome12m) && (
@@ -478,6 +592,19 @@ export default function AlumniPanel({
                   {record.outcome6m && <p>6 months: {record.outcome6m}</p>}
                   {record.outcome12m && <p>12 months: {record.outcome12m}</p>}
                 </div>
+              )}
+              {record.publicStory && (
+                <p className="mt-2 rounded-lg border border-border bg-muted/20 p-2 text-[11px] text-muted-foreground">
+                  Public story: {record.publicStory}
+                </p>
+              )}
+              {record.followUpDueAt && (
+                <p className="mt-1 text-[10px] text-muted-foreground">
+                  Next follow-up {new Date(record.followUpDueAt).toLocaleString()}
+                  {record.followUpSentAt
+                    ? ` · last sent ${new Date(record.followUpSentAt).toLocaleString()}`
+                    : ""}
+                </p>
               )}
               {record.notes && (
                 <p className="mt-2 whitespace-pre-wrap text-[11px] text-muted-foreground">
@@ -488,6 +615,24 @@ export default function AlumniPanel({
                 <Button variant="outline" size="sm" onClick={() => openEdit(record)}>
                   Edit
                 </Button>
+                {record.updateToken && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(
+                          `${window.location.origin}/alumni/update/${record.updateToken}`,
+                        );
+                        setNotice("Alumni update link copied.");
+                      } catch {
+                        setError("Could not copy the alumni update link.");
+                      }
+                    }}
+                  >
+                    Copy update link
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"

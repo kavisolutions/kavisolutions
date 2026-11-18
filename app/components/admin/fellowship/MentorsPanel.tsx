@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, Plus, RefreshCw, Save, Trash2, UserRound } from "lucide-react";
+import { Loader2, Plus, RefreshCw, Save, Trash2, UserRound, Copy } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -325,6 +325,54 @@ export default function MentorsPanel() {
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => void toggleStatus(mentor)}>
                   {mentor.status === "active" ? "Mark inactive" : "Mark active"}
+                </Button>
+                {mentor.portalToken && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(
+                          `${window.location.origin}/mentor/portal/${mentor.portalToken}`,
+                        );
+                        setNotice("Mentor portal link copied.");
+                      } catch {
+                        setError("Could not copy the mentor portal link.");
+                      }
+                    }}
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                    Copy portal link
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={async () => {
+                    if (
+                      !window.confirm(
+                        `Rotate ${mentor.name}'s portal link? The old link stops working.`,
+                      )
+                    ) {
+                      return;
+                    }
+                    try {
+                      await adminRequest(
+                        `/api/fellowship-mentors/${mentor.id}/rotate-portal`,
+                        { method: "POST" },
+                      );
+                      setNotice("Mentor portal link rotated.");
+                      await load();
+                    } catch (cause) {
+                      setError(
+                        cause instanceof Error
+                          ? cause.message
+                          : "Could not rotate the portal link.",
+                      );
+                    }
+                  }}
+                >
+                  Rotate portal link
                 </Button>
                 <Button
                   variant="ghost"

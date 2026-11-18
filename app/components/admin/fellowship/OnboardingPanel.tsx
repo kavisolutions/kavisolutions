@@ -30,6 +30,10 @@ type OnboardingDraft = Pick<
   | "deviceNeeds"
   | "baselineDone"
   | "vipassanaAck"
+  | "accommodationNotes"
+  | "travelNotes"
+  | "foodNotes"
+  | "arrivalAt"
   | "notes"
 >;
 
@@ -54,6 +58,10 @@ const fromRecord = (record: FellowshipOnboarding): OnboardingDraft => ({
   deviceNeeds: record.deviceNeeds,
   baselineDone: record.baselineDone,
   vipassanaAck: record.vipassanaAck,
+  accommodationNotes: record.accommodationNotes,
+  travelNotes: record.travelNotes,
+  foodNotes: record.foodNotes,
+  arrivalAt: record.arrivalAt,
   notes: record.notes,
 });
 
@@ -334,6 +342,65 @@ export default function OnboardingPanel({
                     rows={2}
                     className="w-full resize-y rounded-lg border border-border bg-background px-2.5 py-2 text-xs"
                     placeholder="Only what the fellow agrees to share with the programme team"
+                  />
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Accommodation
+                  </span>
+                  <Input
+                    value={draft.accommodationNotes}
+                    onChange={(event) =>
+                      setDraft({ ...draft, accommodationNotes: event.target.value })
+                    }
+                    placeholder="Room, campus, local stay…"
+                  />
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Food needs
+                  </span>
+                  <Input
+                    value={draft.foodNotes}
+                    onChange={(event) =>
+                      setDraft({ ...draft, foodNotes: event.target.value })
+                    }
+                    placeholder="Allergies, preferences, mess arrangement"
+                  />
+                </label>
+                <label className="block sm:col-span-2">
+                  <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Travel and arrival
+                  </span>
+                  <textarea
+                    value={draft.travelNotes}
+                    onChange={(event) =>
+                      setDraft({ ...draft, travelNotes: event.target.value })
+                    }
+                    rows={2}
+                    className="w-full resize-y rounded-lg border border-border bg-background px-2.5 py-2 text-xs"
+                    placeholder="Travel booked, pickup, arrival window"
+                  />
+                </label>
+                <label className="block sm:col-span-2">
+                  <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Arrival date and time
+                  </span>
+                  <Input
+                    type="datetime-local"
+                    value={
+                      draft.arrivalAt
+                        ? new Date(draft.arrivalAt).toISOString().slice(0, 16)
+                        : ""
+                    }
+                    onChange={(event) =>
+                      setDraft({
+                        ...draft,
+                        arrivalAt: event.target.value
+                          ? new Date(event.target.value).toISOString()
+                          : null,
+                      })
+                    }
                   />
                 </label>
                 <label className="block sm:col-span-2">

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  Bell,
   CalendarClock,
   CheckCircle2,
   ChevronDown,
@@ -12,6 +13,7 @@ import {
   Plus,
   RefreshCw,
   Save,
+  ShieldOff,
   Video,
 } from "lucide-react";
 
@@ -115,6 +117,10 @@ export default function InterviewsPanel({
   const [rescheduleAt, setRescheduleAt] = useState("");
   const [scorecardID, setScorecardID] = useState<string | null>(null);
   const [scoreDraft, setScoreDraft] = useState<ScoreDraft>(EMPTY_SCORE);
+  const [panelEditID, setPanelEditID] = useState<string | null>(null);
+  const [panelMentorIds, setPanelMentorIds] = useState<string[]>([]);
+  const [panelAdminEmails, setPanelAdminEmails] = useState("");
+  const [reminderSending, setReminderSending] = useState(false);
 
   const [applicationId, setApplicationId] = useState("");
   const [scheduledAt, setScheduledAt] = useState(defaultSlot);
@@ -294,6 +300,100 @@ export default function InterviewsPanel({
     }
   };
 
+  const savePanel = async (interview: FellowshipInterview) => {
+    setSaving(true);
+    setError("");
+    setNotice("");
+    try {
+      await adminRequest(
+        `/api/fellowship-interviews/${interview.id}/panel`,
+        jsonPatch({
+          mentorIds: panelMentorIds,
+          adminEmails: panelAdminEmails
+            .split(/[\s,;]+/)
+            .map((email) => email.trim())
+            .filter(Boolean),
+        }),
+      );
+      setNotice("Interview panel updated. New panelists were invited.");
+      setPanelEditID(null);
+      await load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not update the panel.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const rotatePanel = async (interview: FellowshipInterview, panelId: string) => {
+    if (!window.confirm("Rotate this scorecard link? The old link stops working.")) return;
+    setError("");
+    setNotice("");
+    try {
+      await adminRequest(
+        `/api/fellowship-interviews/${interview.id}/panel/${panelId}/rotate`,
+        jsonBody({ expiresInDays: 14 }),
+      );
+      setNotice("New scorecard link generated and emailed.");
+      await load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not rotate the link.");
+    }
+  };
+
+  const revokePanel = async (interview: FellowshipInterview, panelId: string) => {
+    if (!window.confirm("Revoke this scorecard link?")) return;
+    setError("");
+    setNotice("");
+    try {
+      await adminRequest(
+        `/api/fellowship-interviews/${interview.id}/panel/${panelId}/revoke`,
+        { method: "POST" },
+      );
+      setNotice("Scorecard link revoked.");
+      await load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not revoke the link.");
+    }
+  };
+
+  const resendPanel = async (interview: FellowshipInterview, panelId: string) => {
+    setError("");
+    setNotice("");
+    try {
+      await adminRequest(
+        `/api/fellowship-interviews/${interview.id}/panel/${panelId}/resend`,
+        { method: "POST" },
+      );
+      setNotice("Panel invitation resent.");
+      await load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not resend the invite.");
+    }
+  };
+
+  const runReminders = async () => {
+    setReminderSending(true);
+    setError("");
+    setNotice("");
+    try {
+      const data = await adminRequest<{ sent: number }>(
+        "/api/fellowship-interviews/reminders/run",
+        { method: "POST" },
+      );
+      setNotice(
+        data.sent
+          ? `${data.sent} interview reminder(s) sent.`
+          : "No interviews need a reminder in the next 48 hours.",
+      );
+      await load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not send reminders.");
+    } finally {
+      setReminderSending(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
       {(error || notice) && (
@@ -324,6 +424,19 @@ export default function InterviewsPanel({
             <Button variant="outline" size="sm" onClick={() => void load()} disabled={loading}>
               <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               Refresh
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void runReminders()}
+              disabled={reminderSending}
+            >
+              {reminderSending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Bell className="h-4 w-4" />
+              )}
+              Send reminders
             </Button>
             <Button size="sm" onClick={() => setFormOpen((current) => !current)}>
               <Plus className="h-4 w-4" />
@@ -555,6 +668,27 @@ export default function InterviewsPanel({
                   ))}
                 </div>
 
+                {(interview.candidateConfirmedAt ||
+                  interview.rescheduleRequestedAt) && (
+                  <div className="mt-2 space-y-1">
+                    {interview.candidateConfirmedAt && (
+                      <p className="rounded-lg border border-emerald-500/25 bg-emerald-500/10 px-3 py-1.5 text-[10px] text-emerald-700">
+                        Candidate confirmed attendance on{" "}
+                        {new Date(interview.candidateConfirmedAt).toLocaleString()}.
+                      </p>
+                    )}
+                    {interview.rescheduleRequestedAt && (
+                      <p className="rounded-lg border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 text-[10px] text-amber-700">
+                        Reschedule requested{" "}
+                        {new Date(interview.rescheduleRequestedAt).toLocaleString()}
+                        {interview.rescheduleNote
+                          ? `: ${interview.rescheduleNote}`
+                          : "."}
+                      </p>
+                    )}
+                  </div>
+                )}
+
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Button
                     variant="outline"
@@ -567,6 +701,30 @@ export default function InterviewsPanel({
                       <ChevronDown className="h-3.5 w-3.5" />
                     )}
                     Details
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      if (panelEditID === interview.id) {
+                        setPanelEditID(null);
+                        return;
+                      }
+                      setPanelEditID(interview.id);
+                      setPanelMentorIds(
+                        interview.panel
+                          .map((member) => member.mentorId)
+                          .filter((value): value is string => Boolean(value)),
+                      );
+                      setPanelAdminEmails(
+                        interview.panel
+                          .filter((member) => member.role === "admin")
+                          .map((member) => member.email)
+                          .join(", "),
+                      );
+                    }}
+                  >
+                    Edit panel
                   </Button>
                   <Button
                     variant="outline"
@@ -721,6 +879,73 @@ export default function InterviewsPanel({
                   </div>
                 )}
 
+                {panelEditID === interview.id && (
+                  <div className="mt-3 rounded-lg border border-border bg-muted/20 p-3">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      Edit panel
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {activeMentors.map((mentor) => {
+                        const checked = panelMentorIds.includes(mentor.id);
+                        return (
+                          <label
+                            key={mentor.id}
+                            className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-[11px] ${
+                              checked
+                                ? "border-primary/40 bg-primary/5"
+                                : "border-border bg-background"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={(event) =>
+                                setPanelMentorIds((current) =>
+                                  event.target.checked
+                                    ? [...current, mentor.id]
+                                    : current.filter((id) => id !== mentor.id),
+                                )
+                              }
+                            />
+                            {mentor.name}
+                          </label>
+                        );
+                      })}
+                    </div>
+                    <label className="mt-2 block">
+                      <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Admin panel emails
+                      </span>
+                      <Input
+                        value={panelAdminEmails}
+                        onChange={(event) => setPanelAdminEmails(event.target.value)}
+                        placeholder="admin1@example.com, admin2@example.com"
+                      />
+                    </label>
+                    <p className="mt-1 text-[10px] text-muted-foreground">
+                      Submitted panelists cannot be removed. New panelists get a private
+                      scorecard link.
+                    </p>
+                    <div className="mt-2 flex gap-2">
+                      <Button size="sm" onClick={() => void savePanel(interview)} disabled={saving}>
+                        {saving ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Save className="h-3.5 w-3.5" />
+                        )}
+                        Save panel
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPanelEditID(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
                 {expanded && (
                   <div className="mt-3 space-y-2 rounded-lg border border-border bg-muted/20 p-3">
                     {interview.meetingUrl && (
@@ -738,6 +963,22 @@ export default function InterviewsPanel({
                         Location: {interview.location}
                       </p>
                     )}
+                    <div className="flex flex-wrap gap-3 text-[10px]">
+                      <a
+                        href={`/api/fellowship-interviews/candidate/token/${interview.candidateToken}/calendar.ics`}
+                        className="text-primary hover:underline"
+                      >
+                        Candidate calendar (.ics)
+                      </a>
+                      <a
+                        href={`/fellowship/interview/${interview.candidateToken}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        Candidate confirmation page
+                      </a>
+                    </div>
                     {interview.panel.map((member) => (
                       <div
                         key={member.id}
@@ -750,15 +991,53 @@ export default function InterviewsPanel({
                               ({member.role})
                             </span>
                           </p>
-                          <button
-                            type="button"
-                            onClick={() => void copyLink(member.token)}
-                            className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline"
-                          >
-                            <Copy className="h-3 w-3" />
-                            Copy scorecard link
-                          </button>
+                          <div className="flex flex-wrap gap-1">
+                            <button
+                              type="button"
+                              onClick={() => void copyLink(member.token)}
+                              className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[10px] text-primary hover:bg-primary/10"
+                            >
+                              <Copy className="h-3 w-3" />
+                              Copy
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => void resendPanel(interview, member.id)}
+                              className="rounded-md px-1.5 py-1 text-[10px] text-primary hover:bg-primary/10"
+                            >
+                              Resend
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => void rotatePanel(interview, member.id)}
+                              className="rounded-md px-1.5 py-1 text-[10px] text-muted-foreground hover:bg-muted"
+                            >
+                              Rotate
+                            </button>
+                            {!member.revokedAt && (
+                              <button
+                                type="button"
+                                onClick={() => void revokePanel(interview, member.id)}
+                                className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[10px] text-destructive hover:bg-destructive/10"
+                              >
+                                <ShieldOff className="h-3 w-3" />
+                                Revoke
+                              </button>
+                            )}
+                          </div>
                         </div>
+                        {member.revokedAt ? (
+                          <p className="mt-1.5 text-[10px] text-destructive">
+                            Link revoked {new Date(member.revokedAt).toLocaleString()}.
+                          </p>
+                        ) : member.tokenExpiresAt ? (
+                          <p className="mt-1.5 text-[10px] text-muted-foreground">
+                            Link expires {new Date(member.tokenExpiresAt).toLocaleString()}.
+                            {member.lastSentAt
+                              ? ` Last sent ${new Date(member.lastSentAt).toLocaleString()}.`
+                              : ""}
+                          </p>
+                        ) : null}
                         {member.submittedAt ? (
                           <div className="mt-1.5 text-[10px] text-muted-foreground">
                             <p>

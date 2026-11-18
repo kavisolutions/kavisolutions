@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsDateString,
   IsEmail,
   IsOptional,
   IsString,
@@ -66,13 +67,29 @@ export class CreateFellowshipAlumniDto {
   testimonialConsent?: boolean;
 
   @IsOptional()
+  @IsDateString()
+  followUpDueAt?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(4000)
+  publicStory?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  storyPublished?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  verified?: boolean;
+
+  @IsOptional()
   @IsString()
   @MaxLength(4000)
   notes?: string;
 }
 
-export class UpdateFellowshipAlumniDto {
-  @IsOptional()
+export class UpdateFellowshipAlumniDto {  @IsOptional()
   @IsString()
   @MinLength(2)
   @MaxLength(120)
@@ -127,7 +144,64 @@ export class UpdateFellowshipAlumniDto {
   testimonialConsent?: boolean;
 
   @IsOptional()
+  @IsDateString()
+  followUpDueAt?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(4000)
+  publicStory?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  storyPublished?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  verified?: boolean;
+
+  @IsOptional()
   @IsString()
   @MaxLength(4000)
   notes?: string;
+}
+
+export class AlumniSelfUpdateDto {
+  @IsOptional()
+  @IsString()
+  @MaxLength(80)
+  destinationType?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  organisation?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(160)
+  role?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  outcome6m?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  outcome12m?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  mentorWilling?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  testimonialConsent?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(4000)
+  publicStory?: string;
 }

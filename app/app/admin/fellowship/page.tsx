@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  AlertOctagon,
   ArrowLeft,
   CalendarClock,
   CalendarDays,
+  ClipboardCheck,
   ClipboardList,
   GraduationCap,
+  LayoutDashboard,
   Loader2,
   Mail,
   MapPin,
@@ -31,9 +34,13 @@ import {
   type FellowshipPolicy,
 } from "@/lib/fellowship-policy";
 import AlumniPanel from "@/components/admin/fellowship/AlumniPanel";
+import CasesPanel from "@/components/admin/fellowship/CasesPanel";
+import DashboardPanel from "@/components/admin/fellowship/DashboardPanel";
+import DeliveryPanel from "@/components/admin/fellowship/DeliveryPanel";
 import InterviewsPanel from "@/components/admin/fellowship/InterviewsPanel";
 import MentorsPanel from "@/components/admin/fellowship/MentorsPanel";
 import OnboardingPanel from "@/components/admin/fellowship/OnboardingPanel";
+import ReviewsPanel from "@/components/admin/fellowship/ReviewsPanel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -55,6 +62,11 @@ type Application = {
   cohort: string;
   stage: FellowshipApplicationStage;
   offerExpiresAt: string | null;
+  offerReminderSentAt: string | null;
+  waitlistPosition: number | null;
+  waitlistExpiresAt: string | null;
+  completedAt: string | null;
+  candidateToken: string | null;
   notes: string;
   createdAt: string;
   updatedAt: string;
@@ -77,8 +89,16 @@ const toLocalInput = (value: string): string => {
 export default function FellowshipApplicationsAdmin() {
   const { session, loading: authLoading } = useAuth();
   const [tab, setTab] = useState<
-    "applications" | "interviews" | "mentors" | "onboarding" | "alumni"
-  >("applications");
+    | "dashboard"
+    | "applications"
+    | "reviews"
+    | "interviews"
+    | "mentors"
+    | "fellowship"
+    | "onboarding"
+    | "alumni"
+    | "cases"
+  >("dashboard");
   const [applications, setApplications] = useState<Application[]>([]);
   const [selectedID, setSelectedID] = useState<string | null>(null);
   const [query, setQuery] = useState("");
@@ -88,11 +108,17 @@ export default function FellowshipApplicationsAdmin() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [forbidden, setForbidden] = useState(false);
+  const [checkedIDs, setCheckedIDs] = useState<string[]>([]);
+  const [bulkStage, setBulkStage] =
+    useState<FellowshipApplicationStage>("review");
+  const [bulkSaving, setBulkSaving] = useState(false);
   const [draft, setDraft] = useState<{
     stage: FellowshipApplicationStage;
     cohort: string;
     notes: string;
     offerExpiresAt: string;
+    waitlistPosition: string;
+    waitlistExpiresAt: string;
   } | null>(null);
   const [policy, setPolicy] = useState<FellowshipPolicy | null>(null);
   const [policyDraft, setPolicyDraft] = useState<FellowshipPolicy>(
@@ -171,6 +197,13 @@ export default function FellowshipApplicationsAdmin() {
       offerExpiresAt: application.offerExpiresAt
         ? toLocalInput(application.offerExpiresAt)
         : "",
+      waitlistPosition:
+        application.waitlistPosition !== null
+          ? String(application.waitlistPosition)
+          : "",
+      waitlistExpiresAt: application.waitlistExpiresAt
+        ? toLocalInput(application.waitlistExpiresAt)
+        : "",
     });
     setNotice("");
     setError("");
@@ -195,6 +228,12 @@ export default function FellowshipApplicationsAdmin() {
             offerExpiresAt: draft.offerExpiresAt
               ? new Date(draft.offerExpiresAt).toISOString()
               : null,
+            waitlistPosition: draft.waitlistPosition
+              ? Number(draft.waitlistPosition)
+              : null,
+            waitlistExpiresAt: draft.waitlistExpiresAt
+              ? new Date(draft.waitlistExpiresAt).toISOString()
+              : null,
           }),
         }),
       );
@@ -217,6 +256,74 @@ export default function FellowshipApplicationsAdmin() {
       setError(cause instanceof Error ? cause.message : "Could not save.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const removeApplication = async () => {
+    if (!selected) return;
+    const confirmation = window.prompt(
+      `Type DELETE to permanently delete ${selected.name}'s application and related records.`,
+    );
+    if (confirmation !== "DELETE") return;
+    setSaving(true);
+    setError("");
+    setNotice("");
+    try {
+      const response = await fetch(`/api/fellowship-applications/${selected.id}`, {
+        ...withCookies({ method: "DELETE" }),
+      });
+      if (!response.ok) {
+        const data = (await response.json().catch(() => null)) as
+          | { message?: string }
+          | null;
+        throw new Error(apiErrorMessage(data, "Could not delete the application."));
+      }
+      setApplications((current) =>
+        current.filter((application) => application.id !== selected.id),
+      );
+      setSelectedID(null);
+      setDraft(null);
+      setNotice("Application and related records deleted.");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not delete.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const bulkApply = async () => {
+    if (!checkedIDs.length) return;
+    setBulkSaving(true);
+    setError("");
+    setNotice("");
+    try {
+      const response = await fetch("/api/fellowship-applications/bulk", {
+        ...withCookies({
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids: checkedIDs, stage: bulkStage }),
+        }),
+      });
+      const data = (await response.json().catch(() => null)) as {
+        applications?: Application[];
+        changed?: number;
+        message?: string;
+      } | null;
+      if (!response.ok || !data?.applications) {
+        throw new Error(apiErrorMessage(data, "Could not update the applications."));
+      }
+      const byId = new Map(
+        data.applications.map((application) => [application.id, application]),
+      );
+      setApplications((current) =>
+        current.map((application) => byId.get(application.id) ?? application),
+      );
+      setNotice(`${data.changed ?? checkedIDs.length} application(s) updated.`);
+      setCheckedIDs([]);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not update.");
+    } finally {
+      setBulkSaving(false);
     }
   };
 
@@ -323,11 +430,15 @@ export default function FellowshipApplicationsAdmin() {
         <div className="mt-5 flex flex-wrap gap-1.5 rounded-xl border border-border bg-muted/30 p-1.5">
           {(
             [
+              ["dashboard", "Dashboard", LayoutDashboard],
               ["applications", "Applications", ClipboardList],
+              ["reviews", "Reviews", ClipboardCheck],
               ["interviews", "Interviews", CalendarClock],
               ["mentors", "Mentors", UserRound],
+              ["fellowship", "Fellowship", UserCheck],
               ["onboarding", "Onboarding", UserCheck],
               ["alumni", "Alumni", GraduationCap],
+              ["cases", "Cases", AlertOctagon],
             ] as const
           ).map(([value, label, Icon]) => (
             <button
@@ -481,6 +592,37 @@ export default function FellowshipApplicationsAdmin() {
                   className="pl-9"
                 />
               </div>
+              {checkedIDs.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 p-2">
+                  <span className="text-[10px] font-medium">
+                    {checkedIDs.length} selected
+                  </span>
+                  <select
+                    value={bulkStage}
+                    onChange={(event) =>
+                      setBulkStage(event.target.value as FellowshipApplicationStage)
+                    }
+                    className="h-8 rounded-lg border border-border bg-background px-2 text-[10px]"
+                  >
+                    {FELLOWSHIP_APPLICATION_STAGES.map((stage) => (
+                      <option key={stage} value={stage}>
+                        {FELLOWSHIP_STAGE_LABELS[stage]}
+                      </option>
+                    ))}
+                  </select>
+                  <Button size="sm" onClick={() => void bulkApply()} disabled={bulkSaving}>
+                    {bulkSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+                    Apply to selected
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCheckedIDs([])}
+                  >
+                    Clear
+                  </Button>
+                </div>
+              )}
             </CardHeader>
             <CardContent className="space-y-2">
               {loading && applications.length === 0 ? (
@@ -496,40 +638,56 @@ export default function FellowshipApplicationsAdmin() {
                   const color = FELLOWSHIP_STAGE_TONES[application.stage];
                   const active = selectedID === application.id;
                   return (
-                    <button
-                      key={application.id}
-                      type="button"
-                      onClick={() => select(application)}
-                      className={`w-full rounded-xl border p-4 text-left transition-colors ${
-                        active
-                          ? "border-primary/40 bg-primary/5"
-                          : "border-border bg-card hover:bg-muted/40"
-                      }`}
-                    >
-                      <div className="flex flex-wrap items-start justify-between gap-2">
-                        <div>
-                          <p className="text-sm font-semibold">{application.name}</p>
-                          <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">
-                            {application.reference} · {application.track}
-                          </p>
+                    <div key={application.id} className="flex items-start gap-2">
+                      <input
+                        type="checkbox"
+                        aria-label={`Select ${application.name}`}
+                        checked={checkedIDs.includes(application.id)}
+                        onChange={(event) =>
+                          setCheckedIDs((current) =>
+                            event.target.checked
+                              ? [...current, application.id]
+                              : current.filter((id) => id !== application.id),
+                          )
+                        }
+                        className="mt-4"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => select(application)}
+                        className={`w-full rounded-xl border p-4 text-left transition-colors ${
+                          active
+                            ? "border-primary/40 bg-primary/5"
+                            : "border-border bg-card hover:bg-muted/40"
+                        }`}
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-2">
+                          <div>
+                            <p className="text-sm font-semibold">{application.name}</p>
+                            <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">
+                              {application.reference} · {application.track}
+                            </p>
+                          </div>
+                          <span
+                            className="rounded-full border px-2 py-1 text-[10px] font-medium"
+                            style={{
+                              color,
+                              borderColor: `${color}55`,
+                              backgroundColor: `${color}14`,
+                            }}
+                          >
+                            {FELLOWSHIP_STAGE_LABELS[application.stage]}
+                          </span>
                         </div>
-                        <span
-                          className="rounded-full border px-2 py-1 text-[10px] font-medium"
-                          style={{
-                            color,
-                            borderColor: `${color}55`,
-                            backgroundColor: `${color}14`,
-                          }}
-                        >
-                          {FELLOWSHIP_STAGE_LABELS[application.stage]}
-                        </span>
-                      </div>
-                      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
-                        <span>{application.email}</span>
-                        <span>{application.city || "City not given"}</span>
-                        <span>{new Date(application.createdAt).toLocaleDateString()}</span>
-                      </div>
-                    </button>
+                        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
+                          <span>{application.email}</span>
+                          <span>{application.city || "City not given"}</span>
+                          <span>
+                            {new Date(application.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </button>
+                    </div>
                   );
                 })
               )}
@@ -649,6 +807,46 @@ export default function FellowshipApplicationsAdmin() {
                     </span>
                   </label>
 
+                  {draft.stage === "waitlisted" && (
+                    <>
+                      <label className="block">
+                        <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                          Waitlist position
+                        </span>
+                        <Input
+                          type="number"
+                          min={1}
+                          value={draft.waitlistPosition}
+                          onChange={(event) =>
+                            setDraft({
+                              ...draft,
+                              waitlistPosition: event.target.value,
+                            })
+                          }
+                          placeholder="Auto-assigned if empty"
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                          Waitlist review by
+                        </span>
+                        <Input
+                          type="datetime-local"
+                          value={draft.waitlistExpiresAt}
+                          onChange={(event) =>
+                            setDraft({
+                              ...draft,
+                              waitlistExpiresAt: event.target.value,
+                            })
+                          }
+                        />
+                        <span className="mt-1 block text-[10px] text-muted-foreground">
+                          Defaults to 30 days when first waitlisted.
+                        </span>
+                      </label>
+                    </>
+                  )}
+
                   <label className="block">
                     <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Internal notes
@@ -665,6 +863,27 @@ export default function FellowshipApplicationsAdmin() {
                   <Button onClick={() => void save()} disabled={saving} className="w-full">
                     {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                     Save changes
+                  </Button>
+
+                  {selected.candidateToken && selected.stage === "offer" && (
+                    <a
+                      href={`/fellowship/offer/${selected.candidateToken}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block text-center text-[10px] font-medium text-primary hover:underline"
+                    >
+                      Open candidate offer page
+                    </a>
+                  )}
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full text-destructive"
+                    onClick={() => void removeApplication()}
+                    disabled={saving}
+                  >
+                    Delete application
                   </Button>
                 </div>
               )}
@@ -701,6 +920,30 @@ export default function FellowshipApplicationsAdmin() {
         {tab === "alumni" && (
           <div className="mt-5">
             <AlumniPanel applications={applications} />
+          </div>
+        )}
+
+        {tab === "dashboard" && (
+          <div className="mt-5">
+            <DashboardPanel />
+          </div>
+        )}
+
+        {tab === "reviews" && (
+          <div className="mt-5">
+            <ReviewsPanel applications={applications} />
+          </div>
+        )}
+
+        {tab === "fellowship" && (
+          <div className="mt-5">
+            <DeliveryPanel applications={applications} />
+          </div>
+        )}
+
+        {tab === "cases" && (
+          <div className="mt-5">
+            <CasesPanel applications={applications} />
           </div>
         )}
       </div>

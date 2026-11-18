@@ -25,6 +25,12 @@ offers, onboarding, active fellows and alumni outcomes.
 | Onboarding API | `api/src/modules/fellowship-onboarding/` |
 | Alumni API | `api/src/modules/fellowship-alumni/` |
 | Mentor scorecard page | `app/app/mentor/interview/[token]/page.tsx` |
+| Mentor portal and review pages | `app/app/mentor/portal/[token]/page.tsx`, `app/app/mentor/review/[token]/page.tsx` |
+| Candidate offer/interview pages | `app/app/fellowship/offer/[token]/page.tsx`, `app/app/fellowship/interview/[token]/page.tsx` |
+| Alumni self-service page | `app/app/alumni/update/[token]/page.tsx` |
+| Delivery, cases, audit APIs | `api/src/modules/fellowship-delivery/`, `fellowship-cases/`, `fellowship-audit/` |
+| Reviews, documents, templates APIs | `api/src/modules/fellowship-reviews/`, `fellowship-onboarding/`, `fellowship-templates/` |
+| Operations dashboard API | `api/src/modules/fellowship-operations/` |
 | Applications + programme tables | `api/src/db/drizzle/migrations/0008_colorful_hiroim.sql`, `0009_deep_wendell_vaughn.sql` |
 | Programme guide | `app/app/fellowship/guide/page.tsx` |
 | SEO structured data | `app/app/fellowship/page.tsx` |
@@ -156,9 +162,14 @@ active → completed`, plus the closed branches `rejected` and `withdrawn`.
 
 ### Application review
 
-Admins read the motivation, commitments, track, city and internal notes, then
-move the application to `review` or `interview`. Keep interview evidence in the
-scorecard rather than only in the free-text notes. Internal notes are never
+Admins assign independent reviewers in the **Reviews** tab. Each reviewer gets a
+private `/mentor/review/<token>` link with the application, motivation and the
+same six-criteria rubric used at interview. Reviewer links expire after 14 days
+by default and can be revoked or deleted. Admins can also submit their own
+review without using the link.
+
+The review summary shows assigned count, submitted count and average score. Keep
+review evidence separate from interview evidence. Internal notes are never
 included in applicant email or the public status response.
 
 ### Mentors and interview panels
@@ -203,9 +214,25 @@ are logged but never lose the interview record.
 
 Token links are bearer secrets: anyone with the link can see the candidate's
 application details and submit that panelist's scorecard. Treat them as private,
-send them only to the named interviewer, and do not forward them. There is no
-expiry or revocation UI yet; deleting the interview/panel row is not currently
-exposed.
+send them only to the named interviewer, and do not forward them. Panel tokens
+expire after 14 days by default. Admins can rotate a token (old link stops
+working immediately), revoke it, or resend the invitation from the interview
+details. A panelist who has already submitted cannot be removed.
+
+Panels can be edited after scheduling. Adding a panelist creates a new token and
+sends an invitation; removing an unsubmitted panelist deletes that token.
+
+Each mentor also has a private portal link `/mentor/portal/<token>` that lists
+all assigned interviews, scorecard status, candidate confirmations and reschedule
+requests. Admins can copy or rotate that link from the Mentors tab.
+
+Candidates receive a private interview page `/fellowship/interview/<token>`.
+They can confirm attendance or request a reschedule with a short reason. The
+admin sees the confirmation/reschedule request on the interview card. The page
+and both invitation emails include a downloadable `.ics` calendar file. Interview
+reminders can be sent manually from the Interviews tab or the Dashboard; the
+maintenance endpoint sends reminders for interviews in the next 48 hours and
+records `reminder_sent_at`.
 
 ### Offer, acceptance and waitlist
 
@@ -217,7 +244,12 @@ deadline. These values live in the policy editor; do not put promises in the
 public copy that the programme cannot deliver.
 
 - Offer emails include the response deadline when one is set.
-- Waitlisted candidates stay open and can be moved to Offer later.
+- Waitlisted candidates get a position and a review date. The first waitlisting
+  assigns the next position and a 30-day review window unless the admin sets one.
+- Offer emails link to `/fellowship/offer/<token>` where the candidate can accept
+  or decline. The API enforces the offer deadline and records the decision.
+- Offer reminders can be run from the Dashboard; the endpoint contacts offers
+  expiring within 72 hours and records `offer_reminder_sent_at`.
 - Accepted candidates move to onboarding only after the written terms and
   consents are confirmed.
 - Never make verbal promises outside the written terms.
@@ -242,17 +274,30 @@ item. Saving the checklist does not change the stage. Use **Mark onboarding
 complete** or move the application to `onboarded` after the induction is done.
 Onboarding notes are internal.
 
+Logistics fields cover accommodation, food needs, travel/arrival notes and the
+arrival date/time. The **Fellowship** tab stores private documents (PDF/JPG/PNG/
+WebP, max 10MB) in the private storage bucket. Documents can be downloaded by
+admins, marked verified/rejected and deleted. They are not exposed publicly.
+
 ### Active fellowship and completion
 
 The application stages `onboarded`, `active` and `completed` cover the delivery
-period. The current admin system records the stage, cohort and internal notes.
-Weekly mentor reviews, attendance, phase assessments, at-risk flags and capstone
-sign-off are **not yet structured records**; see “Still missing” below.
+period. The **Fellowship** tab stores weekly, phase, capstone and exit reviews
+with:
 
-Completion requires the programme team to confirm attendance, phase reviews, the
-DSN field project, a public capstone, an exit interview and a next-step plan.
-The verifiable certificate system remains separate (`/verify/<id>`). Moving an
-application to `completed` creates the alumni record automatically.
+- phase and week
+- reviewer name/email
+- attendance percentage
+- deliverable, collaboration and field scores (1–5)
+- written evidence
+- at-risk flag and support plan
+
+At-risk reviews are highlighted and counted on the Dashboard. Completion still
+requires the programme team to confirm attendance, phase reviews, the DSN field
+project, a public capstone, an exit interview and a next-step plan. The verifiable
+certificate system remains separate (`/verify/<id>`) and is not auto-issued yet.
+Moving an application to `completed` sets `completed_at` and creates the alumni
+record automatically.
 
 ### Alumni
 
@@ -270,6 +315,53 @@ The **Alumni** tab stores:
 Only publish outcomes that are verified and consented. Do not invent alumni
 testimonials or placement claims before the first cohort completes. A record can
 be added manually or started from a completed application.
+
+Each alumni record has a next follow-up date, a private self-service link
+`/alumni/update/<token>`, verified status, a public story and a publish toggle.
+Running alumni follow-ups from the Dashboard emails records whose follow-up is
+due and marks `follow_up_sent_at`. Self-service edits can update destination,
+organisation, outcomes, mentoring willingness, consent and the story text, but
+cannot publish the story. Only records with `story_published` **and**
+`testimonial_consent` appear on `/fellowship`; names are shortened to first name
+plus initial. The public section stays hidden when there are no consented
+stories.
+
+The **Dashboard** also exposes aggregate alumni counts by destination and cohort.
+Do not describe these as placement guarantees.
+
+### Cases and audit
+
+The **Cases** tab records confidential POSH, safeguarding, grievance, wellbeing
+and other cases. Cases have severity, owner, status, details and resolution,
+and are admin-only. This is a record-keeping tool, not a substitute for Kavi's
+written investigation and legal process.
+
+Every application stage change, interview, review, document, case, mentor and
+alumni change writes to `fellowship_audit_log` with the actor email. The
+Dashboard shows the latest entries. The log is append-only through the app; there
+is no UI to edit or delete audit rows.
+
+### Dashboard, CSV and bulk actions
+
+The default admin tab is a dashboard with pipeline counts, interview/offer/
+completion conversion, upcoming interviews, offers expiring in 72 hours,
+pending reviews, at-risk fellows, open cases, waitlist and alumni totals. It also
+runs interview, offer and alumni reminder batches.
+
+Applications can be exported to CSV (`GET /api/fellowship-applications/export.csv`,
+admin only), filtered by stage/search. The applications list supports checkbox
+selection and bulk stage changes through `PATCH /api/fellowship-applications/bulk`.
+Deleting an application requires typing `DELETE`; related interview, review,
+document, delivery and onboarding rows cascade, and linked alumni records keep
+their history with the application link set to null.
+
+### Stage email templates
+
+Stage emails can be overridden from the Dashboard. Templates are keyed
+`stage.<stage>` and support `{{name}}`, `{{reference}}`, `{{track}}`,
+`{{cohort}}`, `{{stage}}`, `{{offerExpiry}}` and `{{offerUrl}}`. Empty overrides
+fall back to the built-in copy. Interview, review, reminder and alumni emails are
+still code-managed.
 
 The cohort terms shown in the public “COHORT TERMS” panel and the guide are
 admin-editable under `/admin/fellowship` → **Cohort and policy terms**. They are
@@ -379,37 +471,63 @@ Public endpoints:
 
 - `POST /api/fellowship-applications` — submit an application.
 - `POST /api/fellowship-applications/status` — reference + email lookup.
+- `GET /api/fellowship-applications/offer/:token` — load the candidate offer.
+- `POST /api/fellowship-applications/offer/:token` — accept/decline an offer.
 - `GET /api/fellowship-policy` — public cohort terms.
+- `GET /api/fellowship-alumni/public` — consented public stories only.
+- `GET/PATCH /api/fellowship-alumni/token/:token` — alumni self-service.
 - `GET /api/fellowship-interviews/token/:token` — load a private scorecard.
 - `POST /api/fellowship-interviews/token/:token` — submit a private scorecard.
+- `GET /api/fellowship-interviews/token/:token/calendar.ics` — panel calendar.
+- `GET /api/fellowship-interviews/candidate/token/:token` — candidate interview.
+- `POST .../confirm` and `POST .../reschedule` — candidate response.
+- `GET .../calendar.ics` — candidate calendar.
+- `GET/POST /api/fellowship-reviews/token/:token` — private application review.
+- `GET /api/fellowship-mentors/portal/:token` — mentor portal.
 
 Admin-only endpoints (session + admin role/email, rate limited):
 
-- `GET /api/fellowship-applications`, `PATCH /api/fellowship-applications/:id`
-- `GET/POST /api/fellowship-mentors`, `PATCH/DELETE /api/fellowship-mentors/:id`
-- `GET/POST /api/fellowship-interviews`, `PATCH /api/fellowship-interviews/:id`,
-  `POST /api/fellowship-interviews/:id/scorecard`
-- `GET /api/fellowship-onboarding`, `GET/PUT /api/fellowship-onboarding/:applicationId`
-- `GET/POST /api/fellowship-alumni`, `PATCH/DELETE /api/fellowship-alumni/:id`
+- `GET/PATCH /api/fellowship-applications`, `PATCH /bulk`, `DELETE /:id`,
+  `GET /export.csv`, `GET /offers/due`, `POST /offers/reminders/run`
+- `GET/POST /api/fellowship-mentors`, `PATCH/DELETE /:id`,
+  `POST /:id/rotate-portal`
+- `GET/POST /api/fellowship-interviews`, `PATCH /:id`,
+  `PATCH /:id/panel`, `POST /:id/panel/:panelId/rotate|revoke|resend`,
+  `POST /:id/scorecard`, `GET /reminders/upcoming`, `POST /reminders/run`
+- `GET /api/fellowship-reviews`, `POST /api/fellowship-reviews`,
+  `POST /application/:applicationId/scorecard`, `POST /:id/revoke`, `DELETE /:id`
+- `GET /api/fellowship-onboarding`, `GET/PUT /:applicationId`,
+  `GET/POST /:applicationId/documents`, `PATCH/DELETE /documents/:id`,
+  `GET /documents/:id/file`
+- `GET/POST /api/fellowship-delivery`, `PATCH/DELETE /api/fellowship-delivery/:id`
+- `GET/POST /api/fellowship-cases`, `PATCH/DELETE /api/fellowship-cases/:id`
+- `GET/POST /api/fellowship-alumni`, `PATCH/DELETE /:id`, `GET /summary`,
+  `GET /follow-ups/due`, `POST /follow-ups/run`
+- `GET /api/fellowship-operations/dashboard`, `GET /api/fellowship-operations/cohorts`
+- `GET /api/fellowship-audit`
+- `GET /api/fellowship-email-templates`, `PUT/DELETE /:key`
 - `PUT /api/fellowship-policy`
 
 Tables in `api/src/db/drizzle/schema.ts`:
 
-- `fellowship_applications` — candidate, stage, cohort, offer expiry, notes.
-- `fellowship_mentors` — mentor directory and active/inactive status.
-- `fellowship_interviews` — schedule, mode, location, meeting link, status.
-- `fellowship_interview_panel` — panelist identity, private token and scorecard.
-- `fellowship_onboarding` — one checklist row per application.
-- `fellowship_alumni` — outcomes and consent, optionally linked to an application.
+- `fellowship_applications` — candidate, stage, cohort, offer/waitlist dates,
+  candidate token, completion date, notes.
+- `fellowship_mentors` — mentor directory, status and private portal token.
+- `fellowship_application_reviews` — assigned pre-interview reviewer scorecards.
+- `fellowship_interviews` — schedule, mode, location, status, candidate token,
+  confirmation/reschedule/reminder fields.
+- `fellowship_interview_panel` — panelist identity, token lifecycle and scorecard.
+- `fellowship_onboarding` — checklist and accommodation/travel/food logistics.
+- `fellowship_documents` — private document metadata and verification status.
+- `fellowship_delivery_reviews` — weekly/phase/capstone/exit reviews and risk flags.
+- `fellowship_cases` — confidential POSH/safeguarding/grievance/wellbeing cases.
+- `fellowship_alumni` — outcomes, follow-ups, self-service token and public story.
+- `fellowship_audit_log` — append-only actor/action trail.
+- `fellowship_email_templates` — optional stage-email overrides.
 
-Migration `0009_deep_wendell_vaughn.sql` creates the mentor, interview, panel,
-onboarding and alumni tables and adds `offer_expires_at`. Apply migrations before
-deploying the API:
-
-```bash
-cd api
-npm run db:migrate
-```
+Migrations `0009`, `0010` and `0011` add the admissions, delivery, alumni,
+audit, case and template tables. The deploy script runs `npm run db:migrate`
+before building the API.
 
 Verification used for this build:
 
@@ -418,79 +536,83 @@ cd api && npm run type-check && npm run lint && npm test
 cd app && npx tsc --noEmit && npm test && npm run build
 ```
 
-The end-to-end check covers: create mentor → submit application → schedule panel
-→ submit mentor and admin scorecards → move to offer (expiry default) → save
-onboarding → accepted/onboarded/active/completed → automatic alumni record →
-public status lookup. The mentor scorecard page and all five admin tabs are
-also tested in the browser.
+The end-to-end check covers: mentor and portal creation → application → reviewer
+assignment and review → interview panel and candidate confirmation → scorecards →
+offer with candidate accept/decline → onboarding checklist and private document →
+delivery reviews including at-risk flags → completion and automatic alumni
+record → alumni follow-up/self-service/public story → dashboard, audit and CSV.
 
 ## Still missing
 
-These are real gaps, not hidden behind the pipeline UI.
+These are the remaining real gaps.
 
-**Admissions operations**
+**Automation and scheduling**
 
-- Structured pre-interview review scoring with two reviewers, a rubric and a
-  weekly calibration call. Review is currently a stage plus internal notes, not a
-  scored record.
-- Reviewer assignment and reviewer-level comments separate from free-text notes.
-- Panel editing after scheduling (add/remove/replace a panelist) needs an API and
-  UI. Today cancel and reschedule the interview if the panel changes.
-- Scorecard token expiry, revocation and “resend link” controls.
-- Calendar integration (Google Calendar/ICS), automated reminders, and a
-  candidate self-serve reschedule flow.
-- Waitlist position, expiry and automatic conversion when a seat opens.
-- Offer reminder automation before the deadline and an acceptance confirmation
-  flow for candidates.
-- CSV export, bulk stage changes, saved views and conversion/time-to-stage
-  analytics.
-- Audit log for who changed a stage or scorecard.
-- Email template editing. Interview, stage and offer copy lives in
-  `api/src/_shared/mailer.ts` and needs a developer to change.
+- Reminder batches exist as admin-triggered endpoints and Dashboard buttons, but
+  no cron or in-process scheduler calls them automatically. Wire the three
+  `POST .../run` endpoints into the server cron/monitoring setup.
+- Waitlist positions/expiry are stored, but there is no automatic promotion when
+  a seat opens. Promotion stays a human decision.
+- Interview reschedules are requests; the team confirms the new time manually.
 
-**Onboarding and delivery**
+**Admissions analytics**
 
-- Document upload/storage and verification status (ID, education, signed
-  consents). The checklist only records that a human verified them.
-- Structured weekly mentor reviews, attendance, phase assessments, deliverable
-  tracking and at-risk flags. The `active` stage is currently a label plus notes.
-- Capstone rubric, exit interview and certificate auto-issue. Certificates stay
-  in the separate certificate module.
-- Accommodation, food, device and travel logistics records.
-- Safeguarding/POSH case management. The acknowledgement is recorded, but there
-  is no incident workflow or restricted-access case log.
+- Dashboard conversion is stage-based. Time-to-stage, source conversion, saved
+  views and interviewer/panel performance are not reported yet.
+- CSV export covers applications. A full subject-access export (documents,
+  scorecards, emails) is not implemented.
+
+**Delivery and certification**
+
+- Certificate auto-issue and a formal capstone rubric remain separate from the
+  delivery review record. Certificates still use the certificates module.
+- Attendance is recorded per review as a percentage; there is no daily attendance
+  ledger or automated threshold alert.
+- Cases are a confidential record. The written POSH/safeguarding investigation,
+  legal escalation and response-time commitments must be defined outside this
+  app.
+- Accommodation/food/travel are notes, not inventory or booking records.
 
 **Alumni**
 
-- Automated 6-month and 12-month follow-up reminders.
-- Consent-aware public alumni stories and outcome reporting.
-- Employer/organisation normalisation and aggregate outcome dashboard.
-- Alumni self-service profile updates.
+- Organisation names are free text. There is no employer normalisation or
+  aggregate public outcome report beyond the dashboard counts.
+- Public stories are reviewed by an admin through the publish toggle; there is no
+  separate editorial workflow or scheduled takedown date.
+- Alumni follow-up cadence needs a real cron job; the current button sends due
+  records only.
 
 **Platform**
 
-- Mentor accounts/portal. Token links are deliberate for now, but mentors cannot
-  log in to see all their assigned interviews.
-- Telugu parity, captions and translated scorecard guidance.
-- SMS/WhatsApp notifications.
-- Data retention, export and deletion policy for candidate documents and
-  scorecards.
-- Automated accessibility checks for the public status, scorecard and admin
-  screens.
-- Privacy review of what candidate data is shown on the token page and for how
-  long tokens remain valid.
+- Mentors use private portal links, not login accounts. There is no mentor MFA,
+  role scope or per-mentor access revocation beyond rotating the portal token.
+- Email templates cover stage emails only. Interview, review, reminder and alumni
+  emails are code-managed.
+- Telugu parity, captions and translated scorecard guidance are not done.
+- SMS/WhatsApp is not configured; email is the only notification channel.
+- There is no retention schedule or automated purge for candidate documents and
+  scorecards. Application deletion removes related rows, but a written retention
+  policy is still needed.
+- Automated accessibility checks are not part of CI. The public token pages and
+  admin tabs were browser-tested manually.
+- Token pages show candidate name, track, city and motivation to the named
+  interviewer/reviewer. A formal privacy review of that scope and token lifetime
+  is still required.
 
 ## Decisions needed from Kavi
 
 1. Who owns admissions day to day, and who sits on interview panels?
-2. Offer validity period and waitlist policy (the system currently defaults to
-   seven days when no deadline is chosen).
+2. Offer validity period and waitlist policy (the system defaults to seven days
+   for offers and 30 days for waitlist review when no date is chosen).
 3. Final fee, scholarship and stipend values.
 4. Accommodation, food, insurance and travel policy.
-5. Attendance and completion thresholds, and early-exit terms.
-6. POSH/safeguarding owner, escalation route and response times.
-7. Alumni tracking owner and the 6/12-month follow-up cadence.
+5. Attendance and completion thresholds, early-exit terms and the capstone rubric.
+6. POSH/safeguarding owner, escalation route, investigation process and response
+   times.
+7. Alumni tracking owner, follow-up cadence and who approves public stories.
 8. Whether mentors should get real accounts and a portal instead of token links.
+9. Who owns the cron/monitoring job for reminders, and the data retention period
+   for applications, documents and scorecards.
 
 Until these are confirmed, keep the public copy and policy editor conservative.
 The policy editor can hold the final wording without a code change, but legal
@@ -499,9 +621,9 @@ fee, scholarship and early-exit terms.
 
 ## Future scope
 
-- Mentor/panel accounts with a dashboard of assigned interviews.
-- Attendance, phase review, at-risk and capstone records on the application.
-- Calendar, reminder and waitlist automation.
-- A consented public alumni outcome report after the first cohort.
-- Telugu content parity and captions.
+- Cron-backed reminders, waitlist promotion rules and calendar sync.
+- Mentor accounts with role scope, MFA and per-assignment access.
+- Time-to-stage, source and panel analytics.
+- Certificate auto-issue from signed capstone/exit reviews.
+- Telugu content parity, captions and SMS/WhatsApp notifications.
 - A separate fellowship domain if the programme outgrows this site.

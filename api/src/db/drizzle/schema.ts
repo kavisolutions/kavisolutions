@@ -281,12 +281,18 @@ export const fellowshipApplications = pgTable(
     cohort: text("cohort").notNull().default("Unassigned"),
     stage: text("stage").notNull().default("applied"),
     offerExpiresAt: timestamp("offer_expires_at", { withTimezone: true }),
+    offerReminderSentAt: timestamp("offer_reminder_sent_at", { withTimezone: true }),
+    waitlistPosition: integer("waitlist_position"),
+    waitlistExpiresAt: timestamp("waitlist_expires_at", { withTimezone: true }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    candidateToken: text("candidate_token"),
     notes: text("notes").notNull().default(""),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [
     uniqueIndex("fellowship_applications_reference_unique").on(table.reference),
+    uniqueIndex("fellowship_applications_candidate_token_unique").on(table.candidateToken),
     index("fellowship_applications_stage_idx").on(table.stage),
     index("fellowship_applications_email_idx").on(table.email),
     index("fellowship_applications_created_at_idx").on(table.createdAt),
@@ -308,11 +314,13 @@ export const fellowshipMentors = pgTable(
     expertise: text("expertise").notNull().default(""),
     status: text("status").notNull().default("active"),
     notes: text("notes").notNull().default(""),
+    portalToken: text("portal_token"),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [
     uniqueIndex("fellowship_mentors_email_unique").on(table.email),
+    uniqueIndex("fellowship_mentors_portal_token_unique").on(table.portalToken),
     index("fellowship_mentors_status_idx").on(table.status),
   ],
 );
@@ -338,10 +346,16 @@ export const fellowshipInterviews = pgTable(
     location: text("location").notNull().default(""),
     meetingUrl: text("meeting_url").notNull().default(""),
     status: text("status").notNull().default("scheduled"),
+    candidateToken: text("candidate_token"),
+    candidateConfirmedAt: timestamp("candidate_confirmed_at", { withTimezone: true }),
+    rescheduleRequestedAt: timestamp("reschedule_requested_at", { withTimezone: true }),
+    rescheduleNote: text("reschedule_note").notNull().default(""),
+    reminderSentAt: timestamp("reminder_sent_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [
+    uniqueIndex("fellowship_interviews_candidate_token_unique").on(table.candidateToken),
     index("fellowship_interviews_application_idx").on(table.applicationId),
     index("fellowship_interviews_scheduled_idx").on(table.scheduledAt),
   ],
@@ -370,6 +384,9 @@ export const fellowshipInterviewPanel = pgTable(
     fitScore: integer("fit_score"),
     recommendation: text("recommendation").notNull().default(""),
     notes: text("notes").notNull().default(""),
+    tokenExpiresAt: timestamp("token_expires_at", { withTimezone: true }),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+    lastSentAt: timestamp("last_sent_at", { withTimezone: true }),
     submittedAt: timestamp("submitted_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
@@ -397,6 +414,10 @@ export const fellowshipOnboarding = pgTable(
     deviceNeeds: text("device_needs").notNull().default(""),
     baselineDone: boolean("baseline_done").notNull().default(false),
     vipassanaAck: boolean("vipassana_ack").notNull().default(false),
+    accommodationNotes: text("accommodation_notes").notNull().default(""),
+    travelNotes: text("travel_notes").notNull().default(""),
+    foodNotes: text("food_notes").notNull().default(""),
+    arrivalAt: timestamp("arrival_at", { withTimezone: true }),
     notes: text("notes").notNull().default(""),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
@@ -422,15 +443,185 @@ export const fellowshipAlumni = pgTable(
     outcome12m: text("outcome_12m").notNull().default(""),
     mentorWilling: boolean("mentor_willing").notNull().default(false),
     testimonialConsent: boolean("testimonial_consent").notNull().default(false),
+    followUpDueAt: timestamp("follow_up_due_at", { withTimezone: true }),
+    followUpSentAt: timestamp("follow_up_sent_at", { withTimezone: true }),
+    publicStory: text("public_story").notNull().default(""),
+    storyPublished: boolean("story_published").notNull().default(false),
+    updateToken: text("update_token"),
+    verifiedAt: timestamp("verified_at", { withTimezone: true }),
     notes: text("notes").notNull().default(""),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [
+    uniqueIndex("fellowship_alumni_update_token_unique").on(table.updateToken),
     index("fellowship_alumni_email_idx").on(table.email),
     index("fellowship_alumni_cohort_idx").on(table.cohort),
+    index("fellowship_alumni_follow_up_idx").on(table.followUpDueAt),
   ],
 );
+
+// Private pre-interview review scores assigned by admins (tokenised links).
+export const fellowshipApplicationReviews = pgTable(
+  "fellowship_application_reviews",
+  {
+    id: text("id").primaryKey(),
+    applicationId: text("application_id")
+      .notNull()
+      .references(() => fellowshipApplications.id, { onDelete: "cascade" }),
+    reviewerName: text("reviewer_name").notNull(),
+    reviewerEmail: text("reviewer_email").notNull(),
+    role: text("role").notNull().default("reviewer"),
+    token: text("token").notNull(),
+    motivationScore: integer("motivation_score"),
+    commitmentScore: integer("commitment_score"),
+    communicationScore: integer("communication_score"),
+    problemScore: integer("problem_score"),
+    fieldScore: integer("field_score"),
+    fitScore: integer("fit_score"),
+    recommendation: text("recommendation").notNull().default(""),
+    notes: text("notes").notNull().default(""),
+    tokenExpiresAt: timestamp("token_expires_at", { withTimezone: true }),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+    submittedAt: timestamp("submitted_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("fellowship_application_reviews_token_unique").on(table.token),
+    index("fellowship_application_reviews_application_idx").on(table.applicationId),
+  ],
+);
+
+// Private onboarding documents (ID, education, signed consent, etc.).
+export const FELLOWSHIP_DOCUMENT_STATUSES = ["pending", "verified", "rejected"] as const;
+export type FellowshipDocumentStatus = (typeof FELLOWSHIP_DOCUMENT_STATUSES)[number];
+
+export const fellowshipDocuments = pgTable(
+  "fellowship_documents",
+  {
+    id: text("id").primaryKey(),
+    applicationId: text("application_id")
+      .notNull()
+      .references(() => fellowshipApplications.id, { onDelete: "cascade" }),
+    type: text("type").notNull().default("other"),
+    name: text("name").notNull(),
+    storageKey: text("storage_key").notNull(),
+    mimeType: text("mime_type").notNull().default(""),
+    size: integer("size").notNull().default(0),
+    status: text("status").notNull().default("pending"),
+    notes: text("notes").notNull().default(""),
+    uploadedBy: text("uploaded_by").notNull().default(""),
+    verifiedAt: timestamp("verified_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [index("fellowship_documents_application_idx").on(table.applicationId)],
+);
+
+// Weekly/phase/capstone/exit reviews. Attendance and risk flags live here.
+export const FELLOWSHIP_DELIVERY_TYPES = [
+  "weekly",
+  "phase",
+  "capstone",
+  "exit",
+] as const;
+export type FellowshipDeliveryType = (typeof FELLOWSHIP_DELIVERY_TYPES)[number];
+
+export const fellowshipDeliveryReviews = pgTable(
+  "fellowship_delivery_reviews",
+  {
+    id: text("id").primaryKey(),
+    applicationId: text("application_id")
+      .notNull()
+      .references(() => fellowshipApplications.id, { onDelete: "cascade" }),
+    type: text("type").notNull().default("weekly"),
+    phase: text("phase").notNull().default(""),
+    week: integer("week"),
+    reviewerName: text("reviewer_name").notNull().default(""),
+    reviewerEmail: text("reviewer_email").notNull().default(""),
+    attendancePercent: integer("attendance_percent"),
+    deliverableScore: integer("deliverable_score"),
+    collaborationScore: integer("collaboration_score"),
+    fieldScore: integer("field_score"),
+    notes: text("notes").notNull().default(""),
+    atRisk: boolean("at_risk").notNull().default(false),
+    riskNotes: text("risk_notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("fellowship_delivery_reviews_application_idx").on(table.applicationId),
+    index("fellowship_delivery_reviews_at_risk_idx").on(table.atRisk),
+  ],
+);
+
+// Confidential POSH/safeguarding/grievance/wellbeing cases.
+export const FELLOWSHIP_CASE_STATUSES = [
+  "open",
+  "investigating",
+  "resolved",
+  "closed",
+] as const;
+export type FellowshipCaseStatus = (typeof FELLOWSHIP_CASE_STATUSES)[number];
+export const FELLOWSHIP_CASE_SEVERITIES = ["low", "medium", "high", "critical"] as const;
+export type FellowshipCaseSeverity = (typeof FELLOWSHIP_CASE_SEVERITIES)[number];
+
+export const fellowshipCases = pgTable(
+  "fellowship_cases",
+  {
+    id: text("id").primaryKey(),
+    applicationId: text("application_id").references(() => fellowshipApplications.id, {
+      onDelete: "set null",
+    }),
+    category: text("category").notNull().default("grievance"),
+    severity: text("severity").notNull().default("medium"),
+    summary: text("summary").notNull(),
+    details: text("details").notNull().default(""),
+    status: text("status").notNull().default("open"),
+    assignedTo: text("assigned_to").notNull().default(""),
+    resolution: text("resolution").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+    resolvedAt: timestamp("resolved_at", { withTimezone: true }),
+  },
+  (table) => [
+    index("fellowship_cases_status_idx").on(table.status),
+    index("fellowship_cases_application_idx").on(table.applicationId),
+  ],
+);
+
+// Admin-editable stage email copy. Placeholders: {{name}}, {{reference}},
+// {{track}}, {{cohort}}, {{stage}}, {{offerExpiry}}, {{offerUrl}}.
+export const fellowshipEmailTemplates = pgTable("fellowship_email_templates", {
+  key: text("key").primaryKey(),
+  subject: text("subject").notNull().default(""),
+  body: text("body").notNull().default(""),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+// Append-only audit trail for admissions and fellowship changes.
+export const fellowshipAuditLog = pgTable(  "fellowship_audit_log",
+  {
+    id: text("id").primaryKey(),
+    actorEmail: text("actor_email").notNull().default(""),
+    action: text("action").notNull(),
+    entityType: text("entity_type").notNull(),
+    entityId: text("entity_id").notNull().default(""),
+    applicationId: text("application_id"),
+    detail: text("detail").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("fellowship_audit_log_created_idx").on(table.createdAt),
+    index("fellowship_audit_log_application_idx").on(table.applicationId),
+  ],
+);
+
+export type FellowshipApplicationReviewRow =
+  typeof fellowshipApplicationReviews.$inferSelect;
+export type FellowshipDocumentRow = typeof fellowshipDocuments.$inferSelect;
+export type FellowshipDeliveryReviewRow = typeof fellowshipDeliveryReviews.$inferSelect;
+export type FellowshipCaseRow = typeof fellowshipCases.$inferSelect;
+export type FellowshipAuditRow = typeof fellowshipAuditLog.$inferSelect;
 
 // ---------------------------------------------------------------------------
 // Relations

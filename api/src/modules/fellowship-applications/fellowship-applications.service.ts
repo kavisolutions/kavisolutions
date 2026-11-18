@@ -20,6 +20,7 @@ import {
   type FellowshipApplicationStage,
 } from "@/db/drizzle/schema";
 import type {
+  BulkUpdateFellowshipApplicationsDto,
   CreateFellowshipApplicationDto,
   FellowshipApplicationStatusDto,
   UpdateFellowshipApplicationDto,
@@ -34,6 +35,8 @@ export type FellowshipApplicationPublicDto = {
   cohort: string;
   stage: FellowshipApplicationStage;
   offerExpiresAt: string | null;
+  waitlistPosition: number | null;
+  waitlistExpiresAt: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -47,6 +50,9 @@ export type FellowshipApplicationAdminDto = FellowshipApplicationPublicDto & {
   vipassana: boolean;
   fieldWork: boolean;
   termsAccepted: boolean;
+  offerReminderSentAt: string | null;
+  completedAt: string | null;
+  candidateToken: string | null;
   notes: string;
 };
 
@@ -65,6 +71,10 @@ const toPublic = (row: FellowshipApplicationRow): FellowshipApplicationPublicDto
   cohort: row.cohort,
   stage: toStage(row.stage),
   offerExpiresAt: row.offerExpiresAt ? row.offerExpiresAt.toISOString() : null,
+  waitlistPosition: row.waitlistPosition ?? null,
+  waitlistExpiresAt: row.waitlistExpiresAt
+    ? row.waitlistExpiresAt.toISOString()
+    : null,
   createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
 });
@@ -79,11 +89,18 @@ const toAdmin = (row: FellowshipApplicationRow): FellowshipApplicationAdminDto =
   vipassana: row.vipassana,
   fieldWork: row.fieldWork,
   termsAccepted: row.termsAccepted,
+  offerReminderSentAt: row.offerReminderSentAt
+    ? row.offerReminderSentAt.toISOString()
+    : null,
+  completedAt: row.completedAt ? row.completedAt.toISOString() : null,
+  candidateToken: row.candidateToken ?? null,
   notes: row.notes ?? "",
 });
 
 const makeReference = (): string =>
   `KF-${new Date().getFullYear()}-${randomBytes(4).toString("hex").toUpperCase()}`;
+
+const makeCandidateToken = (): string => randomBytes(24).toString("hex");
 
 @Injectable()
 export class FellowshipApplicationsService {
@@ -147,6 +164,7 @@ export class FellowshipApplicationsService {
         fieldWork: true,
         termsAccepted: true,
         stage: "applied",
+        candidateToken: makeCandidateToken(),
       })
       .returning();
 
@@ -230,6 +248,47 @@ export class FellowshipApplicationsService {
     if (payload.cohort !== undefined) set.cohort = sanitizeText(payload.cohort, 80);
     if (payload.notes !== undefined) set.notes = sanitizeText(payload.notes, 4000);
 
+    if (payload.waitlistPosition !== undefined) {
+      set.waitlistPosition = payload.waitlistPosition ?? null;
+    }
+    if (payload.waitlistExpiresAt !== undefined) {
+      if (payload.waitlistExpiresAt === null) {
+        set.waitlistExpiresAt = null;
+      } else {
+        const expires = new Date(payload.waitlistExpiresAt);
+        if (Number.isNaN(expires.getTime())) {
+          throw new BadRequestException("Invalid waitlist expiry date");
+        }
+        set.waitlistExpiresAt = expires;
+      }
+    }
+
+    // A waitlisted application without a position/expiry is hard to operate.
+    // Assign the next position and a 30-day review window once.
+    if (payload.stage === "waitlisted") {
+      if (payload.waitlistPosition === undefined && existing.waitlistPosition === null) {
+        const rows = await this.db
+          .select({ position: fellowshipApplications.waitlistPosition })
+          .from(fellowshipApplications)
+          .where(eq(fellowshipApplications.stage, "waitlisted"));
+        const highest = rows.reduce(
+          (max, row) => Math.max(max, row.position ?? 0),
+          0,
+        );
+        set.waitlistPosition = highest + 1;
+      }
+      if (payload.waitlistExpiresAt === undefined && !existing.waitlistExpiresAt) {
+        set.waitlistExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+      }
+    }
+
+    if (payload.stage === "offer") {
+      set.offerReminderSentAt = null;
+    }
+    if (payload.stage === "completed") {
+      set.completedAt = existing.completedAt ?? new Date();
+    }
+
     if (payload.offerExpiresAt !== undefined) {
       if (payload.offerExpiresAt === null) {
         set.offerExpiresAt = null;
@@ -272,6 +331,8 @@ export class FellowshipApplicationsService {
           email: row.email,
           cohort: row.cohort,
           track: row.track,
+          updateToken: randomBytes(24).toString("hex"),
+          followUpDueAt: new Date(Date.now() + 182 * 24 * 60 * 60 * 1000),
         });
       }
     }
@@ -281,5 +342,168 @@ export class FellowshipApplicationsService {
       stageChanged,
       previousStage: toStage(existing.stage),
     };
+  }
+
+  async bulkUpdate(payload: BulkUpdateFellowshipApplicationsDto) {
+    const ids = Array.from(new Set(payload.ids));
+    const applications: FellowshipApplicationAdminDto[] = [];
+    const changedApplications: FellowshipApplicationAdminDto[] = [];
+    let changed = 0;
+
+    for (const id of ids) {
+      const result = await this.update(id, { stage: payload.stage });
+      applications.push(result.application);
+      if (result.stageChanged) {
+        changed += 1;
+        changedApplications.push(result.application);
+      }
+    }
+
+    return { applications, changed, changedApplications };
+  }
+
+  async findByCandidateToken(token: string) {
+    const raw = sanitizeText(token, 80);
+    const [row] = await this.db
+      .select()
+      .from(fellowshipApplications)
+      .where(eq(fellowshipApplications.candidateToken, raw))
+      .limit(1);
+    if (!row) throw new NotFoundException("Offer not found");
+
+    return {
+      application: {
+        reference: row.reference,
+        name: row.name,
+        track: row.track,
+        cohort: row.cohort,
+        stage: toStage(row.stage),
+        offerExpiresAt: row.offerExpiresAt
+          ? row.offerExpiresAt.toISOString()
+          : null,
+        waitlistPosition: row.waitlistPosition ?? null,
+        updatedAt: row.updatedAt.toISOString(),
+      },
+    };
+  }
+
+  async respondToOffer(token: string, decision: "accept" | "decline") {
+    const raw = sanitizeText(token, 80);
+    const [row] = await this.db
+      .select()
+      .from(fellowshipApplications)
+      .where(eq(fellowshipApplications.candidateToken, raw))
+      .limit(1);
+    if (!row) throw new NotFoundException("Offer not found");
+    if (row.stage !== "offer") {
+      throw new BadRequestException("This application is not awaiting an offer response");
+    }
+    if (row.offerExpiresAt && row.offerExpiresAt.getTime() < Date.now()) {
+      throw new BadRequestException(
+        "The offer response window has closed. Email the fellowship team.",
+      );
+    }
+
+    const [updated] = await this.db
+      .update(fellowshipApplications)
+      .set({
+        stage: decision === "accept" ? "accepted" : "withdrawn",
+        waitlistPosition: null,
+        waitlistExpiresAt: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(fellowshipApplications.id, row.id))
+      .returning();
+
+    return {
+      application: toAdmin(updated),
+      stageChanged: true,
+      previousStage: toStage(row.stage),
+    };
+  }
+
+  async remove(id: string) {
+    const [row] = await this.db
+      .delete(fellowshipApplications)
+      .where(eq(fellowshipApplications.id, id))
+      .returning({ id: fellowshipApplications.id });
+    if (!row) throw new NotFoundException("Application not found");
+    return { ok: true };
+  }
+
+  async dueOfferReminders(hours = 72) {
+    const now = Date.now();
+    const until = now + hours * 60 * 60 * 1000;
+    const rows = await this.db
+      .select()
+      .from(fellowshipApplications)
+      .where(eq(fellowshipApplications.stage, "offer"))
+      .orderBy(fellowshipApplications.offerExpiresAt);
+
+    return {
+      applications: rows
+        .filter(
+          (row) =>
+            row.offerExpiresAt !== null &&
+            row.offerExpiresAt.getTime() >= now &&
+            row.offerExpiresAt.getTime() <= until &&
+            !row.offerReminderSentAt,
+        )
+        .map(toAdmin),
+    };
+  }
+
+  async markOfferReminderSent(id: string) {
+    await this.db
+      .update(fellowshipApplications)
+      .set({ offerReminderSentAt: new Date(), updatedAt: new Date() })
+      .where(eq(fellowshipApplications.id, id));
+    return { ok: true };
+  }
+
+  async exportCsv(options: { stage?: string; search?: string } = {}) {    const { applications } = await this.list(options);
+    const headers = [
+      "reference",
+      "name",
+      "email",
+      "phone",
+      "city",
+      "track",
+      "cohort",
+      "stage",
+      "waitlist_position",
+      "waitlist_expires_at",
+      "offer_expires_at",
+      "created_at",
+      "updated_at",
+      "notes",
+    ];
+    const escape = (value: unknown): string =>
+      `"${String(value ?? "").replace(/"/g, '""')}"`;
+    const lines = [
+      headers.join(","),
+      ...applications.map((application) =>
+        [
+          application.reference,
+          application.name,
+          application.email,
+          application.phone,
+          application.city,
+          application.track,
+          application.cohort,
+          application.stage,
+          application.waitlistPosition,
+          application.waitlistExpiresAt,
+          application.offerExpiresAt,
+          application.createdAt,
+          application.updatedAt,
+          application.notes,
+        ]
+          .map(escape)
+          .join(","),
+      ),
+    ];
+
+    return lines.join("\r\n");
   }
 }

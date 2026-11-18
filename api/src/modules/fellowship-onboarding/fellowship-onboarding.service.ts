@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, BadRequestException, NotFoundException } from "@nestjs/common";
 import { desc, eq } from "drizzle-orm";
 
 import { sanitizeText } from "@/_shared/text";
@@ -32,6 +32,10 @@ export type FellowshipOnboardingDto = {
   deviceNeeds: string;
   baselineDone: boolean;
   vipassanaAck: boolean;
+  accommodationNotes: string;
+  travelNotes: string;
+  foodNotes: string;
+  arrivalAt: string | null;
   notes: string;
   complete: boolean;
   completedItems: number;
@@ -79,6 +83,10 @@ const toDto = (
     deviceNeeds: row?.deviceNeeds ?? "",
     baselineDone: row?.baselineDone ?? false,
     vipassanaAck: row?.vipassanaAck ?? false,
+    accommodationNotes: row?.accommodationNotes ?? "",
+    travelNotes: row?.travelNotes ?? "",
+    foodNotes: row?.foodNotes ?? "",
+    arrivalAt: row?.arrivalAt ? row.arrivalAt.toISOString() : null,
     notes: row?.notes ?? "",
     complete: completed >= TOTAL_ITEMS,
     completedItems: completed,
@@ -161,6 +169,26 @@ export class FellowshipOnboardingService {
     }
     if (payload.baselineDone !== undefined) values.baselineDone = payload.baselineDone;
     if (payload.vipassanaAck !== undefined) values.vipassanaAck = payload.vipassanaAck;
+    if (payload.accommodationNotes !== undefined) {
+      values.accommodationNotes = sanitizeText(payload.accommodationNotes, 2000);
+    }
+    if (payload.travelNotes !== undefined) {
+      values.travelNotes = sanitizeText(payload.travelNotes, 2000);
+    }
+    if (payload.foodNotes !== undefined) {
+      values.foodNotes = sanitizeText(payload.foodNotes, 2000);
+    }
+    if (payload.arrivalAt !== undefined) {
+      if (payload.arrivalAt === null) {
+        values.arrivalAt = null;
+      } else {
+        const arrival = new Date(payload.arrivalAt);
+        if (Number.isNaN(arrival.getTime())) {
+          throw new BadRequestException("Invalid arrival date");
+        }
+        values.arrivalAt = arrival;
+      }
+    }
     if (payload.notes !== undefined) values.notes = sanitizeText(payload.notes, 4000);
 
     const [row] = existing
@@ -184,6 +212,10 @@ export class FellowshipOnboardingService {
             deviceNeeds: values.deviceNeeds ?? "",
             baselineDone: values.baselineDone ?? false,
             vipassanaAck: values.vipassanaAck ?? false,
+            accommodationNotes: values.accommodationNotes ?? "",
+            travelNotes: values.travelNotes ?? "",
+            foodNotes: values.foodNotes ?? "",
+            arrivalAt: values.arrivalAt ?? null,
             notes: values.notes ?? "",
           })
           .returning();

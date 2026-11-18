@@ -7,6 +7,7 @@ import FellowshipStory from "@/components/FellowshipStory";
 import FellowshipDetails from "@/components/FellowshipDetails";
 import FellowshipPeople from "@/components/FellowshipPeople";
 import FellowshipOutcomes from "@/components/FellowshipOutcomes";
+import FellowshipAlumniStories from "@/components/FellowshipAlumniStories";
 import FellowshipApply from "@/components/FellowshipApply";
 import FellowshipCursor from "@/components/FellowshipCursor";
 import FellowshipScrollProgress from "@/components/FellowshipScrollProgress";
@@ -263,6 +264,7 @@ export default function FellowshipPage() {
       <FellowshipDetails />
 
       <FellowshipOutcomes />
+      <FellowshipAlumniStories />
 
       {/* FAQ */}
       <section className="relative px-6 py-20">
