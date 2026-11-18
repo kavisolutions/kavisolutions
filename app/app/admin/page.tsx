@@ -35,6 +35,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   Users,
@@ -3583,19 +3584,19 @@ export default function AdminPage() {
                               View
                             </a>
                           )}
-                          <Button
-                            type="button"
-                            role="switch"
-                            aria-checked={enabled}
-                            aria-label={`${enabled ? "Unpublish" : "Publish"} the ${item.label} page`}
-                            disabled={savingPages || pageVisibility === null}
-                            onClick={() => void togglePage(item.key, !enabled)}
-                            variant={enabled ? "default" : "outline"}
-                            size="sm"
-                            className="min-w-[92px] font-semibold"
+                          <span
+                            className={`w-[62px] text-right text-[11px] font-medium ${
+                              enabled ? "text-primary" : "text-muted-foreground"
+                            }`}
                           >
                             {enabled ? "Published" : "Hidden"}
-                          </Button>
+                          </span>
+                          <Switch
+                            checked={enabled}
+                            disabled={savingPages || pageVisibility === null}
+                            onCheckedChange={(next) => void togglePage(item.key, next)}
+                            aria-label={`${enabled ? "Unpublish" : "Publish"} the ${item.label} page`}
+                          />
                         </div>
                       </div>
                     );
