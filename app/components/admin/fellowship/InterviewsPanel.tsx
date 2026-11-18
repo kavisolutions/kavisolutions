@@ -126,9 +126,10 @@ export default function InterviewsPanel({
 
   const schedulable = useMemo(
     () =>
-      applications.filter(
-        (application) =>
-          !["rejected", "withdrawn", "completed"].includes(application.stage),
+      applications.filter((application) =>
+        ["applied", "review", "interview", "waitlisted", "offer"].includes(
+          application.stage,
+        ),
       ),
     [applications],
   );
