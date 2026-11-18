@@ -58,6 +58,7 @@ export type FellowshipInterviewDto = {
   reference: string;
   candidateName: string;
   candidateEmail: string;
+  candidatePhone: string;
   track: string;
   cohort: string;
   scheduledAt: string;
@@ -170,6 +171,7 @@ export class FellowshipInterviewsService {
       reference: application.reference,
       candidateName: application.name,
       candidateEmail: application.email,
+      candidatePhone: application.phone,
       track: application.track,
       cohort: application.cohort,
       scheduledAt: row.scheduledAt.toISOString(),

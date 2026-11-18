@@ -36,6 +36,7 @@ import type {
   FellowshipInterviewDto,
   FellowshipPanelDto,
 } from "@/modules/fellowship-interviews/fellowship-interviews.service";
+import { WhatsAppService } from "@/modules/whatsapp/whatsapp.service";
 
 @ApiTags("fellowship-interviews")
 @Controller("fellowship-interviews")
@@ -45,6 +46,7 @@ export class FellowshipInterviewsController {
   constructor(
     private readonly service: FellowshipInterviewsService,
     private readonly audit: FellowshipAuditService,
+    private readonly whatsapp: WhatsAppService,
   ) {}
 
   @Get()
@@ -352,6 +354,25 @@ export class FellowshipInterviewsController {
         });
         await this.service.markReminderSent(interview.id);
         sent += 1;
+
+        try {
+          const when = new Date(interview.scheduledAt).toLocaleString("en-IN", {
+            dateStyle: "full",
+            timeStyle: "short",
+            timeZone: "Asia/Kolkata",
+          });
+          const manageUrl = ` https://kavisolutions.in/fellowship/interview/${interview.candidateToken}`;
+          await this.whatsapp.sendText(
+            interview.candidatePhone,
+            `Kavi Fellowship interview reminder: ${when} IST with ${interview.panel.map((entry) => entry.name).join(", ")}.${manageUrl}`,
+          );
+        } catch (error) {
+          this.logger.warn(
+            `Interview WhatsApp reminder skipped for ${interview.reference}: ${
+              error instanceof Error ? error.message : "unknown error"
+            }`,
+          );
+        }
       } catch (error) {
         this.logger.error(
           `Interview reminder failed for ${interview.reference}: ${

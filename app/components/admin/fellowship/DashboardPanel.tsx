@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import WhatsAppPanel from "@/components/admin/fellowship/WhatsAppPanel";
 import {
   adminRequest,
   type FellowshipAuditEntry,
@@ -314,6 +315,8 @@ export default function DashboardPanel() {
           ))}
         </CardContent>
       </Card>
+      <WhatsAppPanel />
+
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Stage email templates</CardTitle>

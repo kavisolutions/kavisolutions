@@ -36,6 +36,7 @@ import {
 import { FellowshipApplicationsService } from "@/modules/fellowship-applications/fellowship-applications.service";
 import type { FellowshipApplicationAdminDto } from "@/modules/fellowship-applications/fellowship-applications.service";
 import { FellowshipTemplatesService } from "@/modules/fellowship-templates/fellowship-templates.service";
+import { WhatsAppService } from "@/modules/whatsapp/whatsapp.service";
 
 @ApiTags("fellowship-applications")
 @Controller("fellowship-applications")
@@ -47,6 +48,7 @@ export class FellowshipApplicationsController {
     private readonly settings: SettingsService,
     private readonly audit: FellowshipAuditService,
     private readonly templates: FellowshipTemplatesService,
+    private readonly whatsapp: WhatsAppService,
   ) {}
 
   @Post()
@@ -181,6 +183,29 @@ export class FellowshipApplicationsController {
         });
         await this.service.markOfferReminderSent(application.id);
         sent += 1;
+
+        try {
+          const expiry = application.offerExpiresAt
+            ? new Date(application.offerExpiresAt).toLocaleString("en-IN", {
+                dateStyle: "full",
+                timeStyle: "short",
+                timeZone: "Asia/Kolkata",
+              })
+            : "the deadline in your offer email";
+          const offerUrl = application.candidateToken
+            ? ` https://kavisolutions.in/fellowship/offer/${application.candidateToken}`
+            : "";
+          await this.whatsapp.sendText(
+            application.phone,
+            `Kavi Fellowship: your offer (${application.reference}) expires ${expiry} IST.${offerUrl}`,
+          );
+        } catch (error) {
+          this.logger.warn(
+            `Offer WhatsApp reminder skipped for ${application.reference}: ${
+              error instanceof Error ? error.message : "unknown error"
+            }`,
+          );
+        }
       } catch (error) {
         this.logger.error(
           `Offer reminder failed for ${application.reference}: ${

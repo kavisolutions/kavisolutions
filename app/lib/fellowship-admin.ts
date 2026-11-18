@@ -71,6 +71,7 @@ export type FellowshipInterview = {
   reference: string;
   candidateName: string;
   candidateEmail: string;
+  candidatePhone: string;
   track: string;
   cohort: string;
   scheduledAt: string;

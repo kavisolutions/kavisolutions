@@ -31,6 +31,7 @@ offers, onboarding, active fellows and alumni outcomes.
 | Delivery, cases, audit APIs | `api/src/modules/fellowship-delivery/`, `fellowship-cases/`, `fellowship-audit/` |
 | Reviews, documents, templates APIs | `api/src/modules/fellowship-reviews/`, `fellowship-onboarding/`, `fellowship-templates/` |
 | Operations dashboard API | `api/src/modules/fellowship-operations/` |
+| WhatsApp (Baileys) | `api/src/modules/whatsapp/`, `app/components/admin/fellowship/WhatsAppPanel.tsx` |
 | Applications + programme tables | `api/src/db/drizzle/migrations/0008_colorful_hiroim.sql`, `0009_deep_wendell_vaughn.sql` |
 | Programme guide | `app/app/fellowship/guide/page.tsx` |
 | SEO structured data | `app/app/fellowship/page.tsx` |
@@ -355,6 +356,41 @@ Deleting an application requires typing `DELETE`; related interview, review,
 document, delivery and onboarding rows cascade, and linked alumni records keep
 their history with the application link set to null.
 
+### WhatsApp via Baileys
+
+WhatsApp messages use a **Baileys** WhatsApp Web session, not SMS. The admin
+Dashboard has a WhatsApp card:
+
+- **Connect / show QR** starts the socket and displays the device-link QR.
+- Scan from the dedicated phone: WhatsApp → Settings → Linked devices → Link a
+  device.
+- **Log out** clears the linked device and deletes the local session directory.
+- **Send message** sends a free-text message to an Indian number or a number with
+  country code.
+
+Configuration:
+
+```env
+WHATSAPP_ENABLED=true
+BAILEYS_AUTH_DIR=/var/lib/kavi/baileys
+WHATSAPP_COUNTRY_CODE=91
+```
+
+`WHATSAPP_ENABLED=true` auto-connects on API start. Manual Connect works even
+when auto-connect is off. Run exactly one API instance against one Baileys
+session directory; two processes cannot share the same WhatsApp session. Session
+files live outside the repository by default (`~/.kavi/baileys`) and must be
+backed up/restricted like a password. Use a dedicated number, not the main
+admissions number.
+
+The interview reminder and offer reminder batches also attempt a WhatsApp message
+when the session is open. Those send failures are logged and never block email.
+
+Baileys is unofficial and can be banned or logged out by WhatsApp. It is not
+suitable for legal/POSH communication or high-volume bulk messaging. Official
+Meta WhatsApp Cloud API remains the safer path if Kavi needs guaranteed
+delivery, templates and sender verification.
+
 ### Stage email templates
 
 Stage emails can be overridden from the Dashboard. Templates are keyed
@@ -506,6 +542,8 @@ Admin-only endpoints (session + admin role/email, rate limited):
 - `GET /api/fellowship-operations/dashboard`, `GET /api/fellowship-operations/cohorts`
 - `GET /api/fellowship-audit`
 - `GET /api/fellowship-email-templates`, `PUT/DELETE /:key`
+- `GET /api/whatsapp/status`, `POST /api/whatsapp/connect`,
+  `POST /api/whatsapp/logout`, `POST /api/whatsapp/send`
 - `PUT /api/fellowship-policy`
 
 Tables in `api/src/db/drizzle/schema.ts`:
@@ -586,10 +624,16 @@ These are the remaining real gaps.
 
 - Mentors use private portal links, not login accounts. There is no mentor MFA,
   role scope or per-mentor access revocation beyond rotating the portal token.
+- WhatsApp uses an unofficial Baileys session. There is no official WhatsApp
+  Business verification, template approval, delivery receipt dashboard or
+  guaranteed uptime. A ban or logout stops messages until the device is relinked.
+- WhatsApp has no opt-in field or per-candidate channel preference yet. Add
+  consent before using it for anything beyond operational reminders.
 - Email templates cover stage emails only. Interview, review, reminder and alumni
   emails are code-managed.
 - Telugu parity, captions and translated scorecard guidance are not done.
-- SMS/WhatsApp is not configured; email is the only notification channel.
+- SMS is not configured. Email is the primary channel; WhatsApp is optional via
+  Baileys.
 - There is no retention schedule or automated purge for candidate documents and
   scorecards. Application deletion removes related rows, but a written retention
   policy is still needed.

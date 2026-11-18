@@ -36,6 +36,7 @@ import { SurveyorsModule } from "@/modules/surveyors/surveyors.module";
 import { TeamModule } from "@/modules/team/team.module";
 import { TeamsModule } from "@/modules/teams/teams.module";
 import { UploadModule } from "@/modules/upload/upload.module";
+import { WhatsAppModule } from "@/modules/whatsapp/whatsapp.module";
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { UploadModule } from "@/modules/upload/upload.module";
     FellowshipOperationsModule,
     FellowshipAuditModule,
     FellowshipTemplatesModule,
+    WhatsAppModule,
     FarmsModule,
     PagesModule,
     SocialModule,
