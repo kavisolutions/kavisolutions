@@ -41,7 +41,7 @@ export const SURVEY_HERO = {
   title: "Field research, survey data and",
   highlight: "insight you can act on.",
   description:
-    "We design surveys, run field teams across districts and states, clean and analyse the data, and deliver reports and presentations that answer the question you actually asked. Government, institutional, academic and private-sector assignments.",
+    "We design surveys, run field research and field teams across districts and states, clean and analyse the data, and deliver reports and presentations that answer the question you actually asked. Government, private-sector, research, academic, NGO and multi-sector assignments.",
   metrics: [
     { value: "6", label: "Research verticals" },
     { value: "5", label: "Engagement models" },
@@ -54,17 +54,17 @@ export const SURVEY_VERTICALS: SurveyVertical[] = [
   {
     slug: "field-surveys",
     icon: "📋",
-    tag: "Field Surveys",
-    title: "Field surveys & data collection",
+    tag: "Field Research & Surveys",
+    title: "Field research, surveys & data collection",
     summary:
-      "Structured data collection on the ground — households, institutions, communities and locations — executed by trained enumerators with validation built in.",
+      "Structured and qualitative field research — households, institutions, communities, markets and locations — executed by trained enumerators and researchers with validation built in.",
     services: [
       "Household and public opinion surveys",
-      "Political and election-related surveys",
+      "Qualitative field research: in-depth interviews and focus groups",
+      "Observational, ethnographic and case-study fieldwork",
+      "Baseline, needs-assessment and rapid appraisal studies",
+      "Field verification, audit and mystery-shopping visits",
       "Government and public service surveys",
-      "Product and customer feedback surveys",
-      "Brand awareness and market research surveys",
-      "Consumer behaviour surveys",
       "Employee and organisational surveys",
       "Location-based and field-level data collection",
       "Institutional and community surveys",
@@ -262,16 +262,19 @@ export const SURVEY_FIELD_NETWORK = {
 } as const;
 
 export const SURVEY_INDUSTRIES = [
-  "Government & public services",
+  "Government departments & public services",
+  "Private companies & startups",
+  "Research institutions & think tanks",
+  "Academic institutions & universities",
+  "NGOs & development organisations",
   "Political campaigns & constituencies",
   "Market research agencies",
-  "Academic & research institutions",
-  "NGOs & development organisations",
   "FMCG & consumer brands",
   "Telecom & infrastructure",
   "Healthcare",
   "Education",
   "Financial services",
+  "Other clients & multi-sector assignments",
 ];
 
 /* Business development targets. Presented as opportunities under discussion,
@@ -305,6 +308,18 @@ export const SURVEY_SURVEYOR_QUESTIONS = [
 
 export const SURVEY_CLIENT_QUESTIONS = [
   {
+    q: "Which types of organisations do you work with?",
+    a: "Government departments and public services, private companies and startups, research institutions and think tanks, academic institutions, NGOs and development organisations, political campaigns, market research agencies and multi-sector clients. The method and compliance requirements are adapted to the client and the assignment.",
+  },
+  {
+    q: "Do you handle qualitative field research?",
+    a: "Yes. We run in-depth interviews, focus group discussions, observational and ethnographic fieldwork, case studies, field verification and mystery-shopping visits alongside structured surveys.",
+  },
+  {
+    q: "Can we hire you for data collection only?",
+    a: "Yes. The data-collection-only engagement gives you validated raw data from the field, with the questionnaire, sampling plan and quality checks agreed before fieldwork starts.",
+  },
+  {
     q: "Which locations can you cover?",
     a: "Field operations are coordinated from Hyderabad with teams deployable across India. Coverage for a specific district is confirmed during scoping, based on the network in that area.",
   },
@@ -327,7 +342,8 @@ export const SURVEY_CLIENT_QUESTIONS = [
 ];
 
 export const SURVEY_SERVICE_OPTIONS = [
-  "Field survey & data collection",
+  "Field research, surveys & data collection",
+  "Qualitative field research (interviews / FGDs)",
   "Market & brand research",
   "Political & social research",
   "Data analysis & reporting",

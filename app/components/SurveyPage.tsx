@@ -158,7 +158,7 @@ export function SurveyPage({
           <SectionHeading
             eyebrow="Survey services"
             title="Six research verticals"
-            description="Field surveys, market research, political and social research, analysis, predictive work and academic support — each with its own method and its own deliverable."
+            description="Field research and surveys, data collection, market research, political and social research, analysis and reporting, predictive work and academic support — each with its own method and its own deliverable."
           />
           <RevealStagger className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {SURVEY_VERTICALS.map((vertical) => (
@@ -427,8 +427,8 @@ export function SurveyPage({
         <div className="mx-auto max-w-6xl">
           <SectionHeading
             eyebrow="Sectors"
-            title="Industries we work across"
-            description="Field research is sector-agnostic; the method and the compliance requirements are not. These are the sectors we are set up for."
+            title="Clients and sectors we work across"
+            description="Field research is client-agnostic; the method and compliance requirements are not. We work with government, private companies, research institutions, academic bodies, NGOs and multi-sector clients."
           />
           <Reveal className="mb-14 flex flex-wrap justify-center gap-2.5">
             {SURVEY_INDUSTRIES.map((industry) => (
