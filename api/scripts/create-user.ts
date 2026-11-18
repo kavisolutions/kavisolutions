@@ -41,7 +41,8 @@ async function main(): Promise<void> {
     if (role !== existingRole) {
       await context.internalAdapter.updateUser(existing.user.id, { role });
     }
-    await context.internalAdapter.updatePassword(existing.user.id, password);
+    const hashedPassword = await context.password.hash(password);
+    await context.internalAdapter.updatePassword(existing.user.id, hashedPassword);
     console.log(`Updated existing user ${email} (role: ${role})`);
     process.exit(0);
   }

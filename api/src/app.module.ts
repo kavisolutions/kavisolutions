@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_GUARD } from "@nestjs/core";
+import { ScheduleModule } from "@nestjs/schedule";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 
 import { AuthModule } from "@/auth/auth.module";
@@ -20,6 +21,7 @@ import { FellowshipMentorsModule } from "@/modules/fellowship-mentors/fellowship
 import { FellowshipOnboardingModule } from "@/modules/fellowship-onboarding/fellowship-onboarding.module";
 import { FellowshipOperationsModule } from "@/modules/fellowship-operations/fellowship-operations.module";
 import { FellowshipPolicyModule } from "@/modules/fellowship-policy/fellowship-policy.module";
+import { FellowshipProgrammeModule } from "@/modules/fellowship-programme/fellowship-programme.module";
 import { FellowshipReviewsModule } from "@/modules/fellowship-reviews/fellowship-reviews.module";
 import { FellowshipTemplatesModule } from "@/modules/fellowship-templates/fellowship-templates.module";
 import { FinancialModule } from "@/modules/financial/financial.module";
@@ -42,6 +44,7 @@ import { WhatsAppModule } from "@/modules/whatsapp/whatsapp.module";
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 60 }]),
+    ScheduleModule.forRoot(),
     DrizzleModule,
     AuthModule,
     HealthModule,
@@ -69,6 +72,7 @@ import { WhatsAppModule } from "@/modules/whatsapp/whatsapp.module";
     FellowshipDeliveryModule,
     FellowshipCasesModule,
     FellowshipOperationsModule,
+    FellowshipProgrammeModule,
     FellowshipAuditModule,
     FellowshipTemplatesModule,
     WhatsAppModule,

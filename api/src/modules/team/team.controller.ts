@@ -6,12 +6,11 @@ import {
   Param,
   Patch,
   Post,
-  UnauthorizedException,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 import { CurrentIsAdmin, CurrentUser } from "@/auth/auth.guard";
-import { AdminOnly, OptionalAuth, Public } from "@/auth/auth.decorators";
+import { AdminOnly, Public } from "@/auth/auth.decorators";
 import type { SessionUser } from "@/auth/auth.types";
 import { CreateMemberDto, UpdateMemberDto } from "@/modules/team/dto/team.dto";
 import { TeamService } from "@/modules/team/team.service";
@@ -38,15 +37,14 @@ export class TeamController {
   }
 
   @Patch(":id")
-  @OptionalAuth()
+  @AdminOnly()
   @ApiBearerAuth()
   async update(
     @Param("id") id: string,
     @Body() body: UpdateMemberDto,
-    @CurrentUser() user: SessionUser | null,
+    @CurrentUser() user: SessionUser,
     @CurrentIsAdmin() isAdmin: boolean,
   ) {
-    if (!user) throw new UnauthorizedException("Sign in required");
     return this.service.update(id, body, user, isAdmin);
   }
 

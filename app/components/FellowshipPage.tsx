@@ -9,6 +9,8 @@ import FellowshipPeople from "@/components/FellowshipPeople";
 import FellowshipOutcomes from "@/components/FellowshipOutcomes";
 import FellowshipAlumniStories from "@/components/FellowshipAlumniStories";
 import FellowshipApply from "@/components/FellowshipApply";
+import FellowshipFieldFaqs from "@/components/FellowshipFieldFaqs";
+import FellowshipTalk from "@/components/FellowshipTalk";
 import FellowshipCursor from "@/components/FellowshipCursor";
 import FellowshipScrollProgress from "@/components/FellowshipScrollProgress";
 import {
@@ -266,6 +268,8 @@ export default function FellowshipPage() {
       <FellowshipOutcomes />
       <FellowshipAlumniStories />
 
+      <FellowshipFieldFaqs />
+
       {/* FAQ */}
       <section className="relative px-6 py-20">
         <div className="mx-auto max-w-3xl">
@@ -287,6 +291,8 @@ export default function FellowshipPage() {
           </RevealStagger>
         </div>
       </section>
+
+      <FellowshipTalk />
 
       <FellowshipApply />
     </div>

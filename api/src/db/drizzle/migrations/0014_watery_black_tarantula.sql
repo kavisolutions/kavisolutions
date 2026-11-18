@@ -24,8 +24,7 @@ CREATE TABLE "surveyor_audit_log" (
 CREATE INDEX "survey_enquiries_status_idx" ON "survey_enquiries" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "survey_enquiries_created_idx" ON "survey_enquiries" USING btree ("created_at");--> statement-breakpoint
 CREATE INDEX "surveyor_audit_surveyor_idx" ON "surveyor_audit_log" USING btree ("surveyor_id");--> statement-breakpoint
-CREATE INDEX "surveyor_audit_created_idx" ON "surveyor_audit_log" USING btree ("created_at");
---> statement-breakpoint
+CREATE INDEX "surveyor_audit_created_idx" ON "surveyor_audit_log" USING btree ("created_at");--> statement-breakpoint
 -- Launch the Survey & Research page as part of this release. Admins can hide
 -- it again from Settings -> Live pages.
 INSERT INTO "app_settings" ("key", "value", "updated_at")

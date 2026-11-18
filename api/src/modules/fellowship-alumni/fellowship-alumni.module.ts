@@ -8,5 +8,6 @@ import { FellowshipAuditModule } from "@/modules/fellowship-audit/fellowship-aud
   imports: [FellowshipAuditModule],
   controllers: [FellowshipAlumniController],
   providers: [FellowshipAlumniService],
+  exports: [FellowshipAlumniService],
 })
 export class FellowshipAlumniModule {}

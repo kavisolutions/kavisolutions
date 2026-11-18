@@ -83,6 +83,15 @@ All prefixed with `/api`. Auth routes are Better Auth: `/api/auth/*`.
 | POST | `/surveyors/:id/resend` | admin | re-send the notification email |
 | GET | `/pages` | public, uncached | which public pages are switched on |
 | PATCH | `/pages` | admin | publish/unpublish `survey` and `financial` |
+| GET | `/fellowship-programme/public/faqs` | public | published field questions |
+| POST | `/fellowship-programme/public/inquiries` | public, throttled | fellowship enquiry queue |
+| POST | `/fellowship-programme/public/gurukulam-interests` | public, throttled | Gurukulam / returner lead |
+| POST | `/fellowship-programme/public/donation-pledges` | public, throttled | donation pledge (no payment) |
+| GET | `/fellowship-programme/dashboard` | admin | programme counts |
+| GET/POST | `/fellowship-programme/admin/:resource` | admin | list / create a register row |
+| PATCH/DELETE | `/fellowship-programme/admin/:resource/:id` | admin | update / delete a row |
+| POST | `/fellowship-programme/stipends/generate` | admin | months 6–12 stipend schedule |
+| POST | `/fellowship-programme/automation/run` | admin | run reminder batches now |
 
 Certificates are generated offline from the `certificates/` library; the API only
 keeps the record that makes `/verify/<id>` work. Revoked records still resolve but

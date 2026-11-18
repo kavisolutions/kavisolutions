@@ -19,7 +19,7 @@ const envSchema = z.object({
   FRONTEND_URL: z.string().url().default("http://localhost:3000"),
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
-  ADMIN_EMAILS: z.string().optional(),
+  ADMIN_EMAILS: z.string().default(""),
   SMTP_HOST: z.string().default("smtp.gmail.com"),
   SMTP_PORT: z.coerce.number().int().positive().default(465),
   SMTP_SECURE: z
@@ -55,6 +55,12 @@ const envSchema = z.object({
     (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
     z.string().min(1).optional(),
   ),
+  /* Daily interview/offer/alumni reminder batches. Set to false to keep the
+     admin-triggered buttons without the 06:00 IST cron. */
+  FELLOWSHIP_AUTOMATION_ENABLED: z
+    .string()
+    .default("true")
+    .transform((value) => value === "true" || value === "1"),
 });
 
 const parsed = envSchema.safeParse(process.env);

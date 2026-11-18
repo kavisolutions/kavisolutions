@@ -1460,6 +1460,13 @@ export default function AdminPage() {
             Fellowship programme
           </Link>
 
+          <Link
+            href="/admin/programme"
+            className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+          >
+            <BriefcaseBusiness className="h-4 w-4" />
+            Programme operations
+          </Link>
         </div>
 
         {/* User Account / Footer */}

@@ -20,10 +20,14 @@ requests to the backend via the `BACKEND_URL` rewrite in `next.config.ts`.
 6. **AI & Blockchain** — production AI and auditable chain systems
 7. **Who we are (Team)** — the people behind the studio
 
-Public pages also include `/projects`, `/team`, `/ai-blockchain` and `/verify`
-(certificate verification by ID, also reachable as `/verify/<id>` from a printed
-QR code). `/admin` covers team, roles, teams, projects, certificates, the
-social-agent image calendar and settings.
+Public pages also include `/projects`, `/team`, `/ai-blockchain`, `/gurukulam`
+(the proposed long-term learning/earning pathway), `/fellowship/support`
+(scholarship and equipment pledges) and `/verify` (certificate verification by
+ID, also reachable as `/verify/<id>` from a printed QR code). `/admin` covers
+team, roles, teams, projects, certificates, the social-agent image calendar and
+settings. `/admin/fellowship` runs admissions to alumni; `/admin/programme` runs
+college outreach, content, customer care, fees, intern stipends, client work,
+placements, donations and Gurukulam leads.
 
 `social-agent/` is a small Fastify sidecar for scheduled social posts: import a
 year of images from Google Drive, assign one per day, let a vision model write
@@ -46,7 +50,10 @@ redeploy. See
 [`docs/farms-page.md`](docs/farms-page.md) for content and compliance notes.
 The fellowship programme is documented in
 [`docs/fellowship-page.md`](docs/fellowship-page.md) and
-[`docs/fellowship-curriculum.md`](docs/fellowship-curriculum.md). Legal and
+[`docs/fellowship-curriculum.md`](docs/fellowship-curriculum.md). The operational
+registers for outreach, content, care, fees, stipends, client work, placements,
+donations and Gurukulam are in
+[`docs/programme-operations.md`](docs/programme-operations.md). Legal and
 FSSAI research notes for the farms/licensing work are in
 [`docs/legal-registration.md`](docs/legal-registration.md).
 

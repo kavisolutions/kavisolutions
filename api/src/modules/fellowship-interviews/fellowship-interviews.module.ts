@@ -9,5 +9,6 @@ import { WhatsAppModule } from "@/modules/whatsapp/whatsapp.module";
   imports: [FellowshipAuditModule, WhatsAppModule],
   controllers: [FellowshipInterviewsController],
   providers: [FellowshipInterviewsService],
+  exports: [FellowshipInterviewsService],
 })
 export class FellowshipInterviewsModule {}

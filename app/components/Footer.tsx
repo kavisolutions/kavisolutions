@@ -86,6 +86,16 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
+                  <Link href="/gurukulam" className="hover:text-white transition-colors">
+                    Gurukulam
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/fellowship/support" className="hover:text-white transition-colors">
+                    Support the Fellowship
+                  </Link>
+                </li>
+                <li>
                   <Link href="/team" className="hover:text-white transition-colors">
                     Our Team
                   </Link>

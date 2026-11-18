@@ -16,6 +16,7 @@ import {
   Sprout,
   ShieldCheck,
   ArrowRight,
+  BookOpen,
 } from "lucide-react";
 import MobileMenu from "./MobileMenu";
 import NavAuth from "./NavAuth";
@@ -61,11 +62,42 @@ const services = [
 ];
 
 const verticals = [
-  { label: "GovTech", href: "/government", icon: Landmark },
-  { label: "Research", href: "/survey", icon: BarChart3 },
-  { label: "Financial", href: "/financial", icon: Layers },
-  { label: "Farms", href: "/farms", icon: Sprout },
-  { label: "Verify", href: "/verify", icon: ShieldCheck },
+  {
+    label: "GovTech",
+    href: "/government",
+    icon: Landmark,
+    desc: "Citizen service portals and public workflows",
+  },
+  {
+    label: "Research",
+    href: "/survey",
+    icon: BarChart3,
+    desc: "Field surveys, market research and data",
+  },
+  {
+    label: "Financial",
+    href: "/financial",
+    icon: Layers,
+    desc: "Tax, compliance and cash-flow support",
+  },
+  {
+    label: "Farms",
+    href: "/farms",
+    icon: Sprout,
+    desc: "Organic produce and village experiences",
+  },
+  {
+    label: "Verify",
+    href: "/verify",
+    icon: ShieldCheck,
+    desc: "Check a Kavi certificate instantly",
+  },
+  {
+    label: "Gurukulam",
+    href: "/gurukulam",
+    icon: BookOpen,
+    desc: "Long-term learn, build and earn pathway",
+  },
 ];
 
 const links = [
@@ -153,7 +185,7 @@ export default function Navbar() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 6, scale: 0.98 }}
                   transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute left-1/2 top-full -translate-x-1/2 pt-3 w-[560px]"
+                  className="absolute left-1/2 top-full -translate-x-1/2 pt-3 w-[640px]"
                 >
                   <div className="overflow-hidden rounded-[20px] bg-[rgba(18,29,47,0.96)] backdrop-blur-[24px] border border-[rgba(148,163,184,0.18)] p-5 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)]">
                     {/* Top gradient accent line */}
@@ -208,7 +240,7 @@ export default function Navbar() {
                         </Link>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-1.5">
+                      <div className="grid grid-cols-3 gap-2.5">
                         {verticals.map((v) => {
                           const VIcon = v.icon;
                           return (
@@ -216,10 +248,17 @@ export default function Navbar() {
                               key={v.label}
                               href={v.href}
                               onClick={() => setDropdownOpen(false)}
-                              className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[12px] font-medium text-[#A5B3C7] hover:text-[#F7F9FC] hover:bg-white/5 transition-colors border border-transparent hover:border-[rgba(148,163,184,0.14)]"
+                              className="group flex flex-col rounded-[12px] bg-[#151B2A]/60 hover:bg-[#19202E] border border-[rgba(148,163,184,0.1)] hover:border-[rgba(148,163,184,0.25)] p-3 transition-all"
                             >
-                              <VIcon className="h-3.5 w-3.5 text-[#91B4FF]" />
-                              <span>{v.label}</span>
+                              <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-[rgba(148,163,184,0.14)] bg-[#0F1624] text-[#91B4FF] transition-transform group-hover:scale-105">
+                                <VIcon className="h-3.5 w-3.5" />
+                              </span>
+                              <span className="mt-2 font-display text-[12px] font-semibold text-[#F7F9FC] group-hover:text-[#91B4FF] transition-colors">
+                                {v.label}
+                              </span>
+                              <span className="mt-0.5 text-[10px] leading-snug text-[#7889A0] group-hover:text-[#A5B3C7] line-clamp-2">
+                                {v.desc}
+                              </span>
                             </Link>
                           );
                         })}

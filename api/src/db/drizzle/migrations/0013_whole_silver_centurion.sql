@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "fellowship_stipends_application_month_unique" ON "fellowship_stipends" USING btree ("application_id","month_number");

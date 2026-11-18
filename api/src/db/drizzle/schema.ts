@@ -672,6 +672,443 @@ export type FellowshipCaseRow = typeof fellowshipCases.$inferSelect;
 export type FellowshipAuditRow = typeof fellowshipAuditLog.$inferSelect;
 
 // ---------------------------------------------------------------------------
+// Programme operations: outreach, content, care, finance, pathways
+// ---------------------------------------------------------------------------
+
+export const FELLOWSHIP_COLLEGE_STAGES = [
+  "identified",
+  "contacted",
+  "meeting",
+  "session",
+  "partner",
+  "not_interested",
+] as const;
+export type FellowshipCollegeStage = (typeof FELLOWSHIP_COLLEGE_STAGES)[number];
+
+export const FELLOWSHIP_COLLEGE_PRIORITIES = ["low", "medium", "high"] as const;
+export type FellowshipCollegePriority = (typeof FELLOWSHIP_COLLEGE_PRIORITIES)[number];
+
+export const fellowshipColleges = pgTable(
+  "fellowship_colleges",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    district: text("district").notNull().default(""),
+    state: text("state").notNull().default("Andhra Pradesh"),
+    type: text("type").notNull().default("degree"),
+    contactName: text("contact_name").notNull().default(""),
+    contactRole: text("contact_role").notNull().default(""),
+    email: text("email").notNull().default(""),
+    phone: text("phone").notNull().default(""),
+    stage: text("stage").notNull().default("identified"),
+    priority: text("priority").notNull().default("medium"),
+    lastContactedAt: timestamp("last_contacted_at", { withTimezone: true }),
+    nextFollowUpAt: timestamp("next_follow_up_at", { withTimezone: true }),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("fellowship_colleges_stage_idx").on(table.stage),
+    index("fellowship_colleges_follow_up_idx").on(table.nextFollowUpAt),
+    index("fellowship_colleges_name_idx").on(table.name),
+  ],
+);
+
+export const FELLOWSHIP_OUTREACH_MODES = ["online", "offline"] as const;
+export const FELLOWSHIP_OUTREACH_AUDIENCES = [
+  "students",
+  "parents",
+  "management",
+  "mixed",
+] as const;
+export const FELLOWSHIP_OUTREACH_SESSION_STATUSES = [
+  "planned",
+  "completed",
+  "cancelled",
+] as const;
+
+export const fellowshipOutreachSessions = pgTable(
+  "fellowship_outreach_sessions",
+  {
+    id: text("id").primaryKey(),
+    collegeId: text("college_id").references(() => fellowshipColleges.id, {
+      onDelete: "set null",
+    }),
+    title: text("title").notNull(),
+    mode: text("mode").notNull().default("offline"),
+    audience: text("audience").notNull().default("students"),
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }).notNull(),
+    status: text("status").notNull().default("planned"),
+    attendees: integer("attendees").notNull().default(0),
+    owner: text("owner").notNull().default(""),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("fellowship_outreach_sessions_college_idx").on(table.collegeId),
+    index("fellowship_outreach_sessions_scheduled_idx").on(table.scheduledAt),
+    index("fellowship_outreach_sessions_status_idx").on(table.status),
+  ],
+);
+
+export const FELLOWSHIP_QUESTION_AUDIENCES = [
+  "student",
+  "parent",
+  "management",
+] as const;
+export const FELLOWSHIP_QUESTION_STATUSES = [
+  "open",
+  "answered",
+  "published",
+] as const;
+
+export const fellowshipOutreachQuestions = pgTable(
+  "fellowship_outreach_questions",
+  {
+    id: text("id").primaryKey(),
+    collegeId: text("college_id").references(() => fellowshipColleges.id, {
+      onDelete: "set null",
+    }),
+    audience: text("audience").notNull().default("student"),
+    question: text("question").notNull(),
+    answer: text("answer").notNull().default(""),
+    status: text("status").notNull().default("open"),
+    askedAt: timestamp("asked_at", { withTimezone: true }),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("fellowship_outreach_questions_status_idx").on(table.status),
+    index("fellowship_outreach_questions_college_idx").on(table.collegeId),
+  ],
+);
+
+export const FELLOWSHIP_CONTENT_TYPES = [
+  "poster",
+  "photo",
+  "video",
+  "audio",
+  "youtube",
+  "social_post",
+  "poll",
+  "blog",
+] as const;
+export const FELLOWSHIP_CONTENT_CHANNELS = [
+  "instagram",
+  "linkedin",
+  "facebook",
+  "youtube",
+  "website",
+  "offline",
+] as const;
+export const FELLOWSHIP_CONTENT_STATUSES = [
+  "idea",
+  "draft",
+  "review",
+  "scheduled",
+  "published",
+] as const;
+
+export const fellowshipContentItems = pgTable(
+  "fellowship_content_items",
+  {
+    id: text("id").primaryKey(),
+    title: text("title").notNull(),
+    type: text("type").notNull().default("social_post"),
+    channel: text("channel").notNull().default("instagram"),
+    status: text("status").notNull().default("idea"),
+    owner: text("owner").notNull().default(""),
+    dueAt: timestamp("due_at", { withTimezone: true }),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    url: text("url").notNull().default(""),
+    impressions: integer("impressions").notNull().default(0),
+    engagements: integer("engagements").notNull().default(0),
+    comments: integer("comments").notNull().default(0),
+    leads: integer("leads").notNull().default(0),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("fellowship_content_status_idx").on(table.status),
+    index("fellowship_content_due_idx").on(table.dueAt),
+    index("fellowship_content_channel_idx").on(table.channel),
+  ],
+);
+
+export const FELLOWSHIP_INQUIRY_CHANNELS = [
+  "website",
+  "phone",
+  "whatsapp",
+  "email",
+  "social",
+  "walk_in",
+] as const;
+export const FELLOWSHIP_INQUIRY_CATEGORIES = [
+  "admissions",
+  "fees",
+  "college",
+  "parent",
+  "support",
+  "returner",
+  "other",
+] as const;
+export const FELLOWSHIP_INQUIRY_STATUSES = [
+  "new",
+  "in_progress",
+  "waiting",
+  "resolved",
+  "closed",
+] as const;
+export const FELLOWSHIP_INQUIRY_PRIORITIES = ["low", "medium", "high"] as const;
+
+export const fellowshipInquiries = pgTable(
+  "fellowship_inquiries",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull().default(""),
+    phone: text("phone").notNull().default(""),
+    channel: text("channel").notNull().default("website"),
+    category: text("category").notNull().default("admissions"),
+    subject: text("subject").notNull().default(""),
+    message: text("message").notNull(),
+    status: text("status").notNull().default("new"),
+    priority: text("priority").notNull().default("medium"),
+    owner: text("owner").notNull().default(""),
+    callbackAt: timestamp("callback_at", { withTimezone: true }),
+    resolution: text("resolution").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("fellowship_inquiries_status_idx").on(table.status),
+    index("fellowship_inquiries_callback_idx").on(table.callbackAt),
+    index("fellowship_inquiries_created_idx").on(table.createdAt),
+  ],
+);
+
+export const FELLOWSHIP_FEE_STATUSES = [
+  "pending",
+  "partial",
+  "paid",
+  "waived",
+  "cancelled",
+] as const;
+
+export const fellowshipFeePlans = pgTable(
+  "fellowship_fee_plans",
+  {
+    id: text("id").primaryKey(),
+    applicationId: text("application_id").references(() => fellowshipApplications.id, {
+      onDelete: "set null",
+    }),
+    candidateName: text("candidate_name").notNull().default(""),
+    candidateEmail: text("candidate_email").notNull().default(""),
+    programme: text("programme").notNull().default("fellowship"),
+    totalAmount: integer("total_amount").notNull().default(0),
+    scholarshipAmount: integer("scholarship_amount").notNull().default(0),
+    paidAmount: integer("paid_amount").notNull().default(0),
+    status: text("status").notNull().default("pending"),
+    dueAt: timestamp("due_at", { withTimezone: true }),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("fellowship_fee_plans_application_idx").on(table.applicationId),
+    index("fellowship_fee_plans_status_idx").on(table.status),
+    index("fellowship_fee_plans_due_idx").on(table.dueAt),
+  ],
+);
+
+export const FELLOWSHIP_STIPEND_STATUSES = [
+  "planned",
+  "approved",
+  "paid",
+  "hold",
+] as const;
+
+export const fellowshipStipends = pgTable(
+  "fellowship_stipends",
+  {
+    id: text("id").primaryKey(),
+    applicationId: text("application_id").references(() => fellowshipApplications.id, {
+      onDelete: "set null",
+    }),
+    candidateName: text("candidate_name").notNull().default(""),
+    candidateEmail: text("candidate_email").notNull().default(""),
+    monthNumber: integer("month_number").notNull(),
+    amount: integer("amount").notNull().default(0),
+    status: text("status").notNull().default("planned"),
+    dueAt: timestamp("due_at", { withTimezone: true }),
+    paidAt: timestamp("paid_at", { withTimezone: true }),
+    mode: text("mode").notNull().default(""),
+    reference: text("reference").notNull().default(""),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("fellowship_stipends_application_month_unique").on(
+      table.applicationId,
+      table.monthNumber,
+    ),
+    index("fellowship_stipends_application_idx").on(table.applicationId),
+    index("fellowship_stipends_status_idx").on(table.status),
+    index("fellowship_stipends_due_idx").on(table.dueAt),
+  ],
+);
+
+export const FELLOWSHIP_CLIENT_STATUSES = [
+  "lead",
+  "proposal",
+  "active",
+  "completed",
+  "cancelled",
+] as const;
+
+export const fellowshipClientEngagements = pgTable(
+  "fellowship_client_engagements",
+  {
+    id: text("id").primaryKey(),
+    clientName: text("client_name").notNull(),
+    projectTitle: text("project_title").notNull().default(""),
+    description: text("description").notNull().default(""),
+    contractValue: integer("contract_value").notNull().default(0),
+    receivedAmount: integer("received_amount").notNull().default(0),
+    status: text("status").notNull().default("lead"),
+    startAt: timestamp("start_at", { withTimezone: true }),
+    endAt: timestamp("end_at", { withTimezone: true }),
+    owner: text("owner").notNull().default(""),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("fellowship_client_status_idx").on(table.status),
+    index("fellowship_client_start_idx").on(table.startAt),
+  ],
+);
+
+export const FELLOWSHIP_PLACEMENT_STATUSES = [
+  "offer",
+  "accepted",
+  "joined",
+  "declined",
+  "dropped",
+] as const;
+
+export const fellowshipPlacements = pgTable(
+  "fellowship_placements",
+  {
+    id: text("id").primaryKey(),
+    applicationId: text("application_id").references(() => fellowshipApplications.id, {
+      onDelete: "set null",
+    }),
+    candidateName: text("candidate_name").notNull().default(""),
+    candidateEmail: text("candidate_email").notNull().default(""),
+    employer: text("employer").notNull(),
+    role: text("role").notNull().default(""),
+    packageAmount: integer("package_amount").notNull().default(0),
+    status: text("status").notNull().default("offer"),
+    source: text("source").notNull().default("external"),
+    offerAt: timestamp("offer_at", { withTimezone: true }),
+    joinedAt: timestamp("joined_at", { withTimezone: true }),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("fellowship_placements_application_idx").on(table.applicationId),
+    index("fellowship_placements_status_idx").on(table.status),
+  ],
+);
+
+export const FELLOWSHIP_DONATION_STATUSES = [
+  "pledged",
+  "received",
+  "thanked",
+  "refunded",
+] as const;
+
+export const fellowshipDonations = pgTable(
+  "fellowship_donations",
+  {
+    id: text("id").primaryKey(),
+    donorName: text("donor_name").notNull(),
+    email: text("email").notNull().default(""),
+    phone: text("phone").notNull().default(""),
+    amount: integer("amount").notNull().default(0),
+    purpose: text("purpose").notNull().default("general"),
+    status: text("status").notNull().default("pledged"),
+    rewardPreference: text("reward_preference").notNull().default("none"),
+    anonymous: boolean("anonymous").notNull().default(false),
+    receivedAt: timestamp("received_at", { withTimezone: true }),
+    mode: text("mode").notNull().default(""),
+    reference: text("reference").notNull().default(""),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("fellowship_donations_status_idx").on(table.status),
+    index("fellowship_donations_created_idx").on(table.createdAt),
+  ],
+);
+
+export const GURUKULAM_INTEREST_KINDS = ["gurukulam", "returner"] as const;
+export const GURUKULAM_INTEREST_STATUSES = [
+  "new",
+  "contacted",
+  "eligible",
+  "enrolled",
+  "closed",
+] as const;
+
+export const gurukulamInterests = pgTable(
+  "gurukulam_interests",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull().default(""),
+    phone: text("phone").notNull().default(""),
+    city: text("city").notNull().default(""),
+    kind: text("kind").notNull().default("gurukulam"),
+    background: text("background").notNull().default(""),
+    goal: text("goal").notNull().default(""),
+    status: text("status").notNull().default("new"),
+    applicationId: text("application_id").references(() => fellowshipApplications.id, {
+      onDelete: "set null",
+    }),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("gurukulam_interests_status_idx").on(table.status),
+    index("gurukulam_interests_kind_idx").on(table.kind),
+    index("gurukulam_interests_created_idx").on(table.createdAt),
+  ],
+);
+
+export type FellowshipCollegeRow = typeof fellowshipColleges.$inferSelect;
+export type FellowshipOutreachSessionRow = typeof fellowshipOutreachSessions.$inferSelect;
+export type FellowshipOutreachQuestionRow = typeof fellowshipOutreachQuestions.$inferSelect;
+export type FellowshipContentItemRow = typeof fellowshipContentItems.$inferSelect;
+export type FellowshipInquiryRow = typeof fellowshipInquiries.$inferSelect;
+export type FellowshipFeePlanRow = typeof fellowshipFeePlans.$inferSelect;
+export type FellowshipStipendRow = typeof fellowshipStipends.$inferSelect;
+export type FellowshipClientEngagementRow = typeof fellowshipClientEngagements.$inferSelect;
+export type FellowshipPlacementRow = typeof fellowshipPlacements.$inferSelect;
+export type FellowshipDonationRow = typeof fellowshipDonations.$inferSelect;
+export type GurukulamInterestRow = typeof gurukulamInterests.$inferSelect;
+
+// ---------------------------------------------------------------------------
 // Relations
 // ---------------------------------------------------------------------------
 

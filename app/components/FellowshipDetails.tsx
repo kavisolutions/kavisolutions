@@ -7,9 +7,11 @@ import {
   CalendarDays,
   CheckCircle2,
   GraduationCap,
+  HeartHandshake,
   Mail,
   MapPin,
   ShieldCheck,
+  Sprout,
   Wallet,
   XCircle,
 } from "lucide-react";
@@ -294,6 +296,20 @@ export default function FellowshipDetails() {
                   >
                     Programme guide
                     <ArrowRight className="h-3.5 w-3.5 text-[#91B4FF]" />
+                  </Link>
+                  <Link
+                    href="/gurukulam"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[rgba(148,163,184,0.18)] bg-[rgba(18,29,47,0.7)] px-3 text-[11px] font-medium text-[#F7F9FC] transition-colors hover:bg-white/[0.06]"
+                  >
+                    <Sprout className="h-3.5 w-3.5 text-[#34D399]" />
+                    Gurukulam pathway
+                  </Link>
+                  <Link
+                    href="/fellowship/support"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-emerald-500/25 bg-emerald-500/[0.06] px-3 text-[11px] font-medium text-emerald-300 transition-colors hover:bg-emerald-500/10"
+                  >
+                    <HeartHandshake className="h-3.5 w-3.5" />
+                    Support a candidate
                   </Link>
                   <Link
                     href="#apply"

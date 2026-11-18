@@ -32,6 +32,9 @@ offers, onboarding, active fellows and alumni outcomes.
 | Reviews, documents, templates APIs | `api/src/modules/fellowship-reviews/`, `fellowship-onboarding/`, `fellowship-templates/` |
 | Operations dashboard API | `api/src/modules/fellowship-operations/` |
 | WhatsApp (Baileys) | `api/src/modules/whatsapp/`, `app/components/admin/fellowship/WhatsAppPanel.tsx` |
+| Programme operations (outreach, content, care, fees, payroll, client work, placements, donations, Gurukulam) | `/admin/programme`, `api/src/modules/fellowship-programme/`; see [`programme-operations.md`](programme-operations.md) |
+| Public Gurukulam + support pages | `/gurukulam`, `/fellowship/support` |
+| Public field FAQs + enquiry queue | `FellowshipFieldFaqs.tsx`, `FellowshipTalk.tsx` → `/api/fellowship-programme/public/*` |
 | Applications + programme tables | `api/src/db/drizzle/migrations/0008_colorful_hiroim.sql`, `0009_deep_wendell_vaughn.sql` |
 | Programme guide | `app/app/fellowship/guide/page.tsx` |
 | SEO structured data | `app/app/fellowship/page.tsx` |
@@ -567,6 +570,15 @@ Tables in `api/src/db/drizzle/schema.ts`:
 - `fellowship_alumni` — outcomes, follow-ups, self-service token and public story.
 - `fellowship_audit_log` — append-only actor/action trail.
 - `fellowship_email_templates` — optional stage-email overrides.
+- `fellowship_colleges`, `fellowship_outreach_sessions`,
+  `fellowship_outreach_questions` — college list, sessions and field FAQs.
+- `fellowship_content_items` — poster/photo/video/audio/YouTube/social tracker.
+- `fellowship_inquiries` — customer-care queue.
+- `fellowship_fee_plans`, `fellowship_stipends` — offline fees and intern pay.
+- `fellowship_client_engagements`, `fellowship_placements` — client income and
+  placement pipeline.
+- `fellowship_donations`, `gurukulam_interests` — pledges and Gurukulam/returner
+  leads.
 
 Migrations `0009`, `0010` and `0011` add the admissions, delivery, alumni,
 audit, case and template tables. The deploy script runs `npm run db:migrate`
@@ -587,13 +599,18 @@ record → alumni follow-up/self-service/public story → dashboard, audit and C
 
 ## Still missing
 
-These are the remaining real gaps.
+These are the remaining real gaps after the programme-operations build.
+
+The outreach, content, customer-care, fee, stipend, client-work, placement,
+donation and Gurukulam registers are now in `/admin/programme`; see
+[`programme-operations.md`](programme-operations.md). The gaps below remain.
 
 **Automation and scheduling**
 
-- Reminder batches exist as admin-triggered endpoints and Dashboard buttons, but
-  no cron or in-process scheduler calls them automatically. Wire the three
-  `POST .../run` endpoints into the server cron/monitoring setup.
+- Reminder batches now run daily at 06:00 Asia/Kolkata via
+  `FellowshipAutomationService` (`FELLOWSHIP_AUTOMATION_ENABLED=false` keeps the
+  manual Dashboard buttons only). The same batch can be run on demand from
+  `/admin/fellowship` or `POST /api/fellowship-programme/automation/run`.
 - Waitlist positions/expiry are stored, but there is no automatic promotion when
   a seat opens. Promotion stays a human decision.
 - Interview reschedules are requests; the team confirms the new time manually.
@@ -622,8 +639,8 @@ These are the remaining real gaps.
   aggregate public outcome report beyond the dashboard counts.
 - Public stories are reviewed by an admin through the publish toggle; there is no
   separate editorial workflow or scheduled takedown date.
-- Alumni follow-up cadence needs a real cron job; the current button sends due
-  records only.
+- Alumni follow-ups run in the daily reminder batch; the Dashboard button still
+  sends due records on demand.
 
 **Platform**
 

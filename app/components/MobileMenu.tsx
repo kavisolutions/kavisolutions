@@ -19,6 +19,7 @@ import {
   Briefcase,
   Users,
   GraduationCap,
+  BookOpen,
   Mail,
   Menu,
   X,
@@ -35,6 +36,7 @@ const serviceLinks = [
   { href: "/survey", label: "Survey & Research", icon: BarChart3 },
   { href: "/financial", label: "Financial Services", icon: Layers },
   { href: "/farms", label: "Kavi Farms", icon: Sprout },
+  { href: "/gurukulam", label: "Kavi Gurukulam", icon: BookOpen },
 ];
 
 const mainLinks = [
