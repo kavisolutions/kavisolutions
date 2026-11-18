@@ -1,6 +1,4 @@
 import * as dotenv from "dotenv";
-import { homedir } from "node:os";
-import path from "node:path";
 import { z } from "zod";
 
 dotenv.config();
@@ -31,14 +29,6 @@ const envSchema = z.object({
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
   CONTACT_EMAIL: z.string().optional(),
-  WHATSAPP_ENABLED: z
-    .string()
-    .default("false")
-    .transform((value) => value === "true" || value === "1"),
-  BAILEYS_AUTH_DIR: z
-    .string()
-    .default(path.join(homedir(), ".kavi", "baileys")),
-  WHATSAPP_COUNTRY_CODE: z.string().default("91"),
   S3_ENDPOINT: z.string().url().default("http://localhost:9002"),
   S3_REGION: z.string().default("us-east-1"),
   S3_BUCKET: z.string().default("avatars"),
@@ -81,7 +71,6 @@ export const env = {
   corsAllowedOrigins: csv(parsed.data.CORS_ALLOWED_ORIGINS),
   adminEmails: csv(parsed.data.ADMIN_EMAILS).map((email) => email.toLowerCase()),
   googleEnabled: Boolean(parsed.data.GOOGLE_CLIENT_ID && parsed.data.GOOGLE_CLIENT_SECRET),
-  whatsappEnabled: parsed.data.WHATSAPP_ENABLED,
 };
 
 export type Env = typeof env;

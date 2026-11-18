@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, LogOut, MessageCircle, RefreshCw, Send } from "lucide-react";
+import { Loader2, LogOut, MessageCircle, RefreshCw, Save, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,6 +34,11 @@ const tone = (status: string): string => {
 
 export default function WhatsAppPanel() {
   const [status, setStatus] = useState<WhatsAppStatus | null>(null);
+  const [enabled, setEnabled] = useState(false);
+  const [countryCode, setCountryCode] = useState("91");
+  const [authDir, setAuthDir] = useState("");
+  const [settingsUpdatedAt, setSettingsUpdatedAt] = useState<string | null>(null);
+  const [savingSettings, setSavingSettings] = useState(false);
   const [loading, setLoading] = useState(true);
   const [working, setWorking] = useState("");
   const [to, setTo] = useState("");
@@ -61,6 +66,64 @@ export default function WhatsAppPanel() {
       window.clearInterval(poll);
     };
   }, [load]);
+
+  const loadSettings = useCallback(async () => {
+    try {
+      const data = await adminRequest<{
+        settings: {
+          enabled: boolean;
+          countryCode: string;
+          authDir: string;
+          updatedAt: string | null;
+        };
+      }>("/api/whatsapp/settings");
+      setEnabled(data.settings.enabled);
+      setCountryCode(data.settings.countryCode);
+      setAuthDir(data.settings.authDir);
+      setSettingsUpdatedAt(data.settings.updatedAt);
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "Could not load WhatsApp settings.",
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => void loadSettings(), 0);
+    return () => window.clearTimeout(timer);
+  }, [loadSettings]);
+
+  const saveSettings = async () => {
+    setSavingSettings(true);
+    setError("");
+    setNotice("");
+    try {
+      const data = await adminRequest<{
+        settings: {
+          enabled: boolean;
+          countryCode: string;
+          authDir: string;
+          updatedAt: string | null;
+        };
+      }>("/api/whatsapp/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enabled, countryCode }),
+      });
+      setEnabled(data.settings.enabled);
+      setCountryCode(data.settings.countryCode);
+      setAuthDir(data.settings.authDir);
+      setSettingsUpdatedAt(data.settings.updatedAt);
+      setNotice("WhatsApp settings saved. Auto-connect applies on next API start.");
+      await load();
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "Could not save WhatsApp settings.",
+      );
+    } finally {
+      setSavingSettings(false);
+    }
+  };
 
   const connect = async () => {
     setWorking("connect");
@@ -225,6 +288,63 @@ export default function WhatsAppPanel() {
             </p>
           </div>
         )}
+
+        <div className="mt-4 grid gap-2 rounded-xl border border-border bg-muted/20 p-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              WhatsApp settings (database)
+            </p>
+            {settingsUpdatedAt && (
+              <span className="text-[10px] text-muted-foreground">
+                Updated {new Date(settingsUpdatedAt).toLocaleString()}
+              </span>
+            )}
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <label className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-[11px]">
+              <input
+                type="checkbox"
+                checked={enabled}
+                onChange={(event) => setEnabled(event.target.checked)}
+              />
+              Auto-connect on API start
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Default country code
+              </span>
+              <Input
+                value={countryCode}
+                onChange={(event) => setCountryCode(event.target.value)}
+                placeholder="91"
+              />
+            </label>
+            <label className="block sm:col-span-2">
+              <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Baileys auth directory (read-only)
+              </span>
+              <Input value={authDir} readOnly disabled />
+              <span className="mt-1 block text-[10px] text-muted-foreground">
+                DevOps sets <code>fellowship.whatsapp.authDir</code> in the database.
+                Restart the API after changing it. Admins cannot edit this path.
+              </span>
+            </label>
+          </div>
+          <div>
+            <Button
+              size="sm"
+              onClick={() => void saveSettings()}
+              disabled={savingSettings}
+            >
+              {savingSettings ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Save className="h-3.5 w-3.5" />
+              )}
+              Save settings
+            </Button>
+          </div>
+        </div>
 
         <div className="mt-4 grid gap-2 rounded-xl border border-border bg-muted/20 p-3">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">

@@ -368,20 +368,24 @@ Dashboard has a WhatsApp card:
 - **Send message** sends a free-text message to an Indian number or a number with
   country code.
 
-Configuration:
+Configuration lives in `app_settings`, not environment variables:
 
-```env
-WHATSAPP_ENABLED=true
-BAILEYS_AUTH_DIR=/var/lib/kavi/baileys
-WHATSAPP_COUNTRY_CODE=91
-```
+| DB key | Who edits | Purpose |
+| --- | --- | --- |
+| `fellowship.whatsapp.enabled` | Admin | Auto-connect on API start |
+| `fellowship.whatsapp.countryCode` | Admin | Default country code for 10-digit numbers |
+| `fellowship.whatsapp.authDir` | DevOps only | Persistent Baileys session directory |
 
-`WHATSAPP_ENABLED=true` auto-connects on API start. Manual Connect works even
-when auto-connect is off. Run exactly one API instance against one Baileys
-session directory; two processes cannot share the same WhatsApp session. Session
-files live outside the repository by default (`~/.kavi/baileys`) and must be
-backed up/restricted like a password. Use a dedicated number, not the main
-admissions number.
+The Dashboard shows these values. Admins can edit enabled/country code; the auth
+directory is read-only in the admin UI. DevOps updates
+`fellowship.whatsapp.authDir` directly in the database and restarts the API.
+The service inserts conservative defaults (`false`, `91`,
+`~/.kavi/baileys`) if the keys are missing.
+
+Manual Connect works even when auto-connect is off. Run exactly one API instance
+against one Baileys session directory; two processes cannot share the same
+WhatsApp session. Session files must be backed up/restricted like a password.
+Use a dedicated number, not the main admissions number.
 
 The interview reminder and offer reminder batches also attempt a WhatsApp message
 when the session is open. Those send failures are logged and never block email.
@@ -543,7 +547,8 @@ Admin-only endpoints (session + admin role/email, rate limited):
 - `GET /api/fellowship-audit`
 - `GET /api/fellowship-email-templates`, `PUT/DELETE /:key`
 - `GET /api/whatsapp/status`, `POST /api/whatsapp/connect`,
-  `POST /api/whatsapp/logout`, `POST /api/whatsapp/send`
+  `POST /api/whatsapp/logout`, `POST /api/whatsapp/send`,
+  `GET/PUT /api/whatsapp/settings`
 - `PUT /api/fellowship-policy`
 
 Tables in `api/src/db/drizzle/schema.ts`:

@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/commo
 import { rm } from "node:fs/promises";
 import * as QRCode from "qrcode";
 
-import { env } from "@/config/env";
+import { WhatsAppSettingsService } from "@/modules/whatsapp/whatsapp-settings.service";
 
 type ConnectionUpdate = {
   connection?: "connecting" | "open" | "close";
@@ -54,9 +54,7 @@ const loadBaileys = new Function(
 export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(WhatsAppService.name);
   private socket: WhatsAppSocket | null = null;
-  private statusValue: WhatsAppStatus = env.whatsappEnabled
-    ? "disconnected"
-    : "disabled";
+  private statusValue: WhatsAppStatus = "disabled";
   private qrDataUrl: string | null = null;
   private lastError = "";
   private connectedUser = "";
@@ -66,8 +64,12 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
   private reconnectTimer: NodeJS.Timeout | null = null;
   private connectedAt: string | null = null;
 
+  constructor(private readonly settings: WhatsAppSettingsService) {}
+
   async onModuleInit(): Promise<void> {
-    if (!env.whatsappEnabled) return;
+    const config = await this.settings.ensureDefaults();
+    this.statusValue = config.enabled ? "disconnected" : "disabled";
+    if (!config.enabled) return;
     try {
       await this.connect();
     } catch (error) {
@@ -89,20 +91,26 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  status() {
+  async status() {
+    const config = await this.settings.get();
+    const status =
+      this.statusValue === "disabled" && config.enabled
+        ? "disconnected"
+        : this.statusValue;
     return {
-      enabled: env.whatsappEnabled,
-      status: this.statusValue,
-      qrDataUrl: this.statusValue === "qr" ? this.qrDataUrl : null,
+      enabled: config.enabled,
+      status,
+      qrDataUrl: status === "qr" ? this.qrDataUrl : null,
       user: this.connectedUser,
       lastError: this.lastError,
       connectedAt: this.connectedAt,
-      authDir: env.BAILEYS_AUTH_DIR,
-      countryCode: env.WHATSAPP_COUNTRY_CODE,
+      authDir: config.authDir,
+      countryCode: config.countryCode,
+      updatedAt: config.updatedAt,
     };
   }
 
-  async connect(): Promise<ReturnType<WhatsAppService["status"]>> {
+  async connect(): Promise<Awaited<ReturnType<WhatsAppService["status"]>>> {
     if (this.starting || this.statusValue === "open") return this.status();
     this.starting = true;
     this.manuallyStopped = false;
@@ -111,9 +119,10 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     this.qrDataUrl = null;
 
     try {
+      const config = await this.settings.ensureDefaults();
       const baileys = await loadBaileys("@whiskeysockets/baileys");
       const { state, saveCreds } = await baileys.useMultiFileAuthState(
-        env.BAILEYS_AUTH_DIR,
+        config.authDir,
       );
       const { version } = await baileys.fetchLatestBaileysVersion();
 
@@ -169,7 +178,10 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     }
 
     try {
-      await rm(env.BAILEYS_AUTH_DIR, { recursive: true, force: true });
+      await rm((await this.settings.get()).authDir, {
+        recursive: true,
+        force: true,
+      });
     } catch (error) {
       this.logger.warn(`Could not remove WhatsApp auth directory: ${this.message(error)}`);
     }
@@ -189,7 +201,7 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
       );
     }
 
-    const jid = this.normalizeNumber(to);
+    const jid = this.normalizeNumber(to, (await this.settings.get()).countryCode);
     if (!jid) {
       throw new Error("Enter a valid phone number with country code");
     }
@@ -264,13 +276,13 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private normalizeNumber(raw: string): string | null {
+  private normalizeNumber(raw: string, countryCode: string): string | null {
     const digits = raw.replace(/\D/g, "");
     if (!digits) return null;
 
     let number = digits;
     if (number.startsWith("0")) number = number.slice(1);
-    if (number.length === 10) number = `${env.WHATSAPP_COUNTRY_CODE}${number}`;
+    if (number.length === 10) number = `${countryCode}${number}`;
     if (number.length < 10 || number.length > 15) return null;
     return `${number}@s.whatsapp.net`;
   }
