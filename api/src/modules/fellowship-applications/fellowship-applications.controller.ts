@@ -97,6 +97,7 @@ export class FellowshipApplicationsController {
           track: result.application.track,
           cohort: result.application.cohort,
           stage: result.application.stage,
+          offerExpiresAt: result.application.offerExpiresAt,
         });
       } catch (error) {
         this.logger.error(

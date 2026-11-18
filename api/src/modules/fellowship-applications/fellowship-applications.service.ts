@@ -13,6 +13,7 @@ import { uuid } from "@/_shared/team-helpers";
 import { DATABASE } from "@/db/drizzle/drizzle.module";
 import type { Database } from "@/db/drizzle/drizzle.client";
 import {
+  fellowshipAlumni,
   fellowshipApplications,
   FELLOWSHIP_APPLICATION_STAGES,
   type FellowshipApplicationRow,
@@ -32,6 +33,7 @@ export type FellowshipApplicationPublicDto = {
   track: string;
   cohort: string;
   stage: FellowshipApplicationStage;
+  offerExpiresAt: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -62,6 +64,7 @@ const toPublic = (row: FellowshipApplicationRow): FellowshipApplicationPublicDto
   track: row.track,
   cohort: row.cohort,
   stage: toStage(row.stage),
+  offerExpiresAt: row.offerExpiresAt ? row.offerExpiresAt.toISOString() : null,
   createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
 });
@@ -227,15 +230,55 @@ export class FellowshipApplicationsService {
     if (payload.cohort !== undefined) set.cohort = sanitizeText(payload.cohort, 80);
     if (payload.notes !== undefined) set.notes = sanitizeText(payload.notes, 4000);
 
+    if (payload.offerExpiresAt !== undefined) {
+      if (payload.offerExpiresAt === null) {
+        set.offerExpiresAt = null;
+      } else {
+        const expires = new Date(payload.offerExpiresAt);
+        if (Number.isNaN(expires.getTime())) {
+          throw new BadRequestException("Invalid offer expiry date");
+        }
+        set.offerExpiresAt = expires;
+      }
+    }
+
+    // An offer without a deadline reads as an open-ended promise. Default to
+    // seven days; admins can change or clear it explicitly.
+    if (payload.stage === "offer" && !existing.offerExpiresAt) {
+      set.offerExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    }
+
     const [row] = await this.db
       .update(fellowshipApplications)
       .set(set)
       .where(eq(fellowshipApplications.id, id))
       .returning();
 
+    const stageChanged = payload.stage !== undefined && payload.stage !== existing.stage;
+
+    // Completing the fellowship creates the alumni record automatically so the
+    // team has one place to track 6/12-month outcomes.
+    if (row.stage === "completed") {
+      const [alumni] = await this.db
+        .select({ id: fellowshipAlumni.id })
+        .from(fellowshipAlumni)
+        .where(eq(fellowshipAlumni.applicationId, row.id))
+        .limit(1);
+      if (!alumni) {
+        await this.db.insert(fellowshipAlumni).values({
+          id: uuid(),
+          applicationId: row.id,
+          name: row.name,
+          email: row.email,
+          cohort: row.cohort,
+          track: row.track,
+        });
+      }
+    }
+
     return {
       application: toAdmin(row),
-      stageChanged: payload.stage !== undefined && payload.stage !== existing.stage,
+      stageChanged,
       previousStage: toStage(existing.stage),
     };
   }

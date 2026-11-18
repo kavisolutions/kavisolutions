@@ -10,7 +10,11 @@ import { AdminsModule } from "@/modules/admins/admins.module";
 import { CertificatesModule } from "@/modules/certificates/certificates.module";
 import { ContactModule } from "@/modules/contact/contact.module";
 import { FarmsModule } from "@/modules/farms/farms.module";
+import { FellowshipAlumniModule } from "@/modules/fellowship-alumni/fellowship-alumni.module";
 import { FellowshipApplicationsModule } from "@/modules/fellowship-applications/fellowship-applications.module";
+import { FellowshipInterviewsModule } from "@/modules/fellowship-interviews/fellowship-interviews.module";
+import { FellowshipMentorsModule } from "@/modules/fellowship-mentors/fellowship-mentors.module";
+import { FellowshipOnboardingModule } from "@/modules/fellowship-onboarding/fellowship-onboarding.module";
 import { FellowshipPolicyModule } from "@/modules/fellowship-policy/fellowship-policy.module";
 import { FinancialModule } from "@/modules/financial/financial.module";
 import { GovernmentModule } from "@/modules/government/government.module";
@@ -50,6 +54,10 @@ import { UploadModule } from "@/modules/upload/upload.module";
     GovernmentModule,
     FellowshipApplicationsModule,
     FellowshipPolicyModule,
+    FellowshipMentorsModule,
+    FellowshipInterviewsModule,
+    FellowshipOnboardingModule,
+    FellowshipAlumniModule,
     FarmsModule,
     PagesModule,
     SocialModule,

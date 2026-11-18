@@ -251,8 +251,12 @@ export const FELLOWSHIP_APPLICATION_STAGES = [
   "applied",
   "review",
   "interview",
+  "waitlisted",
   "offer",
   "accepted",
+  "onboarded",
+  "active",
+  "completed",
   "rejected",
   "withdrawn",
 ] as const;
@@ -276,6 +280,7 @@ export const fellowshipApplications = pgTable(
     termsAccepted: boolean("terms_accepted").notNull().default(false),
     cohort: text("cohort").notNull().default("Unassigned"),
     stage: text("stage").notNull().default("applied"),
+    offerExpiresAt: timestamp("offer_expires_at", { withTimezone: true }),
     notes: text("notes").notNull().default(""),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
@@ -285,6 +290,145 @@ export const fellowshipApplications = pgTable(
     index("fellowship_applications_stage_idx").on(table.stage),
     index("fellowship_applications_email_idx").on(table.email),
     index("fellowship_applications_created_at_idx").on(table.createdAt),
+  ],
+);
+
+// Mentors who can sit on fellowship interview panels.
+export const FELLOWSHIP_MENTOR_STATUSES = ["active", "inactive"] as const;
+export type FellowshipMentorStatus = (typeof FELLOWSHIP_MENTOR_STATUSES)[number];
+
+export const fellowshipMentors = pgTable(
+  "fellowship_mentors",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    phone: text("phone").notNull().default(""),
+    title: text("title").notNull().default(""),
+    expertise: text("expertise").notNull().default(""),
+    status: text("status").notNull().default("active"),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("fellowship_mentors_email_unique").on(table.email),
+    index("fellowship_mentors_status_idx").on(table.status),
+  ],
+);
+
+// A scheduled interview for one application.
+export const FELLOWSHIP_INTERVIEW_STATUSES = [
+  "scheduled",
+  "completed",
+  "cancelled",
+  "no_show",
+] as const;
+export type FellowshipInterviewStatus = (typeof FELLOWSHIP_INTERVIEW_STATUSES)[number];
+
+export const fellowshipInterviews = pgTable(
+  "fellowship_interviews",
+  {
+    id: text("id").primaryKey(),
+    applicationId: text("application_id")
+      .notNull()
+      .references(() => fellowshipApplications.id, { onDelete: "cascade" }),
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }).notNull(),
+    mode: text("mode").notNull().default("online"),
+    location: text("location").notNull().default(""),
+    meetingUrl: text("meeting_url").notNull().default(""),
+    status: text("status").notNull().default("scheduled"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("fellowship_interviews_application_idx").on(table.applicationId),
+    index("fellowship_interviews_scheduled_idx").on(table.scheduledAt),
+  ],
+);
+
+// Interviewer panel rows double as private scorecards (tokenized access).
+export const fellowshipInterviewPanel = pgTable(
+  "fellowship_interview_panel",
+  {
+    id: text("id").primaryKey(),
+    interviewId: text("interview_id")
+      .notNull()
+      .references(() => fellowshipInterviews.id, { onDelete: "cascade" }),
+    mentorId: text("mentor_id").references(() => fellowshipMentors.id, {
+      onDelete: "set null",
+    }),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    role: text("role").notNull().default("mentor"),
+    token: text("token").notNull(),
+    motivationScore: integer("motivation_score"),
+    commitmentScore: integer("commitment_score"),
+    communicationScore: integer("communication_score"),
+    problemScore: integer("problem_score"),
+    fieldScore: integer("field_score"),
+    fitScore: integer("fit_score"),
+    recommendation: text("recommendation").notNull().default(""),
+    notes: text("notes").notNull().default(""),
+    submittedAt: timestamp("submitted_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("fellowship_interview_panel_token_unique").on(table.token),
+    index("fellowship_interview_panel_interview_idx").on(table.interviewId),
+  ],
+);
+
+// Admin-maintained onboarding checklist for accepted fellows.
+export const fellowshipOnboarding = pgTable(
+  "fellowship_onboarding",
+  {
+    id: text("id").primaryKey(),
+    applicationId: text("application_id")
+      .notNull()
+      .references(() => fellowshipApplications.id, { onDelete: "cascade" }),
+    idVerified: boolean("id_verified").notNull().default(false),
+    educationVerified: boolean("education_verified").notNull().default(false),
+    emergencyContact: text("emergency_contact").notNull().default(""),
+    medicalNotes: text("medical_notes").notNull().default(""),
+    codeOfConduct: boolean("code_of_conduct").notNull().default(false),
+    poshAck: boolean("posh_ack").notNull().default(false),
+    mediaConsent: boolean("media_consent").notNull().default(false),
+    deviceNeeds: text("device_needs").notNull().default(""),
+    baselineDone: boolean("baseline_done").notNull().default(false),
+    vipassanaAck: boolean("vipassana_ack").notNull().default(false),
+    notes: text("notes").notNull().default(""),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [uniqueIndex("fellowship_onboarding_application_unique").on(table.applicationId)],
+);
+
+// Alumni records and 6/12-month outcome tracking.
+export const fellowshipAlumni = pgTable(
+  "fellowship_alumni",
+  {
+    id: text("id").primaryKey(),
+    applicationId: text("application_id").references(() => fellowshipApplications.id, {
+      onDelete: "set null",
+    }),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    cohort: text("cohort").notNull().default(""),
+    track: text("track").notNull().default(""),
+    destinationType: text("destination_type").notNull().default(""),
+    organisation: text("organisation").notNull().default(""),
+    role: text("role").notNull().default(""),
+    outcome6m: text("outcome_6m").notNull().default(""),
+    outcome12m: text("outcome_12m").notNull().default(""),
+    mentorWilling: boolean("mentor_willing").notNull().default(false),
+    testimonialConsent: boolean("testimonial_consent").notNull().default(false),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("fellowship_alumni_email_idx").on(table.email),
+    index("fellowship_alumni_cohort_idx").on(table.cohort),
   ],
 );
 
@@ -342,3 +486,9 @@ export type SurveyorRow = typeof surveyors.$inferSelect;
 export type SurveyorInsert = typeof surveyors.$inferInsert;
 export type FellowshipApplicationRow = typeof fellowshipApplications.$inferSelect;
 export type FellowshipApplicationInsert = typeof fellowshipApplications.$inferInsert;
+export type FellowshipMentorRow = typeof fellowshipMentors.$inferSelect;
+export type FellowshipMentorInsert = typeof fellowshipMentors.$inferInsert;
+export type FellowshipInterviewRow = typeof fellowshipInterviews.$inferSelect;
+export type FellowshipInterviewPanelRow = typeof fellowshipInterviewPanel.$inferSelect;
+export type FellowshipOnboardingRow = typeof fellowshipOnboarding.$inferSelect;
+export type FellowshipAlumniRow = typeof fellowshipAlumni.$inferSelect;

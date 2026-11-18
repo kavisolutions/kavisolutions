@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsDateString,
   IsEmail,
   IsIn,
   IsOptional,
@@ -83,4 +84,9 @@ export class UpdateFellowshipApplicationDto {
   @IsString()
   @MaxLength(4000)
   notes?: string;
+
+  /* Send null to clear an existing offer deadline. */
+  @IsOptional()
+  @IsDateString()
+  offerExpiresAt?: string | null;
 }

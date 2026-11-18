@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
+  CalendarClock,
   CalendarDays,
   ClipboardList,
+  GraduationCap,
   Loader2,
   Mail,
   MapPin,
@@ -13,6 +15,8 @@ import {
   RefreshCw,
   Save,
   Search,
+  UserCheck,
+  UserRound,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { apiErrorMessage } from "@/lib/api-error";
@@ -26,6 +30,10 @@ import {
   FELLOWSHIP_POLICY_DEFAULTS,
   type FellowshipPolicy,
 } from "@/lib/fellowship-policy";
+import AlumniPanel from "@/components/admin/fellowship/AlumniPanel";
+import InterviewsPanel from "@/components/admin/fellowship/InterviewsPanel";
+import MentorsPanel from "@/components/admin/fellowship/MentorsPanel";
+import OnboardingPanel from "@/components/admin/fellowship/OnboardingPanel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -46,6 +54,7 @@ type Application = {
   termsAccepted: boolean;
   cohort: string;
   stage: FellowshipApplicationStage;
+  offerExpiresAt: string | null;
   notes: string;
   createdAt: string;
   updatedAt: string;
@@ -56,8 +65,20 @@ const withCookies = (extra: RequestInit = {}): RequestInit => ({
   ...extra,
 });
 
+const toLocalInput = (value: string): string => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const pad = (part: number) => String(part).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
+    date.getHours(),
+  )}:${pad(date.getMinutes())}`;
+};
+
 export default function FellowshipApplicationsAdmin() {
   const { session, loading: authLoading } = useAuth();
+  const [tab, setTab] = useState<
+    "applications" | "interviews" | "mentors" | "onboarding" | "alumni"
+  >("applications");
   const [applications, setApplications] = useState<Application[]>([]);
   const [selectedID, setSelectedID] = useState<string | null>(null);
   const [query, setQuery] = useState("");
@@ -71,6 +92,7 @@ export default function FellowshipApplicationsAdmin() {
     stage: FellowshipApplicationStage;
     cohort: string;
     notes: string;
+    offerExpiresAt: string;
   } | null>(null);
   const [policy, setPolicy] = useState<FellowshipPolicy | null>(null);
   const [policyDraft, setPolicyDraft] = useState<FellowshipPolicy>(
@@ -146,6 +168,9 @@ export default function FellowshipApplicationsAdmin() {
       stage: application.stage,
       cohort: application.cohort,
       notes: application.notes,
+      offerExpiresAt: application.offerExpiresAt
+        ? toLocalInput(application.offerExpiresAt)
+        : "",
     });
     setNotice("");
     setError("");
@@ -163,7 +188,14 @@ export default function FellowshipApplicationsAdmin() {
         withCookies({
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(draft),
+          body: JSON.stringify({
+            stage: draft.stage,
+            cohort: draft.cohort,
+            notes: draft.notes,
+            offerExpiresAt: draft.offerExpiresAt
+              ? new Date(draft.offerExpiresAt).toISOString()
+              : null,
+          }),
         }),
       );
       const data = (await response.json().catch(() => null)) as {
@@ -275,16 +307,47 @@ export default function FellowshipApplicationsAdmin() {
               Admin
             </Link>
             <h1 className="mt-2 font-display text-2xl font-semibold tracking-tight">
-              Fellowship applications
+              Fellowship programme
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Review applications, move them through the pipeline and keep internal notes.
+              Run admissions from review and interviews through onboarding, the
+              active fellowship and alumni outcomes.
             </p>
           </div>
           <Button variant="outline" onClick={() => void load()} disabled={loading}>
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
           </Button>
+        </div>
+
+        <div className="mt-5 flex flex-wrap gap-1.5 rounded-xl border border-border bg-muted/30 p-1.5">
+          {(
+            [
+              ["applications", "Applications", ClipboardList],
+              ["interviews", "Interviews", CalendarClock],
+              ["mentors", "Mentors", UserRound],
+              ["onboarding", "Onboarding", UserCheck],
+              ["alumni", "Alumni", GraduationCap],
+            ] as const
+          ).map(([value, label, Icon]) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => {
+                setTab(value);
+                setError("");
+                setNotice("");
+              }}
+              className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+                tab === value
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {label}
+            </button>
+          ))}
         </div>
 
         {(error || notice) && (
@@ -299,6 +362,8 @@ export default function FellowshipApplicationsAdmin() {
           </div>
         )}
 
+        {tab === "applications" && (
+          <>
         <Card className="mt-5">
           <CardHeader className="flex flex-row items-center justify-between gap-3">
             <div>
@@ -569,6 +634,23 @@ export default function FellowshipApplicationsAdmin() {
 
                   <label className="block">
                     <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      Offer response deadline
+                    </span>
+                    <Input
+                      type="datetime-local"
+                      value={draft.offerExpiresAt}
+                      onChange={(event) =>
+                        setDraft({ ...draft, offerExpiresAt: event.target.value })
+                      }
+                    />
+                    <span className="mt-1 block text-[10px] text-muted-foreground">
+                      Set when the stage is Offer. Leaving it empty on a new offer
+                      defaults to seven days.
+                    </span>
+                  </label>
+
+                  <label className="block">
+                    <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Internal notes
                     </span>
                     <textarea
@@ -589,6 +671,38 @@ export default function FellowshipApplicationsAdmin() {
             </CardContent>
           </Card>
         </div>
+          </>
+        )}
+
+        {tab === "interviews" && (
+          <div className="mt-5">
+            <InterviewsPanel
+              applications={applications}
+              onApplicationsChanged={() => void load()}
+            />
+          </div>
+        )}
+
+        {tab === "mentors" && (
+          <div className="mt-5">
+            <MentorsPanel />
+          </div>
+        )}
+
+        {tab === "onboarding" && (
+          <div className="mt-5">
+            <OnboardingPanel
+              applications={applications}
+              onApplicationsChanged={() => void load()}
+            />
+          </div>
+        )}
+
+        {tab === "alumni" && (
+          <div className="mt-5">
+            <AlumniPanel applications={applications} />
+          </div>
+        )}
       </div>
     </main>
   );

@@ -18,6 +18,7 @@ type ApplicationStatus = {
   track: string;
   cohort: string;
   stage: FellowshipApplicationStage;
+  offerExpiresAt: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -61,7 +62,9 @@ export default function FellowshipStatusLookup() {
   };
 
   const activeIndex = application
-    ? FELLOWSHIP_PIPELINE_STAGES.indexOf(application.stage)
+    ? application.stage === "waitlisted"
+      ? FELLOWSHIP_PIPELINE_STAGES.indexOf("interview")
+      : FELLOWSHIP_PIPELINE_STAGES.indexOf(application.stage)
     : -1;
   const activeColor = application
     ? FELLOWSHIP_STAGE_TONES[application.stage]
@@ -167,7 +170,13 @@ export default function FellowshipStatusLookup() {
               </div>
 
               {isFellowshipStage(application.stage) &&
-                (application.stage === "rejected" ||
+                (application.stage === "waitlisted" ? (
+                  <p className="mt-5 rounded-xl border border-amber-500/25 bg-amber-500/10 p-4 text-xs leading-relaxed text-amber-200">
+                    You are on the waitlist. Your interview is complete and your
+                    application stays open. The team will contact you if a seat
+                    becomes available for your track and cohort.
+                  </p>
+                ) : application.stage === "rejected" ||
                   application.stage === "withdrawn" ? (
                     <p className="mt-5 rounded-xl border border-[rgba(148,163,184,0.16)] bg-[rgba(18,29,47,0.55)] p-4 text-xs leading-relaxed text-[#A5B3C7]">
                       This application is closed. You can email
@@ -175,37 +184,61 @@ export default function FellowshipStatusLookup() {
                       or want feedback.
                     </p>
                   ) : (
-                    <ol className="mt-6 space-y-2">
-                      {FELLOWSHIP_PIPELINE_STAGES.map((stage, index) => {
-                        const complete = index <= activeIndex;
-                        const current = index === activeIndex;
-                        const color = FELLOWSHIP_STAGE_TONES[stage];
-                        return (
-                          <li
-                            key={stage}
-                            className="flex items-center gap-3 rounded-xl border border-[rgba(148,163,184,0.14)] bg-[rgba(18,29,47,0.55)] px-4 py-3"
-                          >
-                            <span
-                              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[9px] font-mono"
-                              style={{
-                                color: complete ? color : "#7889A0",
-                                borderColor: complete ? `${color}66` : "rgba(148,163,184,0.2)",
-                                backgroundColor: complete ? `${color}14` : "transparent",
-                              }}
+                    <>
+                      {application.stage === "offer" && application.offerExpiresAt && (
+                        <p className="mt-5 rounded-xl border border-[#8B5CF6]/30 bg-[#8B5CF6]/10 p-4 text-xs leading-relaxed text-[#DDD6FE]">
+                          Please respond to your offer by{" "}
+                          <strong>
+                            {new Date(application.offerExpiresAt).toLocaleString("en-IN", {
+                              dateStyle: "full",
+                              timeStyle: "short",
+                              timeZone: "Asia/Kolkata",
+                            })}{" "}
+                            IST
+                          </strong>
+                          .
+                        </p>
+                      )}
+                      <ol className="mt-6 space-y-2">
+                        {FELLOWSHIP_PIPELINE_STAGES.map((stage, index) => {
+                          const complete = index <= activeIndex;
+                          const current = index === activeIndex;
+                          const color = FELLOWSHIP_STAGE_TONES[stage];
+                          return (
+                            <li
+                              key={stage}
+                              className="flex items-center gap-3 rounded-xl border border-[rgba(148,163,184,0.14)] bg-[rgba(18,29,47,0.55)] px-4 py-3"
                             >
-                              {complete ? <CheckCircle2 className="h-3.5 w-3.5" /> : index + 1}
-                            </span>
-                            <span
-                              className={`text-xs ${
-                                current ? "font-semibold text-[#F7F9FC]" : "text-[#A5B3C7]"
-                              }`}
-                            >
-                              {FELLOWSHIP_STAGE_LABELS[stage]}
-                            </span>
-                          </li>
-                        );
-                      })}
-                    </ol>
+                              <span
+                                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[9px] font-mono"
+                                style={{
+                                  color: complete ? color : "#7889A0",
+                                  borderColor: complete
+                                    ? `${color}66`
+                                    : "rgba(148,163,184,0.2)",
+                                  backgroundColor: complete ? `${color}14` : "transparent",
+                                }}
+                              >
+                                {complete ? (
+                                  <CheckCircle2 className="h-3.5 w-3.5" />
+                                ) : (
+                                  index + 1
+                                )}
+                              </span>
+                              <span
+                                className={`text-xs ${
+                                  current
+                                    ? "font-semibold text-[#F7F9FC]"
+                                    : "text-[#A5B3C7]"
+                                }`}
+                              >
+                                {FELLOWSHIP_STAGE_LABELS[stage]}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ol>
+                    </>
                   ))}
 
               <p className="mt-4 text-[10px] text-[#7889A0]">

@@ -535,8 +535,12 @@ const FELLOWSHIP_STAGE_LABELS: Record<string, string> = {
   applied: "Application received",
   review: "Under review",
   interview: "Interview stage",
+  waitlisted: "Waitlisted",
   offer: "Offer shared",
   accepted: "Offer accepted",
+  onboarded: "Onboarding complete",
+  active: "Fellowship active",
+  completed: "Fellowship completed",
   rejected: "Not selected",
   withdrawn: "Withdrawn",
 };
@@ -548,6 +552,7 @@ export type FellowshipStageUpdateMailInput = {
   track: string;
   cohort: string;
   stage: string;
+  offerExpiresAt?: string | null;
 };
 
 /* Stage-change email to the applicant. Internal notes are never included. */
@@ -556,6 +561,14 @@ export async function sendFellowshipStageUpdateEmail(
 ): Promise<void> {
   const label = FELLOWSHIP_STAGE_LABELS[input.stage] ?? input.stage;
   const closed = input.stage === "rejected" || input.stage === "withdrawn";
+  const offerExpiry =
+    input.stage === "offer" && input.offerExpiresAt
+      ? new Date(input.offerExpiresAt).toLocaleString("en-IN", {
+          dateStyle: "full",
+          timeStyle: "short",
+          timeZone: "Asia/Kolkata",
+        })
+      : null;
 
   await getTransporter().sendMail({
     from: `"Kavi Fellowship" <${env.SMTP_USER}>`,
@@ -570,6 +583,11 @@ export async function sendFellowshipStageUpdateEmail(
           ${escapeHtml(input.cohort)} cohort) is now at:
         </p>
         <p style="margin:0 0 16px;font-family:monospace;font-size:18px;color:#91b4ff;">${escapeHtml(label)}</p>
+        ${
+          offerExpiry
+            ? `<p style="margin:0 0 12px;line-height:1.6;"><strong>Please respond by:</strong> ${escapeHtml(offerExpiry)} IST</p>`
+            : ""
+        }
         <p style="margin:0 0 16px;">
           <a href="https://kavisolutions.in/fellowship/status" style="color:#22d3ee;">Check the status page</a>
           with reference ${escapeHtml(input.reference)} and your email.
@@ -578,8 +596,132 @@ export async function sendFellowshipStageUpdateEmail(
           ${
             closed
               ? "This application is closed. Email kavisolutions1@gmail.com if you believe this is a mistake."
-              : "This is a status update, not an offer unless the stage says Offer shared or Offer accepted."
+              : "This is a status update, not an offer unless the stage says Offer shared."
           }
+        </p>
+      </div>
+    `,
+  });
+}
+
+export type FellowshipInterviewMailInput = {
+  reference: string;
+  candidateName: string;
+  candidateEmail: string;
+  scheduledAt: string;
+  mode: string;
+  location: string;
+  meetingUrl: string;
+  interviewers: string[];
+  kind: "scheduled" | "updated" | "cancelled";
+};
+
+export async function sendFellowshipInterviewCandidateEmail(
+  input: FellowshipInterviewMailInput,
+): Promise<void> {
+  const when = new Date(input.scheduledAt).toLocaleString("en-IN", {
+    dateStyle: "full",
+    timeStyle: "short",
+    timeZone: "Asia/Kolkata",
+  });
+  const heading =
+    input.kind === "cancelled"
+      ? "Interview cancelled"
+      : input.kind === "updated"
+        ? "Interview rescheduled"
+        : "Interview scheduled";
+
+  await getTransporter().sendMail({
+    from: `"Kavi Fellowship" <${env.SMTP_USER}>`,
+    to: input.candidateEmail,
+    subject: `${heading} — Kavi Fellowship (${input.reference})`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#06060b;color:#e0e0e0;border-radius:12px;">
+        <h2 style="color:#ffffff;margin:0 0 12px;">${heading}</h2>
+        <p style="margin:0 0 12px;">Hello ${escapeHtml(input.candidateName)},</p>
+        <p style="margin:0 0 12px;line-height:1.6;">
+          ${
+            input.kind === "cancelled"
+              ? "Your fellowship interview has been cancelled. The team will contact you about the next step."
+              : `Your Kavi Fellowship interview is ${input.kind === "updated" ? "now" : ""} scheduled for <strong>${escapeHtml(when)} IST</strong>.`
+          }
+        </p>
+        ${
+          input.kind !== "cancelled"
+            ? `<p style="margin:0 0 8px;"><strong>Mode:</strong> ${escapeHtml(input.mode)}</p>
+               ${
+                 input.meetingUrl
+                   ? `<p style="margin:0 0 8px;"><strong>Meeting link:</strong> <a href="${escapeHtml(input.meetingUrl)}" style="color:#22d3ee;">${escapeHtml(input.meetingUrl)}</a></p>`
+                   : ""
+               }
+               ${
+                 input.location
+                   ? `<p style="margin:0 0 8px;"><strong>Location:</strong> ${escapeHtml(input.location)}</p>`
+                   : ""
+               }
+               <p style="margin:0 0 12px;"><strong>Panel:</strong> ${escapeHtml(input.interviewers.join(", "))}</p>`
+            : ""
+        }
+        <p style="margin:0;color:#6e6e85;font-size:12px;">Reference: ${escapeHtml(input.reference)}</p>
+      </div>
+    `,
+  });
+}
+
+export type FellowshipInterviewerMailInput = {
+  name: string;
+  email: string;
+  candidateName: string;
+  reference: string;
+  track: string;
+  scheduledAt: string;
+  mode: string;
+  location: string;
+  meetingUrl: string;
+  token: string;
+};
+
+export async function sendFellowshipInterviewerEmail(
+  input: FellowshipInterviewerMailInput,
+): Promise<void> {
+  const when = new Date(input.scheduledAt).toLocaleString("en-IN", {
+    dateStyle: "full",
+    timeStyle: "short",
+    timeZone: "Asia/Kolkata",
+  });
+  const scorecardUrl = `https://kavisolutions.in/mentor/interview/${input.token}`;
+
+  await getTransporter().sendMail({
+    from: `"Kavi Fellowship" <${env.SMTP_USER}>`,
+    to: input.email,
+    subject: `Interview panel — ${input.candidateName} (${input.reference})`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#06060b;color:#e0e0e0;border-radius:12px;">
+        <h2 style="color:#ffffff;margin:0 0 12px;">Fellowship interview assignment</h2>
+        <p style="margin:0 0 12px;">Hello ${escapeHtml(input.name)},</p>
+        <p style="margin:0 0 12px;line-height:1.6;">
+          You are on the interview panel for <strong>${escapeHtml(input.candidateName)}</strong>
+          (${escapeHtml(input.track)} track, reference ${escapeHtml(input.reference)}).
+        </p>
+        <p style="margin:0 0 8px;"><strong>When:</strong> ${escapeHtml(when)} IST</p>
+        <p style="margin:0 0 8px;"><strong>Mode:</strong> ${escapeHtml(input.mode)}</p>
+        ${
+          input.meetingUrl
+            ? `<p style="margin:0 0 8px;"><strong>Meeting link:</strong> <a href="${escapeHtml(input.meetingUrl)}" style="color:#22d3ee;">${escapeHtml(input.meetingUrl)}</a></p>`
+            : ""
+        }
+        ${
+          input.location
+            ? `<p style="margin:0 0 8px;"><strong>Location:</strong> ${escapeHtml(input.location)}</p>`
+            : ""
+        }
+        <p style="margin:16px 0;">
+          <a href="${scorecardUrl}" style="display:inline-block;padding:12px 18px;background:#175cd3;color:#ffffff;border-radius:8px;text-decoration:none;">
+            Open private scorecard
+          </a>
+        </p>
+        <p style="margin:0;color:#6e6e85;font-size:12px;">
+          This link is private. Submit the scorecard after the interview. Do not forward it.
         </p>
       </div>
     `,

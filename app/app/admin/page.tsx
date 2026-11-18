@@ -1336,7 +1336,7 @@ export default function AdminPage() {
             className="mt-2 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
           >
             <ClipboardList className="h-4 w-4" />
-            Fellowship applications
+            Fellowship programme
           </Link>
         </div>
 
