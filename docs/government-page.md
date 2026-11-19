@@ -1,15 +1,14 @@
 # Kavi Government Technology Services — page handover
 
-Status: **built, not launched.** `/government` returns 404 until an administrator
-enables it under **Settings → Live pages → Government Technology**.
+Status: **published.** The page is live at `/government`; admins can hide it again under **Settings → Live pages**.
 
 ## Review links
 
-The page is hidden until an admin enables it.
+The page is live. Admins can hide it from **Settings → Live pages**.
 
 | Item | Link |
 | --- | --- |
-| Live route | `https://kavisolutions.in/government` (enable it first) |
+| Live route | `https://kavisolutions.in/government` |
 | Code | https://github.com/kavisolutions/kavisolutions/commit/6b8a78d6 |
 | Handover | `docs/government-page.md` |
 | Internal tracker | `docs/government-portals.xlsx` |

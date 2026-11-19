@@ -1,15 +1,14 @@
 # Kavi Farms — page handover
 
-Status: **built, not launched.** `/farms` returns 404 until an administrator
-enables it under **Settings → Live pages → Kavi Farms**.
+Status: **published.** The page is live at `/farms`; admins can hide it again under **Settings → Live pages**.
 
 ## Review links
 
-The page is still hidden, so the public route returns 404 until it is enabled.
+The page is live at `/farms`. Admins can hide it from **Settings → Live pages**.
 
 | Item | Link |
 | --- | --- |
-| Live route | `https://kavisolutions.in/farms` (enable it first) |
+| Live route | `https://kavisolutions.in/farms` |
 | Code | https://github.com/kavisolutions/kavisolutions/commit/6b8a78d6 |
 | Handover | `docs/farms-page.md` |
 | Content | `app/lib/farms-data.ts` |

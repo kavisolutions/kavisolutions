@@ -1,14 +1,14 @@
 # Kavi Financial Services — page handover
 
-Status: **built, not launched.** The page 404s until it is explicitly enabled.
+Status: **published.** The page is live at `/financial`; admins can hide it again under **Settings → Live pages**.
 
 ## Review links
 
-The page is hidden until an admin enables it.
+The page is live. Admins can hide it from **Settings → Live pages**.
 
 | Item | Link |
 | --- | --- |
-| Live route | `https://kavisolutions.in/financial` (enable it first) |
+| Live route | `https://kavisolutions.in/financial` |
 | Code | https://github.com/kavisolutions/kavisolutions/commit/6b8a78d6 |
 | Handover | `docs/financial-page.md` |
 
@@ -130,11 +130,10 @@ Everything visible lives in `app/lib/financial-data.ts`:
 Cards size to their content, so adding or removing list items needs no layout
 change.
 
-## Adding a navigation link
+## Navigation links
 
-Once launched, add `/financial` to `app/components/Navbar.tsx` (`links`) and the
-services column in `app/components/Footer.tsx`. Keep it out of the nav until the
-page is enabled or visitors hit a 404.
+`/financial` is linked from the Navbar, mobile menu and footer. If the page is
+hidden again, remove those links at the same time or visitors will hit a 404.
 
 ## Future dependencies
 
