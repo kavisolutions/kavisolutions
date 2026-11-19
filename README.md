@@ -36,7 +36,10 @@ approval. See [`docs/social-agent.md`](docs/social-agent.md). The admin panel
 talks to it through `/api/admin/social/*`; the sidecar is optional and the rest
 of the site runs without it.
 
-`/survey` (Survey & Research Solutions), `/financial` (Financial Services),
+`/survey` (Survey & Research Solutions) is served by the independent
+[`kavi-solutions/kavi-survey-research`](https://github.com/kavi-solutions/kavi-survey-research)
+service at the same URL; the main-app page remains a fallback.
+`/financial` (Financial Services),
 `/government` (Government Technology Services) and `/farms` (Kavi Farms) are
 **published**. Any of them can be hidden again from **Settings → Live pages** in
 the admin panel; the switch takes effect immediately — no rebuild or redeploy.

@@ -1,6 +1,12 @@
 # Kavi Survey & Research Solutions — page handover
 
-Status: **published.** The page is live at `/survey`; admins can hide it again from **Settings → Live pages**.
+> **Production note:** `https://kavisolutions.in/survey` is served by the
+> independent [`kavi-solutions/kavi-survey-research`](https://github.com/kavi-solutions/kavi-survey-research)
+> service behind nginx. This document covers the original page in the main app,
+> which remains as a fallback/local implementation. Content edits for the live
+> platform go through `/survey/admin`, not `app/lib/survey-data.ts`.
+
+Status: **published.** The original page lives at `/survey`; admins can hide it again from **Settings → Live pages**.
 
 ## What exists
 
