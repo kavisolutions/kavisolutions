@@ -193,6 +193,27 @@ const sections = [
 
 type SectionKey = (typeof sections)[number]["key"];
 
+const WORKSPACE_SECTIONS: SectionKey[] = [
+  "team",
+  "roles",
+  "teams",
+  "projects",
+  "certificates",
+  "admins",
+  "settings",
+];
+
+const SURVEY_SECTIONS: SectionKey[] = ["survey", "surveyors", "enquiries"];
+
+const SECTION_NAV_LABELS: Partial<Record<SectionKey, string>> = {
+  survey: "Services",
+  surveyors: "Users",
+  enquiries: "Enquiries",
+};
+
+const sectionByKey = (key: SectionKey) =>
+  sections.find((item) => item.key === key) ?? sections[0];
+
 /* Public page switches, read from and written to /api/pages. A page is
    unpublished until its switch is on, in which case the route 404s. */
 type PageVisibility = { survey: boolean; financial: boolean; government: boolean; farms: boolean };
@@ -236,6 +257,7 @@ export default function AdminPage() {
     return stored === "light" ? "light" : "dark";
   });
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(true);
 
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [memberQuery, setMemberQuery] = useState("");
@@ -536,6 +558,7 @@ export default function AdminPage() {
 
   const selectSection = (key: SectionKey) => {
     setSection(key);
+    if (SURVEY_SECTIONS.includes(key)) setServicesOpen(true);
     setMobileNavOpen(false);
     const url = new URL(window.location.href);
     url.searchParams.set("section", key);
@@ -1486,6 +1509,72 @@ export default function AdminPage() {
   const activeSection = sections.find((item) => item.key === section) ?? sections[0];
   const userInitial = (session.user.email?.[0] ?? "A").toUpperCase();
 
+  const sectionCount = (key: SectionKey): number | null => {
+    switch (key) {
+      case "team":
+        return members.length;
+      case "roles":
+        return roles.length;
+      case "teams":
+        return orgTeams.length;
+      case "projects":
+        return projects.length;
+      case "certificates":
+        return certificates.length;
+      case "survey":
+        return surveyContent.verticals.length;
+      case "surveyors":
+        return surveyors.length;
+      case "enquiries":
+        return enquiries.length;
+      case "admins":
+        return admins.length;
+      default:
+        return null;
+    }
+  };
+
+  const renderNavItem = (key: SectionKey, nested = false) => {
+    const item = sectionByKey(key);
+    const isActive = section === key;
+    const count = sectionCount(key);
+
+    return (
+      <button
+        key={key}
+        onClick={() => selectSection(key)}
+        aria-current={isActive ? "page" : undefined}
+        className={`group flex items-center justify-between rounded-lg text-left font-medium transition-all ${
+          nested ? "px-3 py-2 text-[13px]" : "px-3 py-2.5 text-sm"
+        } ${
+          isActive
+            ? "bg-primary/10 text-primary border border-primary/20 shadow-xs"
+            : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+        }`}
+      >
+        <div className="flex min-w-0 items-center gap-3">
+          <item.icon
+            className={`shrink-0 transition-colors ${
+              nested ? "h-3.5 w-3.5" : "h-4 w-4"
+            } ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}
+          />
+          <span className="truncate">{SECTION_NAV_LABELS[key] ?? item.label}</span>
+        </div>
+        {count !== null && (
+          <span
+            className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold tabular-nums ${
+              isActive
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground group-hover:text-foreground"
+            }`}
+          >
+            {count}
+          </span>
+        )}
+      </button>
+    );
+  };
+
   return (
     <div id="admin-app" data-theme={theme} className={`admin-app min-h-screen bg-background text-foreground ${theme === "dark" ? "dark" : ""}`}>
       {/* Mobile Drawer Backdrop */}
@@ -1531,61 +1620,53 @@ export default function AdminPage() {
             Workspace
           </p>
           <nav className="flex flex-col gap-1">
-            {sections.map((item) => {
-              const isActive = section === item.key;
-              const count =
-                item.key === "team"
-                  ? members.length
-                  : item.key === "roles"
-                  ? roles.length
-                  : item.key === "teams"
-                  ? orgTeams.length
-                  : item.key === "projects"
-                  ? projects.length
-                  : item.key === "certificates"
-                  ? certificates.length
-                  : item.key === "survey"
-                  ? surveyContent.verticals.length
-                  : item.key === "surveyors"
-                  ? surveyors.length
-                  : item.key === "admins"
-                  ? admins.length
-                  : null;
-
-              return (
-                <button
-                  key={item.key}
-                  onClick={() => selectSection(item.key)}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`group flex items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-all ${
-                    isActive
-                      ? "bg-primary/10 text-primary border border-primary/20 shadow-xs"
-                      : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <item.icon className={`h-4 w-4 transition-colors ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`} />
-                    <span>{item.label}</span>
-                  </div>
-                  {count !== null && (
-                    <span
-                      className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold tabular-nums ${
-                        isActive
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground group-hover:text-foreground"
-                      }`}
-                    >
-                      {count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+            {WORKSPACE_SECTIONS.map((key) => renderNavItem(key))}
           </nav>
 
+          <p className="mt-5 px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
+            Services
+          </p>
+          <nav className="flex flex-col gap-1">
+            <button
+              type="button"
+              onClick={() => setServicesOpen((open) => !open)}
+              aria-expanded={servicesOpen}
+              className={`group flex items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-all ${
+                SURVEY_SECTIONS.includes(section)
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <BarChart3
+                  className={`h-4 w-4 ${
+                    SURVEY_SECTIONS.includes(section)
+                      ? "text-primary"
+                      : "text-muted-foreground group-hover:text-foreground"
+                  }`}
+                />
+                <span>Survey &amp; Research</span>
+              </div>
+              <ChevronRight
+                className={`h-3.5 w-3.5 transition-transform ${
+                  servicesOpen ? "rotate-90" : ""
+                }`}
+              />
+            </button>
+
+            {servicesOpen && (
+              <div className="ml-4 flex flex-col gap-1 border-l border-border pl-2">
+                {SURVEY_SECTIONS.map((key) => renderNavItem(key, true))}
+              </div>
+            )}
+          </nav>
+
+          <p className="mt-5 px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
+            Programmes
+          </p>
           <Link
             href="/admin/fellowship"
-            className="mt-2 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
           >
             <ClipboardList className="h-4 w-4" />
             Fellowship programme
@@ -1598,6 +1679,11 @@ export default function AdminPage() {
             <BriefcaseBusiness className="h-4 w-4" />
             Programme operations
           </Link>
+
+          <p className="mt-5 px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
+            Automation
+          </p>
+          <nav className="flex flex-col gap-1">{renderNavItem("social")}</nav>
         </div>
 
         {/* User Account / Footer */}
