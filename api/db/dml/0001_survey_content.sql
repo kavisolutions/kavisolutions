@@ -261,29 +261,29 @@ VALUES (
     ],
     "engagement": [
       {
-        "title": "On-call support",
+        "title": "On-Call Support",
         "bestFor": "Clients with an in-house research team who need execution bandwidth.",
-        "summary": "Surveyors, field researchers and research support available whenever your team needs extra capacity."
+        "summary": "Provide surveyors, field researchers, and research support whenever clients require them."
       },
       {
-        "title": "Direct project execution",
+        "title": "Direct Project Execution",
         "bestFor": "Organisations that want a single accountable partner end to end.",
-        "summary": "We take complete ownership of the assignment — planning, field execution, analysis and final reporting."
+        "summary": "Take complete ownership of survey projects, from planning to field execution and final reporting."
       },
       {
-        "title": "Data collection only",
+        "title": "Data Collection Only",
         "bestFor": "Teams with analysts but no field presence.",
-        "summary": "We run the fieldwork and hand over validated raw data, ready for your own analysis team."
+        "summary": "Execute fieldwork and deliver validated raw data to clients."
       },
       {
-        "title": "Analysis & reporting",
+        "title": "Analysis & Reporting",
         "bestFor": "Clients who already have data but need it turned into insight.",
-        "summary": "Send us an existing dataset and we handle cleaning, analysis, visualisation and the presentation."
+        "summary": "Accept existing datasets and prepare analytical reports, visualizations, and presentations."
       },
       {
-        "title": "End-to-end research",
+        "title": "End-to-End Research",
         "bestFor": "Institutions running a study from scratch with no internal capacity.",
-        "summary": "The full lifecycle: questionnaire design, data collection, analysis, reporting and presentation."
+        "summary": "Manage the complete research lifecycle, from questionnaire design and data collection to analysis, reporting, and presentation."
       }
     ],
     "previousWork": [

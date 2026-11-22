@@ -40,6 +40,9 @@ assumptions and limitations.
 approved title, description and 9-service list. The description keeps the
 research-integrity statement: no fabricated data, results or findings.
 
+`0008_survey_content_engagement.sql` syncs the five Project Execution Models
+(on-call, direct execution, data collection, analysis and end-to-end).
+
 ## Verify
 
 ```bash
@@ -92,6 +95,15 @@ psql "$DATABASE_URL" -Atc \
 ```
 
 Expected: `9`.
+
+Check the Project Execution Models count:
+
+```bash
+psql "$DATABASE_URL" -Atc \
+  "SELECT jsonb_array_length(data->'engagement') FROM survey_content WHERE id = 'main';"
+```
+
+Expected: `5`.
 
 Check the Prediction-Based Research & Presentations service count:
 
