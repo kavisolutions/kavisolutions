@@ -184,7 +184,7 @@ VALUES (
           "Community and household surveys",
           "Social impact assessments",
           "Public policy feedback collection",
-          "Government scheme awareness and beneficiary feedback"
+          "Government scheme awareness and beneficiary feedback surveys"
         ]
       },
       {
