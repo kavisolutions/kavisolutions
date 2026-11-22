@@ -11,6 +11,14 @@ export type SurveyVertical = {
   hidden?: boolean;
 };
 
+export type SurveyNetwork = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  requirements: string[];
+  objective: string;
+};
+
 export type SurveyContent = {
   brand: {
     name: string;
@@ -27,6 +35,7 @@ export type SurveyContent = {
     metrics: SurveyMetric[];
   };
   verticals: SurveyVertical[];
+  network: SurveyNetwork;
   approach: { step: string; title: string; summary: string }[];
   engagement: { title: string; summary: string; bestFor: string }[];
   sampleProjects: { tag: string; title: string; desc: string }[];
@@ -62,6 +71,13 @@ export const EMPTY_SURVEY_CONTENT: SurveyContent = {
     metrics: [],
   },
   verticals: [],
+  network: {
+    eyebrow: "",
+    title: "",
+    description: "",
+    requirements: [],
+    objective: "",
+  },
   approach: [],
   engagement: [],
   sampleProjects: [],
@@ -72,6 +88,15 @@ export const EMPTY_SURVEY_CONTENT: SurveyContent = {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
+
+const isNetwork = (value: unknown): value is SurveyNetwork =>
+  isRecord(value) &&
+  typeof value.eyebrow === "string" &&
+  typeof value.title === "string" &&
+  typeof value.description === "string" &&
+  Array.isArray(value.requirements) &&
+  value.requirements.every((requirement) => typeof requirement === "string") &&
+  typeof value.objective === "string";
 
 const isVertical = (value: unknown): value is SurveyVertical =>
   isRecord(value) &&
@@ -90,6 +115,7 @@ export const isSurveyContent = (value: unknown): value is SurveyContent => {
     isRecord(value.hero) &&
     Array.isArray(value.verticals) &&
     value.verticals.every(isVertical) &&
+    isNetwork(value.network) &&
     Array.isArray(value.approach) &&
     Array.isArray(value.engagement) &&
     Array.isArray(value.sampleProjects) &&

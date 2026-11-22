@@ -41,19 +41,13 @@ if [ -f .gitmodules ]; then
   echo "==> Syncing submodules"
   git submodule sync --recursive
 
-  # CI exports a short-lived read token for the private survey submodule.
+  # CI exports a read token for the private survey submodule.
   if [ -n "${SURVEY_REPO_TOKEN:-}" ]; then
-    askpass="$(mktemp)"
-    cat > "${askpass}" <<'ASKPASS'
-#!/bin/sh
-case "$1" in
-  *Username*) echo "x-access-token" ;;
-  *) printf '%s\n' "$SURVEY_REPO_TOKEN" ;;
-esac
-ASKPASS
-    chmod 700 "${askpass}"
-    GIT_ASKPASS="${askpass}" GIT_TERMINAL_PROMPT=0 git submodule update --init --recursive
-    rm -f "${askpass}"
+    GIT_CONFIG_COUNT=1 \
+      GIT_CONFIG_KEY_0="url.https://x-access-token:${SURVEY_REPO_TOKEN}@github.com/.insteadOf" \
+      GIT_CONFIG_VALUE_0="https://github.com/" \
+      GIT_TERMINAL_PROMPT=0 \
+      git submodule update --init --recursive
   else
     git submodule update --init --recursive
   fi

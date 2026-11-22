@@ -73,6 +73,22 @@ VALUES (
       "contactName": "Basha",
       "contactEmail": "kavisolutions1@gmail.com"
     },
+    "network": {
+      "title": "A field network we are building deliberately",
+      "eyebrow": "Surveyor & field team network",
+      "objective": "The long-term objective is to build a scalable field workforce that can execute projects across different cities, districts, and states.",
+      "description": "One of the major strengths of this vertical is building a network of surveyors, field researchers, coordinators, and specialized professionals.",
+      "requirements": [
+        "Onboard individual surveyors and field researchers",
+        "Build location-based surveyor networks",
+        "Onboard teams with different skill sets",
+        "Maintain surveyor profiles and expertise",
+        "Identify language and regional capabilities",
+        "Build a network of project coordinators and team leads",
+        "Support temporary and project-based recruitment",
+        "Maintain a database of available resources for future projects"
+      ]
+    },
     "sectors": [
       "Government departments & public services",
       "Private companies & startups",

@@ -43,6 +43,10 @@ research-integrity statement: no fabricated data, results or findings.
 `0008_survey_content_engagement.sql` syncs the five Project Execution Models
 (on-call, direct execution, data collection, analysis and end-to-end).
 
+`0009_survey_content_network.sql` adds or updates the Surveyor & Field Team
+Network copy block (`network`) with its heading, description, requirements and
+long-term objective.
+
 ## Verify
 
 ```bash
@@ -96,14 +100,14 @@ psql "$DATABASE_URL" -Atc \
 
 Expected: `9`.
 
-Check the Project Execution Models count:
+Check the Surveyor & Field Team Network section:
 
 ```bash
 psql "$DATABASE_URL" -Atc \
-  "SELECT jsonb_array_length(data->'engagement') FROM survey_content WHERE id = 'main';"
+  "SELECT jsonb_array_length(data->'network'->'requirements') FROM survey_content WHERE id = 'main';"
 ```
 
-Expected: `5`.
+Expected: `8`.
 
 Check the Prediction-Based Research & Presentations service count:
 
@@ -126,3 +130,12 @@ psql "$DATABASE_URL" -Atc \
 ```
 
 Expected: `9`.
+
+Check the Project Execution Models count:
+
+```bash
+psql "$DATABASE_URL" -Atc \
+  "SELECT jsonb_array_length(data->'engagement') FROM survey_content WHERE id = 'main';"
+```
+
+Expected: `5`.

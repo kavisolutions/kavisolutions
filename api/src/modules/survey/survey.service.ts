@@ -84,10 +84,22 @@ const isSurveyContent = (value: unknown): value is Record<string, unknown> => {
         vertical.services.every((service) => typeof service === "string"),
     );
 
+  const validNetwork =
+    isRecord(value.network) &&
+    typeof value.network.eyebrow === "string" &&
+    typeof value.network.title === "string" &&
+    typeof value.network.description === "string" &&
+    Array.isArray(value.network.requirements) &&
+    value.network.requirements.every(
+      (requirement) => typeof requirement === "string",
+    ) &&
+    typeof value.network.objective === "string";
+
   return (
     objects.every((key) => isRecord(value[key])) &&
     arrays.every((key) => Array.isArray(value[key])) &&
-    validVerticals
+    validVerticals &&
+    validNetwork
   );
 };
 

@@ -145,6 +145,12 @@ Same for the Research Data Analysis & Reporting list:
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f api/db/dml/0005_survey_content_analysis_services.sql
 ```
 
+Same for the Surveyor & Field Team Network copy:
+
+```bash
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f api/db/dml/0009_survey_content_network.sql
+```
+
 ## Managing services in the admin panel
 
 Main admin → **Survey services** (`/admin?section=survey`) manages the public
@@ -153,6 +159,8 @@ service cards without editing JSON:
 - list of verticals in display order;
 - add, edit and delete a service;
 - hide/show a service without deleting it (`hidden` flag);
+- edit the Surveyor & Field Team Network heading, description, requirements and
+  long-term objective;
 - side heading (`tag`), icon, title, description (`summary`);
 - service points (`services`) as one line per point;
 - reorder with up/down buttons.

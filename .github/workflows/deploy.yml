@@ -32,21 +32,14 @@ jobs:
           mkdir -p app
           if [ -f .env.production ] && [ ! -f app/.env.production ]; then cp .env.production app/.env.production; fi
           export SURVEY_REPO_TOKEN='${{ secrets.SURVEY_REPO_TOKEN }}'
-          askpass="$(mktemp)"
-          cat > "$askpass" <<'ASKPASS'
-          #!/bin/sh
-          case "$1" in
-            *Username*) echo "x-access-token" ;;
-            *) printf '%s\n' "$SURVEY_REPO_TOKEN" ;;
-          esac
-          ASKPASS
-          chmod 700 "$askpass"
-          export GIT_ASKPASS="$askpass"
+          export GIT_CONFIG_COUNT=1
+          export GIT_CONFIG_KEY_0="url.https://x-access-token:${SURVEY_REPO_TOKEN}@github.com/.insteadOf"
+          export GIT_CONFIG_VALUE_0="https://github.com/"
           export GIT_TERMINAL_PROMPT=0
           git reset --hard origin/main
           git submodule sync --recursive
           git submodule update --init --recursive
-          rm -f "$askpass"
+          unset SURVEY_REPO_TOKEN GIT_CONFIG_COUNT GIT_CONFIG_KEY_0 GIT_CONFIG_VALUE_0
           rm -rf .next/types .next/dev
 
           bash deploy/deploy.sh --no-pull

@@ -39,6 +39,7 @@ import {
   toSurveyVerticalDraft,
   withSurveyVerticalCount,
   type SurveyContent,
+  type SurveyNetwork,
   type SurveyVerticalDraft,
 } from "@/lib/survey-content";
 import {
@@ -273,6 +274,9 @@ export default function AdminPage() {
   const [financialEmail, setFinancialEmail] = useState("");
   const [surveyOpportunities, setSurveyOpportunities] = useState("");
   const [surveyContent, setSurveyContent] = useState<SurveyContent>(EMPTY_SURVEY_CONTENT);
+  const [networkDraft, setNetworkDraft] = useState<SurveyNetwork>(
+    EMPTY_SURVEY_CONTENT.network,
+  );
   const [surveyPublished, setSurveyPublished] = useState(false);
   const [surveyDraft, setSurveyDraft] = useState<SurveyVerticalDraft | null>(null);
   const [savingSurvey, setSavingSurvey] = useState(false);
@@ -482,12 +486,12 @@ export default function AdminPage() {
     setContactEmail(settingsData?.settings?.contactEmail ?? "");
     setFinancialEmail(settingsData?.settings?.financialEmail ?? "");
     setSurveyOpportunities(settingsData?.settings?.surveyOpportunities ?? "");
+    const nextSurveyContent = isSurveyContent(surveyContentData?.content)
+      ? surveyContentData.content
+      : EMPTY_SURVEY_CONTENT;
     setSurveyPublished(isSurveyContent(surveyContentData?.content));
-    setSurveyContent(
-      isSurveyContent(surveyContentData?.content)
-        ? surveyContentData.content
-        : EMPTY_SURVEY_CONTENT,
-    );
+    setSurveyContent(nextSurveyContent);
+    setNetworkDraft(nextSurveyContent.network);
     setPageVisibility(
       pagesData?.pages
         ? {
@@ -936,6 +940,32 @@ export default function AdminPage() {
     setNotice(message);
     setSavingSurvey(false);
     return true;
+  };
+
+  const saveSurveyNetwork = async () => {
+    const requirements = networkDraft.requirements
+      .map((requirement) => requirement.trim())
+      .filter(Boolean);
+
+    if (
+      !networkDraft.eyebrow.trim() ||
+      !networkDraft.title.trim() ||
+      !networkDraft.description.trim() ||
+      !networkDraft.objective.trim() ||
+      requirements.length === 0
+    ) {
+      setActionError(
+        "Add the field team network eyebrow, title, description, at least one requirement and the objective.",
+      );
+      return;
+    }
+
+    const network = { ...networkDraft, requirements };
+    const ok = await persistSurveyContent(
+      { ...surveyContent, network },
+      "Field team network saved",
+    );
+    if (ok) setNetworkDraft(network);
   };
 
   const saveSurveyVertical = async () => {
@@ -3632,6 +3662,113 @@ export default function AdminPage() {
                   >
                     {surveyPublished ? "Published" : "Not published"}
                   </Badge>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Field team network</CardTitle>
+                  <CardDescription>
+                    Copy shown in the Surveyor &amp; Field Team Network section on the public
+                    survey page.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                        Side heading *
+                      </label>
+                      <Input
+                        value={networkDraft.eyebrow}
+                        onChange={(e) =>
+                          setNetworkDraft({ ...networkDraft, eyebrow: e.target.value })
+                        }
+                        placeholder="Surveyor & field team network"
+                        maxLength={80}
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                        Title *
+                      </label>
+                      <Input
+                        value={networkDraft.title}
+                        onChange={(e) =>
+                          setNetworkDraft({ ...networkDraft, title: e.target.value })
+                        }
+                        placeholder="A field network we are building deliberately"
+                        maxLength={120}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                      Description *
+                    </label>
+                    <textarea
+                      value={networkDraft.description}
+                      onChange={(e) =>
+                        setNetworkDraft({ ...networkDraft, description: e.target.value })
+                      }
+                      rows={3}
+                      className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      placeholder="What this network covers and why it matters."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                      Key requirements *
+                    </label>
+                    <textarea
+                      value={networkDraft.requirements.join("\n")}
+                      onChange={(e) =>
+                        setNetworkDraft({
+                          ...networkDraft,
+                          requirements: e.target.value.split("\n"),
+                        })
+                      }
+                      rows={8}
+                      className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      placeholder={"Onboard individual surveyors and field researchers\nBuild location-based surveyor networks"}
+                    />
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      One requirement per line. Empty lines are ignored.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                      Long-term objective *
+                    </label>
+                    <textarea
+                      value={networkDraft.objective}
+                      onChange={(e) =>
+                        setNetworkDraft({ ...networkDraft, objective: e.target.value })
+                      }
+                      rows={3}
+                      className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      placeholder="The long-term objective is to build a scalable field workforce."
+                    />
+                  </div>
+
+                  <div className="flex justify-end border-t border-border pt-4">
+                    <Button
+                      onClick={() => void saveSurveyNetwork()}
+                      disabled={savingSurvey}
+                      className="font-semibold"
+                    >
+                      {savingSurvey ? (
+                        <>
+                          <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Saving…
+                        </>
+                      ) : (
+                        "Save field team network"
+                      )}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
 
