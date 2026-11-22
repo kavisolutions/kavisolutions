@@ -1,10 +1,16 @@
--- One-off production sync: Field Surveys & Data Collection services.
+-- Production sync: Field Surveys & Data Collection service list.
 --
--- Adds the four missing service points to an existing survey_content row:
+-- Sets the field-surveys services array to the approved 10 points:
+--   Household and public opinion surveys
 --   Political and election-related surveys
+--   Government and public service surveys
 --   Product and customer feedback surveys
 --   Brand awareness and market research surveys
 --   Consumer behaviour surveys
+--   Employee and organizational surveys
+--   Location-based and field-level data collection
+--   Institutional and community surveys
+--   Custom research and data collection assignments
 --
 -- Replaces only the field-surveys services array and leaves every other
 -- vertical untouched. No-op when the row already has the canonical list.
@@ -16,22 +22,13 @@ WITH canonical AS (
   SELECT $services$[
                 "Household and public opinion surveys",
                 "Political and election-related surveys",
-                "Qualitative field research: in-depth interviews and focus groups",
-                "Observational, ethnographic and case-study fieldwork",
-                "Baseline, needs-assessment and rapid appraisal studies",
-                "Field verification, audit and mystery-shopping visits",
                 "Government and public service surveys",
                 "Product and customer feedback surveys",
                 "Brand awareness and market research surveys",
                 "Consumer behaviour surveys",
-                "Employee and organisational surveys",
+                "Employee and organizational surveys",
                 "Location-based and field-level data collection",
                 "Institutional and community surveys",
-                "Listing, census and household enumeration",
-                "Longitudinal, panel and tracking studies",
-                "Retail, channel and customer-experience audits",
-                "Enumerator training and field-team capacity building",
-                "GIS-tagged and location-verified data collection",
                 "Custom research and data collection assignments"
               ]$services$::jsonb AS services
 )

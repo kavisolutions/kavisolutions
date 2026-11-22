@@ -17,10 +17,10 @@ It is idempotent: `ON CONFLICT (id) DO NOTHING` means an existing row is left
 untouched, so content published from the admin panel is never overwritten.
 Re-running the file is safe.
 
-`0002_survey_content_field_services.sql` is the one-off sync for a database
-that already has the older 15-service `field-surveys` list. It replaces only
-that vertical's services array with the canonical 19-service list, leaves every
-other vertical untouched, and does nothing when the list is already current.
+`0002_survey_content_field_services.sql` syncs an existing database to the
+approved `field-surveys` service list. It replaces only that vertical's
+services array with the canonical 10-service list, leaves every other vertical
+untouched, and does nothing when the list is already current.
 
 ## Verify
 
@@ -40,4 +40,4 @@ psql "$DATABASE_URL" -Atc \
    WHERE id = 'main' AND v->>'slug' = 'field-surveys';"
 ```
 
-Expected: `19`.
+Expected: `10`.

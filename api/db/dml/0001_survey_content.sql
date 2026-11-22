@@ -125,22 +125,13 @@ VALUES (
         "services": [
           "Household and public opinion surveys",
           "Political and election-related surveys",
-          "Qualitative field research: in-depth interviews and focus groups",
-          "Observational, ethnographic and case-study fieldwork",
-          "Baseline, needs-assessment and rapid appraisal studies",
-          "Field verification, audit and mystery-shopping visits",
           "Government and public service surveys",
           "Product and customer feedback surveys",
           "Brand awareness and market research surveys",
           "Consumer behaviour surveys",
-          "Employee and organisational surveys",
+          "Employee and organizational surveys",
           "Location-based and field-level data collection",
           "Institutional and community surveys",
-          "Listing, census and household enumeration",
-          "Longitudinal, panel and tracking studies",
-          "Retail, channel and customer-experience audits",
-          "Enumerator training and field-team capacity building",
-          "GIS-tagged and location-verified data collection",
           "Custom research and data collection assignments"
         ]
       },
