@@ -1,5 +1,3 @@
-import defaultContent from "./survey-content-default.json";
-
 export type SurveyMetric = { value: string; label: string };
 
 export type SurveyVertical = {
@@ -9,6 +7,8 @@ export type SurveyVertical = {
   title: string;
   summary: string;
   services: string[];
+  /* Hidden cards stay in the admin list but are omitted from the public page. */
+  hidden?: boolean;
 };
 
 export type SurveyContent = {
@@ -44,7 +44,31 @@ export type SurveyVerticalDraft = {
   servicesText: string;
 };
 
-export const DEFAULT_SURVEY_CONTENT = defaultContent as SurveyContent;
+/* The API content row is the only content source. This empty shell is used
+   when nothing has been published yet, so the admin screen can start clean. */
+export const EMPTY_SURVEY_CONTENT: SurveyContent = {
+  brand: {
+    name: "",
+    vertical: "",
+    contactEmail: "",
+    contactName: "",
+    location: "",
+  },
+  hero: {
+    eyebrow: "",
+    title: "",
+    highlight: "",
+    description: "",
+    metrics: [],
+  },
+  verticals: [],
+  approach: [],
+  engagement: [],
+  sampleProjects: [],
+  previousWork: [],
+  sectors: [],
+  faqs: [],
+};
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -55,7 +79,8 @@ const isVertical = (value: unknown): value is SurveyVertical =>
   typeof value.title === "string" &&
   typeof value.summary === "string" &&
   Array.isArray(value.services) &&
-  value.services.every((service) => typeof service === "string");
+  value.services.every((service) => typeof service === "string") &&
+  (value.hidden === undefined || typeof value.hidden === "boolean");
 
 export const isSurveyContent = (value: unknown): value is SurveyContent => {
   if (!isRecord(value)) return false;
@@ -113,7 +138,7 @@ export const fromSurveyVerticalDraft = (
 
 /* Keep the hero tile in step when a service is added or removed. */
 export const withSurveyVerticalCount = (content: SurveyContent): SurveyContent => {
-  const count = content.verticals.length;
+  const count = content.verticals.filter((vertical) => !vertical.hidden).length;
   const metrics = content.hero.metrics.map((metric) =>
     metric.label.toLowerCase().includes("research vertical")
       ? { ...metric, value: String(count) }

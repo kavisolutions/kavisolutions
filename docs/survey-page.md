@@ -99,15 +99,33 @@ Admin-triggered actions still work in both processes.
 
 | Method | Endpoint | Auth | Purpose |
 | --- | --- | --- | --- |
-| `GET` | `/api/survey/content` | public | Published page content (`null` → bundled fallback) |
+| `GET` | `/api/survey/content` | public | Published page content (`null` → empty page) |
 | `PUT` | `/api/survey/content` | admin | Publish content |
 | `POST` | `/api/survey/enquiries` | public, throttled | Client project enquiry |
 | `POST` | `/api/surveyors/register` | public, throttled | Surveyor network registration |
 | `GET` | `/api/survey/enquiries` | admin | Client enquiry inbox |
 | `PATCH` | `/api/survey/enquiries/:id` | admin | Status and internal notes |
 
-`survey_content` is a single JSONB row (`id = 'main'`).
-`docs/survey-content-8-verticals.json` is the current eight-vertical payload.
+`survey_content` is a single JSONB row (`id = 'main'`) and the only content
+source. There is no bundled default payload.
+
+### Production pre-data
+
+Seed the content row before starting the survey frontend:
+
+```bash
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f api/db/dml/0001_survey_content.sql
+```
+
+The DML is idempotent and never overwrites a row already published from the
+admin panel. See `api/db/dml/README.md` for verification queries.
+
+If the database already has the older 15-service Field Surveys list, run the
+targeted sync instead (or as well):
+
+```bash
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f api/db/dml/0002_survey_content_field_services.sql
+```
 
 ## Managing services in the admin panel
 
@@ -116,17 +134,22 @@ service cards without editing JSON:
 
 - list of verticals in display order;
 - add, edit and delete a service;
+- hide/show a service without deleting it (`hidden` flag);
 - side heading (`tag`), icon, title, description (`summary`);
 - service points (`services`) as one line per point;
 - reorder with up/down buttons.
+
+Hidden services stay in the admin list, marked **Hidden**, but are omitted from
+the public cards and the enquiry service dropdown. The hero vertical count uses
+the visible count.
 
 Each action publishes immediately through `PUT /api/survey/content`. The hero
 metric labelled “Research verticals” is recalculated from the array length.
 The survey frontend’s enquiry dropdown is generated from the same vertical
 titles, so a new service appears there automatically.
 
-If the shared API has no published content yet, the admin screen shows the
-bundled starter set and publishes it on the first save.
+If the shared API has no published content yet, the admin screen starts empty
+and the first saved service creates the content row.
 
 ## Local Docker
 

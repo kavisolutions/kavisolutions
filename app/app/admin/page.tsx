@@ -32,7 +32,7 @@ import {
   type SurveyorStatus,
 } from "@/lib/surveyors";
 import {
-  DEFAULT_SURVEY_CONTENT,
+  EMPTY_SURVEY_CONTENT,
   emptySurveyVertical,
   fromSurveyVerticalDraft,
   isSurveyContent,
@@ -66,6 +66,8 @@ import {
   LogOut,
   Search,
   Pencil,
+  Eye,
+  EyeOff,
   Trash2,
   Sun,
   Moon,
@@ -248,7 +250,7 @@ export default function AdminPage() {
   const [contactEmail, setContactEmail] = useState("");
   const [financialEmail, setFinancialEmail] = useState("");
   const [surveyOpportunities, setSurveyOpportunities] = useState("");
-  const [surveyContent, setSurveyContent] = useState<SurveyContent>(DEFAULT_SURVEY_CONTENT);
+  const [surveyContent, setSurveyContent] = useState<SurveyContent>(EMPTY_SURVEY_CONTENT);
   const [surveyPublished, setSurveyPublished] = useState(false);
   const [surveyDraft, setSurveyDraft] = useState<SurveyVerticalDraft | null>(null);
   const [savingSurvey, setSavingSurvey] = useState(false);
@@ -462,7 +464,7 @@ export default function AdminPage() {
     setSurveyContent(
       isSurveyContent(surveyContentData?.content)
         ? surveyContentData.content
-        : DEFAULT_SURVEY_CONTENT,
+        : EMPTY_SURVEY_CONTENT,
     );
     setPageVisibility(
       pagesData?.pages
@@ -969,6 +971,20 @@ export default function AdminPage() {
     await persistSurveyContent(
       { ...surveyContent, verticals },
       "Survey service order saved",
+    );
+  };
+
+  const toggleSurveyVerticalVisibility = async (index: number) => {
+    const vertical = surveyContent.verticals[index];
+    if (!vertical) return;
+
+    const verticals = surveyContent.verticals.map((item, itemIndex) =>
+      itemIndex === index ? { ...item, hidden: !item.hidden } : item,
+    );
+
+    await persistSurveyContent(
+      { ...surveyContent, verticals },
+      vertical.hidden ? "Survey service shown" : "Survey service hidden",
     );
   };
 
@@ -3514,8 +3530,10 @@ export default function AdminPage() {
                       Published to the survey frontend
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Adding, editing, reordering or removing a service saves immediately through
-                      the shared API. The hero vertical count is updated automatically.
+                      Adding, editing, reordering, hiding or removing a service saves immediately
+                      through the shared API. Hidden services stay in this list but are removed
+                      from the public page and enquiry form. The hero vertical count is updated
+                      automatically.
                     </p>
                   </div>
                   <Badge
@@ -3526,30 +3544,10 @@ export default function AdminPage() {
                         : "border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400"
                     }`}
                   >
-                    {surveyPublished ? "Published" : "Starter content not saved"}
+                    {surveyPublished ? "Published" : "Not published"}
                   </Badge>
                 </CardContent>
               </Card>
-
-              {!surveyPublished && (
-                <div className="flex flex-col gap-3 rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-300 sm:flex-row sm:items-center sm:justify-between">
-                  <p>
-                    The shared API has no published survey content yet. The cards below are the
-                    bundled starter set.
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="shrink-0 border-amber-500/30 bg-amber-500/10 font-semibold text-amber-700 hover:bg-amber-500/20 dark:text-amber-300"
-                    disabled={savingSurvey}
-                    onClick={() =>
-                      void persistSurveyContent(surveyContent, "Survey services published")
-                    }
-                  >
-                    {savingSurvey ? "Publishing…" : "Publish starter content"}
-                  </Button>
-                </div>
-              )}
 
               {surveyContent.verticals.length === 0 && (
                 <Card>
@@ -3561,7 +3559,10 @@ export default function AdminPage() {
 
               <div className="space-y-3">
                 {surveyContent.verticals.map((vertical, index) => (
-                  <Card key={`${vertical.title}-${index}`}>
+                  <Card
+                    key={`${vertical.title}-${index}`}
+                    className={vertical.hidden ? "border-dashed opacity-75" : undefined}
+                  >
                     <CardContent className="p-5">
                       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div className="min-w-0">
@@ -3575,6 +3576,14 @@ export default function AdminPage() {
                             <Badge variant="outline" className="h-5 rounded-full px-2 text-[10px]">
                               {index + 1}
                             </Badge>
+                            {vertical.hidden && (
+                              <Badge
+                                variant="outline"
+                                className="h-5 rounded-full border-amber-500/30 bg-amber-500/10 px-2 text-[10px] text-amber-600 dark:text-amber-400"
+                              >
+                                Hidden
+                              </Badge>
+                            )}
                           </div>
                           <h3 className="mt-3 text-base font-semibold text-foreground">
                             {vertical.title}
@@ -3595,6 +3604,25 @@ export default function AdminPage() {
                         </div>
 
                         <div className="flex shrink-0 items-center gap-1 self-start">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            aria-label={
+                              vertical.hidden
+                                ? `Show ${vertical.title} on the survey page`
+                                : `Hide ${vertical.title} from the survey page`
+                            }
+                            title={vertical.hidden ? "Show on survey page" : "Hide from survey page"}
+                            disabled={savingSurvey}
+                            onClick={() => void toggleSurveyVerticalVisibility(index)}
+                          >
+                            {vertical.hidden ? (
+                              <EyeOff className="h-3.5 w-3.5" />
+                            ) : (
+                              <Eye className="h-3.5 w-3.5" />
+                            )}
+                          </Button>
                           <Button
                             variant="outline"
                             size="icon"
