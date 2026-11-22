@@ -244,20 +244,17 @@ VALUES (
         "tag": "Academic Support",
         "icon": "🎓",
         "slug": "academic-research",
-        "title": "Academic & institutional research support",
-        "summary": "Support for students, scholars and institutions across the research lifecycle — with research integrity preserved and no fabricated data, results or findings.",
+        "title": "Academic & Institutional Research Support",
+        "summary": "Provide research support to students, scholars, educational institutions, and research organizations. Academic support should preserve research integrity, with no fabricated data, results, or findings.",
         "services": [
           "Primary and secondary data collection",
           "Questionnaire and survey design",
           "Research methodology support",
-          "Literature review and research synthesis",
-          "Ethics and IRB documentation support",
           "Field research coordination",
           "Data processing and statistical analysis",
-          "Data management and reproducibility planning",
           "Research report preparation",
           "Research paper data support",
-          "Charts, tables and presentation preparation",
+          "Charts, tables, and presentation preparation",
           "Research findings documentation"
         ]
       }

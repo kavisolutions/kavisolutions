@@ -36,6 +36,10 @@ approved title, description and 7-service list. The description keeps the
 required distinction between data-supported findings, estimates, predictions,
 assumptions and limitations.
 
+`0007_survey_content_academic.sql` syncs the `academic-research` card to the
+approved title, description and 9-service list. The description keeps the
+research-integrity statement: no fabricated data, results or findings.
+
 ## Verify
 
 ```bash
@@ -99,3 +103,14 @@ psql "$DATABASE_URL" -Atc \
 ```
 
 Expected: `7`.
+
+Check the Academic & Institutional Research Support service count:
+
+```bash
+psql "$DATABASE_URL" -Atc \
+  "SELECT jsonb_array_length(v->'services')
+   FROM survey_content, jsonb_array_elements(data->'verticals') AS v
+   WHERE id = 'main' AND v->>'slug' = 'academic-research';"
+```
+
+Expected: `9`.
