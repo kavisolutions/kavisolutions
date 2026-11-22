@@ -22,6 +22,9 @@ approved `field-surveys` service list. It replaces only that vertical's
 services array with the canonical 10-service list, leaves every other vertical
 untouched, and does nothing when the list is already current.
 
+`0003_survey_content_market_services.sql` does the same for the
+`market-research` vertical, using the approved 8-service list.
+
 ## Verify
 
 ```bash
@@ -41,3 +44,14 @@ psql "$DATABASE_URL" -Atc \
 ```
 
 Expected: `10`.
+
+Check the Market Research service count:
+
+```bash
+psql "$DATABASE_URL" -Atc \
+  "SELECT jsonb_array_length(v->'services')
+   FROM survey_content, jsonb_array_elements(data->'verticals') AS v
+   WHERE id = 'main' AND v->>'slug' = 'market-research';"
+```
+
+Expected: `8`.

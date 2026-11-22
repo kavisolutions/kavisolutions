@@ -127,6 +127,12 @@ instead (or as well):
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f api/db/dml/0002_survey_content_field_services.sql
 ```
 
+Same for the Market Research list:
+
+```bash
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f api/db/dml/0003_survey_content_market_services.sql
+```
+
 ## Managing services in the admin panel
 
 Main admin → **Survey services** (`/admin?section=survey`) manages the public

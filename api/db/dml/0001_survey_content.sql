@@ -168,11 +168,7 @@ VALUES (
           "Competitor research",
           "Consumer preference analysis",
           "Product usage and adoption studies",
-          "Market opportunity assessments",
-          "Concept, pricing and willingness-to-pay testing",
-          "Customer journey and experience research",
-          "Industry benchmarking and feasibility studies",
-          "Secondary and desk research"
+          "Market opportunity assessments"
         ]
       },
       {
