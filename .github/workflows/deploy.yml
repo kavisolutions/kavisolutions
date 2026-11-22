@@ -31,7 +31,6 @@ jobs:
           git clean -fd -e .env -e .env.local -e .env.production -e api/.env -e app/.env -e app/.env.local -e app/.env.production -e survey/.env -e survey/.env.local -e survey/.env.production -e social-agent/.env -e social-agent/data
           mkdir -p app
           if [ -f .env.production ] && [ ! -f app/.env.production ]; then cp .env.production app/.env.production; fi
-          git reset --hard origin/main
           export SURVEY_REPO_TOKEN='${{ secrets.SURVEY_REPO_TOKEN }}'
           askpass="$(mktemp)"
           cat > "$askpass" <<'ASKPASS'
@@ -42,8 +41,11 @@ jobs:
           esac
           ASKPASS
           chmod 700 "$askpass"
+          export GIT_ASKPASS="$askpass"
+          export GIT_TERMINAL_PROMPT=0
+          git reset --hard origin/main
           git submodule sync --recursive
-          GIT_ASKPASS="$askpass" GIT_TERMINAL_PROMPT=0 git submodule update --init --recursive
+          git submodule update --init --recursive
           rm -f "$askpass"
           rm -rf .next/types .next/dev
 
