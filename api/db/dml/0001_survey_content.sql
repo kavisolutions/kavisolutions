@@ -214,17 +214,13 @@ VALUES (
         "summary": "Raw responses become decisions. We clean, structure, weight and analyse the data, then deliver reports, charts and dashboards that hold up to scrutiny.",
         "services": [
           "Data cleaning and validation",
-          "Data categorisation and structuring",
+          "Data categorization and structuring",
           "Statistical analysis",
           "Survey result analysis",
-          "Qualitative data analysis",
-          "Weighting and complex-sample analysis",
           "Trend identification",
           "Comparative analysis",
-          "GIS mapping and spatial analysis",
           "Research report preparation",
-          "Charts, dashboards and visualisations",
-          "Policy briefs, infographics and dissemination decks",
+          "Charts, dashboards, and visualizations",
           "Executive summaries and recommendations"
         ]
       },

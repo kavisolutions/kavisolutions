@@ -28,6 +28,9 @@ untouched, and does nothing when the list is already current.
 `0004_survey_content_political.sql` does the same for the `political-social`
 vertical, using the approved description and 7-service list.
 
+`0005_survey_content_analysis_services.sql` does the same for the
+`analysis-reporting` vertical, using the approved 9-service list.
+
 ## Verify
 
 ```bash
@@ -69,3 +72,14 @@ psql "$DATABASE_URL" -Atc \
 ```
 
 Expected: `7`.
+
+Check the Research Data Analysis & Reporting service count:
+
+```bash
+psql "$DATABASE_URL" -Atc \
+  "SELECT jsonb_array_length(v->'services')
+   FROM survey_content, jsonb_array_elements(data->'verticals') AS v
+   WHERE id = 'main' AND v->>'slug' = 'analysis-reporting';"
+```
+
+Expected: `9`.

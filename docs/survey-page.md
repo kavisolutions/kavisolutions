@@ -139,6 +139,12 @@ Same for the Political & Social list:
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f api/db/dml/0004_survey_content_political.sql
 ```
 
+Same for the Research Data Analysis & Reporting list:
+
+```bash
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f api/db/dml/0005_survey_content_analysis_services.sql
+```
+
 ## Managing services in the admin panel
 
 Main admin → **Survey services** (`/admin?section=survey`) manages the public
