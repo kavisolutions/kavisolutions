@@ -129,6 +129,11 @@ export NEXT_PUBLIC_APP_URL="${SURVEY_PUBLIC_URL:-${PUBLIC_URL}}"
 export AUTH_PUBLIC_URL="${SURVEY_PUBLIC_URL:-${PUBLIC_URL}}"
 npm run build
 
+# `output: "standalone"` does not copy these into the standalone directory.
+rm -rf .next/standalone/.next/static .next/standalone/public
+cp -a .next/static .next/standalone/.next/static
+if [ -d public ]; then cp -a public .next/standalone/public; fi
+
 echo "==> [survey] Reloading ${SURVEY_APP} on port ${SURVEY_PORT}"
 pm2 delete "${SURVEY_APP}" >/dev/null 2>&1 || true
 PORT="${SURVEY_PORT}" pm2 start ecosystem.config.js --update-env
