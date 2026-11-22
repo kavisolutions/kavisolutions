@@ -6,6 +6,14 @@ const backendUrl = (
   (process.env.NODE_ENV === "development" ? "http://localhost:3200" : "")
 ).replace(/\/+$/, "");
 
+/* `/survey` is owned by the standalone kavi-survey-research service. In
+   production nginx proxies it before Next.js; locally and in Docker the main
+   app proxies it so the public URL stays the same. */
+const surveyUrl = (
+  process.env.SURVEY_SERVICE_URL ??
+  (process.env.NODE_ENV === "development" ? "http://localhost:3004" : "")
+).replace(/\/+$/, "");
+
 const nextConfig: NextConfig = {
   /* The Docker image runs the standalone server, which keeps the runtime
      image small and avoids shipping the full node_modules tree. */
@@ -14,14 +22,24 @@ const nextConfig: NextConfig = {
     root: path.join(__dirname),
   },
   async rewrites() {
-    if (!backendUrl) return [];
+    const beforeFiles: { source: string; destination: string }[] = [];
+
+    if (surveyUrl) {
+      beforeFiles.push(
+        { source: "/survey", destination: `${surveyUrl}/survey` },
+        { source: "/survey/:path*", destination: `${surveyUrl}/survey/:path*` },
+      );
+    }
+
+    if (backendUrl) {
+      beforeFiles.push({
+        source: "/api/:path*",
+        destination: `${backendUrl}/api/:path*`,
+      });
+    }
+
     return {
-      beforeFiles: [
-        {
-          source: "/api/:path*",
-          destination: `${backendUrl}/api/:path*`,
-        },
-      ],
+      beforeFiles,
       afterFiles: [],
       fallback: [],
     };

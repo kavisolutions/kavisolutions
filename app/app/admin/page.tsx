@@ -32,6 +32,16 @@ import {
   type SurveyorStatus,
 } from "@/lib/surveyors";
 import {
+  DEFAULT_SURVEY_CONTENT,
+  emptySurveyVertical,
+  fromSurveyVerticalDraft,
+  isSurveyContent,
+  toSurveyVerticalDraft,
+  withSurveyVerticalCount,
+  type SurveyContent,
+  type SurveyVerticalDraft,
+} from "@/lib/survey-content";
+import {
   SURVEY_ENQUIRY_STATUSES,
   SURVEY_ENQUIRY_STATUS_LABELS,
   SURVEY_ENQUIRY_STATUS_TONES,
@@ -63,6 +73,8 @@ import {
   AlertCircle,
   CheckCircle2,
   ChevronRight,
+  ArrowDown,
+  ArrowUp,
   Menu,
   Globe,
   Link2,
@@ -74,6 +86,7 @@ import {
   RotateCcw,
   Ban,
   ClipboardList,
+  BarChart3,
   FileText,
   FileX,
   Sparkles,
@@ -168,6 +181,7 @@ const sections = [
   { key: "teams", label: "Teams", icon: Layers3, description: "Organize people into functional teams and departments" },
   { key: "projects", label: "Projects", icon: FolderKanban, description: "Manage featured work, tech stacks, and live links" },
   { key: "certificates", label: "Certificates", icon: Award, description: "Issue, revoke and reinstate verifiable certificates" },
+  { key: "survey", label: "Survey services", icon: BarChart3, description: "Manage the service cards shown on the survey and research page" },
   { key: "surveyors", label: "Surveyors", icon: ClipboardList, description: "Review and verify the field surveyor network" },
   { key: "enquiries", label: "Survey enquiries", icon: Inbox, description: "Client project enquiries from the survey page" },
   { key: "social", label: "Social agent", icon: Sparkles, description: "Plan a year of images, generate captions and publish on schedule" },
@@ -182,12 +196,6 @@ type SectionKey = (typeof sections)[number]["key"];
 type PageVisibility = { survey: boolean; financial: boolean; government: boolean; farms: boolean };
 
 const PAGE_SWITCHES: { key: keyof PageVisibility; label: string; href: string; blurb: string }[] = [
-  {
-    key: "survey",
-    label: "Survey & Research",
-    href: "/survey",
-    blurb: "Field surveys, market research and the surveyor network.",
-  },
   {
     key: "financial",
     label: "Financial Services",
@@ -240,6 +248,11 @@ export default function AdminPage() {
   const [contactEmail, setContactEmail] = useState("");
   const [financialEmail, setFinancialEmail] = useState("");
   const [surveyOpportunities, setSurveyOpportunities] = useState("");
+  const [surveyContent, setSurveyContent] = useState<SurveyContent>(DEFAULT_SURVEY_CONTENT);
+  const [surveyPublished, setSurveyPublished] = useState(false);
+  const [surveyDraft, setSurveyDraft] = useState<SurveyVerticalDraft | null>(null);
+  const [savingSurvey, setSavingSurvey] = useState(false);
+  const [surveyError, setSurveyError] = useState("");
   const [pageVisibility, setPageVisibility] = useState<PageVisibility | null>(null);
   const [savingPages, setSavingPages] = useState(false);
 
@@ -404,7 +417,7 @@ export default function AdminPage() {
   }, [certificates, certificateDraft]);
 
   const loadAll = useCallback(async () => {
-    const [teamRes, adminsRes, settingsRes, projectsRes, certificatesRes, surveyorsRes, enquiriesRes, pagesRes] = await Promise.all([
+    const [teamRes, adminsRes, settingsRes, projectsRes, certificatesRes, surveyorsRes, enquiriesRes, pagesRes, surveyContentRes] = await Promise.all([
       fetch("/api/team", withCookies()),
       fetch("/api/admins", withCookies()),
       fetch("/api/settings", withCookies()),
@@ -413,6 +426,7 @@ export default function AdminPage() {
       fetch("/api/surveyors", withCookies()),
       fetch("/api/survey/enquiries", withCookies()),
       fetch("/api/pages", withCookies()),
+      fetch("/api/survey/content", withCookies()),
     ]);
 
     if (teamRes.status === 401 || adminsRes.status === 401 || adminsRes.status === 403) {
@@ -428,6 +442,7 @@ export default function AdminPage() {
     const surveyorsData = await surveyorsRes.json().catch(() => null);
     const enquiriesData = await enquiriesRes.json().catch(() => null);
     const pagesData = await pagesRes.json().catch(() => null);
+    const surveyContentData = await surveyContentRes.json().catch(() => null);
 
     setIsAdmin(true);
     setMembers(teamData.members ?? []);
@@ -443,6 +458,12 @@ export default function AdminPage() {
     setContactEmail(settingsData?.settings?.contactEmail ?? "");
     setFinancialEmail(settingsData?.settings?.financialEmail ?? "");
     setSurveyOpportunities(settingsData?.settings?.surveyOpportunities ?? "");
+    setSurveyPublished(isSurveyContent(surveyContentData?.content));
+    setSurveyContent(
+      isSurveyContent(surveyContentData?.content)
+        ? surveyContentData.content
+        : DEFAULT_SURVEY_CONTENT,
+    );
     setPageVisibility(
       pagesData?.pages
         ? {
@@ -494,13 +515,13 @@ export default function AdminPage() {
   }, [notice]);
 
   useEffect(() => {
-    if (!draft && !projectDraft && !preview && !certificateDraft && !revokeTarget && !surveyorDraft) return;
+    if (!draft && !projectDraft && !preview && !certificateDraft && !revokeTarget && !surveyorDraft && !surveyDraft) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previous;
     };
-  }, [draft, projectDraft, preview, certificateDraft, revokeTarget, surveyorDraft]);
+  }, [draft, projectDraft, preview, certificateDraft, revokeTarget, surveyorDraft, surveyDraft]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -859,6 +880,96 @@ export default function AdminPage() {
 
     setNotice(`PDF removed from ${certificate.id}`);
     await loadAll();
+  };
+
+  const persistSurveyContent = async (next: SurveyContent, message: string) => {
+    if (savingSurvey) return false;
+
+    setSavingSurvey(true);
+    setSurveyError("");
+    setActionError("");
+
+    const payload = withSurveyVerticalCount(next);
+    const res = await fetch("/api/survey/content", {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      const message = apiErrorMessage(data, "Failed to publish survey services");
+      setSurveyError(message);
+      setActionError(message);
+      setSavingSurvey(false);
+      return false;
+    }
+
+    setSurveyContent(isSurveyContent(data?.content) ? data.content : payload);
+    setSurveyPublished(true);
+    setNotice(message);
+    setSavingSurvey(false);
+    return true;
+  };
+
+  const saveSurveyVertical = async () => {
+    if (!surveyDraft) return;
+
+    const draft = surveyDraft;
+    if (!draft.tag.trim() || !draft.title.trim() || !draft.summary.trim()) {
+      setSurveyError("Side heading, title and description are required.");
+      return;
+    }
+
+    const existing =
+      draft.index === null ? undefined : surveyContent.verticals[draft.index];
+    const vertical = fromSurveyVerticalDraft(draft, existing);
+
+    if (vertical.services.length === 0) {
+      setSurveyError("Add at least one service point, one per line.");
+      return;
+    }
+
+    const verticals =
+      draft.index === null
+        ? [...surveyContent.verticals, vertical]
+        : surveyContent.verticals.map((item, index) =>
+            index === draft.index ? vertical : item,
+          );
+
+    const ok = await persistSurveyContent(
+      { ...surveyContent, verticals },
+      draft.index === null ? "Survey service added" : "Survey service updated",
+    );
+    if (ok) setSurveyDraft(null);
+  };
+
+  const deleteSurveyVertical = async (index: number) => {
+    const vertical = surveyContent.verticals[index];
+    if (!vertical) return;
+    if (!window.confirm(`Remove "${vertical.title}" from the survey page?`)) return;
+
+    await persistSurveyContent(
+      {
+        ...surveyContent,
+        verticals: surveyContent.verticals.filter((_, itemIndex) => itemIndex !== index),
+      },
+      "Survey service removed",
+    );
+  };
+
+  const moveSurveyVertical = async (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= surveyContent.verticals.length) return;
+
+    const verticals = [...surveyContent.verticals];
+    [verticals[index], verticals[target]] = [verticals[target], verticals[index]];
+
+    await persistSurveyContent(
+      { ...surveyContent, verticals },
+      "Survey service order saved",
+    );
   };
 
   const saveSurveyor = async () => {
@@ -1417,6 +1528,8 @@ export default function AdminPage() {
                   ? projects.length
                   : item.key === "certificates"
                   ? certificates.length
+                  : item.key === "survey"
+                  ? surveyContent.verticals.length
                   : item.key === "surveyors"
                   ? surveyors.length
                   : item.key === "admins"
@@ -1620,6 +1733,25 @@ export default function AdminPage() {
                     className="shadow-sm font-semibold"
                   >
                     <Plus className="h-4 w-4 mr-1.5" /> Issue certificate
+                  </Button>
+                </>
+              )}
+
+              {section === "survey" && (
+                <>
+                  <Badge variant="outline" className="h-8 rounded-full border-border bg-muted/50 px-3 text-xs font-semibold text-foreground">
+                    {surveyContent.verticals.length}{" "}
+                    {surveyContent.verticals.length === 1 ? "service" : "services"}
+                  </Badge>
+                  <Button
+                    onClick={() => {
+                      setSurveyDraft(emptySurveyVertical());
+                      setSurveyError("");
+                    }}
+                    className="shadow-sm font-semibold"
+                    disabled={savingSurvey}
+                  >
+                    <Plus className="h-4 w-4 mr-1.5" /> Add service
                   </Button>
                 </>
               )}
@@ -3235,6 +3367,282 @@ export default function AdminPage() {
                   view and no longer verify. Choose “Deleted only” to restore one.
                 </p>
               )}
+            </div>
+          )}
+
+          {/* SECTION: SURVEY SERVICES */}
+          {section === "survey" && (
+            <div className="space-y-4">
+              {surveyDraft && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+                  <div className="relative my-8 w-full max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-2xl sm:p-8">
+                    <div className="mb-6 flex items-center justify-between border-b border-border pb-4">
+                      <div>
+                        <h2 className="text-lg font-bold text-foreground">
+                          {surveyDraft.index === null ? "Add survey service" : "Edit survey service"}
+                        </h2>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          This card appears immediately on the public survey page.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setSurveyDraft(null)}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        aria-label="Close modal"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="grid gap-4 sm:grid-cols-[1fr_120px]">
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                            Side heading *
+                          </label>
+                          <Input
+                            value={surveyDraft.tag}
+                            onChange={(e) =>
+                              setSurveyDraft({ ...surveyDraft, tag: e.target.value })
+                            }
+                            placeholder="e.g. Market Research"
+                            maxLength={60}
+                          />
+                          <p className="mt-1 text-[11px] text-muted-foreground">
+                            Short label above the title. Keep it to two or three words.
+                          </p>
+                        </div>
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                            Icon
+                          </label>
+                          <Input
+                            value={surveyDraft.icon}
+                            onChange={(e) =>
+                              setSurveyDraft({ ...surveyDraft, icon: e.target.value })
+                            }
+                            placeholder="📊"
+                            maxLength={8}
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                          Title *
+                        </label>
+                        <Input
+                          value={surveyDraft.title}
+                          onChange={(e) =>
+                            setSurveyDraft({ ...surveyDraft, title: e.target.value })
+                          }
+                          placeholder="e.g. Market & brand research"
+                          maxLength={120}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                          Description *
+                        </label>
+                        <textarea
+                          value={surveyDraft.summary}
+                          onChange={(e) =>
+                            setSurveyDraft({ ...surveyDraft, summary: e.target.value })
+                          }
+                          rows={3}
+                          className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          placeholder="What this service covers and who it is for."
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                          Service points *
+                        </label>
+                        <textarea
+                          value={surveyDraft.servicesText}
+                          onChange={(e) =>
+                            setSurveyDraft({ ...surveyDraft, servicesText: e.target.value })
+                          }
+                          rows={8}
+                          className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          placeholder={"Household surveys\nCustomer satisfaction surveys\nMarket opportunity assessments"}
+                        />
+                        <p className="mt-1 text-[11px] text-muted-foreground">
+                          One point per line. Empty lines are ignored.
+                        </p>
+                      </div>
+
+                      {surveyError && (
+                        <p className="rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive">
+                          {surveyError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="mt-6 flex items-center justify-end gap-2 border-t border-border pt-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => setSurveyDraft(null)}
+                        disabled={savingSurvey}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={() => void saveSurveyVertical()}
+                        disabled={savingSurvey}
+                        className="font-semibold"
+                      >
+                        {savingSurvey ? (
+                          <>
+                            <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Saving…
+                          </>
+                        ) : (
+                          "Save service"
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <Card>
+                <CardContent className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      Published to the survey frontend
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Adding, editing, reordering or removing a service saves immediately through
+                      the shared API. The hero vertical count is updated automatically.
+                    </p>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className={`h-8 shrink-0 rounded-full px-3 text-xs font-semibold ${
+                      surveyPublished
+                        ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                        : "border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                    }`}
+                  >
+                    {surveyPublished ? "Published" : "Starter content not saved"}
+                  </Badge>
+                </CardContent>
+              </Card>
+
+              {!surveyPublished && (
+                <div className="flex flex-col gap-3 rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-300 sm:flex-row sm:items-center sm:justify-between">
+                  <p>
+                    The shared API has no published survey content yet. The cards below are the
+                    bundled starter set.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 border-amber-500/30 bg-amber-500/10 font-semibold text-amber-700 hover:bg-amber-500/20 dark:text-amber-300"
+                    disabled={savingSurvey}
+                    onClick={() =>
+                      void persistSurveyContent(surveyContent, "Survey services published")
+                    }
+                  >
+                    {savingSurvey ? "Publishing…" : "Publish starter content"}
+                  </Button>
+                </div>
+              )}
+
+              {surveyContent.verticals.length === 0 && (
+                <Card>
+                  <CardContent className="py-12 text-center text-sm text-muted-foreground">
+                    No survey services yet. Add the first one.
+                  </CardContent>
+                </Card>
+              )}
+
+              <div className="space-y-3">
+                {surveyContent.verticals.map((vertical, index) => (
+                  <Card key={`${vertical.title}-${index}`}>
+                    <CardContent className="p-5">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-base">
+                              {vertical.icon || "•"}
+                            </span>
+                            <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
+                              {vertical.tag}
+                            </span>
+                            <Badge variant="outline" className="h-5 rounded-full px-2 text-[10px]">
+                              {index + 1}
+                            </Badge>
+                          </div>
+                          <h3 className="mt-3 text-base font-semibold text-foreground">
+                            {vertical.title}
+                          </h3>
+                          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+                            {vertical.summary}
+                          </p>
+                          <ul className="mt-3 flex flex-wrap gap-1.5">
+                            {vertical.services.map((service) => (
+                              <li
+                                key={service}
+                                className="rounded-full border border-border bg-muted/40 px-2.5 py-1 text-[11px] text-muted-foreground"
+                              >
+                                {service}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div className="flex shrink-0 items-center gap-1 self-start">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            aria-label={`Move ${vertical.title} up`}
+                            disabled={savingSurvey || index === 0}
+                            onClick={() => void moveSurveyVertical(index, -1)}
+                          >
+                            <ArrowUp className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            aria-label={`Move ${vertical.title} down`}
+                            disabled={savingSurvey || index === surveyContent.verticals.length - 1}
+                            onClick={() => void moveSurveyVertical(index, 1)}
+                          >
+                            <ArrowDown className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8"
+                            disabled={savingSurvey}
+                            onClick={() => {
+                              setSurveyDraft(toSurveyVerticalDraft(vertical, index));
+                              setSurveyError("");
+                            }}
+                          >
+                            <Pencil className="mr-1 h-3.5 w-3.5" /> Edit
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                            aria-label={`Remove ${vertical.title}`}
+                            disabled={savingSurvey}
+                            onClick={() => void deleteSurveyVertical(index)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
           )}
 

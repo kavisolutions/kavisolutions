@@ -67,6 +67,12 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
   constructor(private readonly settings: WhatsAppSettingsService) {}
 
   async onModuleInit(): Promise<void> {
+    /* Secondary API deployments must not open the same WhatsApp session. */
+    if (process.env.WHATSAPP_AUTOCONNECT === "false") {
+      this.statusValue = "disabled";
+      return;
+    }
+
     const config = await this.settings.ensureDefaults();
     this.statusValue = config.enabled ? "disconnected" : "disabled";
     if (!config.enabled) return;

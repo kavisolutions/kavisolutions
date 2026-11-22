@@ -55,7 +55,7 @@ The design must feel:
 | Login | `/login` | Live | P0 |
 | Member profile | `/profile` | Live, auth-gated | P1 |
 | Certificate verification | `/verify`, `/verify/[id]` | Live | P0 |
-| Survey & Research | `/survey` | Built, hidden until admin publishes | P1 |
+| Survey & Research | `/survey` | Served by the standalone survey service | P1 |
 | Financial Services | `/financial` | Built, hidden until admin publishes | P1 |
 | Government Technology | `/government` | Built, hidden until admin publishes | P1 |
 | Kavi Farms | `/farms` | Built, hidden until admin publishes | P1 |
@@ -574,7 +574,7 @@ Rules:
 
 **Accent:** teal → emerald.
 
-**Sections:** Hero + 4 metrics; Approach (5 steps); Six research verticals; Market research band; Field operations & network; Data analysis & reporting; Predictive research; Academic support; Engagement models (5); Industries + opportunities (framed as "under discussion", not clients); Join network + client enquiry; FAQ blocks; contact.
+**Sections:** Hero + 4 metrics; Approach (5 steps); Eight research verticals; Market research band; Field operations & network; Data analysis & reporting; Predictive research; Academic support; Engagement models (5); Industries + opportunities (framed as "under discussion", not clients); Join network + client enquiry; FAQ blocks; contact.
 
 **Form:** Glass card with a two-tab switch: **Client / project enquiry** and **Join our survey network**. Client fields: name, email, phone, organisation, service, message. Surveyor fields: name, email, phone, location, languages, experience, about. States idle/sending/sent/error.
 
@@ -716,7 +716,7 @@ Two management screens sharing a pattern:
 Two cards:
 
 1. **Company profile** — tagline, description, contact email, Save.
-2. **Live pages** — four rows: Survey & Research, Financial Services, Government Technology, Kavi Farms. Each has route, blurb, and a Published toggle that saves immediately. Explain that hidden pages return 404 and have no nav link; publishing takes effect on the next request.
+2. **Live pages** — three rows: Financial Services, Government Technology, Kavi Farms. Each has route, blurb, and a Published toggle that saves immediately. Explain that hidden pages return 404 and have no nav link; publishing takes effect on the next request. Survey & Research is not in this list; it is served by the standalone survey service.
 
 ---
 

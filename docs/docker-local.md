@@ -7,9 +7,11 @@ MinIO on the host.
 
 | Service | Container | Host port | Purpose |
 | --- | --- | --- | --- |
-| `web` | `kavi-solutions-web` | `3100` | Next.js production build |
-| `api` | `kavi-solutions-api` | `3200` | NestJS API |
-| `postgres` | `kavi-solutions-postgres` | `5437` | PostgreSQL 16 |
+| `web` | `kavi-solutions-web` | `3100` | Main Next.js app |
+| `survey` | `kavi-solutions-survey` | `3004` | Survey frontend (separate UI) |
+| `api` | `kavi-solutions-api` | `3200` | Main NestJS API |
+| `survey-api` | `kavi-solutions-survey-api` | `3201` | Second deployment of the same NestJS API |
+| `postgres` | `kavi-solutions-postgres` | `5437` | PostgreSQL 16 (shared) |
 | `minio` | `kavi-solutions-minio` | `9004` / `9005` | S3 storage API / console |
 | `minio-init` | `kavi-solutions-minio-init` | — | Creates `avatars` + `certificates` buckets |
 | `api-migrate` | `kavi-solutions-api-migrate` | — | Applies Drizzle migrations once |
@@ -27,7 +29,11 @@ This stack was built and tested on 2026-11-14:
 - Drizzle migrations and the seed script completed
 - admin login worked through the web proxy (`/api/auth/sign-in/email`)
 - `/api/me` returned the admin session
-- `/survey`, `/financial`, `/government` and `/farms` returned 200 once enabled
+- `/financial`, `/government` and `/farms` returned 200 once enabled
+- `/survey` returned 200 through the main app proxy and directly on `:3004`
+- the survey frontend used its own API deployment (`:3201`), not the main API
+- stopping `api` did not stop `survey-api` or the survey frontend
+- stopping `survey` or `survey-api` did not stop `web` or `api`
 - form endpoints rejected empty payloads with 400
 - avatar upload returned 201 and the public MinIO URL returned 200
 - the optional `social-agent` image built successfully
@@ -86,7 +92,8 @@ Expected:
 ```
 
 `/api/pages` should return all page switches (`survey`, `financial`,
-`government`, `farms`).
+`government`, `farms`). The `survey` switch is legacy: the survey frontend is
+not gated by it and is served from its own container.
 
 Run the application checks inside the images if needed:
 
@@ -119,13 +126,26 @@ test:
 docker compose exec postgres psql -U kavi -d kavi_solutions -c "
   insert into app_settings(key, value, updated_at)
   values
-    ('page_survey_enabled', 'true', now()),
     ('page_financial_enabled', 'true', now()),
     ('page_government_enabled', 'true', now()),
     ('page_farms_enabled', 'true', now())
   on conflict (key) do update set value = 'true', updated_at = now();
 "
 ```
+
+The survey frontend is at <http://localhost:3100/survey> (or
+<http://localhost:3004/survey>). It calls its own API deployment on `:3201`;
+content and enquiries live in the shared main Postgres database:
+
+```bash
+curl http://localhost:3200/api/survey/content
+docker compose exec postgres psql -U kavi -d kavi_solutions \
+  -c "select jsonb_array_length(data->'verticals') from survey_content;"
+```
+
+Migration `0015_next_joseph` creates `survey_content`. Publish content at
+<http://localhost:3100/survey/admin> after signing in at
+<http://localhost:3100/login>.
 
 Set them back to `false` with the same command when you want to verify the
 hidden-page 404 behaviour.

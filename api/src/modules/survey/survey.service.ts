@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { and, desc, eq, ilike, or, type SQL } from "drizzle-orm";
 
 import { uuid } from "@/_shared/team-helpers";
@@ -6,6 +6,7 @@ import { sanitizeText } from "@/_shared/text";
 import { DATABASE } from "@/db/drizzle/drizzle.module";
 import type { Database } from "@/db/drizzle/drizzle.client";
 import {
+  surveyContent,
   surveyEnquiries,
   SURVEY_ENQUIRY_STATUSES,
   type SurveyEnquiryRow,
@@ -52,9 +53,76 @@ const csvCell = (value: string): string => {
   return `"${safe.replace(/"/g, '""')}"`;
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  Boolean(value) && typeof value === "object" && !Array.isArray(value);
+
+/* The frontend owns the shape; the API only checks the blocks it renders so a
+   malformed PUT cannot replace the page with an unusable document. */
+const isSurveyContent = (value: unknown): value is Record<string, unknown> => {
+  if (!isRecord(value)) return false;
+
+  const objects = ["brand", "hero"];
+  const arrays = [
+    "verticals",
+    "approach",
+    "engagement",
+    "sampleProjects",
+    "previousWork",
+    "sectors",
+    "faqs",
+  ];
+
+  const validVerticals =
+    Array.isArray(value.verticals) &&
+    value.verticals.every(
+      (vertical) =>
+        isRecord(vertical) &&
+        typeof vertical.tag === "string" &&
+        typeof vertical.title === "string" &&
+        typeof vertical.summary === "string" &&
+        Array.isArray(vertical.services) &&
+        vertical.services.every((service) => typeof service === "string"),
+    );
+
+  return (
+    objects.every((key) => isRecord(value[key])) &&
+    arrays.every((key) => Array.isArray(value[key])) &&
+    validVerticals
+  );
+};
+
 @Injectable()
 export class SurveyService {
   constructor(@Inject(DATABASE) private readonly db: Database) {}
+
+  async getContent(): Promise<unknown | null> {
+    const [row] = await this.db
+      .select({ data: surveyContent.data })
+      .from(surveyContent)
+      .where(eq(surveyContent.id, "main"))
+      .limit(1);
+
+    return row?.data ?? null;
+  }
+
+  async saveContent(value: unknown): Promise<unknown> {
+    if (!isSurveyContent(value)) {
+      throw new BadRequestException(
+        "Content must include brand, hero, verticals, approach, engagement, sampleProjects, previousWork, sectors and faqs.",
+      );
+    }
+
+    const [row] = await this.db
+      .insert(surveyContent)
+      .values({ id: "main", data: value, updatedAt: new Date() })
+      .onConflictDoUpdate({
+        target: surveyContent.id,
+        set: { data: value, updatedAt: new Date() },
+      })
+      .returning({ data: surveyContent.data });
+
+    return row.data;
+  }
 
   /* Client enquiries are stored before the notification email is attempted, so
      an SMTP outage cannot lose a lead. Surveyor registrations keep their own

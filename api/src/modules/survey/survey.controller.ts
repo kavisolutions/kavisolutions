@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   ServiceUnavailableException,
 } from "@nestjs/common";
@@ -106,6 +107,21 @@ export class SurveyController {
     }
 
     return { success: true };
+  }
+
+  /* The standalone survey frontend reads and writes its content through the
+     main API, so the survey service owns no database of its own. */
+  @Get("content")
+  @Public()
+  async content() {
+    return { content: await this.service.getContent() };
+  }
+
+  @Put("content")
+  @AdminOnly()
+  @ApiBearerAuth()
+  async saveContent(@Body() body: unknown) {
+    return { content: await this.service.saveContent(body) };
   }
 
   /* Public list for the opportunities block. Admin-editable, with the page

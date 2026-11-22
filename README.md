@@ -36,9 +36,14 @@ approval. See [`docs/social-agent.md`](docs/social-agent.md). The admin panel
 talks to it through `/api/admin/social/*`; the sidecar is optional and the rest
 of the site runs without it.
 
-`/survey` (Survey & Research Solutions) is served by the independent
-[`kavi-solutions/kavi-survey-research`](https://github.com/kavi-solutions/kavi-survey-research)
-service at the same URL; the main-app page remains a fallback.
+`/survey` (Survey & Research Solutions) is a separate frontend
+([`kavi-solutions/kavi-survey-research`](https://github.com/kavi-solutions/kavi-survey-research))
+with its **own deployment of the same NestJS API** and the **same PostgreSQL
+database**. The two API deployments do not depend on each other: the main app
+can be down while survey runs, and survey can be down while the main app runs.
+The shared database is the remaining single point of failure. Service cards are
+managed from **Admin → Survey services** (`/admin?section=survey`). See
+[`docs/survey-page.md`](docs/survey-page.md).
 `/financial` (Financial Services),
 `/government` (Government Technology Services) and `/farms` (Kavi Farms) are
 **published**. Any of them can be hidden again from **Settings → Live pages** in
@@ -93,11 +98,13 @@ cp social-agent/.env.example social-agent/.env   # fill in
 npm run dev:social                               # :3300
 ```
 
-Prefer containers? A full local stack (web, API, Postgres, MinIO and optional
-social-agent) is documented in [`docs/docker-local.md`](docs/docker-local.md):
+Prefer containers? A full local stack (web, survey frontend, API, Postgres,
+MinIO and optional social-agent) is documented in
+[`docs/docker-local.md`](docs/docker-local.md):
 
 ```bash
-docker compose up --build   # web :3100, API :3200
+git submodule update --init --recursive   # survey frontend
+docker compose up --build                 # web :3100, survey :3004, API :3200
 ```
 
 Open http://localhost:3000. `.env.local` must contain `BACKEND_URL`

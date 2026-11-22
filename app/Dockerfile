@@ -13,7 +13,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ARG BACKEND_URL=http://api:3200
+ARG SURVEY_SERVICE_URL=http://survey:3004
 ENV BACKEND_URL=${BACKEND_URL}
+ENV SURVEY_SERVICE_URL=${SURVEY_SERVICE_URL}
 RUN npm run build
 
 FROM node:22-alpine AS runner

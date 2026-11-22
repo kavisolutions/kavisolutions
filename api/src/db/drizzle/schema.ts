@@ -3,6 +3,7 @@ import {
   boolean,
   index,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -290,6 +291,15 @@ export const surveyEnquiries = pgTable(
     index("survey_enquiries_created_idx").on(table.createdAt),
   ],
 );
+
+/* The standalone survey frontend renders this JSON document. The main API is
+   the only writer, so content and enquiries stay on the same database and
+   server as the rest of Kavi Solutions. */
+export const surveyContent = pgTable("survey_content", {
+  id: text("id").primaryKey(),
+  data: jsonb("data").notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
 
 // ---------------------------------------------------------------------------
 // Fellowship applications — public form, reference lookup and admin pipeline.

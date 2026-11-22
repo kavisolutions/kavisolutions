@@ -252,11 +252,11 @@ Show the valid and revoked result cards side by side as separate frames, plus a 
 ```text
 Design a long desktop Survey & Research page for Kavi Solutions, 1440px wide, using the Kavi design system from the master prompt. Accent: teal #14B8A6 → emerald #10B981.
 
-HERO: teal/emerald glow orbs. Pill "🔎 SURVEY & RESEARCH SOLUTIONS". H1: "Field research, survey data and insight you can act on." with the second phrase in #91B4FF. Subcopy: "We design surveys, run field teams across districts and states, clean and analyse the data, and deliver reports and presentations that answer the question you actually asked. Government, institutional, academic and private-sector assignments." Buttons: "Discuss a survey project →" (teal→emerald) and "Join the survey network" (glass). Four metrics: 6 Research verticals; 5 Engagement models; PAN-INDIA Field network; END-TO-END Design to report.
+HERO: teal/emerald glow orbs. Pill "🔎 SURVEY & RESEARCH SOLUTIONS". H1: "Field research, survey data and insight you can act on." with the second phrase in #91B4FF. Subcopy: "We design surveys, run field teams across districts and states, clean and analyse the data, and deliver reports and presentations that answer the question you actually asked. Government, institutional, academic and private-sector assignments." Buttons: "Discuss a survey project →" (teal→emerald) and "Join the survey network" (glass). Four metrics: 8 Research verticals; 5 Engagement models; PAN-INDIA Field network; END-TO-END Design to report.
 
 SECTIONS:
 1. Approach — "Research you can defend", 5 steps (01–05) in a 5-column strip.
-2. Six research verticals — 6 cards with emoji icon, title, bullet list.
+2. Eight research verticals — 8 cards with emoji icon, title, bullet list.
 3. Market research band — narrative with a pull quote.
 4. Field operations & network — copy, checklist, capability table.
 5. Data analysis & reporting — "From raw responses to a decision", 3-step flow.
@@ -508,11 +508,12 @@ HEADER: H1 "Settings", description "Update company profile and public page metad
 
 CARD 1 — COMPANY PROFILE: tagline input, description textarea, contact email input, primary "Save settings". Helper: "Used in the public team page and as the recipient for enquiries."
 
-CARD 2 — LIVE PAGES: four rows, each with page name, route, one-line blurb, and a toggle:
-1. Survey & Research — /survey — "Field surveys, market research and the surveyor network." — On
-2. Financial Services — /financial — "Tax filing, planning, accounting and cash flow support." — Off
-3. Government Technology — /government — "Modernisation, security and digital service delivery for public platforms." — Off
-4. Kavi Farms — /farms — "Farm products, village experiences and weekend tourism packages." — Off
+CARD 2 — LIVE PAGES: three rows, each with page name, route, one-line blurb, and a toggle:
+1. Financial Services — /financial — "Tax filing, planning, accounting and cash flow support." — Off
+2. Government Technology — /government — "Modernisation, security and digital service delivery for public platforms." — Off
+3. Kavi Farms — /farms — "Farm products, village experiences and weekend tourism packages." — Off
+
+Survey & Research is served by the standalone survey service and has no toggle here.
 
 Helper: "A hidden page returns 404 and has no navigation link. Changes take effect on the next request."
 
@@ -641,9 +642,9 @@ Label connections "Register", "Review", "Verify".
 ```text
 Create a 3-screen desktop flow for Kavi Solutions, 1440×900 each, using the Kavi design system.
 
-1. ADMIN SETTINGS: "Live pages" card with Survey & Research toggle Off.
-2. SAME SCREEN: toggle On, success toast "Survey & Research page published".
-3. PUBLIC SURVEY PAGE: hero visible, with navigation link "Survey" now present.
+1. ADMIN SETTINGS: "Live pages" card with Financial Services toggle Off.
+2. SAME SCREEN: toggle On, success toast "Financial Services page published".
+3. PUBLIC FINANCIAL PAGE: hero visible, with navigation link "Financial" now present.
 
 Label connections "Publish" and "Next request".
 ```

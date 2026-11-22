@@ -67,14 +67,16 @@ All prefixed with `/api`. Auth routes are Better Auth: `/api/auth/*`.
 | DELETE | `/certificates/:id/pdf` | admin | remove the stored PDF |
 | POST | `/upload` | signed-in | multipart `file`, ≤5 MB, jpeg/png/webp/gif |
 | POST | `/contact` | public, throttled | sends mail to the configured contact address |
-| POST | `/survey/enquiries` | public, throttled | client enquiry (stored + emailed) or surveyor form email |
+| POST | `/survey/enquiries` | public, throttled | client enquiry (stored + emailed) |
+| GET | `/survey/content` | public | published survey frontend content (`null` → bundled fallback) |
+| PUT | `/survey/content` | admin | publish survey frontend content |
 | GET | `/survey/opportunities` | public | admin-editable business development list |
 | GET | `/survey/enquiries` | admin | client enquiry inbox (`?status=`, `?search=`) |
 | GET | `/survey/enquiries/export.csv` | admin | client enquiry CSV |
 | PATCH | `/survey/enquiries/:id` | admin | status (`new` \| `contacted` \| `closed` \| `archived`) and notes |
 | DELETE | `/survey/enquiries/:id` | admin | delete an enquiry |
 | POST | `/financial/enquiries` | public, throttled | financial page forms (`kind`: `individual` \| `business`) |
-| POST | `/surveyors/register` | public, throttled | surveyor network registration (stored) |
+| POST | `/surveyors/register` | public, throttled | surveyor network registration from the survey frontend (stored + emailed) |
 | GET | `/surveyors` | admin | list (`?status=`, `?search=`) |
 | GET | `/surveyors/export.csv` | admin | surveyor network CSV |
 | GET | `/surveyors/:id/audit` | admin | profile change history |
@@ -82,7 +84,7 @@ All prefixed with `/api`. Auth routes are Better Auth: `/api/auth/*`.
 | DELETE | `/surveyors/:id` | admin | remove a profile |
 | POST | `/surveyors/:id/resend` | admin | re-send the notification email |
 | GET | `/pages` | public, uncached | which public pages are switched on |
-| PATCH | `/pages` | admin | publish/unpublish `survey` and `financial` |
+| PATCH | `/pages` | admin | publish/unpublish `financial`, `government` and `farms` |
 | GET | `/fellowship-programme/public/faqs` | public | published field questions |
 | POST | `/fellowship-programme/public/inquiries` | public, throttled | fellowship enquiry queue |
 | POST | `/fellowship-programme/public/gurukulam-interests` | public, throttled | Gurukulam / returner lead |
