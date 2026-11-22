@@ -31,6 +31,11 @@ vertical, using the approved description and 7-service list.
 `0005_survey_content_analysis_services.sql` does the same for the
 `analysis-reporting` vertical, using the approved 9-service list.
 
+`0006_survey_content_predictive.sql` syncs the `predictive-research` card to the
+approved title, description and 7-service list. The description keeps the
+required distinction between data-supported findings, estimates, predictions,
+assumptions and limitations.
+
 ## Verify
 
 ```bash
@@ -83,3 +88,14 @@ psql "$DATABASE_URL" -Atc \
 ```
 
 Expected: `9`.
+
+Check the Prediction-Based Research & Presentations service count:
+
+```bash
+psql "$DATABASE_URL" -Atc \
+  "SELECT jsonb_array_length(v->'services')
+   FROM survey_content, jsonb_array_elements(data->'verticals') AS v
+   WHERE id = 'main' AND v->>'slug' = 'predictive-research';"
+```
+
+Expected: `7`.
