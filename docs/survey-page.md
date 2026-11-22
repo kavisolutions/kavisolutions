@@ -59,6 +59,27 @@ calls stay same-origin and do not pass through the main web app. The main app
 also proxies `/survey` locally for convenience, but that proxy is not required
 in production.
 
+## Production auto-deploy
+
+A push to `main` runs `.github/workflows/deploy.yml`, which updates the `survey`
+submodule and calls `deploy/deploy.sh` on the VPS. That script:
+
+1. builds the shared API once and starts two PM2 processes:
+   `kavi-solutions-be` (:3200) and `kavi-solutions-survey-be` (:3201);
+2. builds the survey frontend and starts `kavi-survey` (:3004);
+3. health-checks `/api/health` on both APIs and `/survey` on the frontend.
+
+`deploy/nginx.conf` must be installed on the server with:
+
+```nginx
+location = /survey { proxy_pass http://127.0.0.1:3004; ... }
+location /survey/   { proxy_pass http://127.0.0.1:3004; ... }
+location /survey-api/ { proxy_pass http://127.0.0.1:3201/; ... }
+```
+
+The survey frontend is built with `NEXT_PUBLIC_API_BASE_URL=/survey-api`, so
+browser calls stay same-origin and bypass the main web process.
+
 ## Data ownership
 
 | Piece | Owner | Location |

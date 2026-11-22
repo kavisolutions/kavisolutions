@@ -14,10 +14,16 @@ set -euo pipefail
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 API_DIR="${APP_DIR}/api"
 FE_DIR="${APP_DIR}/app"
+SURVEY_DIR="${APP_DIR}/survey"
 FE_PORT="${PORT:-3111}"
 BE_PORT="${API_PORT:-3200}"
+SURVEY_PORT="${SURVEY_PORT:-3004}"
+SURVEY_BE_PORT="${SURVEY_API_PORT:-3201}"
+PUBLIC_URL="${PUBLIC_URL:-https://kavisolutions.in}"
 FE_APP="kavi-solutions"
 BE_APP="kavi-solutions-be"
+SURVEY_APP="kavi-survey"
+SURVEY_BE_APP="kavi-solutions-survey-be"
 SOCIAL_APP="kavi-social-agent"
 SOCIAL_PORT="${SOCIAL_PORT:-3300}"
 BRANCH="${BRANCH:-main}"
@@ -29,6 +35,12 @@ cd "${APP_DIR}"
 if [ "${PULL}" = "1" ]; then
   echo "==> Pulling latest ${BRANCH}"
   git pull --ff-only origin "${BRANCH}"
+fi
+
+if [ -f .gitmodules ]; then
+  echo "==> Syncing submodules"
+  git submodule sync --recursive
+  git submodule update --init --recursive
 fi
 
 # Runtime env comes from Env Manager. The read-only deploy tokens live outside
@@ -58,10 +70,11 @@ npm run db:migrate
 echo "==> [api] Building"
 npm run build
 
-# PM2 keeps the previous `script`/`cwd` on startOrReload, so delete the app
-# first to make sure a moved entrypoint (e.g. api/ -> app/) is picked up.
-echo "==> [api] Reloading ${BE_APP} on port ${BE_PORT}"
-pm2 delete "${BE_APP}" >/dev/null 2>&1 || true
+# PM2 keeps the previous `script`/`cwd` on startOrReload, so delete the apps
+# first to make sure a moved entrypoint is picked up. The ecosystem file starts
+# the main API (:3200) and the survey API (:3201) from the same build.
+echo "==> [api] Reloading ${BE_APP} on port ${BE_PORT} and ${SURVEY_BE_APP} on port ${SURVEY_BE_PORT}"
+pm2 delete "${BE_APP}" "${SURVEY_BE_APP}" >/dev/null 2>&1 || true
 PORT="${BE_PORT}" pm2 start ecosystem.config.js --update-env
 pm2 save
 
@@ -79,6 +92,30 @@ npm run build
 echo "==> [web] Reloading ${FE_APP} on port ${FE_PORT}"
 pm2 delete "${FE_APP}" >/dev/null 2>&1 || true
 PORT="${FE_PORT}" pm2 start ecosystem.config.js --update-env
+pm2 save
+
+# ------------------------------------------------------------- survey ----
+# Separate frontend, own API process (same codebase/database). Browser calls
+# use the same-origin /survey-api path handled by nginx.
+if [ ! -f "${SURVEY_DIR}/package.json" ]; then
+  echo "ERROR: survey frontend is missing. Run: git submodule update --init --recursive"
+  exit 1
+fi
+
+echo "==> [survey] Installing dependencies"
+cd "${SURVEY_DIR}"
+npm ci || npm install
+
+echo "==> [survey] Building production bundle"
+export API_BASE_URL="${SURVEY_API_URL:-http://127.0.0.1:${SURVEY_BE_PORT}}"
+export NEXT_PUBLIC_API_BASE_URL="${SURVEY_PUBLIC_API_PATH:-/survey-api}"
+export NEXT_PUBLIC_APP_URL="${SURVEY_PUBLIC_URL:-${PUBLIC_URL}}"
+export AUTH_PUBLIC_URL="${SURVEY_PUBLIC_URL:-${PUBLIC_URL}}"
+npm run build
+
+echo "==> [survey] Reloading ${SURVEY_APP} on port ${SURVEY_PORT}"
+pm2 delete "${SURVEY_APP}" >/dev/null 2>&1 || true
+PORT="${SURVEY_PORT}" pm2 start ecosystem.config.js --update-env
 pm2 save
 
 # ---------------------------------------------------------- social agent ----
@@ -119,12 +156,36 @@ for attempt in $(seq 1 15); do
 done
 
 for attempt in $(seq 1 15); do
+  if curl -fsS -o /dev/null "http://127.0.0.1:${SURVEY_BE_PORT}/api/health" 2>/dev/null; then
+    echo "    survey api OK (:${SURVEY_BE_PORT})"
+    break
+  fi
+  if [ "${attempt}" = "15" ]; then
+    echo "ERROR: survey API did not respond on port ${SURVEY_BE_PORT}. Check: pm2 logs ${SURVEY_BE_APP}"
+    exit 1
+  fi
+  sleep 2
+done
+
+for attempt in $(seq 1 15); do
   if curl -fsS -o /dev/null "http://127.0.0.1:${FE_PORT}/" 2>/dev/null; then
     echo "    web OK (:${FE_PORT})"
     break
   fi
   if [ "${attempt}" = "15" ]; then
     echo "ERROR: web app did not respond on port ${FE_PORT}. Check: pm2 logs ${FE_APP}"
+    exit 1
+  fi
+  sleep 2
+done
+
+for attempt in $(seq 1 15); do
+  if curl -fsS -o /dev/null "http://127.0.0.1:${SURVEY_PORT}/survey" 2>/dev/null; then
+    echo "    survey frontend OK (:${SURVEY_PORT})"
+    break
+  fi
+  if [ "${attempt}" = "15" ]; then
+    echo "ERROR: survey frontend did not respond on port ${SURVEY_PORT}. Check: pm2 logs ${SURVEY_APP}"
     exit 1
   fi
   sleep 2

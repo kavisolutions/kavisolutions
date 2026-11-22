@@ -137,10 +137,10 @@ Actions tab (`workflow_dispatch`).
 On the VPS the deploy does:
 
 1. `git fetch` + `git reset --hard origin/main` (GitHub `main` is the source of truth)
-2. `npm ci` (falls back to `npm install`)
-3. `npm run build`
+2. `git submodule update --init --recursive` for the survey frontend
+3. `npm ci` (falls back to `npm install`) and `npm run build` for API, app and survey
 4. `pm2 startOrReload ecosystem.config.js` + `pm2 save`
-5. a health check against `http://127.0.0.1:3111/`
+5. health checks for `:3200` (main API), `:3201` (survey API), `:3111` (main web) and `:3004/survey` (survey frontend)
 
 Before building, `deploy/deploy.sh` pulls the runtime env from Env Manager
 (`kavi-solutions-be/be-production` and `kavi-solutions/fe-production`) and
@@ -148,10 +148,15 @@ writes `api/.env` + `app/.env.production`. Tokens live outside the repo in
 `~/.config/kavi/`; see [`docs/env-manager.md`](docs/env-manager.md). Set
 `ENV_PULL=0` only for an emergency fallback to the existing files.
 
-`deploy/deploy.sh` deploys **both** apps and, when `social-agent/.env` exists,
-the social-agent sidecar: it installs, migrates (`api/npm run db:migrate`),
-builds and reloads `kavi-solutions-be` (:3200), the Next.js site
-`kavi-solutions` (:3111) and `kavi-social-agent` (:3300). Next.js rewrites are baked in at build time, so
+`deploy/deploy.sh` deploys the main apps, the survey frontend/API and, when
+`social-agent/.env` exists, the social-agent sidecar: it installs, migrates
+(`api/npm run db:migrate`), builds and reloads `kavi-solutions-be` (:3200),
+`kavi-solutions-survey-be` (:3201), the Next.js site `kavi-solutions` (:3111),
+the survey frontend `kavi-survey` (:3004) and `kavi-social-agent` (:3300).
+nginx must have the `/survey` and `/survey-api/` locations from
+`deploy/nginx.conf`; CI does not reload nginx, so install that change once on
+the server with `sudo nginx -t && sudo systemctl reload nginx`. Next.js
+rewrites are baked in at build time, so
 `BACKEND_URL` must be set for the build and the running process; the script
 exports it (default `http://127.0.0.1:3200`) and `ecosystem.config.js` passes it
 to PM2. Database migrations live in `api/src/db/drizzle/migrations`.
@@ -209,4 +214,5 @@ Update the `server_name` and cert paths in `deploy/nginx.conf` to match your act
   (currently `129.225.126.53` / `ubuntu`), key from the `DEPLOY_SSH_KEY` secret
 - The workflow resets the checkout to `origin/main` while preserving runtime
   `.env` files (`.env.production`, `api/.env`) and then runs
-  `deploy/deploy.sh --no-pull`, which builds and reloads both PM2 apps
+  `deploy/deploy.sh --no-pull`, which builds and reloads the main web, main
+  API, survey frontend and survey API PM2 apps
