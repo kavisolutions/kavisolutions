@@ -32,8 +32,19 @@ jobs:
           mkdir -p app
           if [ -f .env.production ] && [ ! -f app/.env.production ]; then cp .env.production app/.env.production; fi
           git reset --hard origin/main
+          export SURVEY_REPO_TOKEN='${{ secrets.SURVEY_REPO_TOKEN }}'
+          askpass="$(mktemp)"
+          cat > "$askpass" <<'ASKPASS'
+          #!/bin/sh
+          case "$1" in
+            *Username*) echo "x-access-token" ;;
+            *) printf '%s\n' "$SURVEY_REPO_TOKEN" ;;
+          esac
+          ASKPASS
+          chmod 700 "$askpass"
           git submodule sync --recursive
-          git submodule update --init --recursive
+          GIT_ASKPASS="$askpass" GIT_TERMINAL_PROMPT=0 git submodule update --init --recursive
+          rm -f "$askpass"
           rm -rf .next/types .next/dev
 
           bash deploy/deploy.sh --no-pull

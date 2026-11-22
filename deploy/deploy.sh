@@ -40,7 +40,23 @@ fi
 if [ -f .gitmodules ]; then
   echo "==> Syncing submodules"
   git submodule sync --recursive
-  git submodule update --init --recursive
+
+  # CI exports a short-lived read token for the private survey submodule.
+  if [ -n "${SURVEY_REPO_TOKEN:-}" ]; then
+    askpass="$(mktemp)"
+    cat > "${askpass}" <<'ASKPASS'
+#!/bin/sh
+case "$1" in
+  *Username*) echo "x-access-token" ;;
+  *) printf '%s\n' "$SURVEY_REPO_TOKEN" ;;
+esac
+ASKPASS
+    chmod 700 "${askpass}"
+    GIT_ASKPASS="${askpass}" GIT_TERMINAL_PROMPT=0 git submodule update --init --recursive
+    rm -f "${askpass}"
+  else
+    git submodule update --init --recursive
+  fi
 fi
 
 # Runtime env comes from Env Manager. The read-only deploy tokens live outside
