@@ -136,7 +136,7 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f api/db/dml/0003_survey_content_market
 Same for the Political & Social list:
 
 ```bash
-psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f api/db/dml/0004_survey_content_political_services.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f api/db/dml/0004_survey_content_political.sql
 ```
 
 ## Managing services in the admin panel

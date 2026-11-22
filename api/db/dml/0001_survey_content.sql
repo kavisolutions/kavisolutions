@@ -176,7 +176,7 @@ VALUES (
         "icon": "🗳️",
         "slug": "political-social",
         "title": "Political & social research",
-        "summary": "Public opinion, constituency-level sentiment and social impact assessment, collected with consent and handled to applicable privacy and election requirements.",
+        "summary": "Undertake research and survey assignments related to public opinion, social development, and community requirements. All political and personal data collection must follow applicable privacy, election, and data protection requirements, with appropriate consent and safeguards.",
         "services": [
           "Public opinion surveys",
           "Constituency-level research",

@@ -25,8 +25,8 @@ untouched, and does nothing when the list is already current.
 `0003_survey_content_market_services.sql` does the same for the
 `market-research` vertical, using the approved 8-service list.
 
-`0004_survey_content_political_services.sql` does the same for the
-`political-social` vertical, using the approved 7-service list.
+`0004_survey_content_political.sql` does the same for the `political-social`
+vertical, using the approved description and 7-service list.
 
 ## Verify
 

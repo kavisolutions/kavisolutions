@@ -1,6 +1,6 @@
--- Production sync: Political & Social research service list.
+-- Production sync: Political & Social research card.
 --
--- Sets the political-social services array to the approved 7 points:
+-- Sets the approved description and service list:
 --   Public opinion surveys
 --   Constituency-level research
 --   Voter sentiment research
@@ -9,14 +9,15 @@
 --   Public policy feedback collection
 --   Government scheme awareness and beneficiary feedback surveys
 --
--- Replaces only the political-social services array and leaves every other vertical
--- untouched. No-op when the row already has the canonical list.
+-- Replaces only the political-social card fields and leaves every other vertical
+-- untouched. No-op when the card is already current.
 --
 -- Usage:
---   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f api/db/dml/0004_survey_content_political_services.sql
+--   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f api/db/dml/0004_survey_content_political.sql
 
 WITH canonical AS (
-  SELECT $services$[
+  SELECT to_jsonb($summary$Undertake research and survey assignments related to public opinion, social development, and community requirements. All political and personal data collection must follow applicable privacy, election, and data protection requirements, with appropriate consent and safeguards.$summary$::text) AS summary,
+         $services$[
                 "Public opinion surveys",
                 "Constituency-level research",
                 "Voter sentiment research",
@@ -34,7 +35,11 @@ SET data = jsonb_set(
         SELECT jsonb_agg(
           CASE
             WHEN vertical->>'slug' = 'political-social'
-              THEN jsonb_set(vertical, '{services}', canonical.services)
+              THEN jsonb_set(
+                jsonb_set(vertical, '{summary}', canonical.summary),
+                '{services}',
+                canonical.services
+              )
             ELSE vertical
           END
           ORDER BY ordinality
@@ -51,7 +56,10 @@ WHERE id = 'main'
     SELECT 1
     FROM jsonb_array_elements(data->'verticals') AS vertical
     WHERE vertical->>'slug' = 'political-social'
-      AND vertical->'services' IS DISTINCT FROM canonical.services
+      AND (
+        vertical->'summary' IS DISTINCT FROM canonical.summary
+        OR vertical->'services' IS DISTINCT FROM canonical.services
+      )
   );
 
 SELECT id, updated_at,
