@@ -111,10 +111,11 @@ State
 
 `GET /api/locations` is the single source of truth.
 
-Admin and public registration now use grouped dropdowns:
+Admin and public registration now use searchable grouped dropdowns:
 
-- Primary location: select a city/town from the grouped list.
-- Coverage: add multiple city/town chips; remove with the chip’s X.
+- Every surveyor-form dropdown has its own search box.
+- Primary location: type a district/town, then select from the grouped list.
+- Coverage: search, add multiple city/town chips; remove with the chip’s X.
 - Location saves as `City, District, State`.
 - Coverage saves as an array of the same labels.
 - Existing free-text profiles remain editable through a “Current: …” option
