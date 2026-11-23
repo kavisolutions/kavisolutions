@@ -47,12 +47,12 @@ if [ -f .gitmodules ]; then
     SURVEY_AUTH_URL="https://x-access-token:${SURVEY_REPO_TOKEN}@github.com/kavi-solutions/kavi-survey-research.git"
     cleanup_survey_auth() {
       git config submodule.survey.url "${SURVEY_REPO_URL}" 2>/dev/null || true
-      if [ -d survey/.git ]; then
+      if [ -e survey/.git ]; then
         git -C survey remote set-url origin "${SURVEY_REPO_URL}" 2>/dev/null || true
       fi
     }
     trap cleanup_survey_auth EXIT
-    if [ -d survey/.git ]; then
+    if [ -e survey/.git ]; then
       git -C survey remote set-url origin "${SURVEY_AUTH_URL}"
     fi
     git config submodule.survey.url "${SURVEY_AUTH_URL}"

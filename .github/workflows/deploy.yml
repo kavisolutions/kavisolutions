@@ -36,7 +36,7 @@ jobs:
           SURVEY_AUTH_URL="https://x-access-token:${SURVEY_REPO_TOKEN}@github.com/kavi-solutions/kavi-survey-research.git"
           cleanup_survey_auth() {
             git config submodule.survey.url "${SURVEY_REPO_URL}" 2>/dev/null || true
-            if [ -d survey/.git ]; then
+            if [ -e survey/.git ]; then
               git -C survey remote set-url origin "${SURVEY_REPO_URL}" 2>/dev/null || true
             fi
           }
@@ -49,13 +49,13 @@ jobs:
           fi
           # The reset may recurse into an already-cloned submodule, so point
           # both URLs at the authenticated URL before touching the tree.
-          if [ -d survey/.git ]; then
+          if [ -e survey/.git ]; then
             git -C survey remote set-url origin "${SURVEY_AUTH_URL}"
           fi
           git config submodule.survey.url "${SURVEY_AUTH_URL}"
           git reset --hard origin/main
           SURVEY_TARGET="$(git ls-tree HEAD survey | awk '{print $3}')"
-          if [ -d survey/.git ]; then
+          if [ -e survey/.git ]; then
             git -C survey remote set-url origin "${SURVEY_AUTH_URL}"
             git -C survey fetch --no-tags origin main
             git -C survey checkout --detach "${SURVEY_TARGET}"
