@@ -40,7 +40,7 @@ export class RegisterSurveyorDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  @MaxLength(60, { each: true })
+  @MaxLength(120, { each: true })
   coverage?: string[];
 
   @IsOptional()
@@ -103,7 +103,7 @@ export class UpdateSurveyorDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  @MaxLength(60, { each: true })
+  @MaxLength(120, { each: true })
   coverage?: string[];
 
   @IsOptional()

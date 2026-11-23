@@ -154,7 +154,7 @@ export class SurveyorsService {
       phone,
       role: payload.role ?? "surveyor",
       location: sanitizeText(payload.location, 160),
-      coverage: cleanList(payload.coverage, 20, 80),
+      coverage: cleanList(payload.coverage, 20, 120),
       availability: sanitizeText(payload.availability, 160),
       capacity: sanitizeText(payload.capacity, 120),
       languages: cleanList(payload.languages, 10, 60),
@@ -216,7 +216,7 @@ export class SurveyorsService {
     if (payload.phone !== undefined) set.phone = sanitizeText(payload.phone, 30);
     if (payload.role !== undefined) set.role = payload.role;
     if (payload.location !== undefined) set.location = sanitizeText(payload.location, 160);
-    if (payload.coverage !== undefined) set.coverage = cleanList(payload.coverage, 20, 80);
+    if (payload.coverage !== undefined) set.coverage = cleanList(payload.coverage, 20, 120);
     if (payload.availability !== undefined) set.availability = sanitizeText(payload.availability, 160);
     if (payload.capacity !== undefined) set.capacity = sanitizeText(payload.capacity, 120);
     if (payload.experience !== undefined) set.experience = sanitizeText(payload.experience, 500);
