@@ -43,11 +43,22 @@ if [ -f .gitmodules ]; then
 
   # CI exports a read token for the private survey submodule.
   if [ -n "${SURVEY_REPO_TOKEN:-}" ]; then
-    GIT_CONFIG_COUNT=1 \
-      GIT_CONFIG_KEY_0="url.https://x-access-token:${SURVEY_REPO_TOKEN}@github.com/.insteadOf" \
-      GIT_CONFIG_VALUE_0="https://github.com/" \
-      GIT_TERMINAL_PROMPT=0 \
-      git submodule update --init --recursive
+    SURVEY_REPO_URL="https://github.com/kavi-solutions/kavi-survey-research"
+    SURVEY_AUTH_URL="https://x-access-token:${SURVEY_REPO_TOKEN}@github.com/kavi-solutions/kavi-survey-research.git"
+    cleanup_survey_auth() {
+      git config submodule.survey.url "${SURVEY_REPO_URL}" 2>/dev/null || true
+      if [ -d survey/.git ]; then
+        git -C survey remote set-url origin "${SURVEY_REPO_URL}" 2>/dev/null || true
+      fi
+    }
+    trap cleanup_survey_auth EXIT
+    if [ -d survey/.git ]; then
+      git -C survey remote set-url origin "${SURVEY_AUTH_URL}"
+    fi
+    git config submodule.survey.url "${SURVEY_AUTH_URL}"
+    GIT_TERMINAL_PROMPT=0 git submodule update --init --recursive
+    cleanup_survey_auth
+    trap - EXIT
   else
     git submodule update --init --recursive
   fi

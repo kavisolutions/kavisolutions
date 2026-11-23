@@ -32,19 +32,31 @@ jobs:
           mkdir -p app
           if [ -f .env.production ] && [ ! -f app/.env.production ]; then cp .env.production app/.env.production; fi
           export SURVEY_REPO_TOKEN='${{ secrets.SURVEY_REPO_TOKEN }}'
-          export GIT_CONFIG_COUNT=1
-          export GIT_CONFIG_KEY_0="url.https://x-access-token:${SURVEY_REPO_TOKEN}@github.com/.insteadOf"
-          export GIT_CONFIG_VALUE_0="https://github.com/"
+          SURVEY_REPO_URL="https://github.com/kavi-solutions/kavi-survey-research"
+          SURVEY_AUTH_URL="https://x-access-token:${SURVEY_REPO_TOKEN}@github.com/kavi-solutions/kavi-survey-research.git"
+          cleanup_survey_auth() {
+            git config submodule.survey.url "${SURVEY_REPO_URL}" 2>/dev/null || true
+            if [ -d survey/.git ]; then
+              git -C survey remote set-url origin "${SURVEY_REPO_URL}" 2>/dev/null || true
+            fi
+          }
+          trap cleanup_survey_auth EXIT
           export GIT_TERMINAL_PROMPT=0
           echo "Survey repo token length: ${#SURVEY_REPO_TOKEN}"
-          if ! git ls-remote https://github.com/kavi-solutions/kavi-survey-research HEAD >/dev/null; then
+          if ! git ls-remote "${SURVEY_AUTH_URL}" HEAD >/dev/null; then
             echo "ERROR: cannot authenticate to the private survey repository"
             exit 1
           fi
           git reset --hard origin/main
           git submodule sync --recursive
+          if [ -d survey/.git ]; then
+            git -C survey remote set-url origin "${SURVEY_AUTH_URL}"
+          fi
+          git config submodule.survey.url "${SURVEY_AUTH_URL}"
           git submodule update --init --recursive
-          unset SURVEY_REPO_TOKEN GIT_CONFIG_COUNT GIT_CONFIG_KEY_0 GIT_CONFIG_VALUE_0
+          cleanup_survey_auth
+          trap - EXIT
+          unset SURVEY_REPO_TOKEN
           rm -rf .next/types .next/dev
 
           bash deploy/deploy.sh --no-pull
