@@ -298,6 +298,7 @@ export default function AdminPage() {
   const [revokeReason, setRevokeReason] = useState("");
 
   const [surveyors, setSurveyors] = useState<Surveyor[]>([]);
+  const [surveyorView, setSurveyorView] = useState<Surveyor | null>(null);
   const [surveyorDraft, setSurveyorDraft] = useState<SurveyorDraft | null>(null);
   const [savingSurveyor, setSavingSurveyor] = useState(false);
   const [surveyorError, setSurveyorError] = useState("");
@@ -310,6 +311,7 @@ export default function AdminPage() {
   const [auditLoading, setAuditLoading] = useState(false);
 
   const [enquiries, setEnquiries] = useState<SurveyEnquiry[]>([]);
+  const [enquiryView, setEnquiryView] = useState<SurveyEnquiry | null>(null);
   const [enquiryQuery, setEnquiryQuery] = useState("");
   const [enquiryStatusFilter, setEnquiryStatusFilter] = useState("all");
   const [enquiryDraft, setEnquiryDraft] = useState<SurveyEnquiry | null>(null);
@@ -543,13 +545,13 @@ export default function AdminPage() {
   }, [notice]);
 
   useEffect(() => {
-    if (!draft && !projectDraft && !preview && !certificateDraft && !revokeTarget && !surveyorDraft && !surveyDraft) return;
+    if (!draft && !projectDraft && !preview && !certificateDraft && !revokeTarget && !surveyorDraft && !surveyorView && !enquiryView && !surveyDraft) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previous;
     };
-  }, [draft, projectDraft, preview, certificateDraft, revokeTarget, surveyorDraft, surveyDraft]);
+  }, [draft, projectDraft, preview, certificateDraft, revokeTarget, surveyorDraft, surveyorView, enquiryView, surveyDraft]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -3900,6 +3902,131 @@ export default function AdminPage() {
           {/* SECTION: SURVEYORS */}
           {section === "surveyors" && (
             <div className="space-y-4">
+              {/* Read-only submission modal */}
+              {surveyorView && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+                  <div className="relative my-8 w-full max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-2xl sm:p-8">
+                    <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-4">
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
+                          Survey network registration
+                        </p>
+                        <h2 className="mt-1 text-lg font-bold text-foreground">
+                          {surveyorView.name}
+                        </h2>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          Submitted {formatCertificateDate(surveyorView.createdAt.slice(0, 10))}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setSurveyorView(null)}
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        aria-label="Close submission"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-5">
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Email</p>
+                          <a href={`mailto:${surveyorView.email}`} className="mt-1 block text-sm text-primary hover:underline">
+                            {surveyorView.email}
+                          </a>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Phone</p>
+                          <a href={`tel:${surveyorView.phone}`} className="mt-1 block text-sm text-foreground hover:underline">
+                            {surveyorView.phone}
+                          </a>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Location</p>
+                          <p className="mt-1 text-sm text-foreground">{surveyorView.location || "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Status</p>
+                          <Badge
+                            variant="outline"
+                            className={`mt-1 text-[10px] font-semibold uppercase tracking-wide ${SURVEYOR_STATUS_TONES[surveyorView.status]}`}
+                          >
+                            {SURVEYOR_STATUS_LABELS[surveyorView.status]}
+                          </Badge>
+                          {surveyorView.verifiedAt && (
+                            <p className="mt-1 text-[10px] text-muted-foreground">
+                              Verified {formatCertificateDate(surveyorView.verifiedAt.slice(0, 10))}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Languages</p>
+                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                          {surveyorView.languages.length > 0 ? (
+                            surveyorView.languages.map((language) => (
+                              <span key={language} className="rounded-full border border-border bg-muted/50 px-2.5 py-1 text-[11px] text-muted-foreground">
+                                {language}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-sm text-muted-foreground">—</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Skills</p>
+                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                          {surveyorView.skills.length > 0 ? (
+                            surveyorView.skills.map((skill) => (
+                              <span key={skill} className="rounded-full border border-border bg-muted/50 px-2.5 py-1 text-[11px] text-muted-foreground">
+                                {skill}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-sm text-muted-foreground">—</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Experience</p>
+                        <p className="mt-1 whitespace-pre-wrap rounded-lg border border-border bg-muted/40 px-3 py-2.5 text-sm leading-relaxed text-foreground">
+                          {surveyorView.experience || "—"}
+                        </p>
+                      </div>
+
+                      {surveyorView.notes && (
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Internal notes</p>
+                          <p className="mt-1 whitespace-pre-wrap rounded-lg border border-border bg-muted/40 px-3 py-2.5 text-sm leading-relaxed text-foreground">
+                            {surveyorView.notes}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-6 flex items-center justify-end gap-2 border-t border-border pt-4">
+                      <Button variant="outline" onClick={() => setSurveyorView(null)}>
+                        Close
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setSurveyorError("");
+                          setSurveyorDraft(toSurveyorDraft(surveyorView));
+                          setSurveyorView(null);
+                        }}
+                        className="font-semibold"
+                      >
+                        <Pencil className="mr-1.5 h-4 w-4" /> Edit profile
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Audit history modal */}
               {auditSurveyor && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
@@ -4211,6 +4338,16 @@ export default function AdminPage() {
                         </TableCell>
                         <TableCell className="pr-5 py-3.5 text-right">
                           <div className="flex justify-end gap-1 whitespace-nowrap">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                              title="View submission"
+                              aria-label={`View submission from ${surveyor.name}`}
+                              onClick={() => setSurveyorView(surveyor)}
+                            >
+                              <Eye className="h-3.5 w-3.5" />
+                            </Button>
                             {surveyor.status !== "verified" && surveyor.status !== "active" && (
                               <Button
                                 variant="ghost"
@@ -4284,6 +4421,101 @@ export default function AdminPage() {
           {/* SECTION: SURVEY ENQUIRIES */}
           {section === "enquiries" && (
             <div className="space-y-4">
+              {/* Read-only submission modal */}
+              {enquiryView && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+                  <div className="relative my-8 w-full max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-2xl sm:p-8">
+                    <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-4">
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
+                          Client project enquiry
+                        </p>
+                        <h2 className="mt-1 text-lg font-bold text-foreground">
+                          {enquiryView.name}
+                        </h2>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          Submitted {formatCertificateDate(enquiryView.createdAt.slice(0, 10))}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setEnquiryView(null)}
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        aria-label="Close submission"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Organisation</p>
+                          <p className="mt-1 text-sm text-foreground">{enquiryView.organisation || "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Service</p>
+                          <p className="mt-1 text-sm text-foreground">{enquiryView.service || "Not specified"}</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Email</p>
+                          <a href={`mailto:${enquiryView.email}`} className="mt-1 block text-sm text-primary hover:underline">
+                            {enquiryView.email}
+                          </a>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Phone</p>
+                          <a href={`tel:${enquiryView.phone}`} className="mt-1 block text-sm text-foreground hover:underline">
+                            {enquiryView.phone}
+                          </a>
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Message</p>
+                        <p className="mt-1 whitespace-pre-wrap rounded-lg border border-border bg-muted/40 px-3 py-2.5 text-sm leading-relaxed text-foreground">
+                          {enquiryView.message}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Status</p>
+                        <Badge
+                          variant="outline"
+                          className={`mt-1 text-[10px] font-semibold uppercase tracking-wide ${SURVEY_ENQUIRY_STATUS_TONES[enquiryView.status]}`}
+                        >
+                          {SURVEY_ENQUIRY_STATUS_LABELS[enquiryView.status]}
+                        </Badge>
+                      </div>
+
+                      {enquiryView.notes && (
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Internal notes</p>
+                          <p className="mt-1 whitespace-pre-wrap rounded-lg border border-border bg-muted/40 px-3 py-2.5 text-sm leading-relaxed text-foreground">
+                            {enquiryView.notes}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-6 flex items-center justify-end gap-2 border-t border-border pt-4">
+                      <Button variant="outline" onClick={() => setEnquiryView(null)}>
+                        Close
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setEnquiryError("");
+                          setEnquiryDraft({ ...enquiryView });
+                          setEnquiryView(null);
+                        }}
+                        className="font-semibold"
+                      >
+                        <Pencil className="mr-1.5 h-4 w-4" /> Update enquiry
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {enquiryDraft && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
                   <div className="relative my-8 w-full max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-2xl sm:p-8">
@@ -4471,6 +4703,16 @@ export default function AdminPage() {
                         </TableCell>
                         <TableCell className="pr-5 py-3.5 text-right">
                           <div className="flex justify-end gap-1 whitespace-nowrap">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                              title="View submission"
+                              aria-label={`View submission from ${enquiry.name}`}
+                              onClick={() => setEnquiryView(enquiry)}
+                            >
+                              <Eye className="h-3.5 w-3.5" />
+                            </Button>
                             <Button
                               variant="ghost"
                               size="sm"
