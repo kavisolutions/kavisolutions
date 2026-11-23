@@ -6,20 +6,21 @@ Status of the five business priorities and the next engineering steps.
 
 Already live:
 
-- `surveyors` registry with name, contact, location, languages, skills,
-  experience, notes and status.
-- Public registration from the survey frontend.
-- Admin review at **Survey services → Users**: view submission, verify, activate,
-  reject, edit, audit history, CSV export.
+- `surveyors` registry with name, contact, primary role, location, coverage,
+  availability, capacity, languages, skills, experience, notes and status.
+- Structured role: surveyor / field executive / coordinator / researcher /
+  analyst.
+- Coverage, availability and capacity fields, editable by admins.
+- Public registration from the survey frontend, including role and coverage.
+- Admin review at **Survey services → Users**: view submission, filter by role,
+  verify, activate, reject, edit, audit history, CSV export.
 - Retention purge (`npm run surveyors:purge`) and audit log.
 
 Next improvements:
 
-- Structured role: surveyor / field executive / coordinator / researcher /
-  analyst, instead of relying only on free-text skills.
-- Coverage fields: districts/states, travel radius, availability.
-- Capacity and rate fields for assignment planning.
+- Travel radius and rate fields for assignment planning.
 - Duplicate detection across phone/email and a merge workflow.
+- Availability calendar instead of free text.
 
 ## 2. Reusable survey templates — **content built, admin library pending**
 
@@ -85,6 +86,5 @@ Next:
 
 ## Recommended next build
 
-1. Structured surveyor roles and coverage fields.
-2. Admin-managed survey template library.
-3. Project/assignment tables only after those two are stable.
+1. Admin-managed survey template library.
+2. Project/assignment tables only after the template library is stable.

@@ -5,6 +5,24 @@ export const SURVEYOR_STATUSES = ["applied", "verified", "active", "inactive", "
 
 export type SurveyorStatus = (typeof SURVEYOR_STATUSES)[number];
 
+export const SURVEYOR_ROLES = [
+  "surveyor",
+  "field-executive",
+  "coordinator",
+  "researcher",
+  "analyst",
+] as const;
+
+export type SurveyorRole = (typeof SURVEYOR_ROLES)[number];
+
+export const SURVEYOR_ROLE_LABELS: Record<SurveyorRole, string> = {
+  surveyor: "Surveyor",
+  "field-executive": "Field executive",
+  coordinator: "Coordinator",
+  researcher: "Researcher",
+  analyst: "Analyst",
+};
+
 export const SURVEYOR_STATUS_LABELS: Record<SurveyorStatus, string> = {
   applied: "Applied",
   verified: "Verified",
@@ -27,7 +45,11 @@ export type Surveyor = {
   name: string;
   email: string;
   phone: string;
+  role: SurveyorRole;
   location: string;
+  coverage: string[];
+  availability: string;
+  capacity: string;
   languages: string[];
   skills: string[];
   experience: string;
@@ -43,7 +65,11 @@ export type SurveyorDraft = {
   name: string;
   email: string;
   phone: string;
+  role: SurveyorRole;
   location: string;
+  coverage: string;
+  availability: string;
+  capacity: string;
   languages: string;
   skills: string;
   experience: string;
@@ -55,7 +81,11 @@ export const emptySurveyorDraft = (): SurveyorDraft => ({
   name: "",
   email: "",
   phone: "",
+  role: "surveyor",
   location: "",
+  coverage: "",
+  availability: "",
+  capacity: "",
   languages: "",
   skills: "",
   experience: "",
@@ -68,7 +98,11 @@ export const toSurveyorDraft = (surveyor: Surveyor): SurveyorDraft => ({
   name: surveyor.name,
   email: surveyor.email,
   phone: surveyor.phone,
+  role: surveyor.role,
   location: surveyor.location,
+  coverage: surveyor.coverage.join(", "),
+  availability: surveyor.availability,
+  capacity: surveyor.capacity,
   languages: surveyor.languages.join(", "),
   skills: surveyor.skills.join(", "),
   experience: surveyor.experience,

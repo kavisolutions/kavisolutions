@@ -24,11 +24,14 @@ import {
 import {
   emptySurveyorDraft,
   splitCommaList,
+  SURVEYOR_ROLE_LABELS,
+  SURVEYOR_ROLES,
   SURVEYOR_STATUS_LABELS,
   SURVEYOR_STATUS_TONES,
   toSurveyorDraft,
   type Surveyor,
   type SurveyorDraft,
+  type SurveyorRole,
   type SurveyorStatus,
 } from "@/lib/surveyors";
 import {
@@ -304,6 +307,7 @@ export default function AdminPage() {
   const [surveyorError, setSurveyorError] = useState("");
   const [surveyorQuery, setSurveyorQuery] = useState("");
   const [surveyorStatusFilter, setSurveyorStatusFilter] = useState("all");
+  const [surveyorRoleFilter, setSurveyorRoleFilter] = useState("all");
   const [auditSurveyor, setAuditSurveyor] = useState<Surveyor | null>(null);
   const [auditEntries, setAuditEntries] = useState<
     { id: string; action: string; actorEmail: string; detail: string; createdAt: string }[]
@@ -383,14 +387,16 @@ export default function AdminPage() {
     return surveyors.filter((surveyor) => {
       const matchesQuery =
         !query ||
-        `${surveyor.name} ${surveyor.email} ${surveyor.location} ${surveyor.languages.join(" ")}`
+        `${surveyor.name} ${surveyor.email} ${surveyor.role} ${surveyor.location} ${surveyor.coverage.join(" ")} ${surveyor.languages.join(" ")}`
           .toLowerCase()
           .includes(query);
       const matchesStatus =
         surveyorStatusFilter === "all" || surveyor.status === surveyorStatusFilter;
-      return matchesQuery && matchesStatus;
+      const matchesRole =
+        surveyorRoleFilter === "all" || surveyor.role === surveyorRoleFilter;
+      return matchesQuery && matchesStatus && matchesRole;
     });
-  }, [surveyors, surveyorQuery, surveyorStatusFilter]);
+  }, [surveyors, surveyorQuery, surveyorStatusFilter, surveyorRoleFilter]);
 
   const surveyorStatusCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -1058,7 +1064,11 @@ export default function AdminPage() {
       name: surveyorDraft.name,
       email: surveyorDraft.email,
       phone: surveyorDraft.phone,
+      role: surveyorDraft.role,
       location: surveyorDraft.location,
+      coverage: splitCommaList(surveyorDraft.coverage),
+      availability: surveyorDraft.availability,
+      capacity: surveyorDraft.capacity,
       languages: splitCommaList(surveyorDraft.languages),
       skills: splitCommaList(surveyorDraft.skills),
       experience: surveyorDraft.experience,
@@ -3942,8 +3952,20 @@ export default function AdminPage() {
                           </a>
                         </div>
                         <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Role</p>
+                          <p className="mt-1 text-sm text-foreground">{SURVEYOR_ROLE_LABELS[surveyorView.role]}</p>
+                        </div>
+                        <div>
                           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Location</p>
                           <p className="mt-1 text-sm text-foreground">{surveyorView.location || "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Availability</p>
+                          <p className="mt-1 text-sm text-foreground">{surveyorView.availability || "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Capacity</p>
+                          <p className="mt-1 text-sm text-foreground">{surveyorView.capacity || "—"}</p>
                         </div>
                         <div>
                           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Status</p>
@@ -3957,6 +3979,21 @@ export default function AdminPage() {
                             <p className="mt-1 text-[10px] text-muted-foreground">
                               Verified {formatCertificateDate(surveyorView.verifiedAt.slice(0, 10))}
                             </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Coverage</p>
+                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                          {surveyorView.coverage.length > 0 ? (
+                            surveyorView.coverage.map((place) => (
+                              <span key={place} className="rounded-full border border-border bg-muted/50 px-2.5 py-1 text-[11px] text-muted-foreground">
+                                {place}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-sm text-muted-foreground">—</span>
                           )}
                         </div>
                       </div>
@@ -4144,6 +4181,61 @@ export default function AdminPage() {
 
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">Role</label>
+                          <Select
+                            value={surveyorDraft.role}
+                            onValueChange={(value) =>
+                              setSurveyorDraft({ ...surveyorDraft, role: value as SurveyorRole })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {SURVEYOR_ROLES.map((role) => (
+                                <SelectItem key={role} value={role}>
+                                  {SURVEYOR_ROLE_LABELS[role]}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">
+                            Coverage
+                          </label>
+                          <Input
+                            value={surveyorDraft.coverage}
+                            onChange={(e) => setSurveyorDraft({ ...surveyorDraft, coverage: e.target.value })}
+                            placeholder="Hyderabad, Warangal, Telangana"
+                          />
+                          <p className="mt-1 text-[11px] text-muted-foreground">
+                            Districts / states, comma separated
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">Availability</label>
+                          <Input
+                            value={surveyorDraft.availability}
+                            onChange={(e) => setSurveyorDraft({ ...surveyorDraft, availability: e.target.value })}
+                            placeholder="Immediate, weekdays, project-based"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1.5 block text-xs font-semibold text-foreground">Capacity</label>
+                          <Input
+                            value={surveyorDraft.capacity}
+                            onChange={(e) => setSurveyorDraft({ ...surveyorDraft, capacity: e.target.value })}
+                            placeholder="20 responses/day, 1 district/week"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
                           <label className="mb-1.5 block text-xs font-semibold text-foreground">
                             Languages
                           </label>
@@ -4238,7 +4330,7 @@ export default function AdminPage() {
                 <div className="relative flex-1 sm:max-w-sm">
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
-                    placeholder="Search by name, email, location…"
+                    placeholder="Search by name, email, role, location…"
                     value={surveyorQuery}
                     onChange={(e) => setSurveyorQuery(e.target.value)}
                     className="pl-9"
@@ -4254,6 +4346,19 @@ export default function AdminPage() {
                       <SelectItem key={status} value={status}>
                         {SURVEYOR_STATUS_LABELS[status]}
                         {surveyorStatusCounts[status] ? ` (${surveyorStatusCounts[status]})` : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={surveyorRoleFilter} onValueChange={setSurveyorRoleFilter}>
+                  <SelectTrigger className="w-full sm:w-[190px]">
+                    <SelectValue placeholder="Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All roles</SelectItem>
+                    {SURVEYOR_ROLES.map((role) => (
+                      <SelectItem key={role} value={role}>
+                        {SURVEYOR_ROLE_LABELS[role]}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -4293,6 +4398,9 @@ export default function AdminPage() {
                               <p className="truncate text-sm font-semibold text-foreground">
                                 {surveyor.name}
                               </p>
+                              <p className="truncate text-[11px] font-medium text-primary">
+                                {SURVEYOR_ROLE_LABELS[surveyor.role]}
+                              </p>
                               <p className="truncate text-xs text-muted-foreground">{surveyor.email}</p>
                               <p className="truncate text-[11px] text-muted-foreground/80">
                                 {surveyor.phone}
@@ -4300,8 +4408,13 @@ export default function AdminPage() {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell className="py-3.5 whitespace-nowrap">
+                        <TableCell className="py-3.5">
                           <span className="text-xs text-foreground">{surveyor.location || "—"}</span>
+                          {surveyor.coverage.length > 0 && (
+                            <p className="mt-0.5 max-w-[220px] truncate text-[10px] text-muted-foreground">
+                              {surveyor.coverage.join(" · ")}
+                            </p>
+                          )}
                         </TableCell>
                         <TableCell className="py-3.5">
                           <div className="flex flex-wrap gap-1">

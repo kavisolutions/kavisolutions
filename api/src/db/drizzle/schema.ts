@@ -216,6 +216,15 @@ export const certificates = pgTable(
 export const SURVEYOR_STATUSES = ["applied", "verified", "active", "inactive", "rejected"] as const;
 export type SurveyorStatus = (typeof SURVEYOR_STATUSES)[number];
 
+export const SURVEYOR_ROLES = [
+  "surveyor",
+  "field-executive",
+  "coordinator",
+  "researcher",
+  "analyst",
+] as const;
+export type SurveyorRole = (typeof SURVEYOR_ROLES)[number];
+
 export const surveyors = pgTable(
   "surveyors",
   {
@@ -223,9 +232,14 @@ export const surveyors = pgTable(
     name: text("name").notNull(),
     email: text("email").notNull(),
     phone: text("phone").notNull(),
+    /* Primary role in the network. Skills remain free text for specialisms. */
+    role: text("role").notNull().default("surveyor"),
     /* Where the surveyor can physically work. Free text because coverage is
        usually "Warangal + 3 neighbouring districts" rather than a lookup code. */
     location: text("location").notNull().default(""),
+    coverage: text("coverage").array().notNull().default([]),
+    availability: text("availability").notNull().default(""),
+    capacity: text("capacity").notNull().default(""),
     languages: text("languages").array().notNull().default([]),
     skills: text("skills").array().notNull().default([]),
     experience: text("experience").notNull().default(""),

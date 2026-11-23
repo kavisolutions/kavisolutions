@@ -8,7 +8,7 @@ import {
   MinLength,
 } from "class-validator";
 
-import { SURVEYOR_STATUSES } from "@/db/drizzle/schema";
+import { SURVEYOR_ROLES, SURVEYOR_STATUSES } from "@/db/drizzle/schema";
 
 /* Public registration from the survey page. Kept permissive on location and
    languages because the network is still being built and we would rather have
@@ -29,9 +29,29 @@ export class RegisterSurveyorDto {
   phone!: string;
 
   @IsOptional()
+  @IsIn(SURVEYOR_ROLES)
+  role?: (typeof SURVEYOR_ROLES)[number];
+
+  @IsOptional()
   @IsString()
   @MaxLength(160)
   location?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @MaxLength(60, { each: true })
+  coverage?: string[];
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(160)
+  availability?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  capacity?: string;
 
   @IsOptional()
   @IsArray()
@@ -72,9 +92,29 @@ export class UpdateSurveyorDto {
   phone?: string;
 
   @IsOptional()
+  @IsIn(SURVEYOR_ROLES)
+  role?: (typeof SURVEYOR_ROLES)[number];
+
+  @IsOptional()
   @IsString()
   @MaxLength(160)
   location?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @MaxLength(60, { each: true })
+  coverage?: string[];
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(160)
+  availability?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  capacity?: string;
 
   @IsOptional()
   @IsArray()

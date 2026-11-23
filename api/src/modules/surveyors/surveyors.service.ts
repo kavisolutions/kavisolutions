@@ -13,7 +13,9 @@ import type { Database } from "@/db/drizzle/drizzle.client";
 import {
   surveyors,
   surveyorAuditLog,
+  SURVEYOR_ROLES,
   SURVEYOR_STATUSES,
+  type SurveyorRole,
   type SurveyorRow,
   type SurveyorStatus,
 } from "@/db/drizzle/schema";
@@ -24,7 +26,11 @@ export type SurveyorDto = {
   name: string;
   email: string;
   phone: string;
+  role: SurveyorRole;
   location: string;
+  coverage: string[];
+  availability: string;
+  capacity: string;
   languages: string[];
   skills: string[];
   experience: string;
@@ -42,12 +48,19 @@ export type PublicSurveyorDto = Omit<SurveyorDto, "notes" | "verifiedAt">;
 const isStatus = (value: string): value is SurveyorStatus =>
   (SURVEYOR_STATUSES as readonly string[]).includes(value);
 
+const isRole = (value: string): value is SurveyorRole =>
+  (SURVEYOR_ROLES as readonly string[]).includes(value);
+
 const toDto = (row: SurveyorRow): SurveyorDto => ({
   id: row.id,
   name: row.name,
   email: row.email,
   phone: row.phone,
+  role: isRole(row.role) ? row.role : "surveyor",
   location: row.location ?? "",
+  coverage: row.coverage ?? [],
+  availability: row.availability ?? "",
+  capacity: row.capacity ?? "",
   languages: row.languages ?? [],
   skills: row.skills ?? [],
   experience: row.experience ?? "",
@@ -67,7 +80,11 @@ const toPublic = (row: SurveyorRow): PublicSurveyorDto => {
     name: dto.name,
     email: dto.email,
     phone: dto.phone,
+    role: dto.role,
     location: dto.location,
+    coverage: dto.coverage,
+    availability: dto.availability,
+    capacity: dto.capacity,
     languages: dto.languages,
     skills: dto.skills,
     experience: dto.experience,
@@ -135,7 +152,11 @@ export class SurveyorsService {
       name,
       email,
       phone,
+      role: payload.role ?? "surveyor",
       location: sanitizeText(payload.location, 160),
+      coverage: cleanList(payload.coverage, 20, 80),
+      availability: sanitizeText(payload.availability, 160),
+      capacity: sanitizeText(payload.capacity, 120),
       languages: cleanList(payload.languages, 10, 60),
       skills: cleanList(payload.skills, 20, 60),
       experience: sanitizeText(payload.experience, 500),
@@ -193,7 +214,11 @@ export class SurveyorsService {
 
     if (payload.name !== undefined) set.name = sanitizeText(payload.name, 120);
     if (payload.phone !== undefined) set.phone = sanitizeText(payload.phone, 30);
+    if (payload.role !== undefined) set.role = payload.role;
     if (payload.location !== undefined) set.location = sanitizeText(payload.location, 160);
+    if (payload.coverage !== undefined) set.coverage = cleanList(payload.coverage, 20, 80);
+    if (payload.availability !== undefined) set.availability = sanitizeText(payload.availability, 160);
+    if (payload.capacity !== undefined) set.capacity = sanitizeText(payload.capacity, 120);
     if (payload.experience !== undefined) set.experience = sanitizeText(payload.experience, 500);
     if (payload.notes !== undefined) set.notes = sanitizeText(payload.notes, 2000);
     if (payload.languages !== undefined) set.languages = cleanList(payload.languages, 10, 60);
@@ -270,7 +295,11 @@ export class SurveyorsService {
       "Name",
       "Email",
       "Phone",
+      "Role",
       "Location",
+      "Coverage",
+      "Availability",
+      "Capacity",
       "Languages",
       "Skills",
       "Experience",
@@ -290,7 +319,11 @@ export class SurveyorsService {
         row.name,
         row.email,
         row.phone,
+        row.role,
         row.location,
+        row.coverage.join("; "),
+        row.availability,
+        row.capacity,
         row.languages.join("; "),
         row.skills.join("; "),
         row.experience,
