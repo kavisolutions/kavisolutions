@@ -6,7 +6,8 @@ import Link from "next/link";
 import { authClient, useAuth } from "@/lib/auth-context";
 import GradientPicker from "@/components/GradientPicker";
 import SocialPanel from "@/components/admin/SocialPanel";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { apiErrorMessage } from "@/lib/api-error";
 import { getInitials, type OrgRole, type OrgTeam, type TeamMember, type Project, COMMON_SKILLS } from "@/lib/team";
 import {
@@ -406,15 +407,15 @@ export default function AdminPage() {
     });
   }, [surveyors, surveyorQuery, surveyorStatusFilter, surveyorRoleFilter]);
 
-  const locationValues = useMemo(
+  const locationOptions = useMemo(
     () =>
-      new Set(
-        surveyLocations.flatMap((group) =>
-          group.districts.flatMap((district) =>
-            district.places.map(
-              (place) => `${place}, ${district.district}, ${group.state}`,
-            ),
-          ),
+      surveyLocations.flatMap((group) =>
+        group.districts.flatMap((district) =>
+          district.places.map((place) => ({
+            value: `${place}, ${district.district}, ${group.state}`,
+            label: `${place} · ${district.district}`,
+            group: group.state,
+          })),
         ),
       ),
     [surveyLocations],
@@ -4198,69 +4199,40 @@ export default function AdminPage() {
                         </div>
                         <div>
                           <label className="mb-1.5 block text-xs font-semibold text-foreground">Location</label>
-                          <Select
+                          <SearchableSelect
                             value={surveyorDraft.location || undefined}
                             onValueChange={(value) =>
                               setSurveyorDraft({ ...surveyorDraft, location: value })
                             }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select city / town" />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-[360px]">
-                              {surveyorDraft.location &&
-                                !locationValues.has(surveyorDraft.location) && (
-                                  <SelectItem value={surveyorDraft.location}>
-                                    Current: {surveyorDraft.location}
-                                  </SelectItem>
-                                )}
-                              {surveyLocations.map((group) => (
-                                <SelectGroup key={group.state}>
-                                  <SelectLabel>{group.state}</SelectLabel>
-                                  {group.districts.flatMap((district) =>
-                                    district.places.map((place) => {
-                                      const value = `${place}, ${district.district}, ${group.state}`;
-                                      return (
-                                        <SelectItem key={value} value={value}>
-                                          {place} · {district.district}
-                                        </SelectItem>
-                                      );
-                                    }),
-                                  )}
-                                </SelectGroup>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                            options={locationOptions}
+                            placeholder="Select city / town"
+                            searchPlaceholder="Search district or town…"
+                          />
                         </div>
                       </div>
 
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div>
                           <label className="mb-1.5 block text-xs font-semibold text-foreground">Role</label>
-                          <Select
+                          <SearchableSelect
                             value={surveyorDraft.role}
                             onValueChange={(value) =>
                               setSurveyorDraft({ ...surveyorDraft, role: value as SurveyorRole })
                             }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select role" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {SURVEYOR_ROLES.map((role) => (
-                                <SelectItem key={role} value={role}>
-                                  {SURVEYOR_ROLE_LABELS[role]}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                            options={SURVEYOR_ROLES.map((role) => ({
+                              value: role,
+                              label: SURVEYOR_ROLE_LABELS[role],
+                            }))}
+                            placeholder="Select role"
+                            searchPlaceholder="Search role…"
+                          />
                         </div>
                         <div>
                           <label className="mb-1.5 block text-xs font-semibold text-foreground">
                             Coverage
                           </label>
-                          <Select
-                            value={coveragePick || undefined}
+                          <SearchableSelect
+                            value={coveragePick}
                             onValueChange={(value) => {
                               const current = splitCoverageList(surveyorDraft.coverage);
                               if (!current.includes(value)) {
@@ -4271,28 +4243,10 @@ export default function AdminPage() {
                               }
                               setCoveragePick("");
                             }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Add coverage area" />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-[320px]">
-                              {surveyLocations.map((group) => (
-                                <SelectGroup key={group.state}>
-                                  <SelectLabel>{group.state}</SelectLabel>
-                                  {group.districts.flatMap((district) =>
-                                    district.places.map((place) => {
-                                      const value = `${place}, ${district.district}, ${group.state}`;
-                                      return (
-                                        <SelectItem key={value} value={value}>
-                                          {place} · {district.district}
-                                        </SelectItem>
-                                      );
-                                    }),
-                                  )}
-                                </SelectGroup>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                            options={locationOptions}
+                            placeholder="Add coverage area"
+                            searchPlaceholder="Search district or town…"
+                          />
                           {splitCoverageList(surveyorDraft.coverage).length > 0 && (
                             <div className="mt-2 flex flex-wrap gap-1.5">
                               {splitCoverageList(surveyorDraft.coverage).map((place) => (
@@ -4370,23 +4324,20 @@ export default function AdminPage() {
 
                       <div>
                         <label className="mb-1.5 block text-xs font-semibold text-foreground">Status</label>
-                        <Select
+                        <SearchableSelect
                           value={surveyorDraft.status}
                           onValueChange={(value) =>
                             setSurveyorDraft({ ...surveyorDraft, status: value as SurveyorStatus })
                           }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {(Object.keys(SURVEYOR_STATUS_LABELS) as SurveyorStatus[]).map((status) => (
-                              <SelectItem key={status} value={status}>
-                                {SURVEYOR_STATUS_LABELS[status]}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          options={(Object.keys(SURVEYOR_STATUS_LABELS) as SurveyorStatus[]).map(
+                            (status) => ({
+                              value: status,
+                              label: SURVEYOR_STATUS_LABELS[status],
+                            }),
+                          )}
+                          placeholder="Select status"
+                          searchPlaceholder="Search status…"
+                        />
                       </div>
 
                       <div>
