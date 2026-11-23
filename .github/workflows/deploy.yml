@@ -36,6 +36,11 @@ jobs:
           export GIT_CONFIG_KEY_0="url.https://x-access-token:${SURVEY_REPO_TOKEN}@github.com/.insteadOf"
           export GIT_CONFIG_VALUE_0="https://github.com/"
           export GIT_TERMINAL_PROMPT=0
+          echo "Survey repo token length: ${#SURVEY_REPO_TOKEN}"
+          if ! git ls-remote https://github.com/kavi-solutions/kavi-survey-research HEAD >/dev/null; then
+            echo "ERROR: cannot authenticate to the private survey repository"
+            exit 1
+          fi
           git reset --hard origin/main
           git submodule sync --recursive
           git submodule update --init --recursive
