@@ -54,12 +54,15 @@ jobs:
           fi
           git config submodule.survey.url "${SURVEY_AUTH_URL}"
           git reset --hard origin/main
-          git submodule sync --recursive
+          SURVEY_TARGET="$(git ls-tree HEAD survey | awk '{print $3}')"
           if [ -d survey/.git ]; then
             git -C survey remote set-url origin "${SURVEY_AUTH_URL}"
+            git -C survey fetch --no-tags origin main
+            git -C survey checkout --detach "${SURVEY_TARGET}"
+          else
+            git config submodule.survey.url "${SURVEY_AUTH_URL}"
+            git submodule update --init --recursive
           fi
-          git config submodule.survey.url "${SURVEY_AUTH_URL}"
-          git submodule update --init --recursive
           cleanup_survey_auth
           trap - EXIT
           unset SURVEY_REPO_TOKEN
