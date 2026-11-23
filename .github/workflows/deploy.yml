@@ -47,6 +47,12 @@ jobs:
             echo "ERROR: cannot authenticate to the private survey repository"
             exit 1
           fi
+          # The reset may recurse into an already-cloned submodule, so point
+          # both URLs at the authenticated URL before touching the tree.
+          if [ -d survey/.git ]; then
+            git -C survey remote set-url origin "${SURVEY_AUTH_URL}"
+          fi
+          git config submodule.survey.url "${SURVEY_AUTH_URL}"
           git reset --hard origin/main
           git submodule sync --recursive
           if [ -d survey/.git ]; then
