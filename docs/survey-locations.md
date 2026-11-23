@@ -99,9 +99,9 @@ be read as “surveyors already available in every place”.
 | --- | --- |
 | Bengaluru Urban | Bengaluru, Whitefield, Electronic City, Yelahanka, HSR Layout |
 
-## Data-entry design
+## Data-entry design — implemented
 
-Recommended master hierarchy:
+The master hierarchy is:
 
 ```text
 State
@@ -109,18 +109,19 @@ State
     City / town
 ```
 
-Use cascading dropdowns in admin and public registration:
+`GET /api/locations` is the single source of truth.
 
-1. Select state.
-2. District list narrows to that state.
-3. City/town list narrows to that district.
-4. Primary location saves as `City, District, State`.
-5. Coverage allows multiple city/town selections, stored as an array of
-   `City, District` labels.
+Admin and public registration now use grouped dropdowns:
 
-The API should own the master list once (`GET /api/locations`) so admin and the
-survey frontend cannot drift. Existing free-text profiles stay editable; the
-first save converts them to the selected master value.
+- Primary location: select a city/town from the grouped list.
+- Coverage: add multiple city/town chips; remove with the chip’s X.
+- Location saves as `City, District, State`.
+- Coverage saves as an array of the same labels.
+- Existing free-text profiles remain editable through a “Current: …” option
+  until a master value is selected.
 
 Keep “surveyor base” separate from “service city”. Chennai and Amaravati can be
 service cities before a surveyor base exists there.
+
+To expand, add the district/town to
+`api/src/modules/locations/locations.data.ts`; both frontends pick it up.

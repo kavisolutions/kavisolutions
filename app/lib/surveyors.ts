@@ -100,7 +100,7 @@ export const toSurveyorDraft = (surveyor: Surveyor): SurveyorDraft => ({
   phone: surveyor.phone,
   role: surveyor.role,
   location: surveyor.location,
-  coverage: surveyor.coverage.join(", "),
+  coverage: surveyor.coverage.join("; "),
   availability: surveyor.availability,
   capacity: surveyor.capacity,
   languages: surveyor.languages.join(", "),
@@ -113,5 +113,13 @@ export const toSurveyorDraft = (surveyor: Surveyor): SurveyorDraft => ({
 export const splitCommaList = (value: string): string[] =>
   value
     .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+/* Coverage labels contain commas ("City, District, State"), so the draft uses
+   semicolons as the separator. */
+export const splitCoverageList = (value: string): string[] =>
+  value
+    .split(";")
     .map((item) => item.trim())
     .filter(Boolean);

@@ -67,6 +67,7 @@ All prefixed with `/api`. Auth routes are Better Auth: `/api/auth/*`.
 | DELETE | `/certificates/:id/pdf` | admin | remove the stored PDF |
 | POST | `/upload` | signed-in | multipart `file`, ≤5 MB, jpeg/png/webp/gif |
 | POST | `/contact` | public, throttled | sends mail to the configured contact address |
+| GET | `/locations` | public | surveyor state/district/city master list |
 | POST | `/survey/enquiries` | public, throttled | client enquiry (stored + emailed) |
 | GET | `/survey/content` | public | published survey frontend content (`null` → bundled fallback) |
 | PUT | `/survey/content` | admin | publish survey frontend content |

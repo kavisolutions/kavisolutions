@@ -6,7 +6,7 @@ import Link from "next/link";
 import { authClient, useAuth } from "@/lib/auth-context";
 import GradientPicker from "@/components/GradientPicker";
 import SocialPanel from "@/components/admin/SocialPanel";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { apiErrorMessage } from "@/lib/api-error";
 import { getInitials, type OrgRole, type OrgTeam, type TeamMember, type Project, COMMON_SKILLS } from "@/lib/team";
 import {
@@ -24,6 +24,7 @@ import {
 import {
   emptySurveyorDraft,
   splitCommaList,
+  splitCoverageList,
   SURVEYOR_ROLE_LABELS,
   SURVEYOR_ROLES,
   SURVEYOR_STATUS_LABELS,
@@ -102,6 +103,11 @@ import {
 } from "lucide-react";
 
 type AdminEntry = { email: string; source: "env" | "db" };
+
+type LocationState = {
+  state: string;
+  districts: { district: string; places: string[] }[];
+};
 
 type MemberDraft = {
   id?: string;
@@ -301,8 +307,10 @@ export default function AdminPage() {
   const [revokeReason, setRevokeReason] = useState("");
 
   const [surveyors, setSurveyors] = useState<Surveyor[]>([]);
+  const [surveyLocations, setSurveyLocations] = useState<LocationState[]>([]);
   const [surveyorView, setSurveyorView] = useState<Surveyor | null>(null);
   const [surveyorDraft, setSurveyorDraft] = useState<SurveyorDraft | null>(null);
+  const [coveragePick, setCoveragePick] = useState("");
   const [savingSurveyor, setSavingSurveyor] = useState(false);
   const [surveyorError, setSurveyorError] = useState("");
   const [surveyorQuery, setSurveyorQuery] = useState("");
@@ -398,6 +406,20 @@ export default function AdminPage() {
     });
   }, [surveyors, surveyorQuery, surveyorStatusFilter, surveyorRoleFilter]);
 
+  const locationValues = useMemo(
+    () =>
+      new Set(
+        surveyLocations.flatMap((group) =>
+          group.districts.flatMap((district) =>
+            district.places.map(
+              (place) => `${place}, ${district.district}, ${group.state}`,
+            ),
+          ),
+        ),
+      ),
+    [surveyLocations],
+  );
+
   const surveyorStatusCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const surveyor of surveyors) {
@@ -453,7 +475,7 @@ export default function AdminPage() {
   }, [certificates, certificateDraft]);
 
   const loadAll = useCallback(async () => {
-    const [teamRes, adminsRes, settingsRes, projectsRes, certificatesRes, surveyorsRes, enquiriesRes, pagesRes, surveyContentRes] = await Promise.all([
+    const [teamRes, adminsRes, settingsRes, projectsRes, certificatesRes, surveyorsRes, enquiriesRes, pagesRes, surveyContentRes, locationsRes] = await Promise.all([
       fetch("/api/team", withCookies()),
       fetch("/api/admins", withCookies()),
       fetch("/api/settings", withCookies()),
@@ -463,6 +485,7 @@ export default function AdminPage() {
       fetch("/api/survey/enquiries", withCookies()),
       fetch("/api/pages", withCookies()),
       fetch("/api/survey/content", withCookies()),
+      fetch("/api/locations", withCookies()),
     ]);
 
     if (teamRes.status === 401 || adminsRes.status === 401 || adminsRes.status === 403) {
@@ -479,6 +502,7 @@ export default function AdminPage() {
     const enquiriesData = await enquiriesRes.json().catch(() => null);
     const pagesData = await pagesRes.json().catch(() => null);
     const surveyContentData = await surveyContentRes.json().catch(() => null);
+    const locationsData = await locationsRes.json().catch(() => null);
 
     setIsAdmin(true);
     setMembers(teamData.members ?? []);
@@ -488,6 +512,7 @@ export default function AdminPage() {
     setProjects(projectsData?.projects ?? []);
     setCertificates(certificatesData?.certificates ?? []);
     setSurveyors(surveyorsData?.surveyors ?? []);
+    setSurveyLocations(Array.isArray(locationsData?.locations) ? locationsData.locations : []);
     setEnquiries(enquiriesData?.enquiries ?? []);
     setTagline(settingsData?.settings?.tagline ?? "");
     setDescription(settingsData?.settings?.description ?? "");
@@ -1066,7 +1091,7 @@ export default function AdminPage() {
       phone: surveyorDraft.phone,
       role: surveyorDraft.role,
       location: surveyorDraft.location,
-      coverage: splitCommaList(surveyorDraft.coverage),
+      coverage: splitCoverageList(surveyorDraft.coverage),
       availability: surveyorDraft.availability,
       capacity: surveyorDraft.capacity,
       languages: splitCommaList(surveyorDraft.languages),
@@ -1908,6 +1933,7 @@ export default function AdminPage() {
                   <Button
                     onClick={() => {
                       setSurveyorDraft(emptySurveyorDraft());
+                      setCoveragePick("");
                       setSurveyorError("");
                     }}
                     className="shadow-sm font-semibold"
@@ -4052,6 +4078,7 @@ export default function AdminPage() {
                       <Button
                         onClick={() => {
                           setSurveyorError("");
+                          setCoveragePick("");
                           setSurveyorDraft(toSurveyorDraft(surveyorView));
                           setSurveyorView(null);
                         }}
@@ -4171,11 +4198,39 @@ export default function AdminPage() {
                         </div>
                         <div>
                           <label className="mb-1.5 block text-xs font-semibold text-foreground">Location</label>
-                          <Input
-                            value={surveyorDraft.location}
-                            onChange={(e) => setSurveyorDraft({ ...surveyorDraft, location: e.target.value })}
-                            placeholder="City / district / state"
-                          />
+                          <Select
+                            value={surveyorDraft.location || undefined}
+                            onValueChange={(value) =>
+                              setSurveyorDraft({ ...surveyorDraft, location: value })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select city / town" />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-[360px]">
+                              {surveyorDraft.location &&
+                                !locationValues.has(surveyorDraft.location) && (
+                                  <SelectItem value={surveyorDraft.location}>
+                                    Current: {surveyorDraft.location}
+                                  </SelectItem>
+                                )}
+                              {surveyLocations.map((group) => (
+                                <SelectGroup key={group.state}>
+                                  <SelectLabel>{group.state}</SelectLabel>
+                                  {group.districts.flatMap((district) =>
+                                    district.places.map((place) => {
+                                      const value = `${place}, ${district.district}, ${group.state}`;
+                                      return (
+                                        <SelectItem key={value} value={value}>
+                                          {place} · {district.district}
+                                        </SelectItem>
+                                      );
+                                    }),
+                                  )}
+                                </SelectGroup>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
 
@@ -4204,13 +4259,69 @@ export default function AdminPage() {
                           <label className="mb-1.5 block text-xs font-semibold text-foreground">
                             Coverage
                           </label>
-                          <Input
-                            value={surveyorDraft.coverage}
-                            onChange={(e) => setSurveyorDraft({ ...surveyorDraft, coverage: e.target.value })}
-                            placeholder="Hyderabad, Warangal, Telangana"
-                          />
+                          <Select
+                            value={coveragePick || undefined}
+                            onValueChange={(value) => {
+                              const current = splitCoverageList(surveyorDraft.coverage);
+                              if (!current.includes(value)) {
+                                setSurveyorDraft({
+                                  ...surveyorDraft,
+                                  coverage: [...current, value].join("; "),
+                                });
+                              }
+                              setCoveragePick("");
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Add coverage area" />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-[320px]">
+                              {surveyLocations.map((group) => (
+                                <SelectGroup key={group.state}>
+                                  <SelectLabel>{group.state}</SelectLabel>
+                                  {group.districts.flatMap((district) =>
+                                    district.places.map((place) => {
+                                      const value = `${place}, ${district.district}, ${group.state}`;
+                                      return (
+                                        <SelectItem key={value} value={value}>
+                                          {place} · {district.district}
+                                        </SelectItem>
+                                      );
+                                    }),
+                                  )}
+                                </SelectGroup>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {splitCoverageList(surveyorDraft.coverage).length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-1.5">
+                              {splitCoverageList(surveyorDraft.coverage).map((place) => (
+                                <span
+                                  key={place}
+                                  className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-[11px] text-muted-foreground"
+                                >
+                                  {place}
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setSurveyorDraft({
+                                        ...surveyorDraft,
+                                        coverage: splitCoverageList(surveyorDraft.coverage)
+                                          .filter((item) => item !== place)
+                                          .join("; "),
+                                      })
+                                    }
+                                    aria-label={`Remove ${place} from coverage`}
+                                    className="text-muted-foreground hover:text-destructive"
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </span>
+                              ))}
+                            </div>
+                          )}
                           <p className="mt-1 text-[11px] text-muted-foreground">
-                            Districts / states, comma separated
+                            Add every district or town this person can cover.
                           </p>
                         </div>
                       </div>
@@ -4491,6 +4602,7 @@ export default function AdminPage() {
                               aria-label={`Edit ${surveyor.name}`}
                               onClick={() => {
                                 setSurveyorError("");
+                                setCoveragePick("");
                                 setSurveyorDraft(toSurveyorDraft(surveyor));
                               }}
                             >
