@@ -43,8 +43,10 @@ services:
     container_name: kavi-solutions-minio
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      # Local Docker uses non-default credentials so the production env guard
+      # in api/src/config/env.ts cannot be satisfied by minioadmin defaults.
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-kavilocal}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-kavilocal123}
     ports:
       - "${MINIO_PORT:-9004}:9000"
       - "${MINIO_CONSOLE_PORT:-9005}:9001"
@@ -64,8 +66,10 @@ services:
       minio:
         condition: service_healthy
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      # Local Docker uses non-default credentials so the production env guard
+      # in api/src/config/env.ts cannot be satisfied by minioadmin defaults.
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-kavilocal}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-kavilocal123}
     entrypoint: >
       /bin/sh -c "
       mc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
@@ -86,6 +90,8 @@ services:
     environment:
       NODE_ENV: production
       DATABASE_URL: postgres://${POSTGRES_USER:-kavi}:${POSTGRES_PASSWORD:-kavi}@postgres:5432/${POSTGRES_DB:-kavi_solutions}
+      S3_ACCESS_KEY: ${MINIO_ROOT_USER:-kavilocal}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-kavilocal123}
     depends_on:
       postgres:
         condition: service_healthy
@@ -108,6 +114,8 @@ services:
       S3_ENDPOINT: http://minio:9000
       S3_PUBLIC_URL: http://localhost:${MINIO_PORT:-9004}/avatars
       S3_FORCE_PATH_STYLE: "true"
+      S3_ACCESS_KEY: ${MINIO_ROOT_USER:-kavilocal}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-kavilocal123}
       SOCIAL_AGENT_URL: ${SOCIAL_AGENT_URL:-}
       SOCIAL_AGENT_ADMIN_TOKEN: ${SOCIAL_AGENT_ADMIN_TOKEN:-}
     ports:
@@ -146,6 +154,8 @@ services:
       S3_ENDPOINT: http://minio:9000
       S3_PUBLIC_URL: http://localhost:${MINIO_PORT:-9004}/avatars
       S3_FORCE_PATH_STYLE: "true"
+      S3_ACCESS_KEY: ${MINIO_ROOT_USER:-kavilocal}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-kavilocal123}
       SOCIAL_AGENT_URL: ${SOCIAL_AGENT_URL:-}
       SOCIAL_AGENT_ADMIN_TOKEN: ${SOCIAL_AGENT_ADMIN_TOKEN:-}
       # Only one API deployment may run the daily fellowship cron or hold the
