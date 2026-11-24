@@ -26,18 +26,31 @@ jobs:
           set -euo pipefail
           cd /var/www/kavi-solutions
 
-          # The survey repository is public. Normalise its URLs BEFORE any git
-          # command that may recurse into submodules: a stale token URL left by
-          # a previous failed run makes git prompt for credentials and aborts
-          # the whole deploy.
+          # The survey repo is PRIVATE. Normalise its URLs to the current token
+          # BEFORE any git command that may recurse into submodules: a stale
+          # token URL left by a previous failed run makes git prompt for
+          # credentials and aborts the whole deploy. Always clean it up after.
           SURVEY_REPO_URL="https://github.com/kavi-solutions/kavi-survey-research"
-          git config submodule.survey.url "${SURVEY_REPO_URL}"
-          if [ -e survey/.git ]; then
-            git -C survey remote set-url origin "${SURVEY_REPO_URL}"
+          export SURVEY_REPO_TOKEN='${{ secrets.SURVEY_REPO_TOKEN }}'
+          if [ -z "${SURVEY_REPO_TOKEN}" ]; then
+            echo "ERROR: SURVEY_REPO_TOKEN is not set"
+            exit 1
           fi
+          SURVEY_CLONE_URL="https://x-access-token:${SURVEY_REPO_TOKEN}@github.com/kavi-solutions/kavi-survey-research.git"
+          cleanup_survey_auth() {
+            git config submodule.survey.url "${SURVEY_REPO_URL}" 2>/dev/null || true
+            if [ -e survey/.git ]; then
+              git -C survey remote set-url origin "${SURVEY_REPO_URL}" 2>/dev/null || true
+            fi
+          }
+          trap cleanup_survey_auth EXIT
           export GIT_TERMINAL_PROMPT=0
+          git config submodule.survey.url "${SURVEY_CLONE_URL}"
+          if [ -e survey/.git ]; then
+            git -C survey remote set-url origin "${SURVEY_CLONE_URL}"
+          fi
 
-          if ! git ls-remote "${SURVEY_REPO_URL}" HEAD >/dev/null; then
+          if ! git ls-remote "${SURVEY_CLONE_URL}" HEAD >/dev/null; then
             echo "ERROR: cannot access the survey repository"
             exit 1
           fi
@@ -51,11 +64,17 @@ jobs:
           git reset --hard origin/main
           SURVEY_TARGET="$(git ls-tree HEAD survey | awk '{print $3}')"
           if [ -e survey/.git ]; then
+            git -C survey remote set-url origin "${SURVEY_CLONE_URL}"
             git -C survey fetch --no-tags origin main
             git -C survey checkout --detach "${SURVEY_TARGET}"
           else
+            git config submodule.survey.url "${SURVEY_CLONE_URL}"
             git submodule update --init --recursive
           fi
+          cleanup_survey_auth
+          trap - EXIT
+          # Keep the token exported: deploy.sh --no-pull still syncs submodules
+          # and may need auth if the submodule checkout needs refreshing.
           rm -rf .next/types .next/dev
 
           bash deploy/deploy.sh --no-pull
