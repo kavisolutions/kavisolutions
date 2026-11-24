@@ -28,7 +28,8 @@ module.exports = {
       env: {
         NODE_ENV: "production",
         PORT: "3111",
-        BACKEND_URL: "http://127.0.0.1:3200",
+        // Keep runtime origin in sync with the value used for the build.
+        BACKEND_URL: process.env.BACKEND_URL || "http://127.0.0.1:3200",
       },
     },
   ],

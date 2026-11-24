@@ -51,6 +51,7 @@ the admin panel; the switch takes effect immediately — no rebuild or redeploy.
 A fresh environment starts with these pages hidden until an administrator
 publishes them. See
 [`docs/survey-page.md`](docs/survey-page.md),
+[`docs/survey-handover.md`](docs/survey-handover.md),
 [`docs/survey-roadmap.md`](docs/survey-roadmap.md) and
 [`docs/survey-templates.md`](docs/survey-templates.md),
 [`docs/financial-page.md`](docs/financial-page.md),

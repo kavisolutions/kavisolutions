@@ -144,6 +144,7 @@ export class FellowshipCasesService {
       .set(set)
       .where(eq(fellowshipCases.id, id))
       .returning();
+    if (!row) throw new NotFoundException("Case not found");
     const names = await this.names();
     return {
       case: toDto(row, row.applicationId ? names.get(row.applicationId) : undefined),

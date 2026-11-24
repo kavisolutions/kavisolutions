@@ -6,6 +6,13 @@ const backendUrl = (
   (process.env.NODE_ENV === "development" ? "http://localhost:3200" : "")
 ).replace(/\/+$/, "");
 
+/* Rewrites are baked into the build. Silently emitting no /api rewrite makes
+   every call 404 at runtime, so fail the build instead of shipping a broken
+   deployment. deploy.sh and the Docker build both set BACKEND_URL. */
+if (process.env.NODE_ENV === "production" && !backendUrl) {
+  throw new Error("BACKEND_URL must be set for a production build");
+}
+
 /* `/survey` is owned by the standalone kavi-survey-research service. In
    production nginx proxies it before Next.js; locally and in Docker the main
    app proxies it so the public URL stays the same. */

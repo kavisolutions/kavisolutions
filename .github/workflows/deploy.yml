@@ -14,11 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Configure SSH
+        env:
+          # Full known_hosts line, e.g. "129.225.126.53 ssh-ed25519 AAAA...".
+          # Pin it: ssh-keyscan trusts whatever key is presented and allows MITM.
+          DEPLOY_HOST_KEY: ${{ secrets.DEPLOY_HOST_KEY }}
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H "${{ vars.DEPLOY_HOST || '129.225.126.53' }}" >> ~/.ssh/known_hosts 2>/dev/null
+          if [ -z "$DEPLOY_HOST_KEY" ]; then
+            echo "ERROR: DEPLOY_HOST_KEY secret is required (known_hosts line for the VPS)"
+            exit 1
+          fi
+          echo "$DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
 
       - name: Deploy on server
         run: |

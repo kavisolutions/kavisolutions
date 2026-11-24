@@ -98,7 +98,7 @@ const toAdmin = (row: FellowshipApplicationRow): FellowshipApplicationAdminDto =
 });
 
 const makeReference = (): string =>
-  `KF-${new Date().getFullYear()}-${randomBytes(4).toString("hex").toUpperCase()}`;
+  `KF-${new Date().getFullYear()}-${randomBytes(12).toString("hex").toUpperCase()}`;
 
 const makeCandidateToken = (): string => randomBytes(24).toString("hex");
 

@@ -489,7 +489,7 @@ export default function AdminPage() {
       fetch("/api/locations", withCookies()),
     ]);
 
-    if (teamRes.status === 401 || adminsRes.status === 401 || adminsRes.status === 403) {
+    if ([teamRes, adminsRes].some((res) => res.status === 401 || res.status === 403)) {
       setIsAdmin(false);
       return;
     }
@@ -1130,12 +1130,24 @@ export default function AdminPage() {
 
     // Registration ignores status, so promote it separately when adding.
     if (!surveyorDraft.id && surveyorDraft.status !== "applied" && data?.surveyor?.id) {
-      await fetch(`/api/surveyors/${data.surveyor.id}`, {
+      const statusRes = await fetch(`/api/surveyors/${data.surveyor.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ status: surveyorDraft.status }),
       });
+      if (!statusRes.ok) {
+        const statusData = await statusRes.json().catch(() => null);
+        const statusMessage = Array.isArray(statusData?.message)
+          ? statusData.message.join(" · ")
+          : statusData?.message;
+        setSurveyorError(
+          statusMessage || "Surveyor was added, but the status could not be updated",
+        );
+        setSavingSurveyor(false);
+        await loadAll();
+        return;
+      }
     }
 
     setNotice(surveyorDraft.id ? "Surveyor profile updated" : "Surveyor added to the network");

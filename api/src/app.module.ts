@@ -46,13 +46,19 @@ import { WhatsAppModule } from "@/modules/whatsapp/whatsapp.module";
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot({
       throttlers: [{ ttl: 60_000, limit: 60 }],
-      // nginx overwrites X-Real-IP with $remote_addr, so it cannot be spoofed.
-      // X-Forwarded-For is appended to by nginx and can carry a client-supplied
-      // prefix, which would give every attacker their own unlimited bucket.
+      // Only trust X-Real-IP from a loopback peer (nginx on the same host).
+      // A client that reaches the API port directly can set any header value,
+      // so accepting it unconditionally gives every attacker a fresh bucket.
+      // X-Forwarded-For is never used: nginx appends to it, leaving a
+      // client-controlled prefix in the first position.
       getTracker: (req: Record<string, any>) => {
-        const realIp = req.headers?.["x-real-ip"];
-        if (typeof realIp === "string" && realIp.trim()) return realIp.split(",")[0].trim();
-        return typeof req.ip === "string" && req.ip ? req.ip : "unknown";
+        const peer = typeof req.ip === "string" ? req.ip : "";
+        const loopback = peer === "127.0.0.1" || peer === "::1" || peer === "::ffff:127.0.0.1";
+        if (loopback) {
+          const realIp = req.headers?.["x-real-ip"];
+          if (typeof realIp === "string" && realIp.trim()) return realIp.split(",")[0].trim();
+        }
+        return peer || "unknown";
       },
     }),
     ScheduleModule.forRoot(),

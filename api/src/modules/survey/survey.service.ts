@@ -56,50 +56,53 @@ const csvCell = (value: string): string => {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
 
-/* The frontend owns the shape; the API only checks the blocks it renders so a
-   malformed PUT cannot replace the page with an unusable document. */
+/* Mirror the frontend's isSurveyContent: validate every element the public
+   page dereferences, otherwise a malformed PUT can 500 the page. */
+const hasStrings = (value: unknown, keys: string[]): boolean =>
+  isRecord(value) && keys.every((key) => typeof value[key] === "string");
+
+const isStringList = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every((item) => typeof item === "string");
+
+const isObjectList = (
+  value: unknown,
+  validate: (item: Record<string, unknown>) => boolean,
+): boolean => Array.isArray(value) && value.every((item) => isRecord(item) && validate(item));
+
+const isOpportunity = (value: unknown): boolean =>
+  isRecord(value) &&
+  typeof value.title === "string" &&
+  typeof value.note === "string" &&
+  (value.stage === undefined || typeof value.stage === "string");
+
+const isImages = (value: unknown): boolean =>
+  isRecord(value) &&
+  ["fieldwork", "analysis", "presentation"].every(
+    (key) => value[key] === undefined || typeof value[key] === "string",
+  );
+
 const isSurveyContent = (value: unknown): value is Record<string, unknown> => {
   if (!isRecord(value)) return false;
-
-  const objects = ["brand", "hero"];
-  const arrays = [
-    "verticals",
-    "approach",
-    "engagement",
-    "sampleProjects",
-    "previousWork",
-    "sectors",
-    "faqs",
-  ];
-
-  const validVerticals =
-    Array.isArray(value.verticals) &&
-    value.verticals.every(
-      (vertical) =>
-        isRecord(vertical) &&
-        typeof vertical.tag === "string" &&
-        typeof vertical.title === "string" &&
-        typeof vertical.summary === "string" &&
-        Array.isArray(vertical.services) &&
-        vertical.services.every((service) => typeof service === "string"),
-    );
-
-  const validNetwork =
-    isRecord(value.network) &&
-    typeof value.network.eyebrow === "string" &&
-    typeof value.network.title === "string" &&
-    typeof value.network.description === "string" &&
-    Array.isArray(value.network.requirements) &&
-    value.network.requirements.every(
-      (requirement) => typeof requirement === "string",
-    ) &&
-    typeof value.network.objective === "string";
+  const hero = isRecord(value.hero) ? value.hero : null;
+  const network = isRecord(value.network) ? value.network : null;
 
   return (
-    objects.every((key) => isRecord(value[key])) &&
-    arrays.every((key) => Array.isArray(value[key])) &&
-    validVerticals &&
-    validNetwork
+    hasStrings(value.brand, ["name", "vertical", "contactEmail", "contactName", "location"]) &&
+    hasStrings(hero, ["eyebrow", "title", "highlight", "description"]) &&
+    Boolean(hero && isObjectList(hero.metrics, (item) => hasStrings(item, ["value", "label"]))) &&
+    isObjectList(value.verticals, (item) =>
+      hasStrings(item, ["tag", "title", "summary"]) && isStringList(item.services),
+    ) &&
+    hasStrings(network, ["eyebrow", "title", "description", "objective"]) &&
+    Boolean(network && isStringList(network.requirements)) &&
+    isObjectList(value.approach, (item) => hasStrings(item, ["step", "title", "summary"])) &&
+    isObjectList(value.engagement, (item) => hasStrings(item, ["title", "summary", "bestFor"])) &&
+    isObjectList(value.sampleProjects, (item) => hasStrings(item, ["tag", "title", "desc"])) &&
+    isObjectList(value.previousWork, (item) => hasStrings(item, ["name", "note"])) &&
+    isStringList(value.sectors) &&
+    isObjectList(value.faqs, (item) => hasStrings(item, ["q", "a"])) &&
+    (value.opportunities === undefined || isObjectList(value.opportunities, isOpportunity)) &&
+    (value.images === undefined || isImages(value.images))
   );
 };
 
@@ -120,7 +123,7 @@ export class SurveyService {
   async saveContent(value: unknown): Promise<unknown> {
     if (!isSurveyContent(value)) {
       throw new BadRequestException(
-        "Content must include brand, hero, verticals, approach, engagement, sampleProjects, previousWork, sectors and faqs.",
+        "Content must include brand, hero, verticals, approach, engagement, sampleProjects, previousWork, sectors and faqs. Opportunities and images are optional.",
       );
     }
 

@@ -370,7 +370,7 @@ export class FellowshipProgrammeService {
   ) {}
 
   private config(resource: string): { key: ResourceKey; config: ResourceConfig } {
-    if (!(resource in RESOURCES)) {
+    if (!Object.hasOwn(RESOURCES, resource)) {
       throw new NotFoundException("Unknown programme resource");
     }
     const key = resource as ResourceKey;

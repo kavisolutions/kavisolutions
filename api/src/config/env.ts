@@ -61,6 +61,17 @@ const envSchema = z.object({
     .string()
     .default("true")
     .transform((value) => value === "true" || value === "1"),
+}).superRefine((value, ctx) => {
+  /* The minioadmin defaults are for local Docker only. Failing startup is
+     better than silently writing uploads to a bucket with well-known creds. */
+  if (value.NODE_ENV !== "production") return;
+  if (value.S3_ACCESS_KEY === "minioadmin" || value.S3_SECRET_KEY === "minioadmin") {
+    ctx.addIssue({
+      code: "custom",
+      path: ["S3_ACCESS_KEY", "S3_SECRET_KEY"],
+      message: "S3_ACCESS_KEY and S3_SECRET_KEY must be set explicitly in production",
+    });
+  }
 });
 
 const parsed = envSchema.safeParse(process.env);

@@ -274,14 +274,14 @@ export class CertificatesService {
   /* Returns the bytes for the download endpoint. Deliberately does not check
      revocation: the issued document is what it is, and revocation is reported
      by the verification page, not by withholding the artefact from its owner
-     or an auditor. */
+     or an auditor. Soft-deleted records are excluded, matching public verify(). */
   async readPdf(rawId: string): Promise<{ body: Buffer; filename: string }> {
     const id = normalizeCertificateId(rawId);
 
     const [row] = await this.db
       .select()
       .from(certificates)
-      .where(eq(certificates.id, id))
+      .where(and(eq(certificates.id, id), isNull(certificates.deletedAt)))
       .limit(1);
 
     if (!row) throw new NotFoundException("Certificate not found");

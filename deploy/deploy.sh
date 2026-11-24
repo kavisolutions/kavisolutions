@@ -33,7 +33,51 @@ BRANCH="${BRANCH:-main}"
 PULL=1
 [ "${1:-}" = "--no-pull" ] && PULL=0
 
+# Snapshot the current build output once, before any build overwrites it. If a
+# later step fails after processes have been switched, we restore these bytes
+# and restart PM2 instead of leaving a half-deployed site online.
+BUILD_DIRS=(api/dist app/.next survey/.next)
+BACKUP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/kavi-deploy-backup.XXXXXX")"
+SWITCHED=0
+
+snapshot_builds() {
+  local rel src
+  for rel in "${BUILD_DIRS[@]}"; do
+    src="${APP_DIR}/${rel}"
+    if [ -e "${src}" ]; then
+      mkdir -p "${BACKUP_DIR}/$(dirname "${rel}")"
+      cp -a "${src}" "${BACKUP_DIR}/${rel}"
+    fi
+  done
+}
+
+restore_builds() {
+  local rel dest
+  for rel in "${BUILD_DIRS[@]}"; do
+    if [ -e "${BACKUP_DIR}/${rel}" ]; then
+      dest="${APP_DIR}/${rel}"
+      rm -rf "${dest}"
+      mkdir -p "$(dirname "${dest}")"
+      cp -a "${BACKUP_DIR}/${rel}" "${dest}"
+    fi
+  done
+}
+
+rollback() {
+  [ "${SWITCHED}" = "1" ] || return 0
+  echo "==> Deployment failed after process restart; rolling back previous build"
+  restore_builds || true
+  pm2 delete "${FE_APP}" "${BE_APP}" "${SURVEY_APP}" "${SURVEY_BE_APP}" >/dev/null 2>&1 || true
+  (cd "${API_DIR}" && PORT="${BE_PORT}" pm2 start ecosystem.config.js --update-env) || true
+  (cd "${FE_DIR}" && PORT="${FE_PORT}" pm2 start ecosystem.config.js --update-env) || true
+  (cd "${SURVEY_DIR}" && PORT="${SURVEY_PORT}" pm2 start ecosystem.config.js --update-env) || true
+  pm2 save || true
+  SWITCHED=0
+}
+trap rollback EXIT
+
 cd "${APP_DIR}"
+snapshot_builds
 
 if [ "${PULL}" = "1" ]; then
   echo "==> Pulling latest ${BRANCH}"
@@ -90,16 +134,19 @@ echo "==> [api] Installing dependencies"
 cd "${API_DIR}"
 npm ci || npm install
 
-echo "==> [api] Applying DB migrations"
-npm run db:migrate
-
 echo "==> [api] Building"
 npm run build
+
+# Migrate only after the new build exists: a failed build must not leave the
+# database ahead of the running code.
+echo "==> [api] Applying DB migrations"
+npm run db:migrate
 
 # PM2 keeps the previous `script`/`cwd` on startOrReload, so delete the apps
 # first to make sure a moved entrypoint is picked up. The ecosystem file starts
 # the main API (:3200) and the survey API (:3201) from the same build.
 echo "==> [api] Reloading ${BE_APP} on port ${BE_PORT} and ${SURVEY_BE_APP} on port ${SURVEY_BE_PORT}"
+SWITCHED=1
 pm2 delete "${BE_APP}" "${SURVEY_BE_APP}" >/dev/null 2>&1 || true
 PORT="${BE_PORT}" pm2 start ecosystem.config.js --update-env
 pm2 save
@@ -236,4 +283,7 @@ if [ "${SOCIAL_READY}" = "1" ]; then
   done
 fi
 
+# All health checks passed: keep the new build, disable the rollback trap.
+SWITCHED=0
+rm -rf "${BACKUP_DIR}"
 echo "==> Done."

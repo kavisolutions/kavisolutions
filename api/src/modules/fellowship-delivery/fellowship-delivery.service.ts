@@ -177,6 +177,7 @@ export class FellowshipDeliveryService {
       .set(set)
       .where(eq(fellowshipDeliveryReviews.id, id))
       .returning();
+    if (!row) throw new NotFoundException("Review not found");
     const application = await this.application(row.applicationId);
     return { review: toDto(row, application) };
   }

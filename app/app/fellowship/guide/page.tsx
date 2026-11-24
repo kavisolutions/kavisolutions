@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import FellowshipGuidePrint from "@/components/FellowshipGuidePrint";
+import { apiBaseUrl } from "@/lib/pages";
 import {
   FELLOWSHIP_AT_A_GLANCE,
   FELLOWSHIP_DETAILS,
@@ -48,7 +49,8 @@ const DEFAULT_POLICY: Policy = {
 
 async function getPolicy(): Promise<Policy> {
   try {
-    const base = (process.env.BACKEND_URL ?? "http://localhost:3200").replace(/\/+$/, "");
+    const base = apiBaseUrl();
+    if (!base) return DEFAULT_POLICY;
     const response = await fetch(`${base}/api/fellowship-policy`, { cache: "no-store" });
     if (!response.ok) return DEFAULT_POLICY;
     const data = (await response.json()) as { policy?: Partial<Policy> };

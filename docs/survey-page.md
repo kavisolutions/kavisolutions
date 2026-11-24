@@ -174,6 +174,16 @@ metric labelled “Research verticals” is recalculated from the array length.
 The survey frontend’s enquiry dropdown is generated from the same vertical
 titles, so a new service appears there automatically.
 
+The same content JSON also drives two optional blocks:
+
+- `opportunities` — stage-labelled potential clients / business opportunities
+  rendered under “Potential clients and active discussions”. Never list an
+  unagreed lead as a confirmed client. Seed with
+  `api/db/dml/0010_survey_content_opportunities.sql` or edit via Survey admin.
+- `images` — optional paths (`fieldwork`, `analysis`, `presentation`) for real
+  photos under `survey/public/images/`. When absent, the built-in SVG
+  illustrations are used as placeholders.
+
 If the shared API has no published content yet, the admin screen starts empty
 and the first saved service creates the content row.
 

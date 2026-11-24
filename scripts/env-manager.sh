@@ -63,7 +63,7 @@ read_token() {
   return 1
 }
 
-fetch_env() {
+fetch_env_file() {
   local project="$1"
   local env="$2"
   local token="$3"
@@ -88,7 +88,6 @@ fetch_env() {
 
   install -m 600 "$tmp" "$out"
   rm -f "$tmp"
-  echo "Wrote $out from $project/$env"
 }
 
 print_keys() {
@@ -114,19 +113,19 @@ print_keys() {
 
 pull() {
   local target="$1"
-  local be_token fe_token
+  local be_token fe_token be_out fe_out be_tmp fe_tmp
 
   be_token="$(read_token be)"
   fe_token="$(read_token fe)"
 
   case "$target" in
     local)
-      fetch_env "$PROJECT_BE" "be-local" "$be_token" "$ROOT_DIR/api/.env"
-      fetch_env "$PROJECT_FE" "fe-local" "$fe_token" "$ROOT_DIR/app/.env.local"
+      be_out="$ROOT_DIR/api/.env"
+      fe_out="$ROOT_DIR/app/.env.local"
       ;;
     production)
-      fetch_env "$PROJECT_BE" "be-production" "$be_token" "$ROOT_DIR/api/.env"
-      fetch_env "$PROJECT_FE" "fe-production" "$fe_token" "$ROOT_DIR/app/.env.production"
+      be_out="$ROOT_DIR/api/.env"
+      fe_out="$ROOT_DIR/app/.env.production"
       ;;
     *)
       echo "Unknown environment: $target" >&2
@@ -134,6 +133,21 @@ pull() {
       exit 1
       ;;
   esac
+
+  # Fetch both environments before replacing either file: a failed second
+  # request must not leave the backend on a new version and the frontend old.
+  be_tmp="$(mktemp)"
+  fe_tmp="$(mktemp)"
+  if ! fetch_env_file "$PROJECT_BE" "be-$target" "$be_token" "$be_tmp" ||
+     ! fetch_env_file "$PROJECT_FE" "fe-$target" "$fe_token" "$fe_tmp"; then
+    rm -f "$be_tmp" "$fe_tmp"
+    return 1
+  fi
+
+  install -m 600 "$be_tmp" "$be_out"
+  install -m 600 "$fe_tmp" "$fe_out"
+  rm -f "$be_tmp" "$fe_tmp"
+  echo "Wrote $be_out and $fe_out from $target"
 }
 
 check() {

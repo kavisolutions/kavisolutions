@@ -47,6 +47,10 @@ research-integrity statement: no fabricated data, results or findings.
 Network copy block (`network`) with its heading, description, requirements and
 long-term objective.
 
+`0010_survey_content_opportunities.sql` adds the optional, admin-updatable
+`opportunities` block shown under “Potential clients and active discussions”.
+Entries are stage-labelled and must never be presented as confirmed clients.
+
 ## Verify
 
 ```bash
@@ -139,3 +143,12 @@ psql "$DATABASE_URL" -Atc \
 ```
 
 Expected: `5`.
+
+Check the opportunities block:
+
+```bash
+psql "$DATABASE_URL" -Atc \
+  "SELECT jsonb_array_length(data->'opportunities') FROM survey_content WHERE id = 'main';"
+```
+
+Expected: `3`.

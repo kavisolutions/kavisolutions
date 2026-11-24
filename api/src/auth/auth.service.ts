@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { fromNodeHeaders } from "better-auth/node";
+import { eq } from "drizzle-orm";
 import type { IncomingHttpHeaders } from "node:http";
 
-import { isAdminCandidate } from "@/_shared/admin-check";
+import { hasAdminRole, isAdminCandidate, matchesAdminEmail } from "@/_shared/admin-check";
 import { env } from "@/config/env";
 import { db } from "@/db/drizzle/drizzle.client";
 import { admins } from "@/db/drizzle/schema";
@@ -20,10 +21,17 @@ export class AuthService {
 
   async isAdmin(user: SessionUser | null): Promise<boolean> {
     if (!user?.email) return false;
+    // Role and env allowlist need no DB hit; most requests stop here.
+    if (hasAdminRole(user.role)) return true;
+    if (matchesAdminEmail(user.email, env.adminEmails)) return true;
 
-    const rows = await db.select({ email: admins.email }).from(admins);
-    const dbEmails = rows.map((row) => row.email);
+    const email = user.email.trim().toLowerCase();
+    const [row] = await db
+      .select({ email: admins.email })
+      .from(admins)
+      .where(eq(admins.email, email))
+      .limit(1);
 
-    return isAdminCandidate(user, env.adminEmails, dbEmails);
+    return isAdminCandidate(user, env.adminEmails, row ? [row.email] : []);
   }
 }
