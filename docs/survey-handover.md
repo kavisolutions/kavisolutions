@@ -26,7 +26,7 @@ API deployment. This document explains how to enable, update and integrate it.
 | Main admin service manager | `/admin?section=survey` |
 | Surveyor registry | `/admin?section=surveyors` |
 | SVG placeholder illustrations | `survey/src/components/SurveyVisuals.tsx` |
-| Real photos (optional) | `survey/public/images/` |
+| Real photos (optional) | Public MinIO bucket via `POST /api/upload` |
 
 ## Enable the page
 
@@ -61,15 +61,18 @@ confirmed client. Seed defaults with
 
 ## Add real photos
 
-The page uses built-in SVG illustrations until a photo path is set. To replace
-one:
+The page uses built-in SVG illustrations until a photo URL is set. Photos are
+stored in the existing **public MinIO bucket** (`S3_BUCKET`, exposed through
+`S3_PUBLIC_URL`), not in the repo.
 
-1. Put a licensed image in `survey/public/images/` (e.g. `fieldwork.jpg`).
-2. In Survey admin, set `images.fieldwork`, `images.analysis` or
-   `images.presentation` to `/images/<file>`.
+1. Sign in as an admin and `POST` the image to `/api/upload` as multipart
+   `file` (jpg, png, webp or gif, max 5MB). The response `{ url }` is the public
+   MinIO URL.
+2. In Survey admin (`/survey/admin`), set `images.fieldwork`, `images.analysis`
+   or `images.presentation` to that full `http(s)` URL.
 3. Save. The matching illustration is replaced on the next page request.
 
-Do not hot-link third-party image URLs; host the files locally.
+Do not hot-link third-party image URLs; upload to MinIO instead.
 
 ## Integrate with the main site
 

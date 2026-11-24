@@ -180,8 +180,9 @@ The same content JSON also drives two optional blocks:
   rendered under “Potential clients and active discussions”. Never list an
   unagreed lead as a confirmed client. Seed with
   `api/db/dml/0010_survey_content_opportunities.sql` or edit via Survey admin.
-- `images` — optional paths (`fieldwork`, `analysis`, `presentation`) for real
-  photos under `survey/public/images/`. When absent, the built-in SVG
+- `images` — optional public MinIO URLs (`fieldwork`, `analysis`,
+  `presentation`). Upload through `POST /api/upload` (jpg, png, webp, gif) and
+  paste the returned URL into Survey admin. When absent, the built-in SVG
   illustrations are used as placeholders.
 
 If the shared API has no published content yet, the admin screen starts empty

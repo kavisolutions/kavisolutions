@@ -75,10 +75,13 @@ const isOpportunity = (value: unknown): boolean =>
   typeof value.note === "string" &&
   (value.stage === undefined || typeof value.stage === "string");
 
+const isImageUrl = (value: unknown): boolean =>
+  typeof value === "string" && /^https?:\/\//i.test(value);
+
 const isImages = (value: unknown): boolean =>
   isRecord(value) &&
   ["fieldwork", "analysis", "presentation"].every(
-    (key) => value[key] === undefined || typeof value[key] === "string",
+    (key) => value[key] === undefined || isImageUrl(value[key]),
   );
 
 const isSurveyContent = (value: unknown): value is Record<string, unknown> => {
