@@ -39,18 +39,54 @@ function requireAdmin(req: FastifyRequest, reply: FastifyReply): boolean {
   return true;
 }
 
+const OAUTH_STATE_COOKIE = 'kavi_oauth_state';
+
+function setOauthStateCookie(reply: FastifyReply, state: string): void {
+  const secure = config.publicBaseUrl.startsWith('https://') ? '; Secure' : '';
+  reply.header(
+    'Set-Cookie',
+    `${OAUTH_STATE_COOKIE}=${encodeURIComponent(state)}; Path=/auth/; HttpOnly; SameSite=Lax${secure}`,
+  );
+}
+
+function readOauthStateCookie(req: FastifyRequest): string | null {
+  for (const part of (req.headers.cookie ?? '').split(';')) {
+    const [name, value] = part.trim().split('=');
+    if (name === OAUTH_STATE_COOKIE) {
+      try {
+        return decodeURIComponent(value ?? '');
+      } catch {
+        return null;
+      }
+    }
+  }
+  return null;
+}
+
+function clearOauthStateCookie(reply: FastifyReply): void {
+  reply.header('Set-Cookie', `${OAUTH_STATE_COOKIE}=; Path=/auth/; HttpOnly; SameSite=Lax; Max-Age=0`);
+}
+
 export async function registerRoutes(app: FastifyInstance): Promise<void> {
   app.get('/health', async () => ({ ok: true }));
 
   app.get('/auth/linkedin', async (_req, reply) => {
     const state = createOAuthState('linkedin');
+    setOauthStateCookie(reply, state);
     return reply.redirect(linkedinAuthUrl(state));
   });
 
   app.get('/auth/linkedin/callback', async (req, reply) => {
     const query = req.query as { code?: string; state?: string; error?: string };
+    const browserState = readOauthStateCookie(req);
+    clearOauthStateCookie(reply);
     if (query.error) return reply.code(400).send({ error: query.error });
-    if (!query.code || !query.state || !consumeOAuthState(query.state, 'linkedin')) {
+    if (
+      !query.code ||
+      !query.state ||
+      browserState !== query.state ||
+      !consumeOAuthState(query.state, 'linkedin')
+    ) {
       return reply.code(400).send({ error: 'Invalid OAuth state or code' });
     }
     const account = await linkedinExchangeCode(query.code);
@@ -60,13 +96,21 @@ export async function registerRoutes(app: FastifyInstance): Promise<void> {
 
   app.get('/auth/meta', async (_req, reply) => {
     const state = createOAuthState('facebook');
+    setOauthStateCookie(reply, state);
     return reply.redirect(metaAuthUrl(state));
   });
 
   app.get('/auth/meta/callback', async (req, reply) => {
     const query = req.query as { code?: string; state?: string; error?: string };
+    const browserState = readOauthStateCookie(req);
+    clearOauthStateCookie(reply);
     if (query.error) return reply.code(400).send({ error: query.error });
-    if (!query.code || !query.state || !consumeOAuthState(query.state, 'facebook')) {
+    if (
+      !query.code ||
+      !query.state ||
+      browserState !== query.state ||
+      !consumeOAuthState(query.state, 'facebook')
+    ) {
       return reply.code(400).send({ error: 'Invalid OAuth state or code' });
     }
     await metaExchangeCode(query.code);
@@ -305,7 +349,9 @@ export async function registerRoutes(app: FastifyInstance): Promise<void> {
       | { targets: string }
       | undefined;
     if (!row) return reply.code(404).send({ error: 'post not found' });
-    const outcomes = await publishPost(id, parseTargets(row.targets));
+    // Retry only platforms that never succeeded, so a partial publish does
+    // not duplicate posts on the platforms that already went live.
+    const outcomes = await publishPost(id, parseTargets(row.targets), true);
     return { outcomes };
   });
 

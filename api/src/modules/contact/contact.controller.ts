@@ -4,15 +4,8 @@ import { ApiTags } from "@nestjs/swagger";
 
 import { Public } from "@/auth/auth.decorators";
 import { sendContactEmail } from "@/_shared/mailer";
+import { SendContactDto } from "@/modules/contact/dto/contact.dto";
 import { SettingsService } from "@/modules/settings/settings.service";
-
-type ContactBody = {
-  name?: string;
-  email?: string;
-  phone?: string;
-  service?: string;
-  message?: string;
-};
 
 @ApiTags("contact")
 @Controller("contact")
@@ -22,12 +15,12 @@ export class ContactController {
   @Post()
   @Public()
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
-  async send(@Body() body: ContactBody) {
-    const name = (body?.name || "").trim();
-    const email = (body?.email || "").trim();
-    const phone = (body?.phone || "").trim();
-    const service = (body?.service || "").trim();
-    const message = (body?.message || "").trim();
+  async send(@Body() body: SendContactDto) {
+    const name = body.name.trim();
+    const email = body.email.trim();
+    const phone = body.phone.trim();
+    const service = (body.service ?? "").trim();
+    const message = body.message.trim();
 
     if (!name || !email || !phone || !message) {
       throw new BadRequestException("Missing required fields");

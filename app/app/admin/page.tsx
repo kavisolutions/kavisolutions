@@ -653,7 +653,8 @@ export default function AdminPage() {
     const hasWeb = projectDraft.projectTypes.includes("Web");
     const liveLinkType = hasApp && hasWeb ? "both" : hasApp ? "app" : "web";
 
-    const res = await fetch(isEdit ? `/api/projects/${projectDraft.id}` : "/api/projects", {
+    // ProjectsController exposes a single @Patch() route; the id travels in the body.
+    const res = await fetch("/api/projects", {
       method: isEdit ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

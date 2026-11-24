@@ -14,6 +14,9 @@ export type DraftOptions = {
   /* Publish an image that is already on disk (media_plan) instead of
      generating one. Passing null explicitly means "no image". */
   imageFile?: string | null;
+  /* Auto-publish flows call publishPost immediately, so an approval keyboard
+     would be stale and a later Reject tap could un-publish a live post. */
+  skipApproval?: boolean;
   instructions?: string;
   imagePrompt?: string;
   card?: {
@@ -101,7 +104,9 @@ export async function createDraft(
   const postId = Number(info.lastInsertRowid);
   const imageUrl = imagePath ? publicMediaUrl(imagePath) : null;
 
-  if (telegramConfigured()) {
+  if (options.skipApproval) {
+    // The caller publishes immediately and reports the result itself.
+  } else if (telegramConfigured()) {
     const preview = describeCaptions(captions, targets);
     await sendApprovalMessage(postId, preview, imageUrl, targets);
   } else {

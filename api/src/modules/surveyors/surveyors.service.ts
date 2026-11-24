@@ -136,9 +136,10 @@ export class SurveyorsService {
     return { surveyors: rows.map(toDto) };
   }
 
-  /* Public registration. A repeat submission from the same email updates the
-     existing profile and keeps its status, so re-registering never resets an
-     already-verified surveyor back to "applied". */
+  /* Public registration is idempotent by email: a repeat submission returns
+     the existing profile unchanged. Anyone who knows an email could otherwise
+     overwrite a verified surveyor's details through this unauthenticated
+     endpoint. Profile changes go through the admin update route. */
   async register(payload: RegisterSurveyorDto): Promise<{ surveyor: PublicSurveyorDto }> {
     const name = sanitizeText(payload.name, 120);
     const email = sanitizeText(payload.email, 200).toLowerCase();
@@ -169,13 +170,7 @@ export class SurveyorsService {
       .limit(1);
 
     if (existing) {
-      const [row] = await this.db
-        .update(surveyors)
-        .set({ ...values, updatedAt: new Date() })
-        .where(eq(surveyors.id, existing.id))
-        .returning();
-
-      return { surveyor: toPublic(row) };
+      return { surveyor: toPublic(existing) };
     }
 
     const [row] = await this.db

@@ -23,6 +23,8 @@ const publishers: Record<
 export async function publishPost(
   postId: number,
   targets: Platform[],
+  /* Admin retry: skip platforms that already published in an earlier attempt. */
+  retryFailedOnly = false,
 ): Promise<PublishOutcome[]> {
   const row = db
     .prepare('SELECT caption, captions, image_path FROM posts WHERE id = ?')
@@ -31,42 +33,80 @@ export async function publishPost(
     | undefined;
   if (!row) throw new Error(`Post ${postId} not found`);
 
-  const captions = safeCaptions(row.captions);
-  const imageUrl = row.image_path ? publicMediaUrl(row.image_path) : null;
-  const outcomes: PublishOutcome[] = [];
-
-  for (const platform of targets) {
-    try {
-      const caption = captions[platform] ?? row.caption;
-      const result = await publishers[platform](caption, imageUrl);
-      outcomes.push({ platform, ok: true, externalId: result.externalId });
-      recordResult(postId, platform, 'published', result.externalId, null);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      outcomes.push({ platform, ok: false, error: message });
-      recordResult(postId, platform, 'failed', null, message);
-    }
-  }
-
-  const anySuccess = outcomes.some((o) => o.ok);
-  db.prepare('UPDATE posts SET status = ?, published_at = ? WHERE id = ?').run(
-    anySuccess ? 'published' : 'failed',
-    anySuccess ? Date.now() : null,
-    postId,
+  const alreadyPublished = new Set(
+    retryFailedOnly
+      ? (
+          db
+            .prepare("SELECT platform FROM post_results WHERE post_id = ? AND status = 'published'")
+            .all(postId) as Array<{ platform: Platform }>
+        ).map((result) => result.platform)
+      : [],
   );
+  const attempted = targets.filter((platform) => !alreadyPublished.has(platform));
+  if (attempted.length === 0) return [];
 
-  /* Keep the calendar in sync when approval happens from Telegram rather than
-     from the media-plan worker. */
-  db.prepare(
-    'UPDATE media_plan SET status = ?, updated_at = ? WHERE post_id = ?',
-  ).run(anySuccess ? 'published' : 'failed', Date.now(), postId);
+  /* Claim atomically so two webhook taps (or a webhook + admin retry) cannot
+     publish the same post twice. Failed/partial posts remain retryable. */
+  const claim = db
+    .prepare(
+      "UPDATE posts SET status = 'publishing' WHERE id = ? AND status IN ('pending_approval', 'failed', 'partial')",
+    )
+    .run(postId);
+  if (claim.changes === 0) throw new Error(`Post ${postId} is not available for publishing`);
 
-  const summary = outcomes
-    .map((o) => `${o.platform}: ${o.ok ? `ok (${o.externalId})` : `FAILED - ${o.error}`}`)
-    .join('\n');
-  await notify(`Post #${postId} publish result:\n${summary}`);
+  const outcomes: PublishOutcome[] = [];
+  try {
+    const captions = safeCaptions(row.captions);
+    const imageUrl = row.image_path ? publicMediaUrl(row.image_path) : null;
 
-  return outcomes;
+    for (const platform of attempted) {
+      try {
+        const caption = captions[platform] ?? row.caption;
+        const result = await publishers[platform](caption, imageUrl);
+        outcomes.push({ platform, ok: true, externalId: result.externalId });
+        recordResult(postId, platform, 'published', result.externalId, null);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        outcomes.push({ platform, ok: false, error: message });
+        recordResult(postId, platform, 'failed', null, message);
+      }
+    }
+
+    const successCount = outcomes.filter((o) => o.ok).length;
+    // A partial failure must not be reported as fully published: the missing
+    // platform stays visible for a retry through the admin publish endpoint.
+    const status =
+      outcomes.length > 0 && successCount === outcomes.length
+        ? 'published'
+        : successCount > 0
+          ? 'partial'
+          : 'failed';
+    db.prepare('UPDATE posts SET status = ?, published_at = ? WHERE id = ?').run(
+      status,
+      successCount > 0 ? Date.now() : null,
+      postId,
+    );
+
+    /* Keep the calendar in sync when approval happens from Telegram rather than
+       from the media-plan worker. */
+    db.prepare(
+      'UPDATE media_plan SET status = ?, updated_at = ? WHERE post_id = ?',
+    ).run(status === 'published' ? 'published' : 'failed', Date.now(), postId);
+
+    const summary = outcomes
+      .map((o) => `${o.platform}: ${o.ok ? `ok (${o.externalId})` : `FAILED - ${o.error}`}`)
+      .join('\n');
+    // A Telegram outage must not turn a successful publish into "failed".
+    await notify(`Post #${postId} publish result:\n${summary}`).catch(() => undefined);
+
+    return outcomes;
+  } catch (error) {
+    // Never leave a post stuck in 'publishing' after an unexpected failure.
+    db.prepare("UPDATE posts SET status = 'failed' WHERE id = ? AND status = 'publishing'").run(postId);
+    const message = error instanceof Error ? error.message : String(error);
+    await notify(`Post #${postId} publish error: ${message}`).catch(() => undefined);
+    return outcomes;
+  }
 }
 
 function safeCaptions(raw: string): Partial<Record<Platform, string>> {

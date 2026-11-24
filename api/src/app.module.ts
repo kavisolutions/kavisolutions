@@ -44,7 +44,17 @@ import { WhatsAppModule } from "@/modules/whatsapp/whatsapp.module";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 60 }]),
+    ThrottlerModule.forRoot({
+      throttlers: [{ ttl: 60_000, limit: 60 }],
+      // nginx overwrites X-Real-IP with $remote_addr, so it cannot be spoofed.
+      // X-Forwarded-For is appended to by nginx and can carry a client-supplied
+      // prefix, which would give every attacker their own unlimited bucket.
+      getTracker: (req: Record<string, any>) => {
+        const realIp = req.headers?.["x-real-ip"];
+        if (typeof realIp === "string" && realIp.trim()) return realIp.split(",")[0].trim();
+        return typeof req.ip === "string" && req.ip ? req.ip : "unknown";
+      },
+    }),
     ScheduleModule.forRoot(),
     DrizzleModule,
     AuthModule,

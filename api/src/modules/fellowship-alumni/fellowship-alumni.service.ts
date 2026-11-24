@@ -71,6 +71,25 @@ const toDto = (row: FellowshipAlumniRow): FellowshipAlumniDto => ({
   updatedAt: row.updatedAt.toISOString(),
 });
 
+/* Fields an alumnus may see via the public update-token endpoints. Both the
+   GET and PATCH responses use this shape: internal notes and the bearer token
+   itself must never leave through a public route. */
+const toSelf = (row: FellowshipAlumniRow) => ({
+  name: row.name,
+  email: row.email,
+  cohort: row.cohort,
+  track: row.track,
+  destinationType: row.destinationType,
+  organisation: row.organisation,
+  role: row.role,
+  outcome6m: row.outcome6m,
+  outcome12m: row.outcome12m,
+  mentorWilling: row.mentorWilling,
+  testimonialConsent: row.testimonialConsent,
+  publicStory: row.publicStory,
+  storyPublished: row.storyPublished,
+});
+
 @Injectable()
 export class FellowshipAlumniService {
   constructor(@Inject(DATABASE) private readonly db: Database) {}
@@ -258,23 +277,7 @@ export class FellowshipAlumniService {
       .where(eq(fellowshipAlumni.updateToken, token))
       .limit(1);
     if (!row) throw new NotFoundException("Alumni record not found");
-    return {
-      alumni: {
-        name: row.name,
-        email: row.email,
-        cohort: row.cohort,
-        track: row.track,
-        destinationType: row.destinationType,
-        organisation: row.organisation,
-        role: row.role,
-        outcome6m: row.outcome6m,
-        outcome12m: row.outcome12m,
-        mentorWilling: row.mentorWilling,
-        testimonialConsent: row.testimonialConsent,
-        publicStory: row.publicStory,
-        storyPublished: row.storyPublished,
-      },
-    };
+    return { alumni: toSelf(row) };
   }
 
   async updateByToken(rawToken: string, payload: AlumniSelfUpdateDto) {
@@ -312,7 +315,7 @@ export class FellowshipAlumniService {
       .where(eq(fellowshipAlumni.id, existing.id))
       .returning();
 
-    return { alumni: toDto(row) };
+    return { alumni: toSelf(row) };
   }
 
   async dueFollowUps(limit = 50) {

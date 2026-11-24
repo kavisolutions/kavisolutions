@@ -108,7 +108,7 @@ git submodule update --init --recursive   # survey frontend
 docker compose up --build                 # web :3100, survey :3004, API :3200
 ```
 
-Open http://localhost:3000. `.env.local` must contain `BACKEND_URL`
+Open http://localhost:3100 for the compose stack (`:3000` is the bare-metal dev server). `.env.local` must contain `BACKEND_URL`
 (default `http://localhost:3200`). If `BACKEND_URL` is unset there is no proxy and
 `/api/*` returns 404 — that is intentional so a misconfigured production build
 fails loudly instead of silently hitting the wrong origin.
@@ -170,7 +170,7 @@ secret. To rotate it:
 
 ```bash
 ssh-keygen -t ed25519 -N "" -C "gha-kavi-solutions-deploy" -f ~/.ssh/gha_kavi
-ssh root@161.97.169.66 "echo '$(cat ~/.ssh/gha_kavi.pub)' >> ~/.ssh/authorized_keys"
+ssh ubuntu@129.225.126.53 "echo '$(cat ~/.ssh/gha_kavi.pub)' >> ~/.ssh/authorized_keys"
 gh secret set DEPLOY_SSH_KEY -R kavisolutions/kavisolutions < ~/.ssh/gha_kavi
 ```
 
@@ -180,12 +180,12 @@ Files in `deploy/`:
 
 - `deploy/nginx.conf` — Nginx reverse proxy config (HTTP→HTTPS redirect, SSL, gzip, static caching)
 - `deploy/deploy.sh` — one-shot deploy script
-- `ecosystem.config.js` — PM2 process definition (serves on port 3000)
+- `app/ecosystem.config.js` — web on port 3111; `api/ecosystem.config.js` — main API :3200 and survey API :3201; `survey/ecosystem.config.js` — survey frontend :3004; `social-agent/ecosystem.config.js` — sidecar :3300
 
 ### Steps
 
 1. **On your VPS**, clone/copy this repo (e.g. to `/home/deploy/kavi-solutions`).
-2. Install Node 18+ and PM2:
+2. Install Node 20.19+ (required by Next.js 16) and PM2:
    ```bash
    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt install -y nodejs
    sudo npm i -g pm2

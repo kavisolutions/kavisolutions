@@ -36,8 +36,9 @@ export class TeamController {
     return this.service.create(body);
   }
 
+  // Authenticated (not admin-only): TeamService.update enforces owner-or-admin
+  // and restricts sortOrder/teamId to admins.
   @Patch(":id")
-  @AdminOnly()
   @ApiBearerAuth()
   async update(
     @Param("id") id: string,

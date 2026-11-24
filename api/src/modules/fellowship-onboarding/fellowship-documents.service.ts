@@ -7,6 +7,7 @@ import {
 import { randomBytes } from "node:crypto";
 import { desc, eq } from "drizzle-orm";
 
+import { fileExtensionFor, sniffFileType, type SniffedType } from "@/_shared/file-sniff";
 import { sanitizeText } from "@/_shared/text";
 import { uuid } from "@/_shared/team-helpers";
 import { DATABASE } from "@/db/drizzle/drizzle.module";
@@ -19,7 +20,7 @@ import {
 import type { UpdateFellowshipDocumentDto } from "@/modules/fellowship-onboarding/dto/fellowship-onboarding.dto";
 import { StorageService } from "@/modules/upload/storage.service";
 
-const ALLOWED_TYPES = [
+const ALLOWED_TYPES: SniffedType[] = [
   "application/pdf",
   "image/jpeg",
   "image/png",
@@ -90,16 +91,17 @@ export class FellowshipDocumentsService {
   ) {
     await this.assertApplication(applicationId);
     if (!file) throw new BadRequestException("No file provided");
-    if (!ALLOWED_TYPES.includes(file.mimetype)) {
+    const detected = sniffFileType(file.buffer);
+    if (!detected || !ALLOWED_TYPES.includes(detected)) {
       throw new BadRequestException("Allowed documents: PDF, JPG, PNG or WebP");
     }
     if (file.size > MAX_SIZE) {
       throw new BadRequestException("Document too large. Maximum size is 10MB");
     }
 
-    const ext = (file.originalname.split(".").pop() || "pdf").toLowerCase();
-    const key = `fellowship-documents/${applicationId}/${randomBytes(16).toString("hex")}.${ext}`;
-    await this.storage.putPrivate(key, file.buffer, file.mimetype);
+    // Derive extension and stored MIME from the bytes, not the client header.
+    const key = `fellowship-documents/${applicationId}/${randomBytes(16).toString("hex")}.${fileExtensionFor(detected)}`;
+    await this.storage.putPrivate(key, file.buffer, detected);
 
     const [row] = await this.db
       .insert(fellowshipDocuments)
@@ -109,7 +111,7 @@ export class FellowshipDocumentsService {
         type: sanitizeText(type, 80) || "other",
         name: sanitizeText(name, 200) || file.originalname,
         storageKey: key,
-        mimeType: file.mimetype,
+        mimeType: detected,
         size: file.size,
         uploadedBy: sanitizeText(uploadedBy, 200),
       })

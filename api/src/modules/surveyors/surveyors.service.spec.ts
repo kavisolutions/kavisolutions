@@ -89,18 +89,20 @@ describe("SurveyorsService.register", () => {
     expect(calls.inserted[0]).toMatchObject({ languages: ["Telugu", "Hindi"] });
   });
 
-  /* Re-registering must not reset a verified surveyor back to "applied". */
-  it("updates an existing profile without touching status", async () => {
+  /* Public re-registration is idempotent: anyone who knows an email must not
+     be able to overwrite a verified surveyor's profile. */
+  it("returns an existing profile unchanged", async () => {
     const existing = [{ ...baseRow, status: "verified", notes: "kept" }];
-    const { db, calls } = buildDb({ existing, after: [{ ...baseRow, status: "verified" }] });
+    const { db, calls } = buildDb({ existing, after: existing });
     const service = new SurveyorsService(db);
 
-    await service.register({ ...register, location: "Karimnagar" });
+    const result = await service.register({ ...register, location: "Karimnagar" });
 
     expect(calls.inserted).toHaveLength(0);
-    expect(calls.updated[0]).toMatchObject({ location: "Karimnagar" });
-    expect(calls.updated[0]).not.toHaveProperty("status");
-    expect(calls.updated[0]).not.toHaveProperty("notes");
+    expect(calls.updated).toHaveLength(0);
+    expect(result.surveyor.location).toBe("Warangal");
+    expect(result.surveyor.status).toBe("verified");
+    expect(result.surveyor).not.toHaveProperty("notes");
   });
 
   it("rejects a blank name", async () => {

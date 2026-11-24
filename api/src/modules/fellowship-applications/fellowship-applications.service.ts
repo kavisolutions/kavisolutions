@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { and, desc, eq, ilike, notInArray, or, type SQL } from "drizzle-orm";
+import { and, desc, eq, gt, ilike, isNull, notInArray, or, type SQL } from "drizzle-orm";
 import { randomBytes } from "node:crypto";
 
 import { sanitizeText } from "@/_shared/text";
@@ -404,6 +404,7 @@ export class FellowshipApplicationsService {
       );
     }
 
+    // Claim atomically: two concurrent responses must not both be recorded.
     const [updated] = await this.db
       .update(fellowshipApplications)
       .set({
@@ -412,11 +413,26 @@ export class FellowshipApplicationsService {
         waitlistExpiresAt: null,
         updatedAt: new Date(),
       })
-      .where(eq(fellowshipApplications.id, row.id))
+      .where(
+        and(
+          eq(fellowshipApplications.id, row.id),
+          eq(fellowshipApplications.stage, "offer"),
+          or(
+            isNull(fellowshipApplications.offerExpiresAt),
+            gt(fellowshipApplications.offerExpiresAt, new Date()),
+          ),
+        ),
+      )
       .returning();
+    if (!updated) {
+      throw new BadRequestException("This offer is no longer awaiting a response");
+    }
 
     return {
-      application: toAdmin(updated),
+      // Public token endpoint: never expose admin notes or the bearer token.
+      application: toPublic(updated),
+      // For server-side mail/audit only — never returned by the controller.
+      internal: { id: updated.id, email: updated.email },
       stageChanged: true,
       previousStage: toStage(row.stage),
     };
@@ -478,8 +494,12 @@ export class FellowshipApplicationsService {
       "updated_at",
       "notes",
     ];
-    const escape = (value: unknown): string =>
-      `"${String(value ?? "").replace(/"/g, '""')}"`;
+    // Spreadsheet cells must not be interpreted as formulas (CSV injection).
+    const escape = (value: unknown): string => {
+      const text = String(value ?? "").replace(/\r?\n/g, " ");
+      const safe = /^[=@]/.test(text) || /^[+-](?![0-9])/.test(text) ? `'${text}` : text;
+      return `"${safe.replace(/"/g, '""')}"`;
+    };
     const lines = [
       headers.join(","),
       ...applications.map((application) =>

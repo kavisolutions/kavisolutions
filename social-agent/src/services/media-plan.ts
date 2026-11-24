@@ -54,28 +54,83 @@ export type ImportJob = {
   finishedAt: number | null;
 };
 
-const jobs = new Map<string, ImportJob>();
+type ImportJobRow = {
+  id: string;
+  status: ImportJobStatus;
+  total: number;
+  processed: number;
+  imported: number;
+  updated: number;
+  failed: number;
+  errors: string;
+  message: string;
+  started_at: number;
+  finished_at: number | null;
+};
+
+const rowToJob = (row: ImportJobRow): ImportJob => ({
+  id: row.id,
+  status: row.status,
+  total: row.total,
+  processed: row.processed,
+  imported: row.imported,
+  updated: row.updated,
+  failed: row.failed,
+  errors: safeErrors(row.errors),
+  message: row.message,
+  startedAt: row.started_at,
+  finishedAt: row.finished_at,
+});
+
+function safeErrors(raw: string): string[] {
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+/* A restart cannot resume an in-flight import (its Drive promise is gone), so
+   mark those jobs failed rather than leaving them "running" forever. */
+db.prepare(
+  "UPDATE import_jobs SET status = 'failed', message = 'Interrupted by restart', finished_at = ? WHERE status IN ('listing', 'downloading')",
+).run(Date.now());
+
+function persistJob(job: ImportJob): void {
+  db.prepare(
+    `INSERT INTO import_jobs
+       (id, status, total, processed, imported, updated, failed, errors, message, started_at, finished_at)
+     VALUES (@id, @status, @total, @processed, @imported, @updated, @failed, @errors, @message, @startedAt, @finishedAt)
+     ON CONFLICT(id) DO UPDATE SET
+       status = excluded.status, total = excluded.total, processed = excluded.processed,
+       imported = excluded.imported, updated = excluded.updated, failed = excluded.failed,
+       errors = excluded.errors, message = excluded.message, finished_at = excluded.finished_at`,
+  ).run({ ...job, errors: JSON.stringify(job.errors) });
+}
+
+function updateJob(job: ImportJob, patch: Partial<ImportJob>): void {
+  Object.assign(job, patch);
+  persistJob(job);
+}
 
 export function getImportJob(id: string): ImportJob | null {
-  const job = jobs.get(id);
-  return job ? { ...job, errors: [...job.errors] } : null;
+  const row = db.prepare('SELECT * FROM import_jobs WHERE id = ?').get(id) as ImportJobRow | undefined;
+  return row ? rowToJob(row) : null;
 }
 
 function runningImport(): ImportJob | undefined {
-  for (const job of jobs.values()) {
-    if (job.status === 'listing' || job.status === 'downloading') return job;
-  }
-  return undefined;
+  const row = db
+    .prepare("SELECT * FROM import_jobs WHERE status IN ('listing', 'downloading') ORDER BY started_at DESC LIMIT 1")
+    .get() as ImportJobRow | undefined;
+  return row ? rowToJob(row) : undefined;
 }
 
 function pruneJobs(): void {
   const cutoff = Date.now() - 6 * 60 * 60 * 1000;
-  for (const [id, job] of jobs) {
-    const ended = job.finishedAt ?? job.startedAt;
-    if (job.status !== 'listing' && job.status !== 'downloading' && ended < cutoff) {
-      jobs.delete(id);
-    }
-  }
+  db.prepare(
+    "DELETE FROM import_jobs WHERE status NOT IN ('listing', 'downloading') AND COALESCE(finished_at, started_at) < ?",
+  ).run(cutoff);
 }
 
 export type DriveImportInput = {
@@ -108,7 +163,7 @@ export function startDriveImport(input: DriveImportInput): ImportJob {
     startedAt: Date.now(),
     finishedAt: null,
   };
-  jobs.set(job.id, job);
+  persistJob(job);
 
   void runDriveImport(job, input.folderUrl, startDate, input.topicHint?.trim() || null);
 
@@ -124,20 +179,24 @@ async function runDriveImport(
   try {
     const images = await listDriveImages(folderUrl);
     images.sort((a, b) => naturalCompare(a.name, b.name));
-    job.total = images.length;
-    job.status = 'downloading';
-    job.message = `Found ${images.length} images`;
+    updateJob(job, {
+      total: images.length,
+      status: 'downloading',
+      message: `Found ${images.length} images`,
+    });
 
     if (images.length === 0) {
-      job.status = 'done';
-      job.finishedAt = Date.now();
-      job.message = 'No images found in that folder';
+      updateJob(job, {
+        status: 'done',
+        finishedAt: Date.now(),
+        message: 'No images found in that folder',
+      });
       return;
     }
 
     let sequentialDate = startDate;
     for (const image of images) {
-      job.message = `Importing ${image.name}`;
+      updateJob(job, { message: `Importing ${image.name}` });
       try {
         const existing = findMediaPlanBySource('drive', image.id);
         const namedDate = parseDateFromName(image.name);
@@ -160,26 +219,27 @@ async function runDriveImport(
           sequentialDate = addDays(result.plan.scheduledDate, 1);
         }
 
-        if (result.created) job.imported += 1;
-        else job.updated += 1;
+        updateJob(job, result.created ? { imported: job.imported + 1 } : { updated: job.updated + 1 });
       } catch (error) {
-        job.failed += 1;
-        if (job.errors.length < 50) {
-          job.errors.push(
-            `${image.name}: ${error instanceof Error ? error.message : String(error)}`,
-          );
-        }
+        const errors = job.errors.length < 50
+          ? [...job.errors, `${image.name}: ${error instanceof Error ? error.message : String(error)}`]
+          : job.errors;
+        updateJob(job, { failed: job.failed + 1, errors });
       }
-      job.processed += 1;
+      updateJob(job, { processed: job.processed + 1 });
     }
 
-    job.status = 'done';
-    job.finishedAt = Date.now();
-    job.message = `Imported ${job.imported}, updated ${job.updated}, failed ${job.failed}`;
+    updateJob(job, {
+      status: 'done',
+      finishedAt: Date.now(),
+      message: `Imported ${job.imported}, updated ${job.updated}, failed ${job.failed}`,
+    });
   } catch (error) {
-    job.status = 'failed';
-    job.finishedAt = Date.now();
-    job.message = error instanceof Error ? error.message : String(error);
+    updateJob(job, {
+      status: 'failed',
+      finishedAt: Date.now(),
+      message: error instanceof Error ? error.message : String(error),
+    });
   }
 }
 
@@ -441,6 +501,7 @@ export async function draftMediaPlan(
       captions,
       imageFile: plan.localFile,
       instructions,
+      skipApproval: config.media.autoPublish,
     });
 
     const updated =
@@ -492,7 +553,9 @@ export async function runDueMedia(): Promise<{
 
       if (config.media.autoPublish) {
         const outcomes = await publishPost(result.postId, defaultTargets());
-        const ok = outcomes.some((outcome) => outcome.ok);
+        // Match publisher.ts: only a full success counts as published. A
+        // partial publish stays failed so it can be retried per platform.
+        const ok = outcomes.length > 0 && outcomes.every((outcome) => outcome.ok);
         updateMediaPlan(plan.id, { status: ok ? 'published' : 'failed' });
       }
     } catch (error) {

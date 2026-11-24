@@ -132,7 +132,10 @@ async function searchWikimedia(search: string): Promise<string | null> {
     if (info.mime === 'image/svg+xml') return false;
     if (config.llm.wikimediaRequireAttribution) {
       const license = info.extmetadata?.LicenseShortName?.value ?? '';
-      if (!/cc0|public domain|cc by(?!-nc)/i.test(license)) return false;
+      // Only no-attribution licenses are safe here: the caption pipeline has
+      // no credit line, so CC BY / CC BY-SA would publish without required
+      // attribution. Keep this to CC0 and public domain.
+      if (!/^(cc0|public domain)$/i.test(license.trim())) return false;
     }
     return true;
   });

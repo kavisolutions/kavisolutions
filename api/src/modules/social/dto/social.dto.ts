@@ -42,7 +42,7 @@ export class UploadMediaDto {
   @MaxLength(300)
   topicHint?: string;
 
-  /* Raw base64 (no data: prefix needed). Checked against 20MB in the service. */
+  /* Raw base64 (no data: prefix needed). Checked against 15MB decoded in the service. */
   @IsString()
   @MinLength(100)
   dataBase64!: string;

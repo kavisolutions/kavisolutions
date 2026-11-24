@@ -34,4 +34,4 @@ Frontend:
 - Google OAuth creds are empty in /var/www/kavi-solutions/api/.env → Google button returns error. Add GOOGLE_CLIENT_ID/SECRET + redirect https://kavisolutions.in/api/auth/callback/google
 - Admin logins with email/password: existing users keep legacy passwords (bcrypt); others must use password reset
 - SMTP_PASS set; contact form verified 201
-- GitHub Actions deploy still targets 161.97.169.66 — must be repointed or disabled
+- GitHub Actions deploy targets 129.225.126.53 (ubuntu). The old 161.97.169.66 host is decommissioned; check `vars.DEPLOY_HOST` if a deploy lands on the wrong box.

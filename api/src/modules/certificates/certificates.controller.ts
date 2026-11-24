@@ -4,6 +4,7 @@ import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import type { Response } from "express";
 
 import { isCertificateId, normalizeCertificateId } from "@/_shared/certificates";
+import { sniffFileType } from "@/_shared/file-sniff";
 import { AdminOnly, Public } from "@/auth/auth.decorators";
 import {
   CertificateIdDto,
@@ -98,10 +99,10 @@ export class CertificatesController {
   ) {
     if (!file) throw new BadRequestException("No file provided");
 
-    const isPdf =
-      file.mimetype === "application/pdf" ||
-      file.originalname.toLowerCase().endsWith(".pdf");
-    if (!isPdf) throw new BadRequestException("Only PDF files are accepted");
+    // Check the bytes: the multipart MIME type and filename are client-supplied.
+    if (sniffFileType(file.buffer) !== "application/pdf") {
+      throw new BadRequestException("Only PDF files are accepted");
+    }
     if (file.size > MAX_PDF_SIZE) {
       throw new BadRequestException(`PDF too large. Max size: ${MAX_PDF_SIZE / 1024 / 1024}MB`);
     }

@@ -51,6 +51,19 @@ export async function sendApprovalMessage(
     });
   }
 
+  if (imageUrl && res.ok && text.length > 1024) {
+    // Telegram caps photo captions at 1024 chars. Send the rest as a follow-up
+    // so the approver sees the whole draft before pressing Approve.
+    await fetch(`${API}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: config.telegram.chatId,
+        text: text.slice(1024).slice(0, 4096),
+      }),
+    }).catch(() => undefined);
+  }
+
   if (!res.ok) return null;
   const data = (await res.json()) as { result?: { message_id: number } };
   return data.result?.message_id ?? null;

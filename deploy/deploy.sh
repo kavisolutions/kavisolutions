@@ -15,17 +15,20 @@ APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 API_DIR="${APP_DIR}/api"
 FE_DIR="${APP_DIR}/app"
 SURVEY_DIR="${APP_DIR}/survey"
-FE_PORT="${PORT:-3111}"
-BE_PORT="${API_PORT:-3200}"
-SURVEY_PORT="${SURVEY_PORT:-3004}"
-SURVEY_BE_PORT="${SURVEY_API_PORT:-3201}"
+# Fixed ports: PM2 ecosystem configs and deploy/nginx.conf hardcode these too.
+# Do not allow shell overrides here — the build would bake a BACKEND_URL for a
+# port nothing listens on and the health checks would poll the wrong ports.
+FE_PORT=3111
+BE_PORT=3200
+SURVEY_PORT=3004
+SURVEY_BE_PORT=3201
 PUBLIC_URL="${PUBLIC_URL:-https://kavisolutions.in}"
 FE_APP="kavi-solutions"
 BE_APP="kavi-solutions-be"
 SURVEY_APP="kavi-survey"
 SURVEY_BE_APP="kavi-solutions-survey-be"
 SOCIAL_APP="kavi-social-agent"
-SOCIAL_PORT="${SOCIAL_PORT:-3300}"
+SOCIAL_PORT=3300
 BRANCH="${BRANCH:-main}"
 PULL=1
 [ "${1:-}" = "--no-pull" ] && PULL=0
@@ -66,7 +69,9 @@ fi
 
 # Runtime env comes from Env Manager. The read-only deploy tokens live outside
 # the repository in ~/.config/kavi (0600). Set ENV_PULL=0 only for an emergency
-# deploy that must use the existing .env files.
+# deploy that must use the existing .env files. The pull verifies TLS; if this
+# host's CA cannot validate env.arkasodhara.tech, install the CA (or use
+# ENV_PULL=0). ENV_MANAGER_INSECURE=1 is an emergency-only fallback.
 ENV_PULL="${ENV_PULL:-1}"
 if [ "${ENV_PULL}" = "1" ]; then
   echo "==> Pulling runtime env from Env Manager"

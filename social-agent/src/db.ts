@@ -53,6 +53,22 @@ db.exec(`
     created_at INTEGER NOT NULL
   );
 
+  /* Drive import progress. Persisted so a PM2 restart does not turn an active
+     import into a 404 for the admin polling endpoint. */
+  CREATE TABLE IF NOT EXISTS import_jobs (
+    id TEXT PRIMARY KEY,
+    status TEXT NOT NULL,
+    total INTEGER NOT NULL DEFAULT 0,
+    processed INTEGER NOT NULL DEFAULT 0,
+    imported INTEGER NOT NULL DEFAULT 0,
+    updated INTEGER NOT NULL DEFAULT 0,
+    failed INTEGER NOT NULL DEFAULT 0,
+    errors TEXT NOT NULL DEFAULT '[]',
+    message TEXT NOT NULL DEFAULT '',
+    started_at INTEGER NOT NULL,
+    finished_at INTEGER
+  );
+
   /* One image per calendar day. Rows are imported ahead of time (Drive folder,
      local folder or single upload) and the scheduler drafts the row whose date
      has arrived. */
@@ -83,6 +99,11 @@ db.exec(`
   CREATE UNIQUE INDEX IF NOT EXISTS media_plan_source_unique
     ON media_plan(source, source_id) WHERE source_id IS NOT NULL;
 `);
+
+/* A process killed between publishPost's "publishing" claim and its final
+   status update would leave the post unrecoverable (no webhook or admin retry
+   accepts that status). Reset such rows on startup so they can be retried. */
+db.prepare("UPDATE posts SET status = 'failed' WHERE status = 'publishing'").run();
 
 export type Platform = 'linkedin' | 'facebook' | 'instagram';
 

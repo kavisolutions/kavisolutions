@@ -183,17 +183,39 @@ async function main(): Promise<void> {
             if (cq.message) await editMessageReplyMarkup(cq.message.message_id, `Post #${postId} already ${row.status}`);
           } else {
             if (cq.message) await editMessageReplyMarkup(cq.message.message_id, `Approved. Publishing #${postId}...`);
-            await publishPost(postId, parseTargets(row.targets));
+            try {
+              await publishPost(postId, parseTargets(row.targets));
+            } catch (error) {
+              // Answer the webhook so Telegram does not retry and double-handle it.
+              app.log.error(error, 'publish failed');
+              await answerCallbackQuery(cq.id, 'Publish failed');
+              if (cq.message) {
+                await editMessageReplyMarkup(cq.message.message_id, `Post #${postId} publish failed`);
+              }
+            }
           }
         } else if (action === 'reject' && Number.isInteger(postId)) {
-          db.prepare('UPDATE posts SET status = ? WHERE id = ?').run('rejected', postId);
-          /* Return the calendar row to "planned" so the day can be drafted
-             again instead of looking finished forever. */
-          db.prepare(
-            "UPDATE media_plan SET status = 'planned', post_id = NULL, updated_at = ? WHERE post_id = ?",
-          ).run(Date.now(), postId);
-          await answerCallbackQuery(cq.id, 'Rejected');
-          if (cq.message) await editMessageReplyMarkup(cq.message.message_id, `Post #${postId} rejected`);
+          /* Only a draft awaiting approval may be rejected. A stale keyboard on
+             an auto-published post must not un-publish it and re-queue the day. */
+          const claimed = db
+            .prepare("UPDATE posts SET status = 'rejected' WHERE id = ? AND status = 'pending_approval'")
+            .run(postId);
+          if (claimed.changes === 0) {
+            const current = db.prepare('SELECT status FROM posts WHERE id = ?').get(postId) as
+              | { status: string }
+              | undefined;
+            const label = current ? `already ${current.status}` : 'not found';
+            await answerCallbackQuery(cq.id, `Post ${label}`);
+            if (cq.message) await editMessageReplyMarkup(cq.message.message_id, `Post #${postId} ${label}`);
+          } else {
+            /* Return the calendar row to "planned" so the day can be drafted
+               again instead of looking finished forever. */
+            db.prepare(
+              "UPDATE media_plan SET status = 'planned', post_id = NULL, updated_at = ? WHERE post_id = ?",
+            ).run(Date.now(), postId);
+            await answerCallbackQuery(cq.id, 'Rejected');
+            if (cq.message) await editMessageReplyMarkup(cq.message.message_id, `Post #${postId} rejected`);
+          }
         } else if (action === 'regen' && Number.isInteger(postId)) {
           await answerCallbackQuery(cq.id, 'Regenerating...');
           const row = db

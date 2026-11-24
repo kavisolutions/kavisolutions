@@ -24,7 +24,15 @@ const GoogleIcon = () => (
 function getNextPath(): string | null {
   if (typeof window === "undefined") return null;
   const next = new URLSearchParams(window.location.search).get("next");
-  return next && next.startsWith("/") ? next : null;
+  if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/\\")) return null;
+  try {
+    const url = new URL(next, window.location.origin);
+    // Only allow same-origin paths. router.push treats protocol-relative URLs
+    // (//evil.com, /\evil.com) as external navigation.
+    return url.origin === window.location.origin ? `${url.pathname}${url.search}${url.hash}` : null;
+  } catch {
+    return null;
+  }
 }
 
 export default function LoginPage() {

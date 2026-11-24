@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, ShieldAlert } from "lucide-react";
 import {
@@ -72,6 +72,8 @@ function initialStateFor(id: string): LookupState {
 export default function VerifyClient({ initialId }: { initialId: string }) {
   const [input, setInput] = useState(initialId);
   const [state, setState] = useState<LookupState>(() => initialStateFor(initialId));
+  // Only the most recent lookup may update state; slower stale responses are ignored.
+  const lookupSeq = useRef(0);
 
   useEffect(() => {
     if (!initialId) return;
@@ -80,8 +82,9 @@ export default function VerifyClient({ initialId }: { initialId: string }) {
     if (!parsed.valid) return;
 
     let cancelled = false;
+    const seq = ++lookupSeq.current;
     void requestCertificate(parsed.id).then((result) => {
-      if (!cancelled) setState(result);
+      if (!cancelled && seq === lookupSeq.current) setState(result);
     });
 
     return () => {
@@ -91,13 +94,15 @@ export default function VerifyClient({ initialId }: { initialId: string }) {
 
   const lookup = useCallback(async (raw: string) => {
     const parsed = normalizeCertificateIdInput(raw);
+    const seq = ++lookupSeq.current;
     if (!parsed.valid) {
       setState({ kind: "invalid", reason: parsed.reason });
       return;
     }
 
     setState({ kind: "loading" });
-    setState(await requestCertificate(parsed.id));
+    const result = await requestCertificate(parsed.id);
+    if (seq === lookupSeq.current) setState(result);
   }, []);
 
   const certificate = useMemo(() => {

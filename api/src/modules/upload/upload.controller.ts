@@ -8,6 +8,7 @@ import {
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
 
+import { fileExtensionFor, sniffFileType } from "@/_shared/file-sniff";
 import { CurrentUser } from "@/auth/auth.guard";
 import type { SessionUser } from "@/auth/auth.types";
 import { StorageService } from "@/modules/upload/storage.service";
@@ -31,7 +32,8 @@ export class UploadController {
     if (!user) throw new BadRequestException("Not authenticated");
     if (!file) throw new BadRequestException("No file provided");
 
-    if (!ALLOWED_TYPES.includes(file.mimetype)) {
+    const detected = sniffFileType(file.buffer);
+    if (!detected || !ALLOWED_TYPES.includes(detected)) {
       throw new BadRequestException("Invalid file type. Allowed: jpg, png, webp, gif");
     }
 
@@ -39,9 +41,9 @@ export class UploadController {
       throw new BadRequestException("File too large. Max size: 5MB");
     }
 
-    const ext = (file.originalname.split(".").pop() || "jpg").toLowerCase();
-    const key = `${user.id}/${Date.now()}.${ext}`;
-    const url = await this.storage.upload(key, file.buffer, file.mimetype);
+    // Derive the extension from the bytes, not from the client's filename.
+    const key = `${user.id}/${Date.now()}.${fileExtensionFor(detected)}`;
+    const url = await this.storage.upload(key, file.buffer, detected);
 
     return { url };
   }

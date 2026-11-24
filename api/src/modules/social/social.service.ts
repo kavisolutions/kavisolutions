@@ -12,7 +12,8 @@ import type {
   UploadMediaDto,
 } from "@/modules/social/dto/social.dto";
 
-const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+// Must match social-agent's /admin/media/upload cap (15MB decoded).
+const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
 
 export type SocialStatus = {
   configured: boolean;

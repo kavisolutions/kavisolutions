@@ -131,14 +131,15 @@ they are not in this repository.
 
 ## TLS note
 
-The Env Manager certificate is currently mismatched, so the script uses
-`curl -k`. Once the certificate is fixed:
+TLS verification is on by default. These calls carry production secrets;
+never disable verification unless the Env Manager host is known-trusted and
+you are debugging a certificate issue in an emergency:
 
 ```bash
-ENV_MANAGER_INSECURE=0 ./scripts/env-manager.sh check production
+ENV_MANAGER_INSECURE=1 ./scripts/env-manager.sh check production
 ```
 
-and then make `ENV_MANAGER_INSECURE=0` the default in the script.
+Prefer fixing the CA/certificate over using `ENV_MANAGER_INSECURE=1`.
 
 ## Updating variables
 

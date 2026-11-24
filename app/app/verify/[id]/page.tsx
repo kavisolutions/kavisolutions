@@ -16,5 +16,6 @@ export default async function VerifyIdPage({
 }) {
   const { id } = await params;
 
-  return <VerifyClient initialId={decodeURIComponent(id ?? "").slice(0, 64)} />;
+  // Next already decodes dynamic params; decoding again throws URIError on a lone `%`.
+  return <VerifyClient initialId={(id ?? "").slice(0, 64)} />;
 }

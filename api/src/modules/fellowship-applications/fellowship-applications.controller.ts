@@ -127,11 +127,11 @@ export class FellowshipApplicationsController {
     }
 
     await this.audit.log({
-      actorEmail: result.application.email,
+      actorEmail: result.internal.email,
       action: "offer.response",
       entityType: "application",
-      entityId: result.application.id,
-      applicationId: result.application.id,
+      entityId: result.internal.id,
+      applicationId: result.internal.id,
       detail: body.decision,
     });
 

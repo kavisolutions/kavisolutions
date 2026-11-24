@@ -11,9 +11,9 @@
 #   ${ENV_MANAGER_TOKEN_DIR:-$HOME/.config/kavi}/env-manager-be.token
 #   ${ENV_MANAGER_TOKEN_DIR:-$HOME/.config/kavi}/env-manager-fe.token
 #
-# The Env Manager TLS certificate is currently mismatched, so this script uses
-# curl -k. Remove -k (or set ENV_MANAGER_INSECURE=0) once the certificate is
-# fixed and the host is trusted.
+# TLS verification is ON by default: these calls carry production secrets
+# (DATABASE_URL, BETTER_AUTH_SECRET, SMTP/OAuth credentials). Only set
+# ENV_MANAGER_INSECURE=1 for a documented local emergency with a trusted host.
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -21,8 +21,8 @@ BASE_URL="${ENV_MANAGER_URL:-https://env.arkasodhara.tech}"
 PROJECT_BE="${ENV_MANAGER_PROJECT_BE:-kavi-solutions-be}"
 PROJECT_FE="${ENV_MANAGER_PROJECT_FE:-kavi-solutions}"
 TOKEN_DIR="${ENV_MANAGER_TOKEN_DIR:-$HOME/.config/kavi}"
-CURL_TLS=(-k)
-[ "${ENV_MANAGER_INSECURE:-1}" = "0" ] && CURL_TLS=()
+CURL_TLS=()
+[ "${ENV_MANAGER_INSECURE:-0}" = "1" ] && CURL_TLS=(-k)
 
 usage() {
   cat <<EOF
@@ -39,7 +39,7 @@ Environment variables:
   ENV_MANAGER_TOKEN_BE      backend project token
   ENV_MANAGER_TOKEN_FE      frontend project token
   ENV_MANAGER_TOKEN_DIR     default: $TOKEN_DIR
-  ENV_MANAGER_INSECURE=0    disable curl -k once TLS is valid
+  ENV_MANAGER_INSECURE=1    enable curl -k (insecure, emergency only)
 EOF
 }
 

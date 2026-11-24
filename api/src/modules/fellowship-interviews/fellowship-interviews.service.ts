@@ -648,6 +648,14 @@ export class FellowshipInterviewsService {
     return { interview, application };
   }
 
+  private assertCandidateActionable(status: string): void {
+    // A cancelled/completed interview's emailed link stays valid forever
+    // otherwise, so a candidate could still mutate finished state.
+    if (status !== "scheduled") {
+      throw new BadRequestException("This interview is no longer awaiting a response");
+    }
+  }
+
   async findByCandidateToken(rawToken: string) {
     const { interview, application } = await this.interviewByCandidateToken(rawToken);
     const dto = await this.toDto(interview, application);
@@ -676,6 +684,7 @@ export class FellowshipInterviewsService {
 
   async confirmCandidate(rawToken: string) {
     const { interview } = await this.interviewByCandidateToken(rawToken);
+    this.assertCandidateActionable(interview.status);
     const [updated] = await this.db
       .update(fellowshipInterviews)
       .set({ candidateConfirmedAt: new Date(), updatedAt: new Date() })
@@ -692,6 +701,7 @@ export class FellowshipInterviewsService {
     payload: FellowshipRescheduleRequestDto,
   ) {
     const { interview } = await this.interviewByCandidateToken(rawToken);
+    this.assertCandidateActionable(interview.status);
     const [updated] = await this.db
       .update(fellowshipInterviews)
       .set({
