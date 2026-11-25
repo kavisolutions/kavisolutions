@@ -68,10 +68,10 @@ VALUES (
     },
     "brand": {
       "name": "Kavi Survey & Research Solutions",
-      "location": "Hyderabad, India · Field operations across India",
+      "location": "Bengaluru",
       "vertical": "A Kavi Solutions business vertical",
-      "contactName": "Basha",
-      "contactEmail": "kavisolutions1@gmail.com"
+      "contactName": "Ashok Sandhyala",
+      "contactEmail": "kavi@kavisolutions.in"
     },
     "network": {
       "title": "A field network we are building deliberately",

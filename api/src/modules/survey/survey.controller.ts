@@ -124,10 +124,11 @@ export class SurveyController {
     return { content: await this.service.saveContent(body) };
   }
 
-  /* Public list for the opportunities block. Admin-editable, with the page
-     falling back to its bundled defaults when this returns an empty list. */
+  /* Internal leads. Admin-only: never expose connections under discussion
+     on the public site or to unauthenticated API callers. */
   @Get("opportunities")
-  @Public()
+  @AdminOnly()
+  @ApiBearerAuth()
   async opportunities() {
     return { opportunities: await this.settings.surveyOpportunities() };
   }

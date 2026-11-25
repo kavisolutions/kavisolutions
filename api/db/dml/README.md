@@ -47,9 +47,12 @@ research-integrity statement: no fabricated data, results or findings.
 Network copy block (`network`) with its heading, description, requirements and
 long-term objective.
 
-`0010_survey_content_opportunities.sql` adds the optional, admin-updatable
-`opportunities` block shown under “Potential clients and active discussions”.
-Entries are stage-labelled and must never be presented as confirmed clients.
+`0010_survey_content_opportunities.sql` added the old public opportunities
+block. It is **no longer shown publicly** — leads are internal-only in main
+admin → Settings → Survey Opportunities.
+
+`0011_survey_content_public_contact.sql` sets the public contact block to
+`kavi@kavisolutions.in`, `Ashok Sandhyala`, `Bengaluru`.
 
 ## Verify
 

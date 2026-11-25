@@ -21,7 +21,8 @@ API deployment. This document explains how to enable, update and integrate it.
 | --- | --- |
 | Page + sections | `survey/src/app/page.tsx` |
 | Client / surveyor enquiry forms | `survey/src/components/EnquiryForm.tsx` |
-| Service cards, network, opportunities | `survey_content` JSONB row (`id = 'main'`) |
+| Service cards and network | `survey_content` JSONB row (`id = 'main'`) |
+| Internal leads / connections | Main admin → Settings → Survey Opportunities |
 | Admin editor | `survey/src/app/admin/page.tsx` + `AdminEditor.tsx` |
 | Main admin service manager | `/admin?section=survey` |
 | Surveyor registry | `/admin?section=surveyors` |
@@ -51,13 +52,12 @@ All public copy is in the single `survey_content` row, never in the frontend.
 - **Main admin** → **Survey services** (`/admin?section=survey`) manages service
   cards, ordering, hidden flags and the network section without JSON editing.
 - **Survey admin** (`/survey/admin`) edits the whole JSON, including
-  `opportunities`, `images`, engagement models, sample work, sectors and FAQs.
+  `images`, engagement models, sample work, sectors and FAQs.
 - Changes publish immediately through `PUT /api/survey/content`; no rebuild.
 
-`opportunities` entries are stage-labelled (`Exploring`, `Under discussion`,
-`Enquiring`). They are indicative only — never publish an unagreed lead as a
-confirmed client. Seed defaults with
-`api/db/dml/0010_survey_content_opportunities.sql`.
+Internal leads are managed only in **main admin → Settings → Survey
+Opportunities**, one `Name | short note` per line. They are for admin review;
+the public page and `GET /api/survey/opportunities` never expose them.
 
 ## Add real photos
 

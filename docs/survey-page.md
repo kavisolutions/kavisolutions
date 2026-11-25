@@ -174,16 +174,18 @@ metric labelled “Research verticals” is recalculated from the array length.
 The survey frontend’s enquiry dropdown is generated from the same vertical
 titles, so a new service appears there automatically.
 
-The same content JSON also drives two optional blocks:
+The same content JSON also drives one optional block:
 
-- `opportunities` — stage-labelled potential clients / business opportunities
-  rendered under “Potential clients and active discussions”. Never list an
-  unagreed lead as a confirmed client. Seed with
-  `api/db/dml/0010_survey_content_opportunities.sql` or edit via Survey admin.
-- `images` — optional public MinIO URLs (`fieldwork`, `analysis`,
-  `presentation`). Upload through `POST /api/upload` (jpg, png, webp, gif) and
-  paste the returned URL into Survey admin. When absent, the built-in SVG
-  illustrations are used as placeholders.
+- `images` — optional public MinIO URLs (`fieldwork`, `analysis`). Upload
+  through `POST /api/upload` (jpg, png, webp, gif) and paste the returned URL
+  into Survey admin. When absent, the built-in SVG illustrations are used as
+  placeholders.
+
+Leads / connections under discussion are **internal only**. Admins manage them
+in the main admin panel under **Settings → Survey Opportunities**
+(`appSettings.survey_opportunities`, one `Name | short note` per line). The
+`GET /api/survey/opportunities` endpoint is admin-only and the public survey
+page never renders those entries.
 
 If the shared API has no published content yet, the admin screen starts empty
 and the first saved service creates the content row.
