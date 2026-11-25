@@ -222,6 +222,20 @@ const SECTION_NAV_LABELS: Partial<Record<SectionKey, string>> = {
   enquiries: "Enquiries",
 };
 
+/* Internal leads are stored as one `Name | short note` per line in Settings.
+   Mirror the API parser so the admin list reflects saved edits immediately. */
+const parseSurveyLeads = (value: string): { name: string; note: string }[] =>
+  value
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [name, ...rest] = line.split("|");
+      return { name: name.trim().slice(0, 120), note: rest.join("|").trim().slice(0, 160) };
+    })
+    .filter((item) => item.name)
+    .slice(0, 30);
+
 const sectionByKey = (key: SectionKey) =>
   sections.find((item) => item.key === key) ?? sections[0];
 
@@ -3820,6 +3834,87 @@ export default function AdminPage() {
                         "Save field team network"
                       )}
                     </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between gap-3 pb-3">
+                  <div>
+                    <CardTitle className="text-sm">Internal leads &amp; connections</CardTitle>
+                    <CardDescription className="mt-1">
+                      Who is connected to us for work. Admin only — never shown on the public page.
+                    </CardDescription>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => setSection("settings")}>
+                    Edit in Settings
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  {parseSurveyLeads(surveyOpportunities).length === 0 ? (
+                    <p className="py-4 text-center text-sm text-muted-foreground">
+                      No leads yet. Add them in Settings → Survey Opportunities.
+                    </p>
+                  ) : (
+                    <ul className="space-y-2">
+                      {parseSurveyLeads(surveyOpportunities).map((lead, index) => (
+                        <li
+                          key={`${lead.name}-${index}`}
+                          className="flex flex-col gap-1 rounded-xl border border-border bg-muted/30 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                          <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                            <Users className="h-3.5 w-3.5 text-primary" />
+                            {lead.name}
+                          </span>
+                          {lead.note && (
+                            <span className="text-xs text-muted-foreground">{lead.note}</span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm">Public contact on /survey</CardTitle>
+                  <CardDescription className="mt-1">
+                    Shown to visitors in the enquiry section. Edit the survey content JSON to change it.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-3 sm:grid-cols-3">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Business development
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-foreground">
+                      {surveyContent.brand.contactName || "—"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Public email
+                    </p>
+                    {surveyContent.brand.contactEmail ? (
+                      <a
+                        href={`mailto:${surveyContent.brand.contactEmail}`}
+                        className="mt-1 flex items-center gap-1.5 break-all text-sm font-semibold text-primary hover:underline"
+                      >
+                        <Link2 className="h-3.5 w-3.5 shrink-0" />
+                        {surveyContent.brand.contactEmail}
+                      </a>
+                    ) : (
+                      <p className="mt-1 text-sm text-muted-foreground">—</p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Location
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-foreground">
+                      {surveyContent.brand.location || "—"}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
