@@ -6,8 +6,9 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowUp,
-  BarChart3,
   BadgeCheck,
+  BarChart3,
+  Check,
   ClipboardList,
   ExternalLink,
   FileText,
@@ -15,6 +16,7 @@ import {
   Inbox,
   Layers3,
   Loader2,
+  Pencil,
   Plus,
   Save,
   Sparkles,
@@ -48,6 +50,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 
 type Content = SurveyContent & Record<string, unknown>;
 
@@ -265,86 +268,179 @@ function StringListEditor({
 }
 
 function VerticalsEditor({ items, onChange }: { items: SurveyVertical[]; onChange: (items: SurveyVertical[]) => void }) {
+  const [editing, setEditing] = useState<number | null>(null);
+
   const update = (index: number, patch: Partial<SurveyVertical>) =>
     onChange(items.map((item, i) => (i === index ? { ...item, ...patch } : item)));
-  const remove = (index: number) => onChange(items.filter((_, i) => i !== index));
+
+  const remove = (index: number) => {
+    const title = items[index]?.title || `Service ${index + 1}`;
+    if (!window.confirm(`Remove “${title}” from the survey services?`)) return;
+    setEditing(null);
+    onChange(items.filter((_, i) => i !== index));
+  };
+
   const move = (index: number, direction: -1 | 1) => {
-    const next = [...items];
     const target = index + direction;
-    if (target < 0 || target >= next.length) return;
+    if (target < 0 || target >= items.length) return;
+    const next = [...items];
     [next[index], next[target]] = [next[target], next[index]];
+    setEditing(null);
     onChange(next);
   };
 
+  const add = () => {
+    setEditing(items.length);
+    onChange([...items, { tag: "", title: "", summary: "", services: [], icon: "", hidden: false }]);
+  };
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
+      <p className="text-xs text-muted-foreground">
+        Cards appear on the public survey page in this order. Use the arrows to reorder, the pencil to
+        edit, and the bin to remove.
+      </p>
+
       {items.map((vertical, index) => (
-        <Card key={`${vertical.slug ?? "vertical"}-${index}`} className="border-border/70">
-          <CardContent className="space-y-3 p-4">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                {vertical.title || `Service ${index + 1}`}
-              </span>
-              <div className="flex items-center gap-1">
-                <Button type="button" variant="ghost" size="icon" disabled={index === 0} aria-label="Move up" onClick={() => move(index, -1)}>
-                  <ArrowUp className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  disabled={index === items.length - 1}
-                  aria-label="Move down"
-                  onClick={() => move(index, 1)}
+        <div
+          key={`${vertical.slug ?? "vertical"}-${index}`}
+          className="overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:border-primary/30 hover:shadow-md"
+        >
+          <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-primary/15 bg-gradient-to-br from-teal-500/15 to-emerald-500/10 text-2xl">
+              {vertical.icon || "🧭"}
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
+                  {vertical.tag || "Service"}
+                </span>
+                <span
+                  className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                    vertical.hidden
+                      ? "border-amber-500/30 bg-amber-500/10 text-amber-600"
+                      : "border-emerald-500/30 bg-emerald-500/10 text-emerald-600"
+                  }`}
                 >
-                  <ArrowDown className="h-4 w-4" />
-                </Button>
-                <Button type="button" variant="ghost" size="icon" aria-label="Remove service" onClick={() => remove(index)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
+                  {vertical.hidden ? "Hidden" : "Live"}
+                </span>
+                <span className="text-[11px] text-muted-foreground">
+                  Position {index + 1} of {items.length}
+                </span>
+              </div>
+              <h3 className="mt-1 truncate text-base font-semibold">{vertical.title || "Untitled service"}</h3>
+              <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                {vertical.summary || "No summary yet — click edit to add one."}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {vertical.services.slice(0, 4).map((service, serviceIndex) => (
+                  <span
+                    key={`${service}-${serviceIndex}`}
+                    className="rounded-md border border-border bg-muted/50 px-2 py-1 text-[11px] text-muted-foreground"
+                  >
+                    {service}
+                  </span>
+                ))}
+                {vertical.services.length > 4 && (
+                  <span className="rounded-md border border-border px-2 py-1 text-[11px] text-muted-foreground">
+                    +{vertical.services.length - 4} more
+                  </span>
+                )}
+                {vertical.services.length === 0 && (
+                  <span className="text-[11px] text-muted-foreground">No service points yet</span>
+                )}
               </div>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Title" value={vertical.title} onChange={(value) => update(index, { title: value })} />
-              <Field label="Tag" value={vertical.tag} onChange={(value) => update(index, { tag: value })} />
-              <Field label="Icon (emoji)" value={vertical.icon ?? ""} onChange={(value) => update(index, { icon: value })} />
-              <Field
-                label="Summary"
-                value={vertical.summary}
-                multiline
-                onChange={(value) => update(index, { summary: value })}
-              />
+
+            <div className="flex shrink-0 items-center gap-1 self-start">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                disabled={index === 0}
+                aria-label={`Move ${vertical.title || "service"} up`}
+                title="Move up"
+                onClick={() => move(index, -1)}
+              >
+                <ArrowUp className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                disabled={index === items.length - 1}
+                aria-label={`Move ${vertical.title || "service"} down`}
+                title="Move down"
+                onClick={() => move(index, 1)}
+              >
+                <ArrowDown className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant={editing === index ? "default" : "outline"}
+                size="icon"
+                aria-label={`Edit ${vertical.title || "service"}`}
+                title="Edit"
+                onClick={() => setEditing(editing === index ? null : index)}
+              >
+                {editing === index ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={`Delete ${vertical.title || "service"}`}
+                title="Delete"
+                onClick={() => remove(index)}
+              >
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
             </div>
-            <StringListEditor
-              label="Services in this card"
-              values={vertical.services}
-              onChange={(values) => update(index, { services: values })}
-              hint="One service per line — shown as bullets on the card"
-            />
-            <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-              <input
-                type="checkbox"
-                checked={Boolean(vertical.hidden)}
-                onChange={(event) => update(index, { hidden: event.target.checked })}
-                className="h-4 w-4"
+          </div>
+
+          {editing === index && (
+            <div className="space-y-4 border-t border-border bg-muted/20 px-5 py-5">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label="Title" value={vertical.title} onChange={(value) => update(index, { title: value })} />
+                <Field label="Tag" value={vertical.tag} onChange={(value) => update(index, { tag: value })} />
+                <Field label="Icon (emoji)" value={vertical.icon ?? ""} onChange={(value) => update(index, { icon: value })} />
+                <Field
+                  label="Summary"
+                  value={vertical.summary}
+                  multiline
+                  onChange={(value) => update(index, { summary: value })}
+                />
+              </div>
+              <StringListEditor
+                label="Service points"
+                values={vertical.services}
+                onChange={(values) => update(index, { services: values })}
+                hint="One service per line — shown as bullets on the public card"
               />
-              Hidden from the public survey page
-            </label>
-          </CardContent>
-        </Card>
+              <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card px-3 py-2.5">
+                <div>
+                  <p className="text-sm font-medium">Visible on the public page</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Hidden cards stay here but are removed from the page and enquiry form.
+                  </p>
+                </div>
+                <Switch
+                  checked={!vertical.hidden}
+                  onCheckedChange={(checked) => update(index, { hidden: !checked })}
+                  aria-label="Visible on the public page"
+                />
+              </div>
+              <Button type="button" size="sm" onClick={() => setEditing(null)}>
+                <Check className="h-4 w-4" /> Done
+              </Button>
+            </div>
+          )}
+        </div>
       ))}
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() =>
-          onChange([
-            ...items,
-            { tag: "", title: "", summary: "", services: [], icon: "", hidden: false },
-          ])
-        }
-      >
-        <Plus className="h-4 w-4" /> Add service
+
+      <Button type="button" variant="outline" className="w-full border-dashed py-5" onClick={add}>
+        <Plus className="h-4 w-4" /> Add service card
       </Button>
     </div>
   );
