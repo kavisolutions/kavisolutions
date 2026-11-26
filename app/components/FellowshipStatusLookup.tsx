@@ -11,6 +11,7 @@ import {
   isFellowshipStage,
   type FellowshipApplicationStage,
 } from "@/lib/fellowship-application";
+import { useSupportEmail } from "@/lib/support-email";
 
 type ApplicationStatus = {
   reference: string;
@@ -26,6 +27,7 @@ type ApplicationStatus = {
 };
 
 export default function FellowshipStatusLookup() {
+  const supportEmail = useSupportEmail();
   const [reference, setReference] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -193,9 +195,8 @@ export default function FellowshipStatusLookup() {
                 ) : application.stage === "rejected" ||
                   application.stage === "withdrawn" ? (
                     <p className="mt-5 rounded-xl border border-[rgba(148,163,184,0.16)] bg-[rgba(18,29,47,0.55)] p-4 text-xs leading-relaxed text-[#A5B3C7]">
-                      This application is closed. You can email
-                      support@kavisolutions.in if you believe this is a mistake
-                      or want feedback.
+                      This application is closed. You can email {supportEmail} if
+                      you believe this is a mistake or want feedback.
                     </p>
                   ) : (
                     <>
@@ -257,8 +258,8 @@ export default function FellowshipStatusLookup() {
 
               <p className="mt-4 text-[10px] text-[#7889A0]">
                 Last updated {new Date(application.updatedAt).toLocaleDateString()}.
-                This page does not show internal notes. Email
-                support@kavisolutions.in for questions.
+                This page does not show internal notes. Email {supportEmail} for
+                questions.
               </p>
             </div>
           )}

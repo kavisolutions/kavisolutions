@@ -3,6 +3,7 @@ export const TEAM_SETTING_KEYS = {
   description: "team_description",
   contactEmail: "contact_email",
   financialEmail: "financial_email",
+  supportEmail: "support_email",
   surveyOpportunities: "survey_opportunities",
 } as const;
 

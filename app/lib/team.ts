@@ -2,6 +2,7 @@ export const TEAM_SETTING_KEYS = {
   tagline: "team_tagline",
   description: "team_description",
   contactEmail: "contact_email",
+  supportEmail: "support_email",
 } as const
 
 export const TEAM_GRADIENTS = [

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import GovernmentForms from "@/components/GovernmentForms";
+import SupportEmail from "@/components/SupportEmail";
 import { GlowOrb, Reveal, RevealItem, RevealStagger } from "@/components/motion";
 import {
   GOVERNMENT_APPROACH,
@@ -343,9 +344,10 @@ export function GovernmentPage() {
               <div className="mt-8 space-y-3 text-sm">
                 <p className="text-slate-600 dark:text-mist">
                   <span className="font-semibold text-slate-900 dark:text-white">Email:</span>{" "}
-                  <a className="text-sky-700 dark:text-sky-300 font-medium hover:underline" href={`mailto:${GOVERNMENT_CONTACT.email}`}>
-                    {GOVERNMENT_CONTACT.email}
-                  </a>
+                  <SupportEmail
+                    href
+                    className="text-sky-700 dark:text-sky-300 font-medium hover:underline"
+                  />
                 </p>
                 <p className="text-slate-600 dark:text-mist">
                   <span className="font-semibold text-slate-900 dark:text-white">Location:</span> {GOVERNMENT_CONTACT.location}

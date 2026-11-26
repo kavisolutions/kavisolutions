@@ -63,6 +63,10 @@ only inserts when the setting is missing or empty, so admin edits are kept.
 and the Survey page's brand contact to `support@kavisolutions.in`. Admin login
 addresses and the outgoing `no-reply@` sender are unchanged.
 
+`0014_support_email_setting.sql` adds the `support_email` setting that admins
+edit in Admin → Settings. Public pages read it from `GET /api/settings/public`
+and all enquiry forms use it as the recipient.
+
 ## Verify
 
 ```bash

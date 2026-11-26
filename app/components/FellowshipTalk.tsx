@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2, Loader2, MessageSquareText } from "lucide-rea
 
 import { apiErrorMessage } from "@/lib/api-error";
 import { Reveal } from "@/components/motion";
+import { useSupportEmail } from "@/lib/support-email";
 
 const CATEGORIES = [
   { value: "admissions", label: "Admissions" },
@@ -16,6 +17,7 @@ const CATEGORIES = [
 ] as const;
 
 export default function FellowshipTalk() {
+  const supportEmail = useSupportEmail();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -118,7 +120,7 @@ export default function FellowshipTalk() {
                 </h3>
                 <p className="mt-2 text-sm text-[#A5B3C7]">
                   The team will reply using the contact details you shared. If it is
-                  urgent, email support@kavisolutions.in.
+                  urgent, email {supportEmail}.
                 </p>
                 <button
                   type="button"

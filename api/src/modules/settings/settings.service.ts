@@ -1,22 +1,25 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 import { DATABASE } from "@/db/drizzle/drizzle.module";
 import type { Database } from "@/db/drizzle/drizzle.client";
 import { appSettings } from "@/db/drizzle/schema";
-import { sanitizeText, TEAM_SETTING_KEYS } from "@/_shared/text";
+import { isEmail, sanitizeText, TEAM_SETTING_KEYS } from "@/_shared/text";
 
 export type SettingsPayload = {
   tagline?: unknown;
   description?: unknown;
   contactEmail?: unknown;
   financialEmail?: unknown;
+  supportEmail?: unknown;
   surveyOpportunities?: unknown;
 };
 
 /* One opportunity per line: `Name | short note`. Keeping this as text in the
    existing settings table avoids a new table for a list that is edited a few
    times a year. */
+export const DEFAULT_SUPPORT_EMAIL = "support@kavisolutions.in";
+
 export type SurveyOpportunity = { name: string; note: string };
 
 export const parseSurveyOpportunities = (value: string | null | undefined): SurveyOpportunity[] =>
@@ -41,6 +44,7 @@ export class SettingsService {
       TEAM_SETTING_KEYS.description,
       TEAM_SETTING_KEYS.contactEmail,
       TEAM_SETTING_KEYS.financialEmail,
+      TEAM_SETTING_KEYS.supportEmail,
       TEAM_SETTING_KEYS.surveyOpportunities,
     ];
 
@@ -57,6 +61,7 @@ export class SettingsService {
         description: map.get(TEAM_SETTING_KEYS.description) || "",
         contactEmail: map.get(TEAM_SETTING_KEYS.contactEmail) || "",
         financialEmail: map.get(TEAM_SETTING_KEYS.financialEmail) || "",
+        supportEmail: map.get(TEAM_SETTING_KEYS.supportEmail) || "",
         surveyOpportunities: map.get(TEAM_SETTING_KEYS.surveyOpportunities) || "",
       },
     };
@@ -98,6 +103,18 @@ export class SettingsService {
       });
     }
 
+    if (payload.supportEmail !== undefined) {
+      const value = sanitizeText(payload.supportEmail, 254);
+      if (value && !isEmail(value)) {
+        throw new BadRequestException("Enter a valid support email address");
+      }
+      rows.push({
+        key: TEAM_SETTING_KEYS.supportEmail,
+        value,
+        updatedAt: now,
+      });
+    }
+
     if (payload.surveyOpportunities !== undefined) {
       const parsed = parseSurveyOpportunities(sanitizeText(payload.surveyOpportunities, 4000));
       rows.push({
@@ -124,7 +141,30 @@ export class SettingsService {
     return { ok: true };
   }
 
+  /* The admin-managed support address is the source of truth for both public
+     display and enquiry recipients. Older contact_email/financial_email rows
+     remain as fallbacks for databases not yet migrated. */
+  private async configuredSupportEmail(): Promise<string> {
+    const [row] = await this.db
+      .select({ value: appSettings.value })
+      .from(appSettings)
+      .where(eq(appSettings.key, TEAM_SETTING_KEYS.supportEmail))
+      .limit(1);
+
+    const value = typeof row?.value === "string" ? row.value.trim() : "";
+    return isEmail(value) ? value : "";
+  }
+
+  /* Read-only for public pages: exposes only the support address an
+     administrator chose, never internal settings. */
+  async publicInfo(): Promise<{ supportEmail: string }> {
+    return { supportEmail: (await this.configuredSupportEmail()) || DEFAULT_SUPPORT_EMAIL };
+  }
+
   async contactEmail(): Promise<string> {
+    const support = await this.configuredSupportEmail();
+    if (support) return support;
+
     const [row] = await this.db
       .select()
       .from(appSettings)
@@ -133,12 +173,15 @@ export class SettingsService {
     const value = typeof row?.value === "string" ? row.value.trim() : "";
     if (value) return value;
 
-    return process.env.CONTACT_EMAIL || process.env.SMTP_USER || "support@kavisolutions.in";
+    return process.env.CONTACT_EMAIL || process.env.SMTP_USER || DEFAULT_SUPPORT_EMAIL;
   }
 
   /* Financial enquiries go to a dedicated mailbox. Falls back to the general
      contact address only when the dedicated one is not configured. */
   async financialEmail(): Promise<string> {
+    const support = await this.configuredSupportEmail();
+    if (support) return support;
+
     const [row] = await this.db
       .select()
       .from(appSettings)
@@ -147,7 +190,7 @@ export class SettingsService {
     const value = typeof row?.value === "string" ? row.value.trim() : "";
     if (value) return value;
 
-    return process.env.FINANCIAL_EMAIL || "support@kavisolutions.in";
+    return process.env.FINANCIAL_EMAIL || DEFAULT_SUPPORT_EMAIL;
   }
 
   async surveyOpportunities(): Promise<SurveyOpportunity[]> {

@@ -6,6 +6,7 @@ import { ArrowRight, CheckCircle2, Loader2, Mail } from "lucide-react";
 import { FELLOWSHIP_TRACKS } from "@/lib/fellowship-data";
 import { apiErrorMessage } from "@/lib/api-error";
 import { Reveal } from "@/components/motion";
+import { useSupportEmail } from "@/lib/support-email";
 
 const STATUS_OPTIONS = [
   "Final-year student",
@@ -17,6 +18,7 @@ const STATUS_OPTIONS = [
 ] as const;
 
 export default function FellowshipApply() {
+  const supportEmail = useSupportEmail();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -78,7 +80,7 @@ export default function FellowshipApply() {
         throw new Error(
           apiErrorMessage(
             data,
-            "Could not send the application. Please try again or email support@kavisolutions.in.",
+            `Could not send the application. Please try again or email ${supportEmail}.`,
           ),
         );
       }
@@ -89,7 +91,7 @@ export default function FellowshipApply() {
       setError(
         cause instanceof Error
           ? cause.message
-          : "Could not send the application. Please try again or email support@kavisolutions.in.",
+          : `Could not send the application. Please try again or email ${supportEmail}.`,
       );
     } finally {
       setLoading(false);
@@ -141,11 +143,11 @@ export default function FellowshipApply() {
               </div>
 
               <a
-                href="mailto:support@kavisolutions.in"
+                href={`mailto:${supportEmail}`}
                 className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium text-[#91B4FF] hover:underline"
               >
                 <Mail className="h-3.5 w-3.5" />
-                support@kavisolutions.in
+                {supportEmail}
               </a>
             </div>
           </Reveal>

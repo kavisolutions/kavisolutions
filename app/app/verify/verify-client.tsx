@@ -14,6 +14,7 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { TiltCard } from "@/components/motion";
+import { useSupportEmail } from "@/lib/support-email";
 
 type LookupState =
   | { kind: "idle" }
@@ -70,6 +71,7 @@ function initialStateFor(id: string): LookupState {
 }
 
 export default function VerifyClient({ initialId }: { initialId: string }) {
+  const supportEmail = useSupportEmail();
   const [input, setInput] = useState(initialId);
   const [state, setState] = useState<LookupState>(() => initialStateFor(initialId));
   // Only the most recent lookup may update state; slower stale responses are ignored.
@@ -254,8 +256,8 @@ export default function VerifyClient({ initialId }: { initialId: string }) {
             Kavi Solutions certificates recognise participation in our programmes and
             engagements. They do not represent university accreditation, government
             recognition or a professional licence. Questions? Write to{" "}
-            <a href="mailto:support@kavisolutions.in" className="text-[#91B4FF] hover:underline">
-              support@kavisolutions.in
+            <a href={`mailto:${supportEmail}`} className="text-[#91B4FF] hover:underline">
+              {supportEmail}
             </a>
             .
           </p>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import FellowshipGuidePrint from "@/components/FellowshipGuidePrint";
+import SupportEmail, { SupportText } from "@/components/SupportEmail";
 import { apiBaseUrl } from "@/lib/pages";
 import {
   FELLOWSHIP_AT_A_GLANCE,
@@ -199,7 +200,7 @@ export default async function FellowshipGuide() {
               <div key={item.q}>
                 <dt className="text-xs font-semibold">{item.q}</dt>
                 <dd className="mt-0.5 text-[11px] leading-relaxed text-slate-600">
-                  {item.a}
+                  <SupportText text={item.a} />
                 </dd>
               </div>
             ))}
@@ -209,7 +210,7 @@ export default async function FellowshipGuide() {
         <section className="mt-8 border-t border-slate-200 pt-5">
           <h2 className="text-lg font-semibold">Contact</h2>
           <p className="mt-2 text-[11px] leading-relaxed text-slate-600">
-            Email: support@kavisolutions.in
+            Email: <SupportEmail />
             <br />
             Location: Andhra Pradesh &amp; Telangana · cohort residencies
             announced per batch.

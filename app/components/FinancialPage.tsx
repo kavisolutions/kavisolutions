@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import FinancialForms from "@/components/FinancialForms";
+import SupportEmail from "@/components/SupportEmail";
 import { GlowOrb, Reveal, RevealItem, RevealStagger } from "@/components/motion";
 import {
   BUSINESS_SERVICES,
@@ -132,9 +133,7 @@ export function FinancialPage() {
             </div>
             <p className="mt-3 text-xs text-fog">
               All enquiries currently go to{" "}
-              <a href={`mailto:${FINANCIAL_CONTACT.email}`} className="text-emerald-300 hover:underline">
-                {FINANCIAL_CONTACT.email}
-              </a>
+              <SupportEmail href className="text-emerald-300 hover:underline" />
               .
             </p>
           </Reveal>
@@ -502,15 +501,16 @@ export function FinancialPage() {
 
               <Reveal delay={0.1}>
                 <div className="mb-8 space-y-3">
-                  <a
-                    href={`mailto:${FINANCIAL_CONTACT.email}?subject=Financial%20services%20enquiry`}
-                    className="flex items-center gap-3 text-mist transition-colors hover:text-white"
-                  >
+                  <div className="flex items-center gap-3 text-mist transition-colors hover:text-white">
                     <span className="flex h-10 w-10 items-center justify-center rounded-xl glass text-lg">
                       ✉️
                     </span>
-                    {FINANCIAL_CONTACT.email}
-                  </a>
+                    <SupportEmail
+                      href
+                      subject="Financial services enquiry"
+                      className="hover:underline"
+                    />
+                  </div>
                   <div className="flex items-center gap-3 text-mist">
                     <span className="flex h-10 w-10 items-center justify-center rounded-xl glass text-lg">
                       📍

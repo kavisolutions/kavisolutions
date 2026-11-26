@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { ArrowRight, CheckCircle2, Globe, Mail, Send } from "lucide-react";
 import { GlowOrb, Reveal, TiltCard } from "./motion";
+import { useSupportEmail } from "@/lib/support-email";
 
 export default function Contact() {
+  const supportEmail = useSupportEmail();
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -80,10 +82,10 @@ export default function Contact() {
                     Direct Partner Inbox
                   </span>
                   <a
-                    href="mailto:support@kavisolutions.in"
+                    href={`mailto:${supportEmail}`}
                     className="text-[14px] sm:text-[15px] text-[#91B4FF] hover:underline font-medium"
                   >
-                    support@kavisolutions.in
+                    {supportEmail}
                   </a>
                 </div>
               </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useSupportEmail } from "@/lib/support-email";
 import { useParams } from "next/navigation";
 import { CalendarClock, CheckCircle2, Loader2, MapPin, Video } from "lucide-react";
 
@@ -21,6 +22,7 @@ type Interview = {
 };
 
 export default function CandidateInterviewPage() {
+  const supportEmail = useSupportEmail();
   const params = useParams<{ token: string }>();
   const token = Array.isArray(params.token) ? params.token[0] : params.token;
   const [interview, setInterview] = useState<Interview | null>(null);
@@ -290,7 +292,7 @@ export default function CandidateInterviewPage() {
           )}
 
           <p className="mt-6 text-[10px] text-[#7889A0]">
-            This link is private. Do not forward it. Email support@kavisolutions.in if
+            This link is private. Do not forward it. Email {supportEmail} if
             you need help.
           </p>
         </div>

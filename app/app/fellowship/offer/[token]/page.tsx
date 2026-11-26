@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useSupportEmail } from "@/lib/support-email";
 import { useParams } from "next/navigation";
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 
@@ -16,6 +17,7 @@ type Application = {
 };
 
 export default function CandidateOfferPage() {
+  const supportEmail = useSupportEmail();
   const params = useParams<{ token: string }>();
   const token = Array.isArray(params.token) ? params.token[0] : params.token;
   const [application, setApplication] = useState<Application | null>(null);
@@ -144,7 +146,7 @@ export default function CandidateOfferPage() {
               </p>
               <p className="mt-1 text-xs leading-relaxed text-[#A5B3C7]">
                 Your response is recorded. Thank you for letting the team know. You can
-                email support@kavisolutions.in if you want feedback.
+                email {supportEmail} if you want feedback.
               </p>
             </div>
           ) : application.stage !== "offer" ? (
@@ -157,8 +159,8 @@ export default function CandidateOfferPage() {
             </div>
           ) : expired ? (
             <div className="mt-5 rounded-xl border border-amber-500/30 bg-amber-500/10 p-5 text-sm text-amber-200">
-              The response window for this offer has closed. Email
-              support@kavisolutions.in to ask about the next step.
+              The response window for this offer has closed. Email {supportEmail} to
+              ask about the next step.
             </div>
           ) : (
             <>
@@ -213,7 +215,7 @@ export default function CandidateOfferPage() {
           )}
 
           <p className="mt-6 text-[10px] text-[#7889A0]">
-            This link is private. Do not forward it. Email support@kavisolutions.in if
+            This link is private. Do not forward it. Email {supportEmail} if
             you need help.
           </p>
         </div>

@@ -295,6 +295,7 @@ export default function AdminPage() {
   const [description, setDescription] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [financialEmail, setFinancialEmail] = useState("");
+  const [supportEmail, setSupportEmail] = useState("");
   const [surveyOpportunities, setSurveyOpportunities] = useState("");
   const [surveyContent, setSurveyContent] = useState<SurveyContent>(EMPTY_SURVEY_CONTENT);
   const [networkDraft, setNetworkDraft] = useState<SurveyNetwork>(
@@ -532,6 +533,7 @@ export default function AdminPage() {
     setDescription(settingsData?.settings?.description ?? "");
     setContactEmail(settingsData?.settings?.contactEmail ?? "");
     setFinancialEmail(settingsData?.settings?.financialEmail ?? "");
+    setSupportEmail(settingsData?.settings?.supportEmail ?? "");
     setSurveyOpportunities(settingsData?.settings?.surveyOpportunities ?? "");
     const nextSurveyContent = isSurveyContent(surveyContentData?.content)
       ? surveyContentData.content
@@ -1483,7 +1485,14 @@ export default function AdminPage() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ tagline, description, contactEmail, financialEmail, surveyOpportunities }),
+      body: JSON.stringify({
+        tagline,
+        description,
+        contactEmail,
+        financialEmail,
+        supportEmail,
+        surveyOpportunities,
+      }),
     });
 
     const data = await res.json().catch(() => null);
@@ -5156,29 +5165,17 @@ export default function AdminPage() {
 
                 <div>
                   <label className="mb-1.5 block text-xs font-semibold text-foreground">
-                    Contact Form Inquiries Email
+                    Support email
                   </label>
                   <Input
                     type="email"
-                    value={contactEmail}
-                    onChange={(e) => setContactEmail(e.target.value)}
-                    placeholder="support@kavisolutions.in"
-                  />
-                  <p className="mt-1 text-[11px] text-muted-foreground">Recipient for customer inquiries submitted through the contact form.</p>
-                </div>
-
-                <div>
-                  <label className="mb-1.5 block text-xs font-semibold text-foreground">
-                    Financial Enquiries Email
-                  </label>
-                  <Input
-                    type="email"
-                    value={financialEmail}
-                    onChange={(e) => setFinancialEmail(e.target.value)}
+                    value={supportEmail}
+                    onChange={(e) => setSupportEmail(e.target.value)}
                     placeholder="support@kavisolutions.in"
                   />
                   <p className="mt-1 text-[11px] text-muted-foreground">
-                    Recipient for financial-services enquiries. Falls back to support@kavisolutions.in.
+                    Shown on public pages and used as the recipient for every enquiry form. Changes
+                    take effect immediately — no rebuild or redeploy needed.
                   </p>
                 </div>
 

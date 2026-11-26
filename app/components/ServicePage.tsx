@@ -6,8 +6,10 @@ import type { ServiceData } from "@/lib/services-data";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { GlowOrb, Reveal, RevealItem, RevealStagger, TiltCard } from "@/components/motion";
+import { useSupportEmail } from "@/lib/support-email";
 
 export function ServicePage({ data }: { data: ServiceData }) {
+  const supportEmail = useSupportEmail();
   return (
     <div className="relative min-h-screen bg-ink font-sans text-[#F7F9FC] flex flex-col justify-between">
       <Navbar />
@@ -289,10 +291,10 @@ export function ServicePage({ data }: { data: ServiceData }) {
                   </Link>
                   {data.contactEmail && (
                     <a
-                      href={`mailto:${data.contactEmail}?subject=${encodeURIComponent(data.tag + " enquiry")}`}
+                      href={`mailto:${supportEmail}?subject=${encodeURIComponent(data.tag + " enquiry")}`}
                       className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-[rgba(255,255,255,0.14)] bg-[rgba(18,29,47,0.7)] px-7 text-[15px] font-medium text-[#F7F9FC] backdrop-blur-md transition-all hover:bg-white/[0.08]"
                     >
-                      <span>{data.contactEmail}</span>
+                      <span>{supportEmail}</span>
                     </a>
                   )}
                 </div>

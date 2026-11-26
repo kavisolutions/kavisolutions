@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useSupportEmail } from "@/lib/support-email";
 import { useParams } from "next/navigation";
 import {
   ArrowLeft,
@@ -110,6 +111,7 @@ const EMPTY_SCORES: Scores = {
 };
 
 export default function MentorInterviewPage() {
+  const supportEmail = useSupportEmail();
   const params = useParams<{ token: string }>();
   const token = Array.isArray(params.token) ? params.token[0] : params.token;
 
@@ -230,7 +232,7 @@ export default function MentorInterviewPage() {
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-[#A5B3C7]">{error}</p>
           <p className="mt-4 text-[10px] text-[#7889A0]">
-            Do not share this link. Email support@kavisolutions.in if you need help.
+            Do not share this link. Email {supportEmail} if you need help.
           </p>
         </div>
       </main>

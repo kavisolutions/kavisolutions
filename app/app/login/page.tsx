@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { TiltCard } from "@/components/motion";
 import { ShieldCheck, ArrowRight, Lock, Mail } from "lucide-react";
+import { useSupportEmail } from "@/lib/support-email";
 
 const inputClass =
   "w-full rounded-xl border border-[rgba(148,163,184,0.18)] bg-[#19202E]/60 px-4 py-3 text-sm text-[#F7F9FC] outline-none transition-colors placeholder:text-[#7889A0] focus:border-[#91B4FF] focus:ring-1 focus:ring-[#91B4FF]";
@@ -36,6 +37,7 @@ function getNextPath(): string | null {
 }
 
 export default function LoginPage() {
+  const supportEmail = useSupportEmail();
   const { session, loading: authLoading } = useAuth();
   const router = useRouter();
   const redirecting = useRef(false);
@@ -232,8 +234,8 @@ export default function LoginPage() {
               <ShieldCheck className="h-4 w-4 shrink-0 text-[#91B4FF] mt-0.5" />
               <p>
                 Team logins are provisioned by an administrator. Contact{" "}
-                <a href="mailto:support@kavisolutions.in" className="text-[#91B4FF] hover:underline">
-                  support@kavisolutions.in
+                <a href={`mailto:${supportEmail}`} className="text-[#91B4FF] hover:underline">
+                  {supportEmail}
                 </a>{" "}
                 if you need access.
               </p>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FINANCIAL_CONTACT, FINANCIAL_ENTITY_TYPES, FINANCIAL_SERVICE_OPTIONS } from "@/lib/financial-data";
+import { useSupportEmail } from "@/lib/support-email";
 
 type Kind = "individual" | "business";
 
@@ -25,6 +26,7 @@ const currentFinancialYear = (): string => {
 };
 
 export default function FinancialForms() {
+  const supportEmail = useSupportEmail();
   const [kind, setKind] = useState<Kind>("individual");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
 
@@ -73,7 +75,7 @@ export default function FinancialForms() {
           kind: "error",
           message:
             message ||
-            `Could not send your enquiry. Please email ${FINANCIAL_CONTACT.email} directly.`,
+            `Could not send your enquiry. Please email ${supportEmail} directly.`,
         });
         return;
       }

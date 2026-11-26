@@ -13,6 +13,7 @@ import FellowshipFieldFaqs from "@/components/FellowshipFieldFaqs";
 import FellowshipTalk from "@/components/FellowshipTalk";
 import FellowshipCursor from "@/components/FellowshipCursor";
 import FellowshipScrollProgress from "@/components/FellowshipScrollProgress";
+import { useSupportEmail } from "@/lib/support-email";
 import {
   FELLOWSHIP_AUDIENCE,
   FELLOWSHIP_COHORTS,
@@ -51,6 +52,7 @@ function SectionHeading({
 }
 
 export default function FellowshipPage() {
+  const supportEmail = useSupportEmail();
   return (
     <div className="relative min-h-screen bg-ink font-sans text-[#0F172A] dark:text-white">
       <FellowshipScrollProgress />
@@ -284,7 +286,9 @@ export default function FellowshipPage() {
                       +
                     </span>
                   </summary>
-                  <p className="mt-3 text-sm leading-relaxed text-[#A5B3C7]">{item.a}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-[#A5B3C7]">
+                    {item.a.replaceAll("support@kavisolutions.in", supportEmail)}
+                  </p>
                 </details>
               </RevealItem>
             ))}

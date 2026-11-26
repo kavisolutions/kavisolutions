@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import FarmsForms from "@/components/FarmsForms";
+import SupportEmail from "@/components/SupportEmail";
 import { GlowOrb, Reveal, RevealItem, RevealStagger } from "@/components/motion";
 import {
   FARM_DESTINATIONS,
@@ -357,9 +358,10 @@ export function FarmsPage() {
               <div className="mt-8 space-y-3 text-sm">
                 <p className="text-slate-600 dark:text-mist">
                   <span className="font-semibold text-slate-900 dark:text-white">Email:</span>{" "}
-                  <a className="text-emerald-700 dark:text-lime-300 font-medium hover:underline" href={`mailto:${FARMS_CONTACT.email}`}>
-                    {FARMS_CONTACT.email}
-                  </a>
+                  <SupportEmail
+                    href
+                    className="text-emerald-700 dark:text-lime-300 font-medium hover:underline"
+                  />
                 </p>
                 <p className="text-slate-600 dark:text-mist">
                   <span className="font-semibold text-slate-900 dark:text-white">Phone:</span> {FARMS_CONTACT.phone}
