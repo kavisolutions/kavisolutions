@@ -636,6 +636,21 @@ export default function SurveyAdmin() {
   }, [authLoading, session, load]);
 
   useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("tab");
+    if (requested && TABS.some((item) => item.key === requested)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- restore tab from URL after hydration
+      setTab(requested as TabKey);
+    }
+  }, []);
+
+  const selectTab = (key: TabKey) => {
+    setTab(key);
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", key);
+    window.history.replaceState(null, "", url.toString());
+  };
+
+  useEffect(() => {
     if (!notice) return;
     const timer = setTimeout(() => setNotice(""), 3500);
     return () => clearTimeout(timer);
@@ -921,7 +936,7 @@ export default function SurveyAdmin() {
             <button
               key={item.key}
               type="button"
-              onClick={() => setTab(item.key)}
+              onClick={() => selectTab(item.key)}
               aria-current={tab === item.key ? "page" : undefined}
               className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[13px] font-medium transition-colors ${
                 tab === item.key
@@ -940,7 +955,7 @@ export default function SurveyAdmin() {
             <button
               key={item.key}
               type="button"
-              onClick={() => setTab(item.key)}
+              onClick={() => selectTab(item.key)}
               aria-current={tab === item.key ? "page" : undefined}
               className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[13px] font-medium transition-colors ${
                 tab === item.key
@@ -995,7 +1010,7 @@ export default function SurveyAdmin() {
               <button
                 key={item.key}
                 type="button"
-                onClick={() => setTab(item.key)}
+                onClick={() => selectTab(item.key)}
                 className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold ${
                   tab === item.key ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"
                 }`}
