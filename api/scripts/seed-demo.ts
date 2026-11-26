@@ -387,11 +387,11 @@ async function main(): Promise<void> {
   await db
     .insert(roles)
     .values([
-      { id: "volunteer", name: "Volunteer", sortOrder: 1 },
-      { id: "intern", name: "Intern", sortOrder: 2 },
-      { id: "fellow", name: "Fellow", sortOrder: 3 },
-      { id: "mentor", name: "Mentor", sortOrder: 4 },
-      { id: "partner", name: "Partner", sortOrder: 5 },
+      { code: "volunteer", name: "Volunteer", sortOrder: 1 },
+      { code: "intern", name: "Intern", sortOrder: 2 },
+      { code: "fellow", name: "Fellow", sortOrder: 3 },
+      { code: "mentor", name: "Mentor", sortOrder: 4 },
+      { code: "partner", name: "Partner", sortOrder: 5 },
     ])
     .onConflictDoNothing();
 
@@ -429,7 +429,8 @@ async function main(): Promise<void> {
       value:
         "The people behind Kavi Solutions — a senior collective of systems architects, product engineers and fellowship leaders.",
     },
-    { key: "contact_email", value: "kavisolutions1@gmail.com" },
+    { key: "contact_email", value: "support@kavisolutions.in" },
+    { key: "support_email", value: "support@kavisolutions.in" },
     { key: "page_survey_enabled", value: "true" },
     { key: "page_financial_enabled", value: "true" },
     { key: "page_government_enabled", value: "true" },
