@@ -74,7 +74,8 @@ export const readOrgOptions = async (
 
   return {
     roles: roleRows
-      .map((row) => ({ id: row.id, name: row.name, sortOrder: row.sortOrder }))
+      // Role ids are serial numbers in the DB; the admin UI still uses string ids.
+      .map((row) => ({ id: String(row.id), name: row.name, sortOrder: row.sortOrder }))
       .sort(byOrder),
     teams: teamRows
       .map((row) => ({ id: row.id, name: row.name, sortOrder: row.sortOrder }))
