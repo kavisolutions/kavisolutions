@@ -8,6 +8,7 @@ import {
   ArrowUp,
   BadgeCheck,
   BarChart3,
+  Bell,
   Check,
   ClipboardList,
   ExternalLink,
@@ -18,7 +19,10 @@ import {
   Loader2,
   Pencil,
   Plus,
+  Rocket,
   Save,
+  Search,
+  Send,
   Sparkles,
   Trash2,
   Users,
@@ -96,6 +100,14 @@ const CONTENT_TABS: TabKey[] = [
   "work",
   "sectors",
   "faqs",
+];
+
+const CARD_TILES = [
+  "border-teal-500/20 from-teal-500/20 to-emerald-500/10 text-teal-500",
+  "border-violet-500/20 from-violet-500/20 to-indigo-500/10 text-violet-500",
+  "border-amber-500/20 from-amber-500/20 to-orange-500/10 text-amber-500",
+  "border-emerald-500/20 from-emerald-500/20 to-green-500/10 text-emerald-500",
+  "border-yellow-500/20 from-yellow-500/20 to-amber-500/10 text-yellow-500",
 ];
 
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
@@ -307,13 +319,17 @@ function VerticalsEditor({ items, onChange }: { items: SurveyVertical[]; onChang
           className="overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:border-primary/30 hover:shadow-md"
         >
           <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-primary/15 bg-gradient-to-br from-teal-500/15 to-emerald-500/10 text-2xl">
+            <div
+              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border bg-gradient-to-br text-2xl ${
+                CARD_TILES[index % CARD_TILES.length]
+              }`}
+            >
               {vertical.icon || "🧭"}
             </div>
 
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
+                <span className="rounded-full border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-blue-400">
                   {vertical.tag || "Service"}
                 </span>
                 <span
@@ -358,6 +374,7 @@ function VerticalsEditor({ items, onChange }: { items: SurveyVertical[]; onChang
                 type="button"
                 variant="ghost"
                 size="icon"
+                className="h-9 w-9 rounded-full border border-border"
                 disabled={index === 0}
                 aria-label={`Move ${vertical.title || "service"} up`}
                 title="Move up"
@@ -369,6 +386,7 @@ function VerticalsEditor({ items, onChange }: { items: SurveyVertical[]; onChang
                 type="button"
                 variant="ghost"
                 size="icon"
+                className="h-9 w-9 rounded-full border border-border"
                 disabled={index === items.length - 1}
                 aria-label={`Move ${vertical.title || "service"} down`}
                 title="Move down"
@@ -378,8 +396,12 @@ function VerticalsEditor({ items, onChange }: { items: SurveyVertical[]; onChang
               </Button>
               <Button
                 type="button"
-                variant={editing === index ? "default" : "outline"}
                 size="icon"
+                className={`h-9 w-9 rounded-full ${
+                  editing === index
+                    ? "bg-blue-600 hover:bg-blue-500"
+                    : "bg-blue-500/90 text-white hover:bg-blue-500"
+                }`}
                 aria-label={`Edit ${vertical.title || "service"}`}
                 title="Edit"
                 onClick={() => setEditing(editing === index ? null : index)}
@@ -388,13 +410,14 @@ function VerticalsEditor({ items, onChange }: { items: SurveyVertical[]; onChang
               </Button>
               <Button
                 type="button"
-                variant="ghost"
+                variant="destructive"
                 size="icon"
+                className="h-9 w-9 rounded-full"
                 aria-label={`Delete ${vertical.title || "service"}`}
                 title="Delete"
                 onClick={() => remove(index)}
               >
-                <Trash2 className="h-4 w-4 text-destructive" />
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -732,6 +755,7 @@ export default function SurveyAdmin() {
 
   const active = TABS.find((item) => item.key === tab) ?? TABS[0];
   const dirty = Boolean(content && JSON.stringify(content) !== savedContent);
+  const newEnquiryCount = enquiries.filter((item) => item.status === "new").length;
 
   const renderTab = (): ReactNode => {
     if (!content) return null;
@@ -923,10 +947,21 @@ export default function SurveyAdmin() {
     <div className="min-h-screen bg-background text-foreground">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-border bg-card lg:flex">
         <div className="flex h-16 items-center gap-3 border-b border-border px-5">
-          <Link href="/admin" className="flex items-center gap-2 text-sm font-bold">
-            <ArrowLeft className="h-4 w-4" /> Admin
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20">
+            <Layers3 className="h-4 w-4" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-bold leading-tight">Admin Panel</p>
+            <p className="text-[11px] text-muted-foreground">Survey &amp; Research</p>
+          </div>
+          <Link
+            href="/admin"
+            title="Back to main admin"
+            aria-label="Back to main admin"
+            className="ml-auto text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
           </Link>
-          <span className="text-sm font-semibold">Survey</span>
         </div>
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
           <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
@@ -971,27 +1006,64 @@ export default function SurveyAdmin() {
         <div className="border-t border-border p-3">
           <Link
             href="/survey"
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+            className="flex items-center gap-3 rounded-xl border border-blue-500/20 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 px-3 py-3 transition-colors hover:border-blue-400/40"
           >
-            View public page <ExternalLink className="h-3 w-3" />
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/15 text-blue-400">
+              <Rocket className="h-4 w-4" />
+            </span>
+            <span>
+              <span className="block text-[13px] font-semibold">Live Site</span>
+              <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                View public page <ExternalLink className="h-3 w-3" />
+              </span>
+            </span>
           </Link>
         </div>
       </aside>
 
       <div className="lg:pl-64">
         <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-card/95 px-5 py-3 backdrop-blur lg:px-8">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold">Survey &amp; Research</h1>
-              {dirty && <span className="rounded bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-600">Unsaved</span>}
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-lg shadow-indigo-500/20">
+              <Layers3 className="h-5 w-5" />
             </div>
-            <p className="text-xs text-muted-foreground">{active.hint}</p>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg font-bold">Survey &amp; Research</h1>
+                {dirty && (
+                  <span className="rounded bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-600">
+                    Unsaved
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">{active.hint}</p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             {notice && <span className="hidden text-xs font-semibold text-emerald-600 sm:inline">{notice}</span>}
+            <button
+              type="button"
+              onClick={() => selectTab("enquiries")}
+              title={`${newEnquiryCount} new enquiries`}
+              aria-label={`${newEnquiryCount} new enquiries — open enquiries`}
+              className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <Bell className="h-4 w-4" />
+              {newEnquiryCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                  {newEnquiryCount}
+                </span>
+              )}
+            </button>
             {CONTENT_TABS.includes(tab) && (
-              <Button type="button" size="sm" disabled={!dirty || saving} onClick={saveContent}>
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Publish changes
+              <Button
+                type="button"
+                size="sm"
+                className="rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 px-4 font-semibold text-white shadow-lg shadow-blue-500/20 hover:from-blue-400 hover:to-indigo-500"
+                disabled={!dirty || saving}
+                onClick={saveContent}
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} Push Changes
               </Button>
             )}
           </div>
@@ -1020,13 +1092,31 @@ export default function SurveyAdmin() {
             ))}
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{active.label}</CardTitle>
-              <CardDescription>{active.hint}</CardDescription>
-            </CardHeader>
-            <CardContent>{renderTab()}</CardContent>
-          </Card>
+          <section className="relative mb-5 overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-r from-blue-950 via-indigo-950 to-slate-950 p-6 text-white shadow-lg">
+            <div className="pointer-events-none absolute -right-10 -top-16 h-52 w-52 rounded-full bg-blue-500/20 blur-2xl" />
+            <div className="pointer-events-none absolute right-20 top-6 h-28 w-28 rounded-full bg-indigo-500/20 blur-xl" />
+            <div className="relative flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <span className="inline-flex rounded-full border border-blue-400/30 bg-blue-500/15 px-3 py-1 text-[11px] font-semibold text-blue-200">
+                  Content Management
+                </span>
+                <h2 className="mt-3 text-2xl font-bold tracking-tight">{active.label}</h2>
+                <p className="mt-1 text-sm text-blue-100/70">{active.hint}</p>
+              </div>
+              <div className="hidden h-24 w-32 items-center justify-center sm:flex">
+                <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-white/10 backdrop-blur">
+                  <BarChart3 className="h-9 w-9 text-blue-200" />
+                  <span className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-indigo-500/40 backdrop-blur">
+                    <Search className="h-5 w-5 text-white" />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
+            {renderTab()}
+          </section>
 
           {CONTENT_TABS.includes(tab) && (
             <p className="mt-4 text-xs text-muted-foreground">
