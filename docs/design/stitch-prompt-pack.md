@@ -110,7 +110,7 @@ FELLOWSHIP TEASER: pill "Fellowship", H2 "Launch your career with Kavi Fellows",
 
 TEAM: H2 "The people behind the magic", 4-column grid of member cards with photo or initials on a coloured gradient tile, name, role in blue, LinkedIn/portfolio links.
 
-CONTACT: split layout. Left: eyebrow "Let's talk", H2 "Have a project in mind? Let's build it.", copy, email kavisolutions1@gmail.com, "Worldwide · Remote-first". Right: glass form with name, email, phone, service select, message textarea, full-width primary "Send message →". Soft sky and violet glows behind.
+CONTACT: split layout. Left: eyebrow "Let's talk", H2 "Have a project in mind? Let's build it.", copy, email support@kavisolutions.in, "Worldwide · Remote-first". Right: glass form with name, email, phone, service select, message textarea, full-width primary "Send message →". Soft sky and violet glows behind.
 
 FOOTER: logo, "Web · Mobile · Product · Marketing · AI · Fellowship", links, copyright.
 
@@ -353,7 +353,7 @@ No prices, no hotel-style promises, no stock photos.
 ```text
 Design four states of the Kavi Solutions contact form as desktop frames, 1440px wide, using the Kavi design system from the master prompt.
 
-Shared layout: split section on #0B1220. Left column: eyebrow "LET'S TALK", H2 "Have a project in mind? Let's build it.", copy "Tell us what you want to create. We'll reply within 24 hours with a plan and a quote.", email kavisolutions1@gmail.com, "Worldwide · Remote-first" with icons. Right column: glass form.
+Shared layout: split section on #0B1220. Left column: eyebrow "LET'S TALK", H2 "Have a project in mind? Let's build it.", copy "Tell us what you want to create. We'll reply within 24 hours with a plan and a quote.", email support@kavisolutions.in, "Worldwide · Remote-first" with icons. Right column: glass form.
 
 Fields: name, email, phone, service select (Web development, Mobile app, Digital product, Digital marketing, Fellowship, Something else), message textarea, full-width primary button.
 

@@ -230,7 +230,7 @@ export default function MentorInterviewPage() {
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-[#A5B3C7]">{error}</p>
           <p className="mt-4 text-[10px] text-[#7889A0]">
-            Do not share this link. Email kavisolutions1@gmail.com if you need help.
+            Do not share this link. Email support@kavisolutions.in if you need help.
           </p>
         </div>
       </main>

@@ -133,7 +133,7 @@ export class SettingsService {
     const value = typeof row?.value === "string" ? row.value.trim() : "";
     if (value) return value;
 
-    return process.env.CONTACT_EMAIL || process.env.SMTP_USER || "";
+    return process.env.CONTACT_EMAIL || process.env.SMTP_USER || "support@kavisolutions.in";
   }
 
   /* Financial enquiries go to a dedicated mailbox. Falls back to the general
@@ -147,7 +147,7 @@ export class SettingsService {
     const value = typeof row?.value === "string" ? row.value.trim() : "";
     if (value) return value;
 
-    return process.env.FINANCIAL_EMAIL || "hr@kavisolutions.in";
+    return process.env.FINANCIAL_EMAIL || "support@kavisolutions.in";
   }
 
   async surveyOpportunities(): Promise<SurveyOpportunity[]> {

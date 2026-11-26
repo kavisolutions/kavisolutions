@@ -35,7 +35,7 @@ export type GovernmentCapability = {
 };
 
 export const GOVERNMENT_CONTACT = {
-  email: "kavisolutions1@gmail.com",
+  email: "support@kavisolutions.in",
   location: "Hyderabad, India · Working with public-sector teams across India",
 } as const;
 

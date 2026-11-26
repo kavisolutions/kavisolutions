@@ -14,7 +14,7 @@ WITH canonical AS (
         "location": "Bengaluru",
         "vertical": "A Kavi Solutions business vertical",
         "contactName": "Ashok Sandhyala",
-        "contactEmail": "kavi@kavisolutions.in"
+        "contactEmail": "support@kavisolutions.in"
       }
   $brand$::jsonb AS brand
 )

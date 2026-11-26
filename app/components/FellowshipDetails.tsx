@@ -284,7 +284,7 @@ export default function FellowshipDetails() {
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <a
-                    href="mailto:kavisolutions1@gmail.com"
+                    href="mailto:support@kavisolutions.in"
                     className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[rgba(148,163,184,0.18)] bg-[rgba(18,29,47,0.7)] px-3 text-[11px] font-medium text-[#F7F9FC] transition-colors hover:bg-white/[0.06]"
                   >
                     <Mail className="h-3.5 w-3.5 text-[#91B4FF]" />

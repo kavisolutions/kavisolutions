@@ -80,10 +80,10 @@ export default function Contact() {
                     Direct Partner Inbox
                   </span>
                   <a
-                    href="mailto:kavisolutions1@gmail.com"
+                    href="mailto:support@kavisolutions.in"
                     className="text-[14px] sm:text-[15px] text-[#91B4FF] hover:underline font-medium"
                   >
-                    kavisolutions1@gmail.com
+                    support@kavisolutions.in
                   </a>
                 </div>
               </div>

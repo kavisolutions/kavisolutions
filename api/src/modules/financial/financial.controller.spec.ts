@@ -20,7 +20,7 @@ const mockedSend = sendFinancialEnquiryEmail as jest.MockedFunction<
 >;
 
 const build = () => {
-  const settings = { financialEmail: jest.fn(async () => "hr@kavisolutions.in") };
+  const settings = { financialEmail: jest.fn(async () => "support@kavisolutions.in") };
   return {
     controller: new FinancialController(
       settings as unknown as SettingsService,
@@ -60,7 +60,7 @@ describe("FinancialController.enquiry", () => {
 
     await expect(controller.enquiry(individual)).resolves.toEqual({ success: true });
     expect(mockedSend).toHaveBeenCalledWith(
-      expect.objectContaining({ kind: "individual", to: "hr@kavisolutions.in" }),
+      expect.objectContaining({ kind: "individual", to: "support@kavisolutions.in" }),
     );
   });
 

@@ -20,7 +20,7 @@ export type FinancialStep = {
 };
 
 export const FINANCIAL_CONTACT = {
-  email: "hr@kavisolutions.in",
+  email: "support@kavisolutions.in",
   location: "Hyderabad, India · Remote consultations across India",
 } as const;
 

@@ -19,7 +19,7 @@ const mockedSend = sendSurveyEnquiryEmail as jest.MockedFunction<typeof sendSurv
 
 const build = () => {
   const settings = {
-    contactEmail: jest.fn(async () => "research@kavisolutions.in"),
+    contactEmail: jest.fn(async () => "support@kavisolutions.in"),
     surveyOpportunities: jest.fn(async () => []),
   };
   const service = {
@@ -56,7 +56,7 @@ describe("SurveyController.enquiry", () => {
     await expect(controller.enquiry(client)).resolves.toEqual({ success: true });
     expect(service.createClient).toHaveBeenCalledWith(client);
     expect(mockedSend).toHaveBeenCalledWith(
-      expect.objectContaining({ kind: "client", to: "research@kavisolutions.in" }),
+      expect.objectContaining({ kind: "client", to: "support@kavisolutions.in" }),
     );
   });
 

@@ -47,7 +47,7 @@ async function main(): Promise<void> {
     .values([
       { key: "team_tagline", value: "" },
       { key: "team_description", value: "" },
-      { key: "contact_email", value: "kavisolutions1@gmail.com" },
+      { key: "contact_email", value: "support@kavisolutions.in" },
     ])
     .onConflictDoNothing();
 

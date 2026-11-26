@@ -20,7 +20,7 @@ const mockedSend = sendFarmsEnquiryEmail as jest.MockedFunction<
 >;
 
 const build = () => {
-  const settings = { contactEmail: jest.fn(async () => "farms@kavisolutions.in") };
+  const settings = { contactEmail: jest.fn(async () => "support@kavisolutions.in") };
   return {
     controller: new FarmsController(
       settings as unknown as SettingsService,
@@ -60,7 +60,7 @@ describe("FarmsController.enquiry", () => {
 
     await expect(controller.enquiry(product)).resolves.toEqual({ success: true });
     expect(mockedSend).toHaveBeenCalledWith(
-      expect.objectContaining({ kind: "product", to: "farms@kavisolutions.in" }),
+      expect.objectContaining({ kind: "product", to: "support@kavisolutions.in" }),
     );
   });
 

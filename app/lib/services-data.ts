@@ -274,6 +274,6 @@ export const services: Record<string, ServiceData> = {
     ],
     ctaTitle: "Put AI or blockchain to work",
     ctaDesc: "Bring a real workflow, document set, transaction flow or trust problem. We will tell you honestly whether the technology fits.",
-    contactEmail: "hr@kavisolutions.in",
+    contactEmail: "support@kavisolutions.in",
   },
 };

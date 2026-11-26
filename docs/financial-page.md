@@ -101,7 +101,7 @@ confirm each of those statements is true.
 - The enquiry form collects name, email, phone, and free-text context. It
   explicitly asks people **not** to send financial documents through it.
 - Financial enquiries are emailed to the dedicated financial mailbox
-  (`FINANCIAL_EMAIL`, default `hr@kavisolutions.in`). They are not stored in the
+  (`FINANCIAL_EMAIL`, default `support@kavisolutions.in`). They are not stored in the
   database; use the email inbox as the system of record until a CRM is added.
 - No PAN, Aadhaar or bank details are requested anywhere on the page.
 - If a CRM or document portal is added later, define retention and access rules

@@ -447,7 +447,7 @@ Rules:
 5. **Why Kavi** — H2 "Built to impress. Engineered to last." Four cards with top accent bar: Performance first, Design that sells, Secure by default, Shipped to scale.
 6. **Fellowship teaser** — eyebrow "Fellowship", H2 "Launch your career with Kavi Fellows", three cohort pills (January 2027, May 2027, September 2027), four cards (Mentorship, Build in public, Network, Opportunities), CTA "Apply for the fellowship →".
 7. **Team** — H2 "The people behind the magic", member grid (photo or initials on gradient), name, role, LinkedIn/portfolio links.
-8. **Contact** — split layout. Left: eyebrow "Let's talk", H2 "Have a project in mind? Let's build it.", email `kavisolutions1@gmail.com`, location "Worldwide · Remote-first". Right: glass form (name, email, phone, service select, message, "Send message →"). Soft sky/violet glow orbs behind.
+8. **Contact** — split layout. Left: eyebrow "Let's talk", H2 "Have a project in mind? Let's build it.", email `support@kavisolutions.in`, location "Worldwide · Remote-first". Right: glass form (name, email, phone, service select, message, "Send message →"). Soft sky/violet glow orbs behind.
 9. **Footer** — logo, "Web · Mobile · Product · Marketing · AI · Fellowship", links including Showcase and Team Admin, copyright.
 
 **States:** logged-out nav (Login), member nav (My Profile, Logout), admin nav (Admin Panel, Logout). Form idle/sending/sent/error. Hover lift on cards. Mobile drawer.

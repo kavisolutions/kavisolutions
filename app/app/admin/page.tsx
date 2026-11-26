@@ -1752,6 +1752,16 @@ export default function AdminPage() {
             {servicesOpen && (
               <div className="ml-4 flex flex-col gap-1 border-l border-border pl-2">
                 {SURVEY_SECTIONS.map((key) => renderNavItem(key, true))}
+                <Link
+                  href="/admin/survey"
+                  className="flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+                >
+                  <span className="flex items-center gap-3">
+                    <FileText className="h-3.5 w-3.5" />
+                    All page content
+                  </span>
+                  <ExternalLink className="h-3 w-3 opacity-60" />
+                </Link>
               </div>
             )}
           </nav>
@@ -5181,7 +5191,7 @@ export default function AdminPage() {
                     type="email"
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
-                    placeholder="contact@kavisolutions.in"
+                    placeholder="support@kavisolutions.in"
                   />
                   <p className="mt-1 text-[11px] text-muted-foreground">Recipient for customer inquiries submitted through the contact form.</p>
                 </div>
@@ -5194,10 +5204,10 @@ export default function AdminPage() {
                     type="email"
                     value={financialEmail}
                     onChange={(e) => setFinancialEmail(e.target.value)}
-                    placeholder="hr@kavisolutions.in"
+                    placeholder="support@kavisolutions.in"
                   />
                   <p className="mt-1 text-[11px] text-muted-foreground">
-                    Recipient for financial-services enquiries. Falls back to hr@kavisolutions.in.
+                    Recipient for financial-services enquiries. Falls back to support@kavisolutions.in.
                   </p>
                 </div>
 

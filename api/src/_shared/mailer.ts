@@ -605,7 +605,7 @@ export async function sendFellowshipStageUpdateEmail(
         <p style="margin:0;color:#6e6e85;font-size:12px;">
           ${
             closed
-              ? "This application is closed. Email kavisolutions1@gmail.com if you believe this is a mistake."
+              ? "This application is closed. Email support@kavisolutions.in if you believe this is a mistake."
               : "This is a status update, not an offer unless the stage says Offer shared."
           }
         </p>

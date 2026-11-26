@@ -429,7 +429,7 @@ async function main(): Promise<void> {
       value:
         "The people behind Kavi Solutions — a senior collective of systems architects, product engineers and fellowship leaders.",
     },
-    { key: "contact_email", value: "kavisolutions1@gmail.com" },
+    { key: "contact_email", value: "support@kavisolutions.in" },
     { key: "page_survey_enabled", value: "true" },
     { key: "page_financial_enabled", value: "true" },
     { key: "page_government_enabled", value: "true" },

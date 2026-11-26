@@ -278,7 +278,7 @@ export default function AlumniUpdatePage() {
           </button>
 
           <p className="mt-6 text-[10px] text-[#7889A0]">
-            This link is private. Do not forward it. Email kavisolutions1@gmail.com if
+            This link is private. Do not forward it. Email support@kavisolutions.in if
             you need help.
           </p>
         </form>

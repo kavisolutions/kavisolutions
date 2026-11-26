@@ -407,7 +407,7 @@ export const FELLOWSHIP_PARENT_FAQ = [
   },
   {
     q: "Who can we contact with a concern?",
-    a: "Email kavisolutions1@gmail.com. Concerns are handled by the programme team, and safety or conduct issues are treated confidentially.",
+    a: "Email support@kavisolutions.in. Concerns are handled by the programme team, and safety or conduct issues are treated confidentially.",
   },
 ] as const;
 
@@ -456,6 +456,6 @@ export const FELLOWSHIP_FAQ: FellowshipFaq[] = [
 ];
 
 export const FELLOWSHIP_CONTACT = {
-  email: "kavisolutions1@gmail.com",
+  email: "support@kavisolutions.in",
   location: "Andhra Pradesh & Telangana · Cohort residencies announced per batch",
 } as const;

@@ -194,7 +194,7 @@ export default function FellowshipStatusLookup() {
                   application.stage === "withdrawn" ? (
                     <p className="mt-5 rounded-xl border border-[rgba(148,163,184,0.16)] bg-[rgba(18,29,47,0.55)] p-4 text-xs leading-relaxed text-[#A5B3C7]">
                       This application is closed. You can email
-                      kavisolutions1@gmail.com if you believe this is a mistake
+                      support@kavisolutions.in if you believe this is a mistake
                       or want feedback.
                     </p>
                   ) : (
@@ -258,7 +258,7 @@ export default function FellowshipStatusLookup() {
               <p className="mt-4 text-[10px] text-[#7889A0]">
                 Last updated {new Date(application.updatedAt).toLocaleDateString()}.
                 This page does not show internal notes. Email
-                kavisolutions1@gmail.com for questions.
+                support@kavisolutions.in for questions.
               </p>
             </div>
           )}

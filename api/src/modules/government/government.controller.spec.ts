@@ -20,7 +20,7 @@ const mockedSend = sendGovernmentEnquiryEmail as jest.MockedFunction<
 >;
 
 const build = () => {
-  const settings = { contactEmail: jest.fn(async () => "gov@kavisolutions.in") };
+  const settings = { contactEmail: jest.fn(async () => "support@kavisolutions.in") };
   return {
     controller: new GovernmentController(
       settings as unknown as SettingsService,
@@ -52,7 +52,7 @@ describe("GovernmentController.enquiry", () => {
     expect(mockedSend).toHaveBeenCalledWith(
       expect.objectContaining({
         organisation: "Department of Technical Education",
-        to: "gov@kavisolutions.in",
+        to: "support@kavisolutions.in",
       }),
     );
   });

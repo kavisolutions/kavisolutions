@@ -34,7 +34,7 @@ export type FarmItineraryDay = {
 };
 
 export const FARMS_CONTACT = {
-  email: "kavisolutions1@gmail.com",
+  email: "support@kavisolutions.in",
   phone: "+91 90000 00000",
   location: "Polepalli Village, Palnadu District, Andhra Pradesh",
 } as const;

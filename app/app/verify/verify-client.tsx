@@ -254,8 +254,8 @@ export default function VerifyClient({ initialId }: { initialId: string }) {
             Kavi Solutions certificates recognise participation in our programmes and
             engagements. They do not represent university accreditation, government
             recognition or a professional licence. Questions? Write to{" "}
-            <a href="mailto:kavisolutions1@gmail.com" className="text-[#91B4FF] hover:underline">
-              kavisolutions1@gmail.com
+            <a href="mailto:support@kavisolutions.in" className="text-[#91B4FF] hover:underline">
+              support@kavisolutions.in
             </a>
             .
           </p>

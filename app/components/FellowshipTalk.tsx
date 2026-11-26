@@ -118,7 +118,7 @@ export default function FellowshipTalk() {
                 </h3>
                 <p className="mt-2 text-sm text-[#A5B3C7]">
                   The team will reply using the contact details you shared. If it is
-                  urgent, email kavisolutions1@gmail.com.
+                  urgent, email support@kavisolutions.in.
                 </p>
                 <button
                   type="button"

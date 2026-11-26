@@ -144,7 +144,7 @@ export default function CandidateOfferPage() {
               </p>
               <p className="mt-1 text-xs leading-relaxed text-[#A5B3C7]">
                 Your response is recorded. Thank you for letting the team know. You can
-                email kavisolutions1@gmail.com if you want feedback.
+                email support@kavisolutions.in if you want feedback.
               </p>
             </div>
           ) : application.stage !== "offer" ? (
@@ -158,7 +158,7 @@ export default function CandidateOfferPage() {
           ) : expired ? (
             <div className="mt-5 rounded-xl border border-amber-500/30 bg-amber-500/10 p-5 text-sm text-amber-200">
               The response window for this offer has closed. Email
-              kavisolutions1@gmail.com to ask about the next step.
+              support@kavisolutions.in to ask about the next step.
             </div>
           ) : (
             <>
@@ -213,7 +213,7 @@ export default function CandidateOfferPage() {
           )}
 
           <p className="mt-6 text-[10px] text-[#7889A0]">
-            This link is private. Do not forward it. Email kavisolutions1@gmail.com if
+            This link is private. Do not forward it. Email support@kavisolutions.in if
             you need help.
           </p>
         </div>

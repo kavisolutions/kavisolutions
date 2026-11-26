@@ -78,7 +78,7 @@ export default function FellowshipApply() {
         throw new Error(
           apiErrorMessage(
             data,
-            "Could not send the application. Please try again or email kavisolutions1@gmail.com.",
+            "Could not send the application. Please try again or email support@kavisolutions.in.",
           ),
         );
       }
@@ -89,7 +89,7 @@ export default function FellowshipApply() {
       setError(
         cause instanceof Error
           ? cause.message
-          : "Could not send the application. Please try again or email kavisolutions1@gmail.com.",
+          : "Could not send the application. Please try again or email support@kavisolutions.in.",
       );
     } finally {
       setLoading(false);
@@ -141,11 +141,11 @@ export default function FellowshipApply() {
               </div>
 
               <a
-                href="mailto:kavisolutions1@gmail.com"
+                href="mailto:support@kavisolutions.in"
                 className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium text-[#91B4FF] hover:underline"
               >
                 <Mail className="h-3.5 w-3.5" />
-                kavisolutions1@gmail.com
+                support@kavisolutions.in
               </a>
             </div>
           </Reveal>

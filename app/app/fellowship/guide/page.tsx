@@ -209,7 +209,7 @@ export default async function FellowshipGuide() {
         <section className="mt-8 border-t border-slate-200 pt-5">
           <h2 className="text-lg font-semibold">Contact</h2>
           <p className="mt-2 text-[11px] leading-relaxed text-slate-600">
-            Email: kavisolutions1@gmail.com
+            Email: support@kavisolutions.in
             <br />
             Location: Andhra Pradesh &amp; Telangana · cohort residencies
             announced per batch.

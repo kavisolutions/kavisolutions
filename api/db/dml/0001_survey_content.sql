@@ -71,7 +71,7 @@ VALUES (
       "location": "Bengaluru",
       "vertical": "A Kavi Solutions business vertical",
       "contactName": "Ashok Sandhyala",
-      "contactEmail": "kavi@kavisolutions.in"
+      "contactEmail": "support@kavisolutions.in"
     },
     "network": {
       "title": "A field network we are building deliberately",

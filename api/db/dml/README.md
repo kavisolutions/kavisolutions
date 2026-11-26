@@ -52,12 +52,16 @@ block. It is **no longer shown publicly** — leads are internal-only in main
 admin → Settings → Survey Opportunities.
 
 `0011_survey_content_public_contact.sql` sets the public contact block to
-`kavi@kavisolutions.in`, `Ashok Sandhyala`, `Bengaluru`.
+`support@kavisolutions.in`, `Ashok Sandhyala`, `Bengaluru`.
 
 `0012_survey_opportunities.sql` seeds the admin-editable Survey Opportunities
 list (IFMR, GHMC, SHE Teams, DishTV, Metro Card and a generic future entry).
 All entries are labelled exploratory/potential, never confirmed clients. It
 only inserts when the setting is missing or empty, so admin edits are kept.
+
+`0013_support_email.sql` switches existing `contact_email`, `financial_email`
+and the Survey page's brand contact to `support@kavisolutions.in`. Admin login
+addresses and the outgoing `no-reply@` sender are unchanged.
 
 ## Verify
 
