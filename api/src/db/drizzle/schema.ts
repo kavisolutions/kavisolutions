@@ -5,6 +5,8 @@ import {
   integer,
   jsonb,
   pgTable,
+  primaryKey,
+  serial,
   text,
   timestamp,
   uniqueIndex,
@@ -100,12 +102,52 @@ export const verification = pgTable(
 // Domain tables (ported from the legacy Next app's SQL migrations).
 // ---------------------------------------------------------------------------
 
-export const roles = pgTable("roles", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  sortOrder: integer("sort_order").notNull().default(0),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+export const roles = pgTable(
+  "roles",
+  {
+    id: serial("id").primaryKey(),
+    code: text("code").notNull(),
+    name: text("name").notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [uniqueIndex("roles_code_unique").on(table.code)],
+);
+
+// Access-control catalog. `roles` above is reused as the role list (it also
+// holds the legacy team/org categories), so no second role table is needed.
+export const permissions = pgTable(
+  "permissions",
+  {
+    id: serial("id").primaryKey(),
+    code: text("code").notNull(), // stable slug: kavi, survey, fellow, ...
+    name: text("name").notNull(),
+    description: text("description").notNull().default(""),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("permissions_name_unique").on(table.name),
+    uniqueIndex("permissions_code_unique").on(table.code),
+  ],
+);
+
+export const rolePermissions = pgTable(
+  "role_permissions",
+  {
+    roleId: integer("role_id")
+      .notNull()
+      .references(() => roles.id, { onDelete: "cascade" }),
+    permissionId: integer("permission_id")
+      .notNull()
+      .references(() => permissions.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.roleId, table.permissionId] }),
+    index("role_permissions_permission_id_idx").on(table.permissionId),
+  ],
+);
 
 export const teams = pgTable(
   "teams",
@@ -314,6 +356,60 @@ export const surveyContent = pgTable("survey_content", {
   data: jsonb("data").notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
+
+// ---------------------------------------------------------------------------
+// Unified lead inbox. Every public enquiry form writes one row here, so the
+// private admin console can show service-wise leads without digging through
+// mailboxes or the older per-service registries.
+// ---------------------------------------------------------------------------
+
+export const LEAD_SERVICES = [
+  "survey",
+  "fellow",
+  "financial",
+  "government",
+  "farms",
+  "gurukulam",
+  "contact",
+] as const;
+export type LeadService = (typeof LEAD_SERVICES)[number];
+
+/* Neutral pipeline shared by all services. Per-service stages (fellowship
+   stages, surveyor verification, etc.) stay in their own registries. */
+export const LEAD_STATUSES = ["new", "contacted", "qualified", "won", "lost"] as const;
+export type LeadStatus = (typeof LEAD_STATUSES)[number];
+
+export const leads = pgTable(
+  "leads",
+  {
+    id: text("id").primaryKey(),
+    service: text("service").notNull().default("contact"),
+    /* Sub-type inside a service: client/surveyor, individual/business,
+       product/tourism, application/interest, or the contact form category. */
+    kind: text("kind").notNull().default(""),
+    name: text("name").notNull(),
+    email: text("email").notNull().default(""),
+    phone: text("phone").notNull().default(""),
+    organisation: text("organisation").notNull().default(""),
+    /* What they asked for: chosen service, product, portal, track, etc. */
+    subject: text("subject").notNull().default(""),
+    message: text("message").notNull().default(""),
+    /* Link to the source record where one exists (application reference/id). */
+    reference: text("reference").notNull().default(""),
+    /* Public route the form lives on, for context in the admin inbox. */
+    source: text("source").notNull().default(""),
+    status: text("status").notNull().default("new"),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("leads_service_created_idx").on(table.service, table.createdAt),
+    index("leads_status_idx").on(table.status),
+    index("leads_email_idx").on(table.email),
+  ],
+);
+export type LeadRow = typeof leads.$inferSelect;
 
 // ---------------------------------------------------------------------------
 // Fellowship applications — public form, reference lookup and admin pipeline.

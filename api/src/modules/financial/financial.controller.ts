@@ -6,6 +6,7 @@ import { sendFinancialEnquiryEmail } from "@/_shared/mailer";
 import { sanitizeText } from "@/_shared/text";
 import { Public } from "@/auth/auth.decorators";
 import { CreateFinancialEnquiryDto } from "@/modules/financial/dto/financial-enquiry.dto";
+import { LeadsService } from "@/modules/leads/leads.service";
 import { SettingsService } from "@/modules/settings/settings.service";
 
 @ApiTags("financial")
@@ -13,7 +14,10 @@ import { SettingsService } from "@/modules/settings/settings.service";
 export class FinancialController {
   private readonly logger = new Logger(FinancialController.name);
 
-  constructor(private readonly settings: SettingsService) {}
+  constructor(
+    private readonly settings: SettingsService,
+    private readonly leads: LeadsService,
+  ) {}
 
   /* Public enquiry form on the financial services page. Throttled like the
      other public mail endpoints: this must not become a spam relay.
@@ -41,6 +45,24 @@ export class FinancialController {
     if (kind === "business" && body.financialYear) {
       throw new BadRequestException("Unexpected fields for a business enquiry");
     }
+
+    await this.leads.captureBestEffort(
+      {
+        service: "financial",
+        kind,
+        name,
+        email,
+        phone,
+        organisation: sanitizeText(body.organisation, 160),
+        subject:
+          sanitizeText(body.service, 120) ||
+          sanitizeText(body.entityType, 60) ||
+          sanitizeText(body.financialYear, 20),
+        message,
+        source: "/financial",
+      },
+      "Financial enquiry",
+    );
 
     const to = await this.settings.financialEmail();
 

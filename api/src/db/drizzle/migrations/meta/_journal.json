@@ -127,6 +127,41 @@
       "when": 1795520177324,
       "tag": "0017_rotate_weak_tokens",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1795677995093,
+      "tag": "0018_role_permissions",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1795678100000,
+      "tag": "0019_role_permissions_seed",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1795678951412,
+      "tag": "0020_permissions_numeric_id",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1795678951500,
+      "tag": "0021_permissions_numeric_id_seed",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1795709706154,
+      "tag": "0022_sparkling_tony_stark",
+      "breakpoints": true
     }
   ]
 }

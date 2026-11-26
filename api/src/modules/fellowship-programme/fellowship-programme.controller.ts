@@ -11,9 +11,11 @@ import {
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 
+import { sanitizeText } from "@/_shared/text";
 import { AdminOnly, Public } from "@/auth/auth.decorators";
 import { CurrentUser } from "@/auth/auth.guard";
 import type { SessionUser } from "@/auth/auth.types";
+import { LeadsService } from "@/modules/leads/leads.service";
 import { FellowshipAutomationService } from "@/modules/fellowship-programme/fellowship-automation.service";
 import { FellowshipProgrammeService } from "@/modules/fellowship-programme/fellowship-programme.service";
 
@@ -23,6 +25,7 @@ export class FellowshipProgrammeController {
   constructor(
     private readonly service: FellowshipProgrammeService,
     private readonly automation: FellowshipAutomationService,
+    private readonly leads: LeadsService,
   ) {}
 
   @Get("dashboard")
@@ -109,7 +112,30 @@ export class FellowshipProgrammeController {
   @Public()
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
   async publicGurukulamInterest(@Body() body: Record<string, unknown>) {
-    return this.service.publicGurukulamInterest(body);
+    const result = await this.service.publicGurukulamInterest(body);
+
+    await this.leads.captureBestEffort(
+      {
+        service: "gurukulam",
+        kind: sanitizeText(body.kind, 60),
+        name: sanitizeText(body.name, 160),
+        email: sanitizeText(body.email, 254),
+        phone: sanitizeText(body.phone, 40),
+        organisation: sanitizeText(body.city, 120),
+        subject: sanitizeText(body.kind, 60),
+        message: [
+          sanitizeText(body.background, 2000),
+          sanitizeText(body.goal, 2000),
+        ]
+          .filter(Boolean)
+          .join("\n\n"),
+        reference: String(result.id),
+        source: "/gurukulam",
+      },
+      "Gurukulam interest",
+    );
+
+    return result;
   }
 
   @Post("public/donation-pledges")

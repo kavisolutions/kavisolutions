@@ -19,6 +19,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { sendSurveyEnquiryEmail } from "@/_shared/mailer";
 import { sanitizeText } from "@/_shared/text";
 import { AdminOnly, Public } from "@/auth/auth.decorators";
+import { LeadsService } from "@/modules/leads/leads.service";
 import { CreateSurveyEnquiryDto } from "@/modules/survey/dto/survey-enquiry.dto";
 import { UpdateSurveyEnquiryDto } from "@/modules/survey/dto/update-survey-enquiry.dto";
 import { SurveyService } from "@/modules/survey/survey.service";
@@ -32,6 +33,7 @@ export class SurveyController {
   constructor(
     private readonly settings: SettingsService,
     private readonly service: SurveyService,
+    private readonly leads: LeadsService,
   ) {}
 
   /* Public form behind the survey page. Same throttle budget as /contact:
@@ -57,6 +59,23 @@ export class SurveyController {
     if (kind === "surveyor" && (body.organisation || body.service)) {
       throw new BadRequestException("Unexpected fields for a surveyor registration");
     }
+
+    await this.leads.captureBestEffort(
+      {
+        service: "survey",
+        kind,
+        name,
+        email,
+        phone,
+        organisation: sanitizeText(body.organisation, 160),
+        subject:
+          sanitizeText(body.service, 120) ||
+          (kind === "surveyor" ? sanitizeText(body.location, 120) : ""),
+        message,
+        source: "/survey",
+      },
+      "Survey enquiry",
+    );
 
     /* Store first. A mail outage must not lose a project enquiry, and the
        admin inbox is the durable record. Surveyor signups use /surveyors. */

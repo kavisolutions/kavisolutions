@@ -5,12 +5,16 @@ import { ApiTags } from "@nestjs/swagger";
 import { Public } from "@/auth/auth.decorators";
 import { sendContactEmail } from "@/_shared/mailer";
 import { SendContactDto } from "@/modules/contact/dto/contact.dto";
+import { LeadsService } from "@/modules/leads/leads.service";
 import { SettingsService } from "@/modules/settings/settings.service";
 
 @ApiTags("contact")
 @Controller("contact")
 export class ContactController {
-  constructor(private readonly settings: SettingsService) {}
+  constructor(
+    private readonly settings: SettingsService,
+    private readonly leads: LeadsService,
+  ) {}
 
   @Post()
   @Public()
@@ -25,6 +29,19 @@ export class ContactController {
     if (!name || !email || !phone || !message) {
       throw new BadRequestException("Missing required fields");
     }
+
+    await this.leads.captureBestEffort(
+      {
+        service: "contact",
+        name,
+        email,
+        phone,
+        subject: service,
+        message,
+        source: "/contact",
+      },
+      "Contact enquiry",
+    );
 
     const to = await this.settings.contactEmail();
 

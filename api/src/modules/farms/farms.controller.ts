@@ -13,6 +13,7 @@ import { sendFarmsEnquiryEmail } from "@/_shared/mailer";
 import { sanitizeText } from "@/_shared/text";
 import { Public } from "@/auth/auth.decorators";
 import { CreateFarmsEnquiryDto } from "@/modules/farms/dto/farms-enquiry.dto";
+import { LeadsService } from "@/modules/leads/leads.service";
 import { SettingsService } from "@/modules/settings/settings.service";
 
 @ApiTags("farms")
@@ -20,7 +21,10 @@ import { SettingsService } from "@/modules/settings/settings.service";
 export class FarmsController {
   private readonly logger = new Logger(FarmsController.name);
 
-  constructor(private readonly settings: SettingsService) {}
+  constructor(
+    private readonly settings: SettingsService,
+    private readonly leads: LeadsService,
+  ) {}
 
   /* Public enquiry form behind the Kavi Farms page. Product and tourism
      enquiries share the endpoint; the controller enforces the field split. */
@@ -44,6 +48,27 @@ export class FarmsController {
     if (kind === "tourism" && (body.product || body.quantity)) {
       throw new BadRequestException("Unexpected fields for a tourism enquiry");
     }
+
+    await this.leads.captureBestEffort(
+      {
+        service: "farms",
+        kind,
+        name,
+        email,
+        phone,
+        subject: [
+          sanitizeText(body.product, 120) || sanitizeText(body.service, 120),
+          sanitizeText(body.quantity, 80),
+          sanitizeText(body.travelMonth, 40),
+          sanitizeText(body.groupSize, 40),
+        ]
+          .filter(Boolean)
+          .join(" · "),
+        message,
+        source: "/farms",
+      },
+      "Farms enquiry",
+    );
 
     const to = await this.settings.contactEmail();
 

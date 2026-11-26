@@ -27,6 +27,7 @@ import { FellowshipTemplatesModule } from "@/modules/fellowship-templates/fellow
 import { FinancialModule } from "@/modules/financial/financial.module";
 import { GovernmentModule } from "@/modules/government/government.module";
 import { HealthModule } from "@/modules/health/health.module";
+import { LeadsModule } from "@/modules/leads/leads.module";
 import { LocationsModule } from "@/modules/locations/locations.module";
 import { MeModule } from "@/modules/me/me.module";
 import { PagesModule } from "@/modules/pages/pages.module";
@@ -76,6 +77,7 @@ import { WhatsAppModule } from "@/modules/whatsapp/whatsapp.module";
     UploadModule,
     ContactModule,
     LocationsModule,
+    LeadsModule,
     SurveyModule,
     SurveyorsModule,
     FinancialModule,

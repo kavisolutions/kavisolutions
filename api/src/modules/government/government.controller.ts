@@ -13,6 +13,7 @@ import { sendGovernmentEnquiryEmail } from "@/_shared/mailer";
 import { sanitizeText } from "@/_shared/text";
 import { Public } from "@/auth/auth.decorators";
 import { CreateGovernmentEnquiryDto } from "@/modules/government/dto/government-enquiry.dto";
+import { LeadsService } from "@/modules/leads/leads.service";
 import { SettingsService } from "@/modules/settings/settings.service";
 
 @ApiTags("government")
@@ -20,7 +21,10 @@ import { SettingsService } from "@/modules/settings/settings.service";
 export class GovernmentController {
   private readonly logger = new Logger(GovernmentController.name);
 
-  constructor(private readonly settings: SettingsService) {}
+  constructor(
+    private readonly settings: SettingsService,
+    private readonly leads: LeadsService,
+  ) {}
 
   /* Public enquiry form behind the government page. Throttled like the other
      public mail endpoints so it cannot become a spam relay. */
@@ -37,6 +41,23 @@ export class GovernmentController {
     if (!name || !email || !phone || !organisation || !message) {
       throw new BadRequestException("Missing required fields");
     }
+
+    await this.leads.captureBestEffort(
+      {
+        service: "government",
+        name,
+        email,
+        phone,
+        organisation,
+        subject:
+          sanitizeText(body.service, 120) ||
+          sanitizeText(body.portal, 200) ||
+          sanitizeText(body.role, 80),
+        message,
+        source: "/government",
+      },
+      "Government enquiry",
+    );
 
     const to = await this.settings.contactEmail();
 

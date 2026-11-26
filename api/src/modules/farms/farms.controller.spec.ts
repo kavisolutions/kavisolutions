@@ -22,7 +22,10 @@ const mockedSend = sendFarmsEnquiryEmail as jest.MockedFunction<
 const build = () => {
   const settings = { contactEmail: jest.fn(async () => "farms@kavisolutions.in") };
   return {
-    controller: new FarmsController(settings as unknown as SettingsService),
+    controller: new FarmsController(
+      settings as unknown as SettingsService,
+      { captureBestEffort: jest.fn(async () => undefined) } as never,
+    ),
     settings,
   };
 };

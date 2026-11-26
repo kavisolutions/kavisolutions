@@ -25,6 +25,7 @@ import { AdminOnly, Public } from "@/auth/auth.decorators";
 import { CurrentUser } from "@/auth/auth.guard";
 import type { SessionUser } from "@/auth/auth.types";
 import { FellowshipAuditService } from "@/modules/fellowship-audit/fellowship-audit.service";
+import { LeadsService } from "@/modules/leads/leads.service";
 import { SettingsService } from "@/modules/settings/settings.service";
 import {
   BulkUpdateFellowshipApplicationsDto,
@@ -49,6 +50,7 @@ export class FellowshipApplicationsController {
     private readonly audit: FellowshipAuditService,
     private readonly templates: FellowshipTemplatesService,
     private readonly whatsapp: WhatsAppService,
+    private readonly leads: LeadsService,
   ) {}
 
   @Post()
@@ -56,6 +58,22 @@ export class FellowshipApplicationsController {
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
   async submit(@Body() body: CreateFellowshipApplicationDto) {
     const application = await this.service.submit(body);
+
+    await this.leads.captureBestEffort(
+      {
+        service: "fellow",
+        kind: "application",
+        name: application.name,
+        email: application.email,
+        phone: body.phone,
+        organisation: body.city,
+        subject: application.track,
+        message: body.motivation,
+        reference: application.reference,
+        source: "/fellowship",
+      },
+      "Fellowship application",
+    );
 
     try {
       const to = await this.settings.contactEmail();

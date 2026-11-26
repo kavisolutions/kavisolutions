@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 
 import { FellowshipAuditModule } from "@/modules/fellowship-audit/fellowship-audit.module";
+import { LeadsModule } from "@/modules/leads/leads.module";
 import { SettingsModule } from "@/modules/settings/settings.module";
 import { FellowshipApplicationsController } from "@/modules/fellowship-applications/fellowship-applications.controller";
 import { FellowshipApplicationsService } from "@/modules/fellowship-applications/fellowship-applications.service";
@@ -13,6 +14,7 @@ import { WhatsAppModule } from "@/modules/whatsapp/whatsapp.module";
     FellowshipAuditModule,
     FellowshipTemplatesModule,
     WhatsAppModule,
+    LeadsModule,
   ],
   controllers: [FellowshipApplicationsController],
   providers: [FellowshipApplicationsService],

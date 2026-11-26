@@ -22,7 +22,10 @@ const mockedSend = sendGovernmentEnquiryEmail as jest.MockedFunction<
 const build = () => {
   const settings = { contactEmail: jest.fn(async () => "gov@kavisolutions.in") };
   return {
-    controller: new GovernmentController(settings as unknown as SettingsService),
+    controller: new GovernmentController(
+      settings as unknown as SettingsService,
+      { captureBestEffort: jest.fn(async () => undefined) } as never,
+    ),
     settings,
   };
 };

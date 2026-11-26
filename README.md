@@ -10,6 +10,23 @@ The repository contains both apps:
 The frontend keeps calling `/api/*` on its own origin; Next.js proxies those
 requests to the backend via the `BACKEND_URL` rewrite in `next.config.ts`.
 
+## Public and private surfaces
+
+- **Public** — the marketing pages (`/`, `/web`, `/mobile`, `/product`,
+  `/fellowship`, `/survey`, `/financial`, `/government`, `/farms`, etc.) and
+  their enquiry forms. Nothing about leads or internal notes is exposed here.
+- **Private** — `/admin` and its companion consoles (`/admin/leads`,
+  `/admin/fellowship`, `/admin/programme`). Admin-only routes are guarded by the
+  backend, not just hidden in the UI.
+
+`/admin/leads` is the unified **lead inbox**. Every public enquiry form writes
+one row to the `leads` table (in addition to its existing email / registry), and
+the admin console groups them under service tabs: Survey, Fellowship, Financial,
+Government, Farms, Gurukulam and General contact. Each lead can be searched,
+filtered, exported as CSV, assigned a pipeline status and annotated with
+internal notes. Lead capture is best-effort: a database outage never blocks a
+visitor's form submission.
+
 ## Sections
 
 1. **Web** — web development services

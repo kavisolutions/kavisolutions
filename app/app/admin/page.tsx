@@ -1757,6 +1757,20 @@ export default function AdminPage() {
           </nav>
 
           <p className="mt-5 px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
+            Leads
+          </p>
+          <Link
+            href="/admin/leads"
+            className="flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+          >
+            <span className="flex items-center gap-3">
+              <Inbox className="h-4 w-4" />
+              Lead inbox
+            </span>
+            <ExternalLink className="h-3.5 w-3.5 opacity-60" />
+          </Link>
+
+          <p className="mt-5 px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
             Programmes
           </p>
           <Link

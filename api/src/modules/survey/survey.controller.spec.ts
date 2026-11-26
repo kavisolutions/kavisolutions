@@ -25,11 +25,15 @@ const build = () => {
   const service = {
     createClient: jest.fn(async () => ({ id: "enquiry-1" })),
   };
+  const leads = {
+    captureBestEffort: jest.fn(async () => undefined),
+  };
   const controller = new SurveyController(
     settings as unknown as SettingsService,
     service as never,
+    leads as never,
   );
-  return { controller, settings, service };
+  return { controller, settings, service, leads };
 };
 
 const client = {
