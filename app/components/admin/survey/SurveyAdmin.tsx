@@ -10,11 +10,14 @@ import {
   BarChart3,
   Bell,
   Check,
+  ClipboardCheck,
   ClipboardList,
   ExternalLink,
+  Eye,
   FileText,
   Globe2,
   Inbox,
+  Info,
   Layers3,
   Loader2,
   Pencil,
@@ -54,6 +57,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 
 type Content = SurveyContent & Record<string, unknown>;
@@ -102,6 +112,8 @@ const CONTENT_TABS: TabKey[] = [
   "faqs",
 ];
 
+const SERVICE_ICONS = ["🧭", "📊", "📋", "🔍", "📈", "🌍", "⚖️", "🎯", "💡", "🗳️", "🧪", "📚"];
+
 const CARD_TILES = [
   "border-teal-500/20 from-teal-500/20 to-emerald-500/10 text-teal-500",
   "border-violet-500/20 from-violet-500/20 to-indigo-500/10 text-violet-500",
@@ -123,29 +135,47 @@ type FieldProps = {
   multiline?: boolean;
   hint?: string;
   rows?: number;
+  maxLength?: number;
 };
 
-function Field({ label, value, onChange, placeholder, multiline, hint, rows = 3 }: FieldProps) {
+function Field({ label, value, onChange, placeholder, multiline, hint, rows = 3, maxLength }: FieldProps) {
   return (
     <label className="block space-y-1.5">
-      <span className="text-xs font-semibold text-muted-foreground">{label}</span>
-      {multiline ? (
-        <textarea
-          className={`${textClass} min-h-20 resize-y`}
-          value={value}
-          rows={rows}
-          placeholder={placeholder}
-          onChange={(event) => onChange(event.target.value)}
-        />
-      ) : (
-        <Input value={value} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} />
-      )}
+      <span className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+        <span className="h-1.5 w-1.5 rounded-full bg-violet-500" />
+        {label}
+      </span>
+      <span className="relative block">
+        {multiline ? (
+          <textarea
+            className={`${textClass} min-h-20 resize-y pb-6`}
+            value={value}
+            rows={rows}
+            maxLength={maxLength}
+            placeholder={placeholder}
+            onChange={(event) => onChange(event.target.value)}
+          />
+        ) : (
+          <Input
+            value={value}
+            maxLength={maxLength}
+            className={maxLength ? "pr-14" : undefined}
+            placeholder={placeholder}
+            onChange={(event) => onChange(event.target.value)}
+          />
+        )}
+        {maxLength !== undefined && (
+          <span className="pointer-events-none absolute bottom-1.5 right-2 text-[10px] tabular-nums text-muted-foreground">
+            {value.length}/{maxLength}
+          </span>
+        )}
+      </span>
       {hint && <span className="block text-[11px] leading-snug text-muted-foreground">{hint}</span>}
     </label>
   );
 }
 
-type ListField<T> = { key: keyof T; label: string; multiline?: boolean };
+type ListField<T> = { key: keyof T; label: string; multiline?: boolean; maxLength?: number };
 
 function ObjectListEditor<T extends Record<string, unknown>>({
   items,
@@ -153,45 +183,100 @@ function ObjectListEditor<T extends Record<string, unknown>>({
   onChange,
   makeEmpty,
   addLabel = "Add item",
+  singular = "Item",
+  onEditingChange,
 }: {
   items: T[];
   fields: ListField<T>[];
   onChange: (items: T[]) => void;
   makeEmpty: () => T;
   addLabel?: string;
+  singular?: string;
+  onEditingChange?: (label: string | null) => void;
 }) {
+  const [editing, setEditing] = useState<number | null>(null);
+
+  const notify = (index: number | null) => onEditingChange?.(index === null ? null : `Edit ${singular}`);
   const update = (index: number, key: keyof T, value: string) =>
     onChange(items.map((item, i) => (i === index ? { ...item, [key]: value } : item)));
-  const remove = (index: number) => onChange(items.filter((_, i) => i !== index));
+
+  const stopEditing = () => {
+    setEditing(null);
+    notify(null);
+  };
+
+  const remove = (index: number) => {
+    const title = fields[1] ? String(items[index]?.[fields[1].key] ?? "") : "";
+    if (!window.confirm(`Remove “${title || `${singular} ${index + 1}`}”?`)) return;
+    stopEditing();
+    onChange(items.filter((_, i) => i !== index));
+  };
+
   const move = (index: number, direction: -1 | 1) => {
-    const next = [...items];
     const target = index + direction;
-    if (target < 0 || target >= next.length) return;
+    if (target < 0 || target >= items.length) return;
+    stopEditing();
+    const next = [...items];
     [next[index], next[target]] = [next[target], next[index]];
     onChange(next);
   };
 
+  const add = () => {
+    setEditing(items.length);
+    notify(items.length);
+    onChange([...items, makeEmpty()]);
+  };
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {items.length === 0 && (
         <p className="rounded-lg border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
-          Nothing here yet. Add the first item below.
+          Nothing here yet. Add the first {singular.toLowerCase()} below.
         </p>
       )}
-      {items.map((item, index) => (
-        <Card key={index} className="border-border/70">
-          <CardContent className="space-y-3 p-4">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                {fields[0] ? String(item[fields[0].key] ?? "") || `Item ${index + 1}` : `Item ${index + 1}`}
-              </span>
-              <div className="flex items-center gap-1">
+      {items.map((item, index) => {
+        const badge = fields[0] ? String(item[fields[0].key] ?? "") || singular : `${singular} ${index + 1}`;
+        const title = fields[1] ? String(item[fields[1].key] ?? "") || `${singular} ${index + 1}` : badge;
+        const summary = fields
+          .slice(1)
+          .map((field) => String(item[field.key] ?? ""))
+          .filter(Boolean)
+          .join(" · ");
+
+        return (
+          <div
+            key={index}
+            className="overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:border-primary/30 hover:shadow-md"
+          >
+            <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start">
+              <div
+                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border bg-gradient-to-br text-lg font-bold ${
+                  CARD_TILES[index % CARD_TILES.length]
+                }`}
+              >
+                {index + 1}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-blue-400">
+                    {badge}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">
+                    Position {index + 1} of {items.length}
+                  </span>
+                </div>
+                <h3 className="mt-1 truncate text-base font-semibold">{title}</h3>
+                {summary && <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{summary}</p>}
+              </div>
+              <div className="flex shrink-0 items-center gap-1 self-start">
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
+                  className="h-9 w-9 rounded-full border border-border"
                   disabled={index === 0}
                   aria-label="Move up"
+                  title="Move up"
                   onClick={() => move(index, -1)}
                 >
                   <ArrowUp className="h-4 w-4" />
@@ -200,38 +285,68 @@ function ObjectListEditor<T extends Record<string, unknown>>({
                   type="button"
                   variant="ghost"
                   size="icon"
+                  className="h-9 w-9 rounded-full border border-border"
                   disabled={index === items.length - 1}
                   aria-label="Move down"
+                  title="Move down"
                   onClick={() => move(index, 1)}
                 >
                   <ArrowDown className="h-4 w-4" />
                 </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  aria-label="Remove item"
-                  onClick={() => remove(index)}
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
+                {editing !== index && (
+                  <>
+                    <Button
+                      type="button"
+                      size="icon"
+                      className="h-9 w-9 rounded-full bg-blue-500/90 text-white hover:bg-blue-500"
+                      aria-label={`Edit ${singular}`}
+                      title="Edit"
+                      onClick={() => {
+                        setEditing(index);
+                        notify(index);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="h-9 w-9 rounded-full"
+                      aria-label={`Delete ${singular}`}
+                      title="Delete"
+                      onClick={() => remove(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {fields.map((field) => (
-                <Field
-                  key={String(field.key)}
-                  label={field.label}
-                  value={String(item[field.key] ?? "")}
-                  multiline={field.multiline}
-                  onChange={(value) => update(index, field.key, value)}
-                />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-      <Button type="button" variant="outline" size="sm" onClick={() => onChange([...items, makeEmpty()])}>
+
+            {editing === index && (
+              <div className="space-y-4 border-t border-border bg-muted/20 px-5 py-5">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {fields.map((field) => (
+                    <Field
+                      key={String(field.key)}
+                      label={field.label}
+                      value={String(item[field.key] ?? "")}
+                      multiline={field.multiline}
+                      maxLength={field.maxLength}
+                      onChange={(value) => update(index, field.key, value)}
+                    />
+                  ))}
+                </div>
+                <Button type="button" size="sm" onClick={stopEditing}>
+                  <Check className="h-4 w-4" /> Done
+                </Button>
+              </div>
+            )}
+          </div>
+        );
+      })}
+      <Button type="button" variant="outline" className="w-full border-dashed py-5" onClick={add}>
         <Plus className="h-4 w-4" /> {addLabel}
       </Button>
     </div>
@@ -264,7 +379,7 @@ function StringListEditor({
       value={text}
       multiline
       rows={6}
-      hint={hint ?? "One entry per line"}
+      hint={`${hint ?? "One entry per line"} · ${values.length} ${values.length === 1 ? "item" : "items"}`}
       placeholder={placeholder}
       onChange={(next) => {
         setText(next);
@@ -279,30 +394,45 @@ function StringListEditor({
   );
 }
 
-function VerticalsEditor({ items, onChange }: { items: SurveyVertical[]; onChange: (items: SurveyVertical[]) => void }) {
+function VerticalsEditor({
+  items,
+  onChange,
+  onEditingChange,
+}: {
+  items: SurveyVertical[];
+  onChange: (items: SurveyVertical[]) => void;
+  onEditingChange?: (label: string | null) => void;
+}) {
   const [editing, setEditing] = useState<number | null>(null);
 
+  const notify = (index: number | null) => onEditingChange?.(index === null ? null : "Edit Service");
   const update = (index: number, patch: Partial<SurveyVertical>) =>
     onChange(items.map((item, i) => (i === index ? { ...item, ...patch } : item)));
+
+  const stopEditing = () => {
+    setEditing(null);
+    notify(null);
+  };
 
   const remove = (index: number) => {
     const title = items[index]?.title || `Service ${index + 1}`;
     if (!window.confirm(`Remove “${title}” from the survey services?`)) return;
-    setEditing(null);
+    stopEditing();
     onChange(items.filter((_, i) => i !== index));
   };
 
   const move = (index: number, direction: -1 | 1) => {
     const target = index + direction;
     if (target < 0 || target >= items.length) return;
+    stopEditing();
     const next = [...items];
     [next[index], next[target]] = [next[target], next[index]];
-    setEditing(null);
     onChange(next);
   };
 
   const add = () => {
     setEditing(items.length);
+    notify(items.length);
     onChange([...items, { tag: "", title: "", summary: "", services: [], icon: "", hidden: false }]);
   };
 
@@ -394,44 +524,78 @@ function VerticalsEditor({ items, onChange }: { items: SurveyVertical[]; onChang
               >
                 <ArrowDown className="h-4 w-4" />
               </Button>
-              <Button
-                type="button"
-                size="icon"
-                className={`h-9 w-9 rounded-full ${
-                  editing === index
-                    ? "bg-blue-600 hover:bg-blue-500"
-                    : "bg-blue-500/90 text-white hover:bg-blue-500"
-                }`}
-                aria-label={`Edit ${vertical.title || "service"}`}
-                title="Edit"
-                onClick={() => setEditing(editing === index ? null : index)}
-              >
-                {editing === index ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
-              </Button>
-              <Button
-                type="button"
-                variant="destructive"
-                size="icon"
-                className="h-9 w-9 rounded-full"
-                aria-label={`Delete ${vertical.title || "service"}`}
-                title="Delete"
-                onClick={() => remove(index)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              {editing !== index && (
+                <>
+                  <Button
+                    type="button"
+                    size="icon"
+                    className="h-9 w-9 rounded-full bg-blue-500/90 text-white hover:bg-blue-500"
+                    aria-label={`Edit ${vertical.title || "service"}`}
+                    title="Edit"
+                    onClick={() => {
+                      setEditing(index);
+                      notify(index);
+                    }}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="h-9 w-9 rounded-full"
+                    aria-label={`Delete ${vertical.title || "service"}`}
+                    title="Delete"
+                    onClick={() => remove(index)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
             </div>
           </div>
 
           {editing === index && (
             <div className="space-y-4 border-t border-border bg-muted/20 px-5 py-5">
               <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="Title" value={vertical.title} onChange={(value) => update(index, { title: value })} />
-                <Field label="Tag" value={vertical.tag} onChange={(value) => update(index, { tag: value })} />
-                <Field label="Icon (emoji)" value={vertical.icon ?? ""} onChange={(value) => update(index, { icon: value })} />
+                <Field
+                  label="Title"
+                  value={vertical.title}
+                  maxLength={100}
+                  onChange={(value) => update(index, { title: value })}
+                />
+                <Field
+                  label="Tag"
+                  value={vertical.tag}
+                  maxLength={50}
+                  onChange={(value) => update(index, { tag: value })}
+                />
+                <label className="block space-y-1.5">
+                  <span className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                    <span className="h-1.5 w-1.5 rounded-full bg-violet-500" />
+                    Icon (emoji)
+                  </span>
+                  <Select
+                    value={vertical.icon && SERVICE_ICONS.includes(vertical.icon) ? vertical.icon : undefined}
+                    onValueChange={(value) => update(index, { icon: value })}
+                  >
+                    <SelectTrigger className="max-w-56">
+                      <SelectValue placeholder="Select Icon" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SERVICE_ICONS.map((icon) => (
+                        <SelectItem key={icon} value={icon}>
+                          {icon}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </label>
                 <Field
                   label="Summary"
                   value={vertical.summary}
                   multiline
+                  maxLength={300}
                   onChange={(value) => update(index, { summary: value })}
                 />
               </div>
@@ -441,12 +605,17 @@ function VerticalsEditor({ items, onChange }: { items: SurveyVertical[]; onChang
                 onChange={(values) => update(index, { services: values })}
                 hint="One service per line — shown as bullets on the public card"
               />
-              <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card px-3 py-2.5">
-                <div>
-                  <p className="text-sm font-medium">Visible on the public page</p>
-                  <p className="text-[11px] text-muted-foreground">
-                    Hidden cards stay here but are removed from the page and enquiry form.
-                  </p>
+              <div className="flex items-center justify-between gap-4 rounded-xl border border-border bg-card px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-blue-500/20 bg-blue-500/10 text-blue-400">
+                    <Eye className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <p className="text-sm font-medium">Visible on the public page</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      Hidden cards stay here but are removed from the page and enquiry form.
+                    </p>
+                  </div>
                 </div>
                 <Switch
                   checked={!vertical.hidden}
@@ -454,7 +623,7 @@ function VerticalsEditor({ items, onChange }: { items: SurveyVertical[]; onChang
                   aria-label="Visible on the public page"
                 />
               </div>
-              <Button type="button" size="sm" onClick={() => setEditing(null)}>
+              <Button type="button" size="sm" onClick={stopEditing}>
                 <Check className="h-4 w-4" /> Done
               </Button>
             </div>
@@ -590,6 +759,7 @@ export default function SurveyAdmin() {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<TabKey>("brand");
+  const [editingLabel, setEditingLabel] = useState<string | null>(null);
   const [content, setContent] = useState<Content | null>(null);
   const [savedContent, setSavedContent] = useState("");
   const [saving, setSaving] = useState(false);
@@ -668,6 +838,7 @@ export default function SurveyAdmin() {
 
   const selectTab = (key: TabKey) => {
     setTab(key);
+    setEditingLabel(null);
     const url = new URL(window.location.href);
     url.searchParams.set("tab", key);
     window.history.replaceState(null, "", url.toString());
@@ -784,11 +955,13 @@ export default function SurveyAdmin() {
               <ObjectListEditor<SurveyMetric>
                 items={content.hero.metrics}
                 fields={[
-                  { key: "value", label: "Value" },
-                  { key: "label", label: "Label" },
+                  { key: "value", label: "Value", maxLength: 20 },
+                  { key: "label", label: "Label", maxLength: 80 },
                 ]}
                 makeEmpty={() => ({ value: "", label: "" })}
                 addLabel="Add metric"
+                singular="Metric"
+                onEditingChange={setEditingLabel}
                 onChange={(items) => mutate((d) => { d.hero.metrics = items; })}
               />
             </div>
@@ -798,6 +971,7 @@ export default function SurveyAdmin() {
         return (
           <VerticalsEditor
             items={content.verticals}
+            onEditingChange={setEditingLabel}
             onChange={(items) => mutate((d) => {
               d.verticals = items;
               const updated = withSurveyVerticalCount(d as SurveyContent);
@@ -826,12 +1000,14 @@ export default function SurveyAdmin() {
           <ObjectListEditor<{ step: string; title: string; summary: string }>
             items={content.approach}
             fields={[
-              { key: "step", label: "Step number" },
-              { key: "title", label: "Title" },
-              { key: "summary", label: "Summary", multiline: true },
+              { key: "step", label: "Step number", maxLength: 10 },
+              { key: "title", label: "Title", maxLength: 100 },
+              { key: "summary", label: "Summary", multiline: true, maxLength: 300 },
             ]}
             makeEmpty={() => ({ step: "", title: "", summary: "" })}
             addLabel="Add step"
+            singular="Step"
+            onEditingChange={setEditingLabel}
             onChange={(items) => mutate((d) => { d.approach = items; })}
           />
         );
@@ -840,12 +1016,14 @@ export default function SurveyAdmin() {
           <ObjectListEditor<{ title: string; summary: string; bestFor: string }>
             items={content.engagement}
             fields={[
-              { key: "title", label: "Title" },
-              { key: "summary", label: "Summary", multiline: true },
-              { key: "bestFor", label: "Best for", multiline: true },
+              { key: "title", label: "Title", maxLength: 100 },
+              { key: "summary", label: "Summary", multiline: true, maxLength: 300 },
+              { key: "bestFor", label: "Best for", multiline: true, maxLength: 200 },
             ]}
             makeEmpty={() => ({ title: "", summary: "", bestFor: "" })}
             addLabel="Add engagement model"
+            singular="Engagement model"
+            onEditingChange={setEditingLabel}
             onChange={(items) => mutate((d) => { d.engagement = items; })}
           />
         );
@@ -854,12 +1032,14 @@ export default function SurveyAdmin() {
           <ObjectListEditor<{ tag: string; title: string; desc: string }>
             items={content.sampleProjects}
             fields={[
-              { key: "tag", label: "Tag" },
-              { key: "title", label: "Title" },
-              { key: "desc", label: "Description", multiline: true },
+              { key: "tag", label: "Tag", maxLength: 50 },
+              { key: "title", label: "Title", maxLength: 100 },
+              { key: "desc", label: "Description", multiline: true, maxLength: 300 },
             ]}
             makeEmpty={() => ({ tag: "", title: "", desc: "" })}
             addLabel="Add sample project"
+            singular="Sample project"
+            onEditingChange={setEditingLabel}
             onChange={(items) => mutate((d) => { d.sampleProjects = items; })}
           />
         );
@@ -868,11 +1048,13 @@ export default function SurveyAdmin() {
           <ObjectListEditor<{ name: string; note: string }>
             items={content.previousWork}
             fields={[
-              { key: "name", label: "Name" },
-              { key: "note", label: "Note", multiline: true },
+              { key: "name", label: "Name", maxLength: 100 },
+              { key: "note", label: "Note", multiline: true, maxLength: 300 },
             ]}
             makeEmpty={() => ({ name: "", note: "" })}
             addLabel="Add previous work"
+            singular="Previous work"
+            onEditingChange={setEditingLabel}
             onChange={(items) => mutate((d) => { d.previousWork = items; })}
           />
         );
@@ -890,11 +1072,13 @@ export default function SurveyAdmin() {
           <ObjectListEditor<{ q: string; a: string }>
             items={content.faqs}
             fields={[
-              { key: "q", label: "Question" },
-              { key: "a", label: "Answer", multiline: true },
+              { key: "q", label: "Question", maxLength: 200 },
+              { key: "a", label: "Answer", multiline: true, maxLength: 600 },
             ]}
             makeEmpty={() => ({ q: "", a: "" })}
             addLabel="Add FAQ"
+            singular="FAQ"
+            onEditingChange={setEditingLabel}
             onChange={(items) => mutate((d) => { d.faqs = items; })}
           />
         );
@@ -1096,20 +1280,42 @@ export default function SurveyAdmin() {
             <div className="pointer-events-none absolute -right-10 -top-16 h-52 w-52 rounded-full bg-blue-500/20 blur-2xl" />
             <div className="pointer-events-none absolute right-20 top-6 h-28 w-28 rounded-full bg-indigo-500/20 blur-xl" />
             <div className="relative flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <span className="inline-flex rounded-full border border-blue-400/30 bg-blue-500/15 px-3 py-1 text-[11px] font-semibold text-blue-200">
-                  Content Management
-                </span>
-                <h2 className="mt-3 text-2xl font-bold tracking-tight">{active.label}</h2>
-                <p className="mt-1 text-sm text-blue-100/70">{active.hint}</p>
+              <div className="flex items-start gap-3">
+                {editingLabel && (
+                  <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/20 text-blue-200">
+                    <Info className="h-5 w-5" />
+                  </span>
+                )}
+                <div>
+                  <span className="inline-flex rounded-full border border-blue-400/30 bg-blue-500/15 px-3 py-1 text-[11px] font-semibold text-blue-200">
+                    {editingLabel ? "Edit Mode" : "Content Management"}
+                  </span>
+                  <h2 className="mt-3 text-2xl font-bold tracking-tight">
+                    {editingLabel ? `${editingLabel} Details` : active.label}
+                  </h2>
+                  <p className="mt-1 text-sm text-blue-100/70">
+                    {editingLabel
+                      ? "Update the information below to keep your content accurate and up to date."
+                      : active.hint}
+                  </p>
+                </div>
               </div>
               <div className="hidden h-24 w-32 items-center justify-center sm:flex">
-                <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-white/10 backdrop-blur">
-                  <BarChart3 className="h-9 w-9 text-blue-200" />
-                  <span className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-indigo-500/40 backdrop-blur">
-                    <Search className="h-5 w-5 text-white" />
-                  </span>
-                </div>
+                {editingLabel ? (
+                  <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-white/10 backdrop-blur">
+                    <ClipboardCheck className="h-9 w-9 text-blue-200" />
+                    <span className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-indigo-500/40 backdrop-blur">
+                      <Pencil className="h-4 w-4 text-white" />
+                    </span>
+                  </div>
+                ) : (
+                  <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-white/10 backdrop-blur">
+                    <BarChart3 className="h-9 w-9 text-blue-200" />
+                    <span className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-indigo-500/40 backdrop-blur">
+                      <Search className="h-5 w-5 text-white" />
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </section>
