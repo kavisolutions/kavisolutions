@@ -282,7 +282,6 @@ export default function AdminPage() {
     return stored === "light" ? "light" : "dark";
   });
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(true);
 
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [memberQuery, setMemberQuery] = useState("");
@@ -602,6 +601,11 @@ export default function AdminPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const s = params.get("section");
+    // Old bookmarks point at the survey tabs that now live on /admin/survey.
+    if (s && SURVEY_SECTIONS.includes(s as SectionKey)) {
+      window.location.replace("/admin/survey");
+      return;
+    }
     if (s && sections.some((item) => item.key === s)) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- sync initial tab from URL before paint
       setSection(s as SectionKey);
@@ -610,7 +614,6 @@ export default function AdminPage() {
 
   const selectSection = (key: SectionKey) => {
     setSection(key);
-    if (SURVEY_SECTIONS.includes(key)) setServicesOpen(true);
     setMobileNavOpen(false);
     const url = new URL(window.location.href);
     url.searchParams.set("section", key);
@@ -1722,48 +1725,16 @@ export default function AdminPage() {
             Services
           </p>
           <nav className="flex flex-col gap-1">
-            <button
-              type="button"
-              onClick={() => setServicesOpen((open) => !open)}
-              aria-expanded={servicesOpen}
-              className={`group flex items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-all ${
-                SURVEY_SECTIONS.includes(section)
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
-              }`}
+            <Link
+              href="/admin/survey"
+              className="flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
             >
-              <div className="flex items-center gap-3">
-                <BarChart3
-                  className={`h-4 w-4 ${
-                    SURVEY_SECTIONS.includes(section)
-                      ? "text-primary"
-                      : "text-muted-foreground group-hover:text-foreground"
-                  }`}
-                />
-                <span>Survey &amp; Research</span>
-              </div>
-              <ChevronRight
-                className={`h-3.5 w-3.5 transition-transform ${
-                  servicesOpen ? "rotate-90" : ""
-                }`}
-              />
-            </button>
-
-            {servicesOpen && (
-              <div className="ml-4 flex flex-col gap-1 border-l border-border pl-2">
-                {SURVEY_SECTIONS.map((key) => renderNavItem(key, true))}
-                <Link
-                  href="/admin/survey"
-                  className="flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
-                >
-                  <span className="flex items-center gap-3">
-                    <FileText className="h-3.5 w-3.5" />
-                    All page content
-                  </span>
-                  <ExternalLink className="h-3 w-3 opacity-60" />
-                </Link>
-              </div>
-            )}
+              <span className="flex items-center gap-3">
+                <BarChart3 className="h-4 w-4" />
+                Survey &amp; Research
+              </span>
+              <ExternalLink className="h-3 w-3 opacity-60" />
+            </Link>
           </nav>
 
           <p className="mt-5 px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
