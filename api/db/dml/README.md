@@ -59,6 +59,11 @@ list (IFMR, GHMC, SHE Teams, DishTV, Metro Card and a generic future entry).
 All entries are labelled exploratory/potential, never confirmed clients. It
 only inserts when the setting is missing or empty, so admin edits are kept.
 
+`0013_survey_previous_work_opportunities.sql` adds the same potential
+connections to the public survey page's `previousWork` block, which renders as
+"Selected previous survey work". Existing past references are preserved and
+exploratory notes are labelled potential/only, never confirmed clients.
+
 `0013_support_email.sql` switches existing `contact_email`, `financial_email`
 and the Survey page's brand contact to `support@kavisolutions.in`. Admin login
 addresses and the outgoing `no-reply@` sender are unchanged.
