@@ -7,8 +7,8 @@ import {
   ArrowUp,
   BadgeCheck,
   BarChart3,
+  CalendarDays,
   Check,
-  ClipboardCheck,
   ClipboardList,
   ExternalLink,
   Eye,
@@ -21,9 +21,9 @@ import {
   Pencil,
   Plus,
   Save,
-  Search,
   Sparkles,
   Trash2,
+  UserRound,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -664,32 +664,79 @@ function EnquiryRow({ enquiry, onSaved }: { enquiry: SurveyEnquiry; onSaved: () 
 
   return (
     <Card className="border-border/70">
-      <CardContent className="space-y-3 p-4">
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div>
-            <p className="text-sm font-semibold">{enquiry.name}</p>
-            <p className="text-xs text-muted-foreground">
-              {enquiry.email} · {enquiry.organisation || "—"}
-            </p>
+      <CardHeader className="flex-row items-center gap-3 border-b border-border px-5 py-4">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-blue-500/25 bg-blue-500/15 text-blue-400">
+          <Users className="h-5 w-5" />
+        </span>
+        <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-blue-500 px-1.5 text-[11px] font-bold text-white">
+          1
+        </span>
+        <CardTitle className="text-base">Client enquiries</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-5 p-5">
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="space-y-2">
+            <span className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+              <span className="h-1.5 w-1.5 rounded-full bg-violet-500" /> From
+            </span>
+            <div className="flex min-h-24 gap-3 rounded-xl border border-border bg-muted/20 p-4">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-blue-500/20 bg-blue-500/10 text-blue-400">
+                <UserRound className="h-4 w-4" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold">{enquiry.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {enquiry.email} · {enquiry.organisation || "—"}
+                </p>
+                <p className="mt-2 whitespace-pre-wrap text-sm">{enquiry.message}</p>
+              </div>
+            </div>
           </div>
-          <span className="text-[11px] text-muted-foreground">{new Date(enquiry.createdAt).toLocaleString()}</span>
+
+          <div className="space-y-2">
+            <span className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+              <CalendarDays className="h-3.5 w-3.5" /> Received At
+            </span>
+            <div className="flex min-h-24 items-center rounded-xl border border-border bg-muted/20 px-4 text-sm">
+              {new Date(enquiry.createdAt).toLocaleString("en-IN")}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <span className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+              <span className="h-1.5 w-1.5 rounded-full bg-violet-500" /> Status
+            </span>
+            <Select value={status} onValueChange={(value) => setStatus(value as SurveyEnquiryStatus)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                {SURVEY_ENQUIRY_STATUSES.map((item) => (
+                  <SelectItem key={item} value={item}>
+                    {SURVEY_ENQUIRY_STATUS_LABELS[item]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Field
+            label="Internal notes"
+            value={notes}
+            multiline
+            maxLength={500}
+            placeholder="Add any notes about this enquiry..."
+            onChange={setNotes}
+          />
         </div>
-        <p className="whitespace-pre-wrap text-sm">{enquiry.message}</p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <label className="block space-y-1.5">
-            <span className="text-xs font-semibold text-muted-foreground">Status</span>
-            <select className={textClass} value={status} onChange={(event) => setStatus(event.target.value as SurveyEnquiryStatus)}>
-              {SURVEY_ENQUIRY_STATUSES.map((item) => (
-                <option key={item} value={item}>
-                  {SURVEY_ENQUIRY_STATUS_LABELS[item]}
-                </option>
-              ))}
-            </select>
-          </label>
-          <Field label="Internal notes" value={notes} multiline onChange={setNotes} />
-        </div>
-        <div className="flex items-center gap-2">
-          <Button type="button" size="sm" disabled={busy} onClick={save}>
+
+        <div className="flex items-center gap-3">
+          <Button
+            type="button"
+            className="rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 px-5 font-semibold text-white shadow-lg shadow-blue-500/20 hover:from-blue-400 hover:to-indigo-500"
+            disabled={busy}
+            onClick={save}
+          >
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save enquiry
           </Button>
           {error && <span className="text-xs text-destructive">{error}</span>}
@@ -726,27 +773,54 @@ function SurveyorRow({ surveyor, onChanged }: { surveyor: Surveyor; onChanged: (
 
   return (
     <Card className="border-border/70">
-      <CardContent className="flex flex-wrap items-end gap-3 p-4">
-        <div className="min-w-48 flex-1">
-          <p className="text-sm font-semibold">{surveyor.name}</p>
-          <p className="text-xs text-muted-foreground">
+      <CardHeader className="flex-row items-center gap-3 border-b border-border px-5 py-4">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-blue-500/25 bg-blue-500/15 text-blue-400">
+          <UserRound className="h-5 w-5" />
+        </span>
+        <div className="min-w-0">
+          <CardTitle className="text-base">{surveyor.name}</CardTitle>
+          <CardDescription className="truncate text-xs">
             {surveyor.email} · {surveyor.role} · {surveyor.location || "no location"}
-          </p>
+          </CardDescription>
         </div>
-        <label className="space-y-1.5">
-          <span className="block text-xs font-semibold text-muted-foreground">Status</span>
-          <select className={textClass} value={status} onChange={(event) => setStatus(event.target.value as SurveyorStatus)}>
-            {SURVEYOR_STATUSES.map((item) => (
-              <option key={item} value={item}>
-                {SURVEYOR_STATUS_LABELS[item]}
-              </option>
-            ))}
-          </select>
-        </label>
-        <Button type="button" size="sm" disabled={busy || status === surveyor.status} onClick={save}>
-          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Update
-        </Button>
-        {error && <span className="text-xs text-destructive">{error}</span>}
+      </CardHeader>
+      <CardContent className="grid gap-5 p-5 sm:grid-cols-2">
+        <div className="space-y-2">
+          <span className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+            <span className="h-1.5 w-1.5 rounded-full bg-violet-500" /> Status
+          </span>
+          <Select value={status} onValueChange={(value) => setStatus(value as SurveyorStatus)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+              {SURVEYOR_STATUSES.map((item) => (
+                <SelectItem key={item} value={item}>
+                  {SURVEYOR_STATUS_LABELS[item]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <span className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+            <CalendarDays className="h-3.5 w-3.5" /> Coverage
+          </span>
+          <div className="flex min-h-10 items-center rounded-xl border border-border bg-muted/20 px-4 text-sm text-muted-foreground">
+            {surveyor.coverage.length ? surveyor.coverage.join(" · ") : "No coverage areas yet"}
+          </div>
+        </div>
+        <div className="flex items-center gap-3 sm:col-span-2">
+          <Button
+            type="button"
+            className="rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 px-5 font-semibold text-white shadow-lg shadow-blue-500/20 hover:from-blue-400 hover:to-indigo-500"
+            disabled={busy || status === surveyor.status}
+            onClick={save}
+          >
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Update status
+          </Button>
+          {error && <span className="text-xs text-destructive">{error}</span>}
+        </div>
       </CardContent>
     </Card>
   );
@@ -1193,50 +1267,6 @@ export default function SurveyAdmin() {
               </button>
             ))}
           </div>
-
-          <section className="relative mb-5 overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-r from-blue-950 via-indigo-950 to-slate-950 p-6 text-white shadow-lg">
-            <div className="pointer-events-none absolute -right-10 -top-16 h-52 w-52 rounded-full bg-blue-500/20 blur-2xl" />
-            <div className="pointer-events-none absolute right-20 top-6 h-28 w-28 rounded-full bg-indigo-500/20 blur-xl" />
-            <div className="relative flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-start gap-3">
-                {editingLabel && (
-                  <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/20 text-blue-200">
-                    <Info className="h-5 w-5" />
-                  </span>
-                )}
-                <div>
-                  <span className="inline-flex rounded-full border border-blue-400/30 bg-blue-500/15 px-3 py-1 text-[11px] font-semibold text-blue-200">
-                    {editingLabel ? "Edit Mode" : "Content Management"}
-                  </span>
-                  <h2 className="mt-3 text-2xl font-bold tracking-tight">
-                    {editingLabel ? `${editingLabel} Details` : active.label}
-                  </h2>
-                  <p className="mt-1 text-sm text-blue-100/70">
-                    {editingLabel
-                      ? "Update the information below to keep your content accurate and up to date."
-                      : active.hint}
-                  </p>
-                </div>
-              </div>
-              <div className="hidden h-24 w-32 items-center justify-center sm:flex">
-                {editingLabel ? (
-                  <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-white/10 backdrop-blur">
-                    <ClipboardCheck className="h-9 w-9 text-blue-200" />
-                    <span className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-indigo-500/40 backdrop-blur">
-                      <Pencil className="h-4 w-4 text-white" />
-                    </span>
-                  </div>
-                ) : (
-                  <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-white/10 backdrop-blur">
-                    <BarChart3 className="h-9 w-9 text-blue-200" />
-                    <span className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-indigo-500/40 backdrop-blur">
-                      <Search className="h-5 w-5 text-white" />
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
 
           <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
             {renderTab()}
