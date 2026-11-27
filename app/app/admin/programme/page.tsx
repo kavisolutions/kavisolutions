@@ -3,26 +3,36 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ArrowLeft,
+  Award,
+  BarChart3,
   BriefcaseBusiness,
   CalendarDays,
+  ClipboardList,
+  FolderKanban,
   GraduationCap,
   HandCoins,
   Headset,
   Image as ImageIcon,
+  Inbox,
   IndianRupee,
+  Layers3,
   LayoutDashboard,
   Loader2,
   MessageSquareText,
   RefreshCw,
+  Settings2,
+  ShieldCheck,
   Sprout,
   Trophy,
+  Users,
   Wallet,
 } from "lucide-react";
 
+import { AdminShell, type AdminNavGroup } from "@/components/admin/shared/AdminShell";
 import ProgrammeOverview from "@/components/admin/programme/ProgrammeOverview";
 import ProgrammePanel from "@/components/admin/programme/ProgrammePanel";
 import StipendGenerator from "@/components/admin/programme/StipendGenerator";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth-context";
@@ -32,6 +42,31 @@ import {
   programmeResource,
   type ProgrammeCollegeOption,
 } from "@/lib/programme-admin";
+import { cn } from "@/lib/utils";
+
+const NAV_GROUPS: AdminNavGroup[] = [
+  {
+    label: "Workspace",
+    items: [
+      { key: "team", label: "Team members", icon: Users, href: "/admin?section=team" },
+      { key: "roles", label: "Roles", icon: BriefcaseBusiness, href: "/admin?section=roles" },
+      { key: "teams", label: "Teams", icon: Layers3, href: "/admin?section=teams" },
+      { key: "projects", label: "Projects", icon: FolderKanban, href: "/admin?section=projects" },
+      { key: "certificates", label: "Certificates", icon: Award, href: "/admin?section=certificates" },
+      { key: "admins", label: "Administrators", icon: ShieldCheck, href: "/admin?section=admins" },
+      { key: "settings", label: "Settings", icon: Settings2, href: "/admin?section=settings" },
+    ],
+  },
+  {
+    label: "Services",
+    items: [
+      { key: "survey", label: "Survey & Research", icon: BarChart3, href: "/admin/survey" },
+      { key: "leads", label: "Lead inbox", icon: Inbox, href: "/admin/leads" },
+      { key: "fellowship", label: "Fellowship", icon: GraduationCap, href: "/admin/fellowship" },
+      { key: "programme", label: "Programme", icon: ClipboardList, href: "/admin/programme" },
+    ],
+  },
+];
 
 const TABS = [
   { key: "overview", label: "Overview", icon: LayoutDashboard },
@@ -101,21 +136,46 @@ export default function ProgrammeAdminPage() {
 
   if (authLoading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-background text-foreground">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      <main className="flex min-h-screen items-center justify-center bg-background px-4 text-foreground">
+        <Card className="w-full max-w-sm rounded-2xl border-border/70 text-center shadow-lg">
+          <CardContent className="flex flex-col items-center gap-3 py-10">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-600">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </span>
+            <Badge
+              variant="outline"
+              className="rounded-full border-violet-500/20 bg-violet-500/10 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-violet-600"
+            >
+              Programme
+            </Badge>
+            <p className="text-sm text-muted-foreground">Checking admin access…</p>
+          </CardContent>
+        </Card>
       </main>
     );
   }
 
   if (!session) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-background px-4 text-foreground">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Programme operations</CardTitle>
+      <main className="flex min-h-screen items-center justify-center bg-background px-4 py-12 text-foreground">
+        <Card className="w-full max-w-md rounded-2xl border-border/70 text-center shadow-xl">
+          <CardHeader className="pb-3">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-600">
+              <ClipboardList className="h-6 w-6" />
+            </div>
+            <Badge
+              variant="outline"
+              className="mx-auto rounded-full border-violet-500/20 bg-violet-500/10 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-violet-600"
+            >
+              Private workspace
+            </Badge>
+            <CardTitle className="mt-3 text-xl">Programme operations</CardTitle>
           </CardHeader>
           <CardContent>
-            <Link href="/login?next=/admin/programme" className="text-sm font-medium text-primary hover:underline">
+            <Link
+              href="/login?next=/admin/programme"
+              className="text-sm font-medium text-primary hover:underline"
+            >
               Sign in to continue
             </Link>
           </CardContent>
@@ -126,10 +186,19 @@ export default function ProgrammeAdminPage() {
 
   if (forbidden) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-background px-4 text-foreground">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Access denied</CardTitle>
+      <main className="flex min-h-screen items-center justify-center bg-background px-4 py-12 text-foreground">
+        <Card className="w-full max-w-md rounded-2xl border-border/70 text-center shadow-xl">
+          <CardHeader className="pb-3">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
+              <ShieldCheck className="h-6 w-6" />
+            </div>
+            <Badge
+              variant="outline"
+              className="mx-auto rounded-full border-destructive/30 bg-destructive/10 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-destructive"
+            >
+              Access denied
+            </Badge>
+            <CardTitle className="mt-3 text-xl">Programme operations</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
             {session.user.email} is not listed as an administrator.
@@ -140,63 +209,112 @@ export default function ProgrammeAdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background px-4 py-6 text-foreground sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-[1320px]">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <Link
-              href="/admin"
-              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              Admin
-            </Link>
-            <h1 className="mt-2 font-display text-2xl font-semibold tracking-tight">
-              Programme operations
-            </h1>
-            <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-              College outreach, content, customer care, fees, intern payroll, client work,
-              placements, donations and the Gurukulam pathway.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" onClick={() => void load()} disabled={loading}>
-              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-              Refresh
+    <AdminShell
+      title="Programme"
+      subtitle="Outreach, operations and student support"
+      headerIcon={ClipboardList}
+      pill="Programme Management"
+      bannerTitle="Manage Programme"
+      bannerDescription="Track outreach, content, fees, client work, placements and donations."
+      bannerIcon={ClipboardList}
+      groups={NAV_GROUPS}
+      activeKey="programme"
+      liveHref="/"
+      actions={
+        <>
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-lg"
+            onClick={() => void load()}
+            disabled={loading}
+          >
+            <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+            Refresh
+          </Button>
+          <Link href="/admin/fellowship">
+            <Button variant="outline" size="sm" className="rounded-lg">
+              Fellowship admissions
             </Button>
-            <Link href="/admin/fellowship">
-              <Button variant="outline" size="sm">
-                Fellowship admissions
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        <div className="mt-5 flex gap-1.5 overflow-x-auto rounded-xl border border-border bg-muted/30 p-1.5">
-          {TABS.map(({ key, label, icon: Icon }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setTab(key)}
-              className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
-                tab === key
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Icon className="h-3.5 w-3.5" />
-              {label}
-            </button>
-          ))}
-        </div>
+          </Link>
+        </>
+      }
+    >
+      <div className="space-y-5">
+        <Card className="overflow-hidden rounded-2xl border-border/70">
+          <CardHeader className="border-b border-border/70 bg-muted/20 p-4 sm:p-5">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/10 text-violet-600">
+                  <LayoutDashboard className="h-5 w-5" />
+                </span>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="flex items-center gap-1.5">
+                      <span className="h-3 w-0.5 rounded-full bg-violet-500" />
+                      <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-violet-600">
+                        Operational registers
+                      </p>
+                    </span>
+                    <Badge
+                      variant="outline"
+                      className="rounded-full border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-[10px] font-semibold text-violet-600"
+                    >
+                      {TABS.length} views
+                    </Badge>
+                  </div>
+                  <CardTitle className="mt-1.5 text-base">Programme workspaces</CardTitle>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Choose a register to review or update its records.
+                  </p>
+                </div>
+              </div>
+              <Badge
+                variant="outline"
+                className="h-8 rounded-full border-border bg-background/60 px-3 text-[11px] font-semibold text-muted-foreground"
+              >
+                INR amounts
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex gap-1.5 overflow-x-auto rounded-xl border border-border/70 bg-muted/30 p-1.5 [scrollbar-width:thin]">
+              {TABS.map(({ key, label, icon: Icon }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setTab(key)}
+                  aria-current={tab === key ? "page" : undefined}
+                  className={cn(
+                    "inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-all",
+                    tab === key
+                      ? "bg-violet-500/10 text-violet-600 shadow-xs ring-1 ring-violet-500/20"
+                      : "text-muted-foreground hover:bg-background hover:text-foreground",
+                  )}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {label}
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         {error && (
-          <div className="mt-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
-            {error}
-          </div>
+          <Card className="rounded-2xl border-destructive/30 bg-destructive/5">
+            <CardContent className="flex flex-wrap items-center gap-2 p-4 text-xs text-destructive">
+              <Badge
+                variant="outline"
+                className="rounded-full border-destructive/30 bg-destructive/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-destructive"
+              >
+                Action needed
+              </Badge>
+              <span>{error}</span>
+            </CardContent>
+          </Card>
         )}
 
-        <div className="mt-4">
+        <div className="space-y-4">
           {tab === "overview" && <ProgrammeOverview />}
           {tab === "stipends" && (
             <div className="space-y-4">
@@ -225,11 +343,21 @@ export default function ProgrammeAdminPage() {
           )}
         </div>
 
-        <p className="mt-6 text-[11px] text-muted-foreground">
-          Only {PROGRAMME_RESOURCES.length} operational registers are shown. Money values are
-          recorded in INR. The website does not collect online payments for fees or donations.
-        </p>
+        <Card className="rounded-2xl border-border/70 bg-muted/20 shadow-none">
+          <CardContent className="flex flex-wrap items-center gap-2 p-4 text-[11px] text-muted-foreground">
+            <Badge
+              variant="outline"
+              className="rounded-full border-border bg-background/60 px-2.5 py-0.5 text-[10px] font-semibold"
+            >
+              INR
+            </Badge>
+            <span>
+              Only {PROGRAMME_RESOURCES.length} operational registers are shown. Money values are
+              recorded in INR. The website does not collect online payments for fees or donations.
+            </span>
+          </CardContent>
+        </Card>
       </div>
-    </main>
+    </AdminShell>
   );
 }
