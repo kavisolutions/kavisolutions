@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import {
   ArrowLeft,
   Bell,
@@ -75,6 +75,12 @@ export function AdminShell({
   notice,
   error,
 }: AdminShellProps) {
+  useEffect(() => {
+    // Route changes can preserve the previous scroll position, which hides the
+    // banner behind the sticky header. Always open an admin screen at the top.
+    window.scrollTo(0, 0);
+  }, [title]);
+
   const renderNavItem = (item: AdminNavItem) => {
     const active = activeKey === item.key;
     const className = cn(

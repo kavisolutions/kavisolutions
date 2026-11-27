@@ -46,6 +46,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -817,7 +818,7 @@ export default function LeadsAdminPage() {
                     (not visible to visitors)
                   </span>
                 </SectionLabel>
-                <textarea
+                <Textarea
                   id="lead-notes"
                   value={draft.notes}
                   onChange={(event) => setDraft((current) => ({
@@ -825,9 +826,13 @@ export default function LeadsAdminPage() {
                     notes: event.target.value,
                   }))}
                   rows={6}
+                  maxLength={500}
                   placeholder="Call back tomorrow, send proposal…"
-                  className="mt-2 w-full resize-y rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                  className="mt-2 resize-y"
                 />
+                <p className="mt-1 text-right text-[10px] tabular-nums text-muted-foreground">
+                  {draft.notes.length}/500
+                </p>
               </section>
             </div>
 
