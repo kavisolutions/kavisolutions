@@ -4,11 +4,9 @@ import Link from "next/link";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import {
   ArrowDown,
-  ArrowLeft,
   ArrowUp,
   BadgeCheck,
   BarChart3,
-  Bell,
   Check,
   ClipboardCheck,
   ClipboardList,
@@ -22,16 +20,15 @@ import {
   Loader2,
   Pencil,
   Plus,
-  Rocket,
   Save,
   Search,
-  Send,
   Sparkles,
   Trash2,
   Users,
   type LucideIcon,
 } from "lucide-react";
 
+import { AdminShell } from "@/components/admin/shared/AdminShell";
 import { apiErrorMessage } from "@/lib/api-error";
 import { useAuth } from "@/lib/auth-context";
 import {
@@ -65,6 +62,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 type Content = SurveyContent & Record<string, unknown>;
 
@@ -147,7 +145,7 @@ function Field({ label, value, onChange, placeholder, multiline, hint, rows = 3,
       </span>
       <span className="relative block">
         {multiline ? (
-          <textarea
+          <Textarea
             className={`${textClass} min-h-20 resize-y pb-6`}
             value={value}
             rows={rows}
@@ -836,11 +834,13 @@ export default function SurveyAdmin() {
     }
   }, []);
 
-  const selectTab = (key: TabKey) => {
-    setTab(key);
+  const selectTab = (key: string) => {
+    if (!TABS.some((item) => item.key === key)) return;
+    const tabKey = key as TabKey;
+    setTab(tabKey);
     setEditingLabel(null);
     const url = new URL(window.location.href);
-    url.searchParams.set("tab", key);
+    url.searchParams.set("tab", tabKey);
     window.history.replaceState(null, "", url.toString());
   };
 
@@ -1128,138 +1128,56 @@ export default function SurveyAdmin() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-border bg-card lg:flex">
-        <div className="flex h-16 items-center gap-3 border-b border-border px-5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20">
-            <Layers3 className="h-4 w-4" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-bold leading-tight">Admin Panel</p>
-            <p className="text-[11px] text-muted-foreground">Survey &amp; Research</p>
-          </div>
-          <Link
-            href="/admin"
-            title="Back to main admin"
-            aria-label="Back to main admin"
-            className="ml-auto text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </div>
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-            Page content
-          </p>
-          {TABS.filter((item) => CONTENT_TABS.includes(item.key)).map((item) => (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => selectTab(item.key)}
-              aria-current={tab === item.key ? "page" : undefined}
-              className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[13px] font-medium transition-colors ${
-                tab === item.key
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
-              }`}
-            >
-              <item.icon className="h-4 w-4 shrink-0" />
-              {item.label}
-            </button>
-          ))}
-          <p className="px-3 pb-2 pt-5 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-            Operations
-          </p>
-          {TABS.filter((item) => !CONTENT_TABS.includes(item.key)).map((item) => (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => selectTab(item.key)}
-              aria-current={tab === item.key ? "page" : undefined}
-              className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[13px] font-medium transition-colors ${
-                tab === item.key
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
-              }`}
-            >
-              <item.icon className="h-4 w-4 shrink-0" />
-              {item.label}
-            </button>
-          ))}
-        </nav>
-        <div className="border-t border-border p-3">
-          <Link
-            href="/survey"
-            className="flex items-center gap-3 rounded-xl border border-blue-500/20 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 px-3 py-3 transition-colors hover:border-blue-400/40"
-          >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/15 text-blue-400">
-              <Rocket className="h-4 w-4" />
-            </span>
-            <span>
-              <span className="block text-[13px] font-semibold">Live Site</span>
-              <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                View public page <ExternalLink className="h-3 w-3" />
-              </span>
-            </span>
-          </Link>
-        </div>
-      </aside>
-
-      <div className="lg:pl-64">
-        <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-card/95 px-5 py-3 backdrop-blur lg:px-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-lg shadow-indigo-500/20">
-              <Layers3 className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold">Survey &amp; Research</h1>
-                {dirty && (
-                  <span className="rounded bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-600">
-                    Unsaved
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground">{active.hint}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {notice && <span className="hidden text-xs font-semibold text-emerald-600 sm:inline">{notice}</span>}
-            <button
-              type="button"
-              onClick={() => selectTab("enquiries")}
-              title={`${newEnquiryCount} new enquiries`}
-              aria-label={`${newEnquiryCount} new enquiries — open enquiries`}
-              className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <Bell className="h-4 w-4" />
-              {newEnquiryCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-                  {newEnquiryCount}
-                </span>
-              )}
-            </button>
-            {CONTENT_TABS.includes(tab) && (
-              <Button
-                type="button"
-                size="sm"
-                className="rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 px-4 font-semibold text-white shadow-lg shadow-blue-500/20 hover:from-blue-400 hover:to-indigo-500"
-                disabled={!dirty || saving}
-                onClick={saveContent}
-              >
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} Push Changes
-              </Button>
-            )}
-          </div>
-        </header>
-
-        {error && (
-          <div className="mx-5 mt-4 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-2 text-sm text-destructive lg:mx-8">
-            {error}
-          </div>
-        )}
-
-        <main className="px-5 py-6 lg:px-8">
+    <AdminShell
+      title="Survey & Research"
+      subtitle={active.hint}
+      headerIcon={active.icon}
+      pill={editingLabel ? "Edit Mode" : "Content Management"}
+      bannerTitle={editingLabel ? `${editingLabel} Details` : active.label}
+      bannerDescription={
+        editingLabel
+          ? "Update the information below to keep your content accurate and up to date."
+          : active.hint
+      }
+      bannerIcon={editingLabel ? Info : active.icon}
+      groups={[
+        {
+          label: "Page content",
+          items: TABS.filter((item) => CONTENT_TABS.includes(item.key)).map((item) => ({
+            key: item.key,
+            label: item.label,
+            icon: item.icon,
+          })),
+        },
+        {
+          label: "Operations",
+          items: TABS.filter((item) => !CONTENT_TABS.includes(item.key)).map((item) => ({
+            key: item.key,
+            label: item.label,
+            icon: item.icon,
+            count: item.key === "enquiries" ? newEnquiryCount : undefined,
+          })),
+        },
+      ]}
+      activeKey={tab}
+      onNavigate={selectTab}
+      liveHref="/survey"
+      notice={notice}
+      error={error}
+      notificationCount={newEnquiryCount}
+      onNotifications={() => selectTab("enquiries")}
+      publishLabel="Push Changes"
+      onPublish={CONTENT_TABS.includes(tab) ? saveContent : undefined}
+      publishDisabled={!dirty}
+      publishBusy={saving}
+      actions={
+        dirty ? (
+          <span className="hidden rounded bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-600 sm:inline">
+            Unsaved
+          </span>
+        ) : undefined
+      }
+    >
           {/* Mobile tab selector */}
           <div className="mb-4 flex gap-2 overflow-x-auto lg:hidden">
             {TABS.map((item) => (
@@ -1329,8 +1247,6 @@ export default function SurveyAdmin() {
               Changes go live on <Link href="/survey" className="underline">/survey</Link> only after you publish.
             </p>
           )}
-        </main>
-      </div>
-    </div>
+    </AdminShell>
   );
 }

@@ -1,15 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   AlertOctagon,
-  ArrowLeft,
+  Award,
+  BarChart3,
+  BriefcaseBusiness,
   CalendarClock,
   CalendarDays,
+  Check,
+  ChevronRight,
   ClipboardCheck,
   ClipboardList,
+  FolderKanban,
   GraduationCap,
+  Inbox,
+  Layers3,
   LayoutDashboard,
   Loader2,
   Mail,
@@ -18,8 +25,14 @@ import {
   RefreshCw,
   Save,
   Search,
+  Settings2,
+  ShieldCheck,
+  Trash2,
   UserCheck,
   UserRound,
+  Users,
+  X,
+  type LucideIcon,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { apiErrorMessage } from "@/lib/api-error";
@@ -41,9 +54,31 @@ import InterviewsPanel from "@/components/admin/fellowship/InterviewsPanel";
 import MentorsPanel from "@/components/admin/fellowship/MentorsPanel";
 import OnboardingPanel from "@/components/admin/fellowship/OnboardingPanel";
 import ReviewsPanel from "@/components/admin/fellowship/ReviewsPanel";
+import {
+  AdminShell,
+  type AdminNavGroup,
+} from "@/components/admin/shared/AdminShell";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 type Application = {
   id: string;
@@ -71,6 +106,131 @@ type Application = {
   createdAt: string;
   updatedAt: string;
 };
+
+const NAV_GROUPS: AdminNavGroup[] = [
+  {
+    label: "Workspace",
+    items: [
+      {
+        key: "team",
+        label: "Team members",
+        icon: Users,
+        href: "/admin?section=team",
+      },
+      {
+        key: "roles",
+        label: "Roles",
+        icon: BriefcaseBusiness,
+        href: "/admin?section=roles",
+      },
+      {
+        key: "teams",
+        label: "Teams",
+        icon: Layers3,
+        href: "/admin?section=teams",
+      },
+      {
+        key: "projects",
+        label: "Projects",
+        icon: FolderKanban,
+        href: "/admin?section=projects",
+      },
+      {
+        key: "certificates",
+        label: "Certificates",
+        icon: Award,
+        href: "/admin?section=certificates",
+      },
+      {
+        key: "administrators",
+        label: "Administrators",
+        icon: ShieldCheck,
+        href: "/admin?section=admins",
+      },
+      {
+        key: "settings",
+        label: "Settings",
+        icon: Settings2,
+        href: "/admin?section=settings",
+      },
+    ],
+  },
+  {
+    label: "Services",
+    items: [
+      {
+        key: "survey",
+        label: "Survey & Research",
+        icon: BarChart3,
+        href: "/admin/survey",
+      },
+      {
+        key: "leads",
+        label: "Lead inbox",
+        icon: Inbox,
+        href: "/admin/leads",
+      },
+      {
+        key: "fellowship",
+        label: "Fellowship",
+        icon: GraduationCap,
+        href: "/admin/fellowship",
+      },
+      {
+        key: "programme",
+        label: "Programme",
+        icon: Layers3,
+        href: "/admin/programme",
+      },
+    ],
+  },
+];
+
+function SectionHeader({
+  icon: Icon,
+  title,
+  description,
+  children,
+}: {
+  icon: LucideIcon;
+  title: string;
+  description?: string;
+  children?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="flex items-start gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/10 text-violet-500 ring-1 ring-violet-500/20">
+          <Icon className="h-5 w-5" />
+        </span>
+        <div>
+          <CardTitle className="text-sm font-semibold">{title}</CardTitle>
+          {description && (
+            <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+          )}
+        </div>
+      </div>
+      {children ? <div className="flex items-center gap-2">{children}</div> : null}
+    </div>
+  );
+}
+
+function FieldLabel({ children }: { children: ReactNode }) {
+  return (
+    <span className="mb-1.5 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+      <span className="h-3 w-0.5 rounded-full bg-violet-500" />
+      {children}
+    </span>
+  );
+}
+
+const initials = (name: string) =>
+  name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
 
 const withCookies = (extra: RequestInit = {}): RequestInit => ({
   credentials: "include",
@@ -364,7 +524,7 @@ export default function FellowshipApplicationsAdmin() {
   if (authLoading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-background text-foreground">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="h-6 w-6 animate-spin text-violet-500" />
       </main>
     );
   }
@@ -372,12 +532,15 @@ export default function FellowshipApplicationsAdmin() {
   if (!session) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-background px-4 text-foreground">
-        <Card className="w-full max-w-md">
+        <Card className="w-full max-w-md rounded-2xl">
           <CardHeader>
             <CardTitle>Fellowship applications</CardTitle>
           </CardHeader>
           <CardContent>
-            <Link href="/login?next=/admin/fellowship" className="text-sm font-medium text-primary hover:underline">
+            <Link
+              href="/login?next=/admin/fellowship"
+              className="text-sm font-medium text-violet-600 hover:underline"
+            >
               Sign in to continue
             </Link>
           </CardContent>
@@ -389,7 +552,7 @@ export default function FellowshipApplicationsAdmin() {
   if (forbidden) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-background px-4 text-foreground">
-        <Card className="w-full max-w-md">
+        <Card className="w-full max-w-md rounded-2xl">
           <CardHeader>
             <CardTitle>Access denied</CardTitle>
           </CardHeader>
@@ -402,551 +565,673 @@ export default function FellowshipApplicationsAdmin() {
   }
 
   return (
-    <main className="min-h-screen bg-background px-4 py-6 text-foreground sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-[1200px]">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <Link
-              href="/admin"
-              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+    <AdminShell
+      title="Fellowship"
+      subtitle="Admissions to alumni operations"
+      headerIcon={GraduationCap}
+      pill="Programme Management"
+      bannerTitle="Manage Fellowship"
+      bannerDescription="Run admissions, reviews, onboarding and alumni from one place."
+      bannerIcon={GraduationCap}
+      groups={NAV_GROUPS}
+      activeKey="fellowship"
+      liveHref="/fellowship"
+    >
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="font-display text-lg font-semibold tracking-tight">
+              Admissions pipeline
+            </h2>
+            <Badge
+              variant="secondary"
+              className="rounded-full bg-violet-500/10 text-violet-600 ring-1 ring-inset ring-violet-500/20"
             >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              Admin
-            </Link>
-            <h1 className="mt-2 font-display text-2xl font-semibold tracking-tight">
-              Fellowship programme
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Run admissions from review and interviews through onboarding, the
-              active fellowship and alumni outcomes.
-            </p>
+              {applications.length} total
+            </Badge>
           </div>
-          <Button variant="outline" onClick={() => void load()} disabled={loading}>
-            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Move candidates from application and review through interviews and
+            onboarding.
+          </p>
         </div>
-
-        <div className="mt-5 flex flex-wrap gap-1.5 rounded-xl border border-border bg-muted/30 p-1.5">
-          {(
-            [
-              ["dashboard", "Dashboard", LayoutDashboard],
-              ["applications", "Applications", ClipboardList],
-              ["reviews", "Reviews", ClipboardCheck],
-              ["interviews", "Interviews", CalendarClock],
-              ["mentors", "Mentors", UserRound],
-              ["fellowship", "Fellowship", UserCheck],
-              ["onboarding", "Onboarding", UserCheck],
-              ["alumni", "Alumni", GraduationCap],
-              ["cases", "Cases", AlertOctagon],
-            ] as const
-          ).map(([value, label, Icon]) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => {
-                setTab(value);
-                setError("");
-                setNotice("");
-              }}
-              className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
-                tab === value
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Icon className="h-3.5 w-3.5" />
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {(error || notice) && (
-          <div
-            className={`mt-4 rounded-lg border p-3 text-xs ${
-              error
-                ? "border-destructive/30 bg-destructive/10 text-destructive"
-                : "border-emerald-500/30 bg-emerald-500/10 text-emerald-600"
-            }`}
-          >
-            {error || notice}
-          </div>
-        )}
-
-        {tab === "applications" && (
-          <>
-        <Card className="mt-5">
-          <CardHeader className="flex flex-row items-center justify-between gap-3">
-            <div>
-              <CardTitle className="text-base">Cohort and policy terms</CardTitle>
-              <p className="mt-1 text-xs text-muted-foreground">
-                These values appear in the public “Cohort terms” panel and guide.
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPolicyOpen((current) => !current)}
-            >
-              {policyOpen ? "Hide" : "Edit terms"}
-            </Button>
-          </CardHeader>
-          {policyOpen && (
-            <CardContent>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {(
-                  [
-                    ["fee", "Fee / contribution"],
-                    ["scholarship", "Scholarship"],
-                    ["stipend", "Stipend"],
-                    ["accommodation", "Accommodation and food"],
-                    ["insurance", "Insurance / medical"],
-                    ["eligibility", "Eligibility"],
-                    ["leave", "Leave"],
-                    ["cohortNote", "Location / residency"],
-                  ] as const
-                ).map(([key, label]) => (
-                  <label key={key} className="block">
-                    <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      {label}
-                    </span>
-                    <textarea
-                      value={policyDraft[key]}
-                      onChange={(event) =>
-                        setPolicyDraft({ ...policyDraft, [key]: event.target.value })
-                      }
-                      rows={3}
-                      className="w-full resize-y rounded-lg border border-border bg-background px-2.5 py-2 text-xs"
-                    />
-                  </label>
-                ))}
-                <label className="block">
-                  <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Next intake
-                  </span>
-                  <Input
-                    value={policyDraft.nextIntake}
-                    onChange={(event) =>
-                      setPolicyDraft({ ...policyDraft, nextIntake: event.target.value })
-                    }
-                  />
-                </label>
-                <label className="block">
-                  <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Seats
-                  </span>
-                  <Input
-                    value={policyDraft.seats}
-                    onChange={(event) =>
-                      setPolicyDraft({ ...policyDraft, seats: event.target.value })
-                    }
-                  />
-                </label>
-              </div>
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                <span className="text-[10px] text-muted-foreground">
-                  {policy?.updatedAt
-                    ? `Last updated ${new Date(policy.updatedAt).toLocaleString()}`
-                    : "Using default terms"}
-                </span>
-                <Button onClick={() => void savePolicy()} disabled={savingPolicy}>
-                  {savingPolicy ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Save className="h-4 w-4" />
-                  )}
-                  Save terms
-                </Button>
-              </div>
-            </CardContent>
-          )}
-        </Card>
-
-        <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_380px]">
-          <Card>
-            <CardHeader className="gap-3">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <ClipboardList className="h-4 w-4 text-primary" />
-                  {filtered.length} of {applications.length}
-                </CardTitle>
-                <select
-                  value={stageFilter}
-                  onChange={(event) => setStageFilter(event.target.value)}
-                  className="h-9 rounded-lg border border-border bg-background px-3 text-xs"
-                >
-                  <option value="all">All stages</option>
-                  {FELLOWSHIP_APPLICATION_STAGES.map((stage) => (
-                    <option key={stage} value={stage}>
-                      {FELLOWSHIP_STAGE_LABELS[stage]}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder="Search name, email, reference or track"
-                  className="pl-9"
-                />
-              </div>
-              {checkedIDs.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 p-2">
-                  <span className="text-[10px] font-medium">
-                    {checkedIDs.length} selected
-                  </span>
-                  <select
-                    value={bulkStage}
-                    onChange={(event) =>
-                      setBulkStage(event.target.value as FellowshipApplicationStage)
-                    }
-                    className="h-8 rounded-lg border border-border bg-background px-2 text-[10px]"
-                  >
-                    {FELLOWSHIP_APPLICATION_STAGES.map((stage) => (
-                      <option key={stage} value={stage}>
-                        {FELLOWSHIP_STAGE_LABELS[stage]}
-                      </option>
-                    ))}
-                  </select>
-                  <Button size="sm" onClick={() => void bulkApply()} disabled={bulkSaving}>
-                    {bulkSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-                    Apply to selected
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setCheckedIDs([])}
-                  >
-                    Clear
-                  </Button>
-                </div>
-              )}
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {loading && applications.length === 0 ? (
-                <div className="flex justify-center py-12">
-                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                </div>
-              ) : filtered.length === 0 ? (
-                <p className="py-10 text-center text-sm text-muted-foreground">
-                  No applications match this view.
-                </p>
-              ) : (
-                filtered.map((application) => {
-                  const color = FELLOWSHIP_STAGE_TONES[application.stage];
-                  const active = selectedID === application.id;
-                  return (
-                    <div key={application.id} className="flex items-start gap-2">
-                      <input
-                        type="checkbox"
-                        aria-label={`Select ${application.name}`}
-                        checked={checkedIDs.includes(application.id)}
-                        onChange={(event) =>
-                          setCheckedIDs((current) =>
-                            event.target.checked
-                              ? [...current, application.id]
-                              : current.filter((id) => id !== application.id),
-                          )
-                        }
-                        className="mt-4"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => select(application)}
-                        className={`w-full rounded-xl border p-4 text-left transition-colors ${
-                          active
-                            ? "border-primary/40 bg-primary/5"
-                            : "border-border bg-card hover:bg-muted/40"
-                        }`}
-                      >
-                        <div className="flex flex-wrap items-start justify-between gap-2">
-                          <div>
-                            <p className="text-sm font-semibold">{application.name}</p>
-                            <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">
-                              {application.reference} · {application.track}
-                            </p>
-                          </div>
-                          <span
-                            className="rounded-full border px-2 py-1 text-[10px] font-medium"
-                            style={{
-                              color,
-                              borderColor: `${color}55`,
-                              backgroundColor: `${color}14`,
-                            }}
-                          >
-                            {FELLOWSHIP_STAGE_LABELS[application.stage]}
-                          </span>
-                        </div>
-                        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
-                          <span>{application.email}</span>
-                          <span>{application.city || "City not given"}</span>
-                          <span>
-                            {new Date(application.createdAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </button>
-                    </div>
-                  );
-                })
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="h-fit lg:sticky lg:top-6">
-            <CardHeader>
-              <CardTitle className="text-base">
-                {selected ? "Application details" : "Select an application"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {!selected || !draft ? (
-                <p className="text-sm text-muted-foreground">
-                  Choose an application to see motivation, commitments and update its stage.
-                </p>
-              ) : (
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm font-semibold">{selected.name}</p>
-                    <p className="font-mono text-[10px] text-muted-foreground">
-                      {selected.reference}
-                    </p>
-                    <div className="mt-2 space-y-1 text-[11px] text-muted-foreground">
-                      <p className="flex items-center gap-1.5">
-                        <Mail className="h-3 w-3" /> {selected.email}
-                      </p>
-                      <p className="flex items-center gap-1.5">
-                        <Phone className="h-3 w-3" /> {selected.phone}
-                      </p>
-                      <p className="flex items-center gap-1.5">
-                        <MapPin className="h-3 w-3" /> {selected.city || "—"}
-                      </p>
-                      <p className="flex items-center gap-1.5">
-                        <CalendarDays className="h-3 w-3" />{" "}
-                        {new Date(selected.createdAt).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="rounded-lg border border-border bg-muted/30 p-3">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      Motivation
-                    </p>
-                    <p className="mt-1 whitespace-pre-wrap text-xs leading-relaxed">
-                      {selected.motivation}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 text-[10px]">
-                    {[
-                      ["Full-time", selected.fullTime],
-                      ["Vipassana", selected.vipassana],
-                      ["Field work", selected.fieldWork],
-                      ["Terms accepted", selected.termsAccepted],
-                    ].map(([label, value]) => (
-                      <span
-                        key={String(label)}
-                        className={`rounded-lg border px-2 py-1.5 ${
-                          value
-                            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600"
-                            : "border-border text-muted-foreground"
-                        }`}
-                      >
-                        {label}: {value ? "yes" : "no"}
-                      </span>
-                    ))}
-                  </div>
-
-                  <label className="block">
-                    <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      Stage
-                    </span>
-                    <select
-                      value={draft.stage}
-                      onChange={(event) =>
-                        setDraft({
-                          ...draft,
-                          stage: event.target.value as FellowshipApplicationStage,
-                        })
-                      }
-                      className="h-9 w-full rounded-lg border border-border bg-background px-2 text-xs"
-                    >
-                      {FELLOWSHIP_APPLICATION_STAGES.map((stage) => (
-                        <option key={stage} value={stage}>
-                          {FELLOWSHIP_STAGE_LABELS[stage]}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <label className="block">
-                    <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      Cohort
-                    </span>
-                    <Input
-                      value={draft.cohort}
-                      onChange={(event) => setDraft({ ...draft, cohort: event.target.value })}
-                    />
-                  </label>
-
-                  <label className="block">
-                    <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      Offer response deadline
-                    </span>
-                    <Input
-                      type="datetime-local"
-                      value={draft.offerExpiresAt}
-                      onChange={(event) =>
-                        setDraft({ ...draft, offerExpiresAt: event.target.value })
-                      }
-                    />
-                    <span className="mt-1 block text-[10px] text-muted-foreground">
-                      Set when the stage is Offer. Leaving it empty on a new offer
-                      defaults to seven days.
-                    </span>
-                  </label>
-
-                  {draft.stage === "waitlisted" && (
-                    <>
-                      <label className="block">
-                        <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                          Waitlist position
-                        </span>
-                        <Input
-                          type="number"
-                          min={1}
-                          value={draft.waitlistPosition}
-                          onChange={(event) =>
-                            setDraft({
-                              ...draft,
-                              waitlistPosition: event.target.value,
-                            })
-                          }
-                          placeholder="Auto-assigned if empty"
-                        />
-                      </label>
-                      <label className="block">
-                        <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                          Waitlist review by
-                        </span>
-                        <Input
-                          type="datetime-local"
-                          value={draft.waitlistExpiresAt}
-                          onChange={(event) =>
-                            setDraft({
-                              ...draft,
-                              waitlistExpiresAt: event.target.value,
-                            })
-                          }
-                        />
-                        <span className="mt-1 block text-[10px] text-muted-foreground">
-                          Defaults to 30 days when first waitlisted.
-                        </span>
-                      </label>
-                    </>
-                  )}
-
-                  <label className="block">
-                    <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      Internal notes
-                    </span>
-                    <textarea
-                      value={draft.notes}
-                      onChange={(event) => setDraft({ ...draft, notes: event.target.value })}
-                      rows={4}
-                      className="w-full resize-y rounded-lg border border-border bg-background px-2.5 py-2 text-xs"
-                      placeholder="Interview notes, documents requested, follow-up date…"
-                    />
-                  </label>
-
-                  <Button onClick={() => void save()} disabled={saving} className="w-full">
-                    {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                    Save changes
-                  </Button>
-
-                  {selected.candidateToken && selected.stage === "offer" && (
-                    <a
-                      href={`/fellowship/offer/${selected.candidateToken}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block text-center text-[10px] font-medium text-primary hover:underline"
-                    >
-                      Open candidate offer page
-                    </a>
-                  )}
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full text-destructive"
-                    onClick={() => void removeApplication()}
-                    disabled={saving}
-                  >
-                    Delete application
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-          </>
-        )}
-
-        {tab === "interviews" && (
-          <div className="mt-5">
-            <InterviewsPanel
-              applications={applications}
-              onApplicationsChanged={() => void load()}
-            />
-          </div>
-        )}
-
-        {tab === "mentors" && (
-          <div className="mt-5">
-            <MentorsPanel />
-          </div>
-        )}
-
-        {tab === "onboarding" && (
-          <div className="mt-5">
-            <OnboardingPanel
-              applications={applications}
-              onApplicationsChanged={() => void load()}
-            />
-          </div>
-        )}
-
-        {tab === "alumni" && (
-          <div className="mt-5">
-            <AlumniPanel applications={applications} />
-          </div>
-        )}
-
-        {tab === "dashboard" && (
-          <div className="mt-5">
-            <DashboardPanel />
-          </div>
-        )}
-
-        {tab === "reviews" && (
-          <div className="mt-5">
-            <ReviewsPanel applications={applications} />
-          </div>
-        )}
-
-        {tab === "fellowship" && (
-          <div className="mt-5">
-            <DeliveryPanel applications={applications} />
-          </div>
-        )}
-
-        {tab === "cases" && (
-          <div className="mt-5">
-            <CasesPanel applications={applications} />
-          </div>
-        )}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => void load()}
+          disabled={loading}
+          title="Refresh applications"
+          aria-label="Refresh applications"
+          className="h-9 w-9 rounded-full border-border/80 bg-card"
+        >
+          <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+        </Button>
       </div>
-    </main>
+
+      <div className="mb-5 flex flex-wrap gap-1.5 rounded-2xl border border-border/70 bg-muted/40 p-1.5">
+        {(
+          [
+            ["dashboard", "Dashboard", LayoutDashboard],
+            ["applications", "Applications", ClipboardList],
+            ["reviews", "Reviews", ClipboardCheck],
+            ["interviews", "Interviews", CalendarClock],
+            ["mentors", "Mentors", UserRound],
+            ["fellowship", "Fellowship", UserCheck],
+            ["onboarding", "Onboarding", UserCheck],
+            ["alumni", "Alumni", GraduationCap],
+            ["cases", "Cases", AlertOctagon],
+          ] as const
+        ).map(([value, label, Icon]) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => {
+              setTab(value);
+              setError("");
+              setNotice("");
+            }}
+            className={cn(
+              "inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-medium transition-all",
+              tab === value
+                ? "bg-violet-600 text-white shadow-sm shadow-violet-500/25"
+                : "text-muted-foreground hover:bg-background hover:text-foreground",
+            )}
+          >
+            <Icon className="h-3.5 w-3.5" />
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {(error || notice) && (
+        <div
+          className={cn(
+            "mb-5 flex items-center gap-2 rounded-xl border px-4 py-2.5 text-xs",
+            error
+              ? "border-destructive/30 bg-destructive/10 text-destructive"
+              : "border-emerald-500/30 bg-emerald-500/10 text-emerald-600",
+          )}
+        >
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/10">
+            {error ? (
+              <AlertOctagon className="h-3 w-3" />
+            ) : (
+              <Check className="h-3 w-3" />
+            )}
+          </span>
+          {error || notice}
+        </div>
+      )}
+
+      {tab === "applications" && (
+        <>
+          <Card className="rounded-2xl border-border/80 shadow-sm">
+            <CardHeader className="border-b border-border/70 p-5">
+              <SectionHeader
+                icon={Settings2}
+                title="Cohort and policy terms"
+                description="These values appear in the public “Cohort terms” panel and guide."
+              >
+                <label className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground">
+                  {policyOpen ? "Hide" : "Edit terms"}
+                  <Switch
+                    checked={policyOpen}
+                    onCheckedChange={setPolicyOpen}
+                    aria-label="Edit terms"
+                  />
+                </label>
+              </SectionHeader>
+            </CardHeader>
+            {policyOpen && (
+              <CardContent className="p-5">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {(
+                    [
+                      ["fee", "Fee / contribution"],
+                      ["scholarship", "Scholarship"],
+                      ["stipend", "Stipend"],
+                      ["accommodation", "Accommodation and food"],
+                      ["insurance", "Insurance / medical"],
+                      ["eligibility", "Eligibility"],
+                      ["leave", "Leave"],
+                      ["cohortNote", "Location / residency"],
+                    ] as const
+                  ).map(([key, label]) => (
+                    <label key={key} className="block">
+                      <FieldLabel>{label}</FieldLabel>
+                      <textarea
+                        value={policyDraft[key]}
+                        onChange={(event) =>
+                          setPolicyDraft({ ...policyDraft, [key]: event.target.value })
+                        }
+                        rows={3}
+                        className="w-full resize-y rounded-xl border border-border/80 bg-background/60 px-3 py-2 text-xs outline-none transition-colors focus-visible:ring-2 focus-visible:ring-violet-500/30"
+                      />
+                    </label>
+                  ))}
+                  <label className="block">
+                    <FieldLabel>Next intake</FieldLabel>
+                    <Input
+                      value={policyDraft.nextIntake}
+                      onChange={(event) =>
+                        setPolicyDraft({ ...policyDraft, nextIntake: event.target.value })
+                      }
+                      className="rounded-xl border-border/80 bg-background/60"
+                    />
+                  </label>
+                  <label className="block">
+                    <FieldLabel>Seats</FieldLabel>
+                    <Input
+                      value={policyDraft.seats}
+                      onChange={(event) =>
+                        setPolicyDraft({ ...policyDraft, seats: event.target.value })
+                      }
+                      className="rounded-xl border-border/80 bg-background/60"
+                    />
+                  </label>
+                </div>
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border/70 pt-4">
+                  <span className="text-[10px] text-muted-foreground">
+                    {policy?.updatedAt
+                      ? `Last updated ${new Date(policy.updatedAt).toLocaleString()}`
+                      : "Using default terms"}
+                  </span>
+                  <Button
+                    onClick={() => void savePolicy()}
+                    disabled={savingPolicy}
+                    className="rounded-xl bg-violet-600 hover:bg-violet-500"
+                  >
+                    {savingPolicy ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4" />
+                    )}
+                    Save terms
+                  </Button>
+                </div>
+              </CardContent>
+            )}
+          </Card>
+
+          <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_380px]">
+            <Card className="overflow-hidden rounded-2xl border-border/80 shadow-sm">
+              <CardHeader className="gap-4 border-b border-border/70 p-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <SectionHeader
+                    icon={ClipboardList}
+                    title="Applications"
+                    description={`${filtered.length} of ${applications.length} in view`}
+                  />
+                  <Select value={stageFilter} onValueChange={setStageFilter}>
+                    <SelectTrigger className="h-9 w-[150px] rounded-full border-border/80 bg-background text-xs">
+                      <SelectValue placeholder="All stages" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All stages</SelectItem>
+                      {FELLOWSHIP_APPLICATION_STAGES.map((stage) => (
+                        <SelectItem key={stage} value={stage}>
+                          {FELLOWSHIP_STAGE_LABELS[stage]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder="Search name, email, reference or track"
+                    className="rounded-xl border-border/80 bg-background/60 pl-9"
+                  />
+                </div>
+                {checkedIDs.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2 rounded-xl border border-violet-500/30 bg-violet-500/5 p-2.5">
+                    <Badge className="rounded-full bg-violet-600 text-white">
+                      {checkedIDs.length} selected
+                    </Badge>
+                    <Select
+                      value={bulkStage}
+                      onValueChange={(value) =>
+                        setBulkStage(value as FellowshipApplicationStage)
+                      }
+                    >
+                      <SelectTrigger className="h-8 w-[150px] rounded-full border-border/80 bg-background text-[10px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {FELLOWSHIP_APPLICATION_STAGES.map((stage) => (
+                          <SelectItem key={stage} value={stage}>
+                            {FELLOWSHIP_STAGE_LABELS[stage]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      size="sm"
+                      onClick={() => void bulkApply()}
+                      disabled={bulkSaving}
+                      className="rounded-full bg-violet-600 hover:bg-violet-500"
+                    >
+                      {bulkSaving ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : null}
+                      Apply to selected
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      title="Clear selection"
+                      aria-label="Clear selection"
+                      onClick={() => setCheckedIDs([])}
+                      className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </CardHeader>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader className="bg-muted/40">
+                    <TableRow>
+                      <TableHead className="w-10 pl-5">
+                        <span className="sr-only">Select</span>
+                      </TableHead>
+                      <TableHead>Applicant</TableHead>
+                      <TableHead>Stage</TableHead>
+                      <TableHead className="hidden md:table-cell">Track</TableHead>
+                      <TableHead className="hidden sm:table-cell">Applied</TableHead>
+                      <TableHead className="w-12 pr-5 text-right">
+                        <span className="sr-only">Open</span>
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {loading && applications.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="py-12 text-center">
+                          <Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" />
+                        </TableCell>
+                      </TableRow>
+                    ) : filtered.length === 0 ? (
+                      <TableRow>
+                        <TableCell
+                          colSpan={6}
+                          className="py-10 text-center text-sm text-muted-foreground"
+                        >
+                          No applications match this view.
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      filtered.map((application) => {
+                        const color = FELLOWSHIP_STAGE_TONES[application.stage];
+                        const active = selectedID === application.id;
+                        return (
+                          <TableRow
+                            key={application.id}
+                            data-state={active ? "selected" : undefined}
+                            onClick={() => select(application)}
+                            className={cn(
+                              "cursor-pointer",
+                              active && "bg-violet-500/5",
+                            )}
+                          >
+                            <TableCell
+                              className="pl-5"
+                              onClick={(event) => event.stopPropagation()}
+                            >
+                              <input
+                                type="checkbox"
+                                aria-label={`Select ${application.name}`}
+                                checked={checkedIDs.includes(application.id)}
+                                onChange={(event) =>
+                                  setCheckedIDs((current) =>
+                                    event.target.checked
+                                      ? [...current, application.id]
+                                      : current.filter((id) => id !== application.id),
+                                  )
+                                }
+                                className="h-4 w-4 rounded border-border accent-violet-600"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-3">
+                                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-[11px] font-semibold text-violet-600 ring-1 ring-violet-500/20">
+                                  {initials(application.name)}
+                                </span>
+                                <div className="min-w-0">
+                                  <p className="truncate text-sm font-semibold">
+                                    {application.name}
+                                  </p>
+                                  <p className="truncate font-mono text-[10px] text-muted-foreground">
+                                    {application.reference} · {application.email}
+                                  </p>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="outline"
+                                className="rounded-full border px-2.5 py-1 text-[10px] font-medium"
+                                style={{
+                                  color,
+                                  borderColor: `${color}55`,
+                                  backgroundColor: `${color}14`,
+                                }}
+                              >
+                                {FELLOWSHIP_STAGE_LABELS[application.stage]}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="hidden text-xs text-muted-foreground md:table-cell">
+                              {application.track}
+                            </TableCell>
+                            <TableCell className="hidden text-xs text-muted-foreground sm:table-cell">
+                              {new Date(application.createdAt).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell className="pr-5 text-right">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                aria-label={`Open ${application.name}`}
+                                title={`Open ${application.name}`}
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  select(application);
+                                }}
+                                className="h-8 w-8 rounded-full text-muted-foreground hover:text-violet-600"
+                              >
+                                <ChevronRight className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            <Card className="h-fit rounded-2xl border-border/80 shadow-sm lg:sticky lg:top-6">
+              <CardHeader className="border-b border-border/70 p-5">
+                <SectionHeader
+                  icon={UserRound}
+                  title={
+                    selected ? "Application details" : "Select an application"
+                  }
+                />
+              </CardHeader>
+              <CardContent className="p-5">
+                {!selected || !draft ? (
+                  <p className="text-sm text-muted-foreground">
+                    Choose an application to see motivation, commitments and
+                    update its stage.
+                  </p>
+                ) : (
+                  <div className="space-y-5">
+                    <div>
+                      <p className="text-sm font-semibold">{selected.name}</p>
+                      <p className="font-mono text-[10px] text-muted-foreground">
+                        {selected.reference}
+                      </p>
+                      <div className="mt-3 space-y-2 text-[11px] text-muted-foreground">
+                        <p className="flex items-center gap-2">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-violet-500/10 text-violet-500">
+                            <Mail className="h-3 w-3" />
+                          </span>
+                          {selected.email}
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-violet-500/10 text-violet-500">
+                            <Phone className="h-3 w-3" />
+                          </span>
+                          {selected.phone}
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-violet-500/10 text-violet-500">
+                            <MapPin className="h-3 w-3" />
+                          </span>
+                          {selected.city || "—"}
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-violet-500/10 text-violet-500">
+                            <CalendarDays className="h-3 w-3" />
+                          </span>
+                          {new Date(selected.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl border border-border/80 bg-muted/40 p-3.5">
+                      <FieldLabel>Motivation</FieldLabel>
+                      <p className="mt-1 whitespace-pre-wrap text-xs leading-relaxed">
+                        {selected.motivation}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        ["Full-time", selected.fullTime],
+                        ["Vipassana", selected.vipassana],
+                        ["Field work", selected.fieldWork],
+                        ["Terms accepted", selected.termsAccepted],
+                      ].map(([label, value]) => (
+                        <Badge
+                          key={String(label)}
+                          variant="outline"
+                          className={cn(
+                            "justify-center rounded-full border px-2 py-1.5 text-[10px] font-medium",
+                            value
+                              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600"
+                              : "border-border/80 text-muted-foreground",
+                          )}
+                        >
+                          {label}: {value ? "yes" : "no"}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    <label className="block">
+                      <FieldLabel>Stage</FieldLabel>
+                      <Select
+                        value={draft.stage}
+                        onValueChange={(value) =>
+                          setDraft({
+                            ...draft,
+                            stage: value as FellowshipApplicationStage,
+                          })
+                        }
+                      >
+                        <SelectTrigger className="h-9 w-full rounded-xl border-border/80 bg-background/60 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {FELLOWSHIP_APPLICATION_STAGES.map((stage) => (
+                            <SelectItem key={stage} value={stage}>
+                              {FELLOWSHIP_STAGE_LABELS[stage]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </label>
+
+                    <label className="block">
+                      <FieldLabel>Cohort</FieldLabel>
+                      <Input
+                        value={draft.cohort}
+                        onChange={(event) =>
+                          setDraft({ ...draft, cohort: event.target.value })
+                        }
+                        className="rounded-xl border-border/80 bg-background/60"
+                      />
+                    </label>
+
+                    <label className="block">
+                      <FieldLabel>Offer response deadline</FieldLabel>
+                      <Input
+                        type="datetime-local"
+                        value={draft.offerExpiresAt}
+                        onChange={(event) =>
+                          setDraft({ ...draft, offerExpiresAt: event.target.value })
+                        }
+                        className="rounded-xl border-border/80 bg-background/60"
+                      />
+                      <span className="mt-1 block text-[10px] text-muted-foreground">
+                        Set when the stage is Offer. Leaving it empty on a new
+                        offer defaults to seven days.
+                      </span>
+                    </label>
+
+                    {draft.stage === "waitlisted" && (
+                      <>
+                        <label className="block">
+                          <FieldLabel>Waitlist position</FieldLabel>
+                          <Input
+                            type="number"
+                            min={1}
+                            value={draft.waitlistPosition}
+                            onChange={(event) =>
+                              setDraft({
+                                ...draft,
+                                waitlistPosition: event.target.value,
+                              })
+                            }
+                            placeholder="Auto-assigned if empty"
+                            className="rounded-xl border-border/80 bg-background/60"
+                          />
+                        </label>
+                        <label className="block">
+                          <FieldLabel>Waitlist review by</FieldLabel>
+                          <Input
+                            type="datetime-local"
+                            value={draft.waitlistExpiresAt}
+                            onChange={(event) =>
+                              setDraft({
+                                ...draft,
+                                waitlistExpiresAt: event.target.value,
+                              })
+                            }
+                            className="rounded-xl border-border/80 bg-background/60"
+                          />
+                          <span className="mt-1 block text-[10px] text-muted-foreground">
+                            Defaults to 30 days when first waitlisted.
+                          </span>
+                        </label>
+                      </>
+                    )}
+
+                    <label className="block">
+                      <FieldLabel>Internal notes</FieldLabel>
+                      <textarea
+                        value={draft.notes}
+                        onChange={(event) =>
+                          setDraft({ ...draft, notes: event.target.value })
+                        }
+                        rows={4}
+                        className="w-full resize-y rounded-xl border border-border/80 bg-background/60 px-3 py-2 text-xs outline-none transition-colors focus-visible:ring-2 focus-visible:ring-violet-500/30"
+                        placeholder="Interview notes, documents requested, follow-up date…"
+                      />
+                    </label>
+
+                    <Button
+                      onClick={() => void save()}
+                      disabled={saving}
+                      className="w-full rounded-xl bg-violet-600 hover:bg-violet-500"
+                    >
+                      {saving ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Save className="h-4 w-4" />
+                      )}
+                      Save changes
+                    </Button>
+
+                    {selected.candidateToken && selected.stage === "offer" && (
+                      <a
+                        href={`/fellowship/offer/${selected.candidateToken}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block text-center text-[10px] font-medium text-violet-600 hover:underline"
+                      >
+                        Open candidate offer page
+                      </a>
+                    )}
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive"
+                      onClick={() => void removeApplication()}
+                      disabled={saving}
+                    >
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full border border-destructive/30 bg-destructive/10">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </span>
+                      Delete application
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
+
+      {tab === "interviews" && (
+        <div className="mt-5">
+          <InterviewsPanel
+            applications={applications}
+            onApplicationsChanged={() => void load()}
+          />
+        </div>
+      )}
+
+      {tab === "mentors" && (
+        <div className="mt-5">
+          <MentorsPanel />
+        </div>
+      )}
+
+      {tab === "onboarding" && (
+        <div className="mt-5">
+          <OnboardingPanel
+            applications={applications}
+            onApplicationsChanged={() => void load()}
+          />
+        </div>
+      )}
+
+      {tab === "alumni" && (
+        <div className="mt-5">
+          <AlumniPanel applications={applications} />
+        </div>
+      )}
+
+      {tab === "dashboard" && (
+        <div className="mt-5">
+          <DashboardPanel />
+        </div>
+      )}
+
+      {tab === "reviews" && (
+        <div className="mt-5">
+          <ReviewsPanel applications={applications} />
+        </div>
+      )}
+
+      {tab === "fellowship" && (
+        <div className="mt-5">
+          <DeliveryPanel applications={applications} />
+        </div>
+      )}
+
+      {tab === "cases" && (
+        <div className="mt-5">
+          <CasesPanel applications={applications} />
+        </div>
+      )}
+    </AdminShell>
   );
 }

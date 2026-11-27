@@ -54,6 +54,7 @@ import {
   type SurveyEnquiry,
   type SurveyEnquiryStatus,
 } from "@/lib/survey-enquiries";
+import { AdminShell } from "@/components/admin/shared/AdminShell";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -80,10 +81,8 @@ import {
   X,
   AlertCircle,
   CheckCircle2,
-  ChevronRight,
   ArrowDown,
   ArrowUp,
-  Menu,
   Globe,
   Link2,
   Shield,
@@ -216,12 +215,6 @@ const WORKSPACE_SECTIONS: SectionKey[] = [
 
 const SURVEY_SECTIONS: SectionKey[] = ["survey", "surveyors", "enquiries"];
 
-const SECTION_NAV_LABELS: Partial<Record<SectionKey, string>> = {
-  survey: "Services",
-  surveyors: "Users",
-  enquiries: "Enquiries",
-};
-
 /* Internal leads are stored as one `Name | short note` per line in Settings.
    Mirror the API parser so the admin list reflects saved edits immediately. */
 const parseSurveyLeads = (value: string): { name: string; note: string }[] =>
@@ -281,7 +274,6 @@ export default function AdminPage() {
       window.localStorage.getItem("kavi-admin-theme");
     return stored === "light" ? "light" : "dark";
   });
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [memberQuery, setMemberQuery] = useState("");
@@ -612,11 +604,12 @@ export default function AdminPage() {
     }
   }, []);
 
-  const selectSection = (key: SectionKey) => {
-    setSection(key);
-    setMobileNavOpen(false);
+  const selectSection = (key: string) => {
+    if (!sections.some((item) => item.key === key)) return;
+    const sectionKey = key as SectionKey;
+    setSection(sectionKey);
     const url = new URL(window.location.href);
-    url.searchParams.set("section", key);
+    url.searchParams.set("section", sectionKey);
     window.history.replaceState(null, "", url.toString());
   };
 
@@ -1605,8 +1598,6 @@ export default function AdminPage() {
   }
 
   const activeSection = sections.find((item) => item.key === section) ?? sections[0];
-  const userInitial = (session.user.email?.[0] ?? "A").toUpperCase();
-
   const sectionCount = (key: SectionKey): number | null => {
     switch (key) {
       case "team":
@@ -1632,236 +1623,78 @@ export default function AdminPage() {
     }
   };
 
-  const renderNavItem = (key: SectionKey, nested = false) => {
-    const item = sectionByKey(key);
-    const isActive = section === key;
-    const count = sectionCount(key);
-
-    return (
-      <button
-        key={key}
-        onClick={() => selectSection(key)}
-        aria-current={isActive ? "page" : undefined}
-        className={`group flex items-center justify-between rounded-lg text-left font-medium transition-all ${
-          nested ? "px-3 py-2 text-[13px]" : "px-3 py-2.5 text-sm"
-        } ${
-          isActive
-            ? "bg-primary/10 text-primary border border-primary/20 shadow-xs"
-            : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
-        }`}
-      >
-        <div className="flex min-w-0 items-center gap-3">
-          <item.icon
-            className={`shrink-0 transition-colors ${
-              nested ? "h-3.5 w-3.5" : "h-4 w-4"
-            } ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}
-          />
-          <span className="truncate">{SECTION_NAV_LABELS[key] ?? item.label}</span>
-        </div>
-        {count !== null && (
-          <span
-            className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold tabular-nums ${
-              isActive
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground group-hover:text-foreground"
-            }`}
-          >
-            {count}
-          </span>
-        )}
-      </button>
-    );
-  };
-
   return (
-    <div id="admin-app" data-theme={theme} className={`admin-app min-h-screen bg-background text-foreground ${theme === "dark" ? "dark" : ""}`}>
-      {/* Mobile Drawer Backdrop */}
-      {mobileNavOpen && (
-        <div
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
-          onClick={() => setMobileNavOpen(false)}
-        />
-      )}
-
-      {/* Sidebar Navigation */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-border bg-card transition-transform duration-200 ease-in-out lg:translate-x-0 ${
-          mobileNavOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        {/* Workspace Brand Header */}
-        <div className="flex h-16 items-center justify-between border-b border-border px-5">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-500 font-bold text-white shadow-sm shadow-blue-500/25 transition-transform group-hover:scale-105">
-              <span>K</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-bold tracking-tight text-foreground leading-none">Kavi Solutions</span>
-              <span className="mt-1 flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                Admin Console
-              </span>
-            </div>
-          </Link>
-          <button
-            onClick={() => setMobileNavOpen(false)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden"
-            aria-label="Close navigation"
+    <AdminShell
+      title={activeSection.label}
+      subtitle={activeSection.description}
+      headerIcon={activeSection.icon}
+      pill="Workspace / Administration"
+      bannerTitle={`Manage ${activeSection.label}`}
+      bannerDescription={activeSection.description}
+      bannerIcon={activeSection.icon}
+      groups={[
+        {
+          label: "Workspace",
+          items: WORKSPACE_SECTIONS.map((key) => {
+            const item = sectionByKey(key);
+            return { key, label: item.label, icon: item.icon, count: sectionCount(key) };
+          }),
+        },
+        {
+          label: "Services",
+          items: [
+            { key: "survey", label: "Survey & Research", icon: BarChart3, href: "/admin/survey" },
+            { key: "leads", label: "Lead inbox", icon: Inbox, href: "/admin/leads" },
+            {
+              key: "fellowship",
+              label: "Fellowship programme",
+              icon: ClipboardList,
+              href: "/admin/fellowship",
+            },
+            {
+              key: "programme",
+              label: "Programme operations",
+              icon: BriefcaseBusiness,
+              href: "/admin/programme",
+            },
+            { key: "social", label: "Social agent", icon: Sparkles },
+          ],
+        },
+      ]}
+      activeKey={section}
+      onNavigate={selectSection}
+      liveHref="/team"
+      actions={
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-9 w-9"
+            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+            title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
           >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        {/* Navigation Links */}
-        <div className="flex-1 overflow-y-auto px-3 py-4">
-          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
-            Workspace
-          </p>
-          <nav className="flex flex-col gap-1">
-            {WORKSPACE_SECTIONS.map((key) => renderNavItem(key))}
-          </nav>
-
-          <p className="mt-5 px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
-            Services
-          </p>
-          <nav className="flex flex-col gap-1">
-            <Link
-              href="/admin/survey"
-              className="flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
-            >
-              <span className="flex items-center gap-3">
-                <BarChart3 className="h-4 w-4" />
-                Survey &amp; Research
-              </span>
-              <ExternalLink className="h-3 w-3 opacity-60" />
-            </Link>
-          </nav>
-
-          <p className="mt-5 px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
-            Leads
-          </p>
+            {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          </Button>
           <Link
-            href="/admin/leads"
-            className="flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+            href="/team"
+            className={`${buttonVariants({ variant: "outline", size: "sm" })} hidden gap-1.5 sm:inline-flex`}
           >
-            <span className="flex items-center gap-3">
-              <Inbox className="h-4 w-4" />
-              Lead inbox
-            </span>
-            <ExternalLink className="h-3.5 w-3.5 opacity-60" />
+            Live team page <ExternalLink className="h-3.5 w-3.5" />
           </Link>
-
-          <p className="mt-5 px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
-            Programmes
-          </p>
-          <Link
-            href="/admin/fellowship"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 text-muted-foreground hover:text-destructive"
+            title="Sign out"
+            aria-label="Sign out"
+            onClick={() => authClient.signOut()}
           >
-            <ClipboardList className="h-4 w-4" />
-            Fellowship programme
-          </Link>
-
-          <Link
-            href="/admin/programme"
-            className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
-          >
-            <BriefcaseBusiness className="h-4 w-4" />
-            Programme operations
-          </Link>
-
-          <p className="mt-5 px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
-            Automation
-          </p>
-          <nav className="flex flex-col gap-1">{renderNavItem("social")}</nav>
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
-
-        {/* User Account / Footer */}
-        <div className="border-t border-border p-3">
-          <div className="flex items-center justify-between rounded-xl bg-muted/40 p-2.5">
-            <div className="flex min-w-0 items-center gap-2.5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-xs font-bold text-white shadow-xs">
-                {userInitial}
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-xs font-semibold text-foreground" title={session.user.email ?? ""}>
-                  {session.user.email}
-                </p>
-                <p className="text-[10px] text-muted-foreground">Administrator</p>
-              </div>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-              title="Sign out"
-              onClick={() => authClient.signOut()}
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content Area */}
-      <div className="min-h-screen lg:pl-64">
-        {/* Top Sticky Header */}
-        <header className="sticky top-0 z-40 border-b border-border bg-card/85 px-4 backdrop-blur-md sm:px-8">
-          <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4">
-            {/* Mobile Header Elements */}
-            <div className="flex items-center gap-3 lg:hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 text-muted-foreground hover:text-foreground"
-                onClick={() => setMobileNavOpen(true)}
-                aria-label="Open navigation"
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-              <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary font-bold text-xs text-primary-foreground">
-                  K
-                </div>
-                <span className="text-sm font-semibold tracking-tight text-foreground">Kavi Solutions</span>
-              </div>
-            </div>
-
-            {/* Desktop Breadcrumbs */}
-            <div className="hidden items-center gap-2 text-xs font-medium text-muted-foreground lg:flex">
-              <Link href="/" className="hover:text-foreground transition-colors">Kavi Solutions</Link>
-              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
-              <span>Workspace</span>
-              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
-              <span className="text-foreground font-semibold">{activeSection.label}</span>
-            </div>
-
-            {/* Right Header Actions */}
-            <div className="ml-auto flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-9 w-9 border-border bg-card text-foreground shadow-xs hover:bg-muted"
-                aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-                title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-              >
-                {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-              </Button>
-
-              <Link
-                href="/team"
-                className={`${buttonVariants({ variant: "outline", size: "sm" })} hidden sm:inline-flex gap-1.5 border-border bg-card text-foreground shadow-xs hover:bg-muted`}
-              >
-                <span>Live team page</span>
-                <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
-              </Link>
-            </div>
-          </div>
-        </header>
-
-        {/* Page Main Content */}
-        <main className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-8">
+      }
+    >
           {/* Section Heading & Primary CTA */}
           <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -5280,8 +5113,6 @@ export default function AdminPage() {
               </div>
             </div>
           )}
-        </main>
-      </div>
-    </div>
+    </AdminShell>
   );
 }

@@ -1,17 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
-  ArrowLeft,
   ArrowUpRight,
+  Award,
   BarChart3,
   BookOpen,
   Building2,
   CalendarDays,
   CheckCircle2,
+  ClipboardList,
   Clock,
   Download,
+  FolderOpen,
   GraduationCap,
   Inbox,
   Landmark,
@@ -22,20 +24,35 @@ import {
   Phone,
   RefreshCw,
   Search,
+  Settings,
+  Shield,
   ShieldCheck,
   Sprout,
   Sun,
   Target,
   Trash2,
   TrendingUp,
+  UserCog,
   UserRound,
+  Users,
+  UsersRound,
   Wallet,
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
+import { AdminShell, type AdminNavGroup } from "@/components/admin/shared/AdminShell";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { apiErrorMessage } from "@/lib/api-error";
 import { useAuth } from "@/lib/auth-context";
 import {
@@ -50,6 +67,7 @@ import {
   type LeadService,
   type LeadStatus,
 } from "@/lib/leads";
+import { cn } from "@/lib/utils";
 
 type ServiceFilter = LeadService | "all";
 type StatusFilter = LeadStatus | "all";
@@ -58,6 +76,44 @@ const withCookies = (extra: RequestInit = {}): RequestInit => ({
   credentials: "include",
   ...extra,
 });
+
+const ADMIN_GROUPS: AdminNavGroup[] = [
+  {
+    label: "Workspace",
+    items: [
+      { key: "team", label: "Team members", icon: Users, href: "/admin?section=team" },
+      { key: "roles", label: "Roles", icon: Shield, href: "/admin?section=roles" },
+      { key: "teams", label: "Teams", icon: UsersRound, href: "/admin?section=teams" },
+      { key: "projects", label: "Projects", icon: FolderOpen, href: "/admin?section=projects" },
+      { key: "certificates", label: "Certificates", icon: Award, href: "/admin?section=certificates" },
+      { key: "administrators", label: "Administrators", icon: UserCog, href: "/admin?section=administrators" },
+      { key: "settings", label: "Settings", icon: Settings, href: "/admin?section=settings" },
+    ],
+  },
+  {
+    label: "Services",
+    items: [
+      { key: "survey", label: "Survey & Research", icon: ClipboardList, href: "/admin/survey" },
+      { key: "leads", label: "Lead inbox", icon: Inbox, href: "/admin/leads" },
+      { key: "fellowship", label: "Fellowship", icon: GraduationCap, href: "/admin/fellowship" },
+      { key: "programme", label: "Programme", icon: Building2, href: "/admin/programme" },
+    ],
+  },
+];
+
+function SectionLabel({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-violet-600 dark:text-violet-300",
+        className,
+      )}
+    >
+      <span className="h-3.5 w-1 rounded-full bg-gradient-to-b from-violet-500 to-indigo-500" />
+      {children}
+    </span>
+  );
+}
 
 const SERVICE_ICONS: Record<LeadService, LucideIcon> = {
   survey: BarChart3,
@@ -272,9 +328,9 @@ export default function LeadsAdminPage() {
   if (!session) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-background px-4 text-foreground">
-        <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
+        <Card className="w-full max-w-md rounded-2xl p-8 text-center shadow-sm">
           <ShieldCheck className="mx-auto h-9 w-9 text-primary" />
-          <h1 className="mt-4 text-lg font-semibold">Private workspace</h1>
+          <CardTitle className="mt-4 text-lg">Private workspace</CardTitle>
           <p className="mt-2 text-sm text-muted-foreground">
             Sign in with an administrator account to view leads.
           </p>
@@ -284,7 +340,7 @@ export default function LeadsAdminPage() {
           >
             Sign in to continue
           </Link>
-        </div>
+        </Card>
       </main>
     );
   }
@@ -292,22 +348,23 @@ export default function LeadsAdminPage() {
   if (forbidden) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-background px-4 text-foreground">
-        <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
+        <Card className="w-full max-w-md rounded-2xl p-8 text-center shadow-sm">
           <ShieldCheck className="mx-auto h-9 w-9 text-destructive" />
-          <h1 className="mt-4 text-lg font-semibold">Access denied</h1>
+          <CardTitle className="mt-4 text-lg">Access denied</CardTitle>
           <p className="mt-2 text-sm text-muted-foreground">
             {session.user.email} is not listed as an administrator.
           </p>
           <Link href="/admin" className="mt-6 inline-block text-sm font-medium text-primary hover:underline">
             Back to admin console
           </Link>
-        </div>
+        </Card>
       </main>
     );
   }
 
   const exportQuery = buildQuery(service, status, query);
   const activeService = SERVICE_TABS.find((tab) => tab.key === service) ?? SERVICE_TABS[0];
+  const newLeadCount = counts.byStatus.new ?? leads.filter((lead) => lead.status === "new").length;
   const kpis = [
     {
       label: "Total leads",
@@ -343,153 +400,72 @@ export default function LeadsAdminPage() {
     <div
       id="admin-app"
       data-theme={theme}
-      className={`admin-app min-h-screen bg-background text-foreground ${theme === "dark" ? "dark" : ""}`}
+      className={cn("admin-app min-h-screen bg-background text-foreground", theme === "dark" && "dark")}
     >
-      {/* Sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-border bg-card lg:flex">
-        <div className="flex h-16 items-center gap-3 border-b border-border px-5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-500 text-sm font-bold text-white shadow-sm">
-            K
+      <AdminShell
+        title="Lead inbox"
+        subtitle="Private enquiries from every service"
+        headerIcon={Inbox}
+        pill="Lead Management"
+        bannerTitle="Manage Leads"
+        bannerDescription="View and manage enquiries received through your website forms."
+        bannerIcon={Inbox}
+        groups={ADMIN_GROUPS}
+        activeKey="leads"
+        liveHref="/"
+        notificationCount={newLeadCount}
+        onNotifications={() => {
+          setStatus("new");
+          setSelectedId(null);
+          setNotice("");
+        }}
+        actions={
+          <div className="flex items-center gap-2">
+            <Badge
+              variant="outline"
+              className="hidden rounded-full border-emerald-500/25 bg-emerald-500/10 px-3 py-1 text-emerald-600 sm:inline-flex dark:text-emerald-300"
+            >
+              <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              Private
+            </Badge>
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            >
+              {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+            </Button>
           </div>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-bold leading-none">Kavi Solutions</p>
-            <p className="mt-1 text-[11px] font-medium text-muted-foreground">Private workspace</p>
-          </div>
-        </div>
-
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
-          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
-            Console
-          </p>
-          <Link
-            href="/admin"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
-          >
-            <LayoutDashboard className="h-4 w-4" />
-            Admin console
-          </Link>
-          <Link
-            href="/admin/leads"
-            aria-current="page"
-            className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary"
-          >
-            <span className="flex items-center gap-3">
-              <Inbox className="h-4 w-4" />
-              Lead inbox
-            </span>
-            <span className="rounded-md bg-primary px-1.5 py-0.5 text-[11px] font-semibold tabular-nums text-primary-foreground">
-              {counts.total}
-            </span>
-          </Link>
-          <Link
-            href="/admin/fellowship"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
-          >
-            <GraduationCap className="h-4 w-4" />
-            Fellowship
-          </Link>
-          <Link
-            href="/admin/programme"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
-          >
-            <Building2 className="h-4 w-4" />
-            Programme operations
-          </Link>
-
-          <p className="mt-6 px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80">
-            Viewing
-          </p>
-          <Link
-            href="/"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
-          >
-            <ArrowUpRight className="h-4 w-4" />
-            Public website
-          </Link>
-        </nav>
-
-        <div className="border-t border-border p-3">
-          <div className="flex items-center gap-2.5 rounded-xl bg-muted/40 p-2.5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-xs font-bold text-white">
-              {(session.user.email?.[0] ?? "A").toUpperCase()}
-            </div>
-            <p className="min-w-0 flex-1 truncate text-xs font-semibold" title={session.user.email ?? ""}>
-              {session.user.email}
-            </p>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main */}
-      <div className="lg:pl-60">
-        <div className="flex items-center gap-2 border-b border-border px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:hidden">
-          <Link href="/admin" className="hover:text-foreground">
-            Admin
-          </Link>
-          <span>/</span>
-          <span className="font-semibold text-foreground">Leads</span>
-        </div>
-
-        <header className="border-b border-border bg-card/60 px-4 py-5 backdrop-blur sm:px-6 lg:px-8">
-          <div className="mx-auto flex max-w-[1280px] flex-wrap items-start justify-between gap-4">
-            <div>
-              <Link
-                href="/admin"
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
-              >
-                <ArrowLeft className="h-3.5 w-3.5" />
-                Admin console
-              </Link>
-              <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Lead inbox</h1>
-              <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                Private enquiries from every public service, in one place. Open a lead to update
-                its status and add internal notes.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="hidden items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-300 sm:inline-flex">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                Private
-              </span>
-              <Button
-                variant="outline"
-                size="icon"
-                aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-              >
-                {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-              </Button>
-            </div>
-          </div>
-        </header>
-
-        <main className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 lg:px-8">
+        }
+      >
+        <div className="space-y-5">
           {/* KPI strip */}
           <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Lead summary">
             {kpis.map((kpi) => (
-              <div
+              <Card
                 key={kpi.label}
-                className={`relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br ${kpi.accent} bg-card p-4 shadow-sm`}
+                className={cn(
+                  "relative overflow-hidden rounded-2xl bg-gradient-to-br p-4 shadow-sm",
+                  kpi.accent,
+                )}
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {kpi.label}
-                    </p>
+                    <SectionLabel className="text-inherit opacity-80">{kpi.label}</SectionLabel>
                     <p className="mt-2 text-3xl font-bold tabular-nums leading-none">{kpi.value}</p>
                     <p className="mt-2 text-[11px] text-muted-foreground">{kpi.note}</p>
                   </div>
-                  <span className="rounded-xl border border-border/60 bg-background/60 p-2">
+                  <span className="rounded-xl border border-violet-500/20 bg-violet-500/10 p-2">
                     <kpi.icon className="h-4 w-4" />
                   </span>
                 </div>
-              </div>
+              </Card>
             ))}
           </section>
 
           {notice && (
-            <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300">
+            <div className="flex items-center justify-between gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300">
               <span className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4" />
                 {notice}
@@ -500,7 +476,7 @@ export default function LeadsAdminPage() {
             </div>
           )}
           {error && (
-            <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            <div className="flex items-center justify-between gap-3 rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
               <span>{error}</span>
               <button aria-label="Dismiss" onClick={() => setError("")}>
                 <X className="h-4 w-4" />
@@ -509,214 +485,232 @@ export default function LeadsAdminPage() {
           )}
 
           {/* Service sub-tabs */}
-          <section className="mt-6" aria-label="Lead services">
-            <div className="flex gap-1.5 overflow-x-auto rounded-xl border border-border bg-card p-1.5 shadow-sm [scrollbar-width:thin]">
-              {SERVICE_TABS.map((tab) => {
-                const active = service === tab.key;
-                const count =
-                  tab.key === "all" ? counts.total : (counts.byService[tab.key] ?? 0);
-                return (
-                  <button
-                    key={tab.key}
-                    type="button"
-                    onClick={() => changeService(tab.key)}
-                    aria-current={active ? "page" : undefined}
-                    title={tab.key === "all" ? "Every service" : LEAD_SERVICE_BLURBS[tab.key]}
-                    className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-semibold transition-all ${
-                      active
-                        ? "bg-primary/10 text-primary shadow-xs ring-1 ring-primary/20"
-                        : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
-                    }`}
-                  >
-                    <tab.icon className="h-4 w-4" />
-                    <span>{tab.label}</span>
-                    <span
-                      className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold tabular-nums ${
-                        active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                      }`}
+          <Card className="rounded-2xl shadow-sm">
+            <CardHeader className="gap-1 border-b border-border px-4 py-3">
+              <SectionLabel>Services</SectionLabel>
+              <CardTitle className="text-sm font-semibold">Filter by enquiry source</CardTitle>
+            </CardHeader>
+            <CardContent className="px-4 py-4">
+              <div className="flex gap-1.5 overflow-x-auto rounded-xl border border-border bg-muted/20 p-1.5 [scrollbar-width:thin]">
+                {SERVICE_TABS.map((tab) => {
+                  const active = service === tab.key;
+                  const count =
+                    tab.key === "all" ? counts.total : (counts.byService[tab.key] ?? 0);
+                  return (
+                    <button
+                      key={tab.key}
+                      type="button"
+                      onClick={() => changeService(tab.key)}
+                      aria-current={active ? "page" : undefined}
+                      title={tab.key === "all" ? "Every service" : LEAD_SERVICE_BLURBS[tab.key]}
+                      className={cn(
+                        "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-semibold transition-all",
+                        active
+                          ? "bg-violet-500/10 text-violet-700 shadow-xs ring-1 ring-violet-500/25 dark:text-violet-200"
+                          : "text-muted-foreground hover:bg-muted/70 hover:text-foreground",
+                      )}
                     >
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {service === "all"
-                ? "All public enquiry forms feed this private inbox."
-                : LEAD_SERVICE_BLURBS[service]}
-            </p>
-          </section>
+                      <tab.icon className="h-4 w-4" />
+                      <span>{tab.label}</span>
+                      <span
+                        className={cn(
+                          "rounded-md px-1.5 py-0.5 text-[10px] font-bold tabular-nums",
+                          active
+                            ? "bg-violet-600 text-white"
+                            : "bg-muted text-muted-foreground",
+                        )}
+                      >
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {service === "all"
+                  ? "All public enquiry forms feed this private inbox."
+                  : LEAD_SERVICE_BLURBS[service]}
+              </p>
+            </CardContent>
+          </Card>
 
           {/* Toolbar */}
-          <section className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm">
-            <div className="relative min-w-[220px] flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search name, email, company or message"
-                aria-label="Search leads"
-                className="h-9 pl-9"
-              />
-            </div>
-            <select
-              value={status}
-              onChange={(event) => setStatus(event.target.value as StatusFilter)}
-              aria-label="Filter by status"
-              className="h-9 rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              {STATUS_OPTIONS.map((option) => (
-                <option key={option.key} value={option.key}>
-                  {option.label}
-                  {option.key !== "all" && ` (${counts.byStatus[option.key] ?? 0})`}
-                </option>
-              ))}
-            </select>
-            <Button variant="outline" size="sm" onClick={() => void load()} disabled={loading}>
-              <RefreshCw className={`mr-1.5 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-              Refresh
-            </Button>
-            <a
-              href={`/api/leads/export.csv${exportQuery}`}
-              className="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-semibold shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
-            >
-              <Download className="h-4 w-4" />
-              Export CSV
-            </a>
-          </section>
+          <Card className="rounded-2xl shadow-sm">
+            <CardHeader className="gap-1 border-b border-border px-4 py-3">
+              <SectionLabel>Search</SectionLabel>
+              <CardTitle className="text-sm font-semibold">Find an enquiry</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-wrap items-center gap-3 px-4 py-3">
+              <div className="relative min-w-[220px] flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Search name, email, company or message"
+                  aria-label="Search leads"
+                  className="h-9 pl-9"
+                />
+              </div>
+              <Select value={status} onValueChange={(value) => setStatus(value as StatusFilter)}>
+                <SelectTrigger aria-label="Filter by status" className="h-9 w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUS_OPTIONS.map((option) => (
+                    <SelectItem key={option.key} value={option.key}>
+                      {option.label}
+                      {option.key !== "all" && ` (${counts.byStatus[option.key] ?? 0})`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button variant="outline" size="sm" onClick={() => void load()} disabled={loading}>
+                <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+                Refresh
+              </Button>
+              <a
+                href={`/api/leads/export.csv${exportQuery}`}
+                className="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-semibold shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                <Download className="h-4 w-4" />
+                Export CSV
+              </a>
+            </CardContent>
+          </Card>
 
           {/* Leads table */}
-          <section className="mt-4 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-            <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
-              <div>
-                <h2 className="text-sm font-semibold">{activeService.label}</h2>
-                <p className="text-[11px] text-muted-foreground">
-                  {loading ? "Loading leads…" : `${leads.length} matching ${leads.length === 1 ? "lead" : "leads"}`}
-                </p>
-              </div>
-            </div>
-
-            {loading ? (
-              <div className="space-y-2 p-4">
-                {[0, 1, 2, 3, 4].map((row) => (
-                  <div key={row} className="h-12 animate-pulse rounded-lg bg-muted/50" />
-                ))}
-              </div>
-            ) : leads.length === 0 ? (
-              <div className="flex flex-col items-center justify-center px-4 py-16 text-center">
-                <div className="rounded-2xl bg-muted/50 p-4">
-                  <Inbox className="h-7 w-7 text-muted-foreground" />
+          <Card className="overflow-hidden rounded-2xl shadow-sm">
+            <CardHeader className="gap-1 border-b border-border px-4 py-3">
+              <SectionLabel>Enquiries</SectionLabel>
+              <CardTitle className="text-sm font-semibold">{activeService.label}</CardTitle>
+              <p className="text-[11px] text-muted-foreground">
+                {loading ? "Loading leads…" : `${leads.length} matching ${leads.length === 1 ? "lead" : "leads"}`}
+              </p>
+            </CardHeader>
+            <CardContent className="p-0">
+              {loading ? (
+                <div className="space-y-2 p-4">
+                  {[0, 1, 2, 3, 4].map((row) => (
+                    <div key={row} className="h-12 animate-pulse rounded-lg bg-muted/50" />
+                  ))}
                 </div>
-                <h3 className="mt-4 text-sm font-semibold">No leads here yet</h3>
-                <p className="mt-1 max-w-sm text-xs text-muted-foreground">
-                  Enquiries submitted from the public pages will appear in this inbox.
-                </p>
-                {(query || status !== "all") && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-4"
-                    onClick={() => {
-                      setQuery("");
-                      setStatus("all");
-                    }}
-                  >
-                    Clear filters
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[860px] text-left text-sm">
-                  <thead>
-                    <tr className="border-b border-border bg-muted/30 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      <th className="px-4 py-3">Contact</th>
-                      {service === "all" && <th className="px-4 py-3">Service</th>}
-                      <th className="px-4 py-3">Interest</th>
-                      <th className="px-4 py-3">Status</th>
-                      <th className="px-4 py-3">Received</th>
-                      <th className="px-4 py-3 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {leads.map((lead) => {
-                      const ServiceIcon = SERVICE_ICONS[lead.service] ?? Mail;
-                      return (
-                        <tr
-                          key={lead.id}
-                          tabIndex={0}
-                          onClick={() => openLead(lead)}
-                          onKeyDown={(event) => {
-                            if (event.key === "Enter" || event.key === " ") {
-                              event.preventDefault();
-                              openLead(lead);
-                            }
-                          }}
-                          className="cursor-pointer transition-colors hover:bg-muted/40 focus:bg-muted/40 focus:outline-none"
-                        >
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-3">
-                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                                {lead.name.slice(0, 2).toUpperCase()}
-                              </div>
-                              <div className="min-w-0">
-                                <p className="truncate font-semibold leading-tight">{lead.name}</p>
-                                <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                                  {lead.email || lead.phone || "—"}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          {service === "all" && (
+              ) : leads.length === 0 ? (
+                <div className="flex flex-col items-center justify-center px-4 py-16 text-center">
+                  <div className="rounded-2xl bg-violet-500/10 p-4">
+                    <Inbox className="h-7 w-7 text-violet-500" />
+                  </div>
+                  <h3 className="mt-4 text-sm font-semibold">No leads here yet</h3>
+                  <p className="mt-1 max-w-sm text-xs text-muted-foreground">
+                    Enquiries submitted from the public pages will appear in this inbox.
+                  </p>
+                  {(query || status !== "all") && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-4"
+                      onClick={() => {
+                        setQuery("");
+                        setStatus("all");
+                      }}
+                    >
+                      Clear filters
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[860px] text-left text-sm">
+                    <thead>
+                      <tr className="border-b border-border bg-muted/30 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        <th className="px-4 py-3">Contact</th>
+                        {service === "all" && <th className="px-4 py-3">Service</th>}
+                        <th className="px-4 py-3">Interest</th>
+                        <th className="px-4 py-3">Status</th>
+                        <th className="px-4 py-3">Received</th>
+                        <th className="px-4 py-3 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {leads.map((lead) => {
+                        const ServiceIcon = SERVICE_ICONS[lead.service] ?? Mail;
+                        return (
+                          <tr
+                            key={lead.id}
+                            tabIndex={0}
+                            onClick={() => openLead(lead)}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                openLead(lead);
+                              }
+                            }}
+                            className="cursor-pointer transition-colors hover:bg-muted/40 focus:bg-muted/40 focus:outline-none"
+                          >
                             <td className="px-4 py-3">
-                              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                                <ServiceIcon className="h-3.5 w-3.5" />
-                                {LEAD_SERVICE_LABELS[lead.service] ?? lead.service}
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-xs font-bold text-violet-600 dark:text-violet-300">
+                                  {lead.name.slice(0, 2).toUpperCase()}
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="truncate font-semibold leading-tight">{lead.name}</p>
+                                  <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                                    {lead.email || lead.phone || "—"}
+                                  </p>
+                                </div>
+                              </div>
+                            </td>
+                            {service === "all" && (
+                              <td className="px-4 py-3">
+                                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                                  <ServiceIcon className="h-3.5 w-3.5" />
+                                  {LEAD_SERVICE_LABELS[lead.service] ?? lead.service}
+                                </span>
+                              </td>
+                            )}
+                            <td className="px-4 py-3">
+                              <p className="max-w-[240px] truncate text-xs font-medium">
+                                {lead.subject || lead.kind || "General enquiry"}
+                              </p>
+                              {lead.organisation && (
+                                <p className="mt-0.5 max-w-[240px] truncate text-[11px] text-muted-foreground">
+                                  {lead.organisation}
+                                </p>
+                              )}
+                            </td>
+                            <td className="px-4 py-3">
+                              <Badge
+                                variant="outline"
+                                className={cn(
+                                  "rounded-full px-2.5 py-1 ring-1 ring-inset",
+                                  LEAD_STATUS_TONES[lead.status] ?? LEAD_STATUS_TONES.new,
+                                )}
+                              >
+                                {LEAD_STATUS_LABELS[lead.status] ?? lead.status}
+                              </Badge>
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-xs text-muted-foreground">
+                                <CalendarDays className="h-3.5 w-3.5" />
+                                {formatDate(lead.createdAt)}
                               </span>
                             </td>
-                          )}
-                          <td className="px-4 py-3">
-                            <p className="max-w-[240px] truncate text-xs font-medium">
-                              {lead.subject || lead.kind || "General enquiry"}
-                            </p>
-                            {lead.organisation && (
-                              <p className="mt-0.5 max-w-[240px] truncate text-[11px] text-muted-foreground">
-                                {lead.organisation}
-                              </p>
-                            )}
-                          </td>
-                          <td className="px-4 py-3">
-                            <span
-                              className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ring-inset ${
-                                LEAD_STATUS_TONES[lead.status] ?? LEAD_STATUS_TONES.new
-                              }`}
-                            >
-                              {LEAD_STATUS_LABELS[lead.status] ?? lead.status}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-xs text-muted-foreground">
-                              <CalendarDays className="h-3.5 w-3.5" />
-                              {formatDate(lead.createdAt)}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary">
-                              View
-                              <ArrowUpRight className="h-3.5 w-3.5" />
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
-        </main>
-      </div>
+                            <td className="px-4 py-3 text-right">
+                              <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary">
+                                View
+                                <ArrowUpRight className="h-3.5 w-3.5" />
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </AdminShell>
 
       {/* Detail drawer */}
       {selected && (
@@ -729,9 +723,9 @@ export default function LeadsAdminPage() {
           <aside className="relative z-10 flex h-full w-full max-w-lg flex-col border-l border-border bg-card shadow-2xl">
             <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
               <div className="min-w-0">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                <SectionLabel>
                   {LEAD_SERVICE_LABELS[selected.service] ?? selected.service} lead
-                </p>
+                </SectionLabel>
                 <h2 className="mt-1 truncate text-xl font-bold">{selected.name}</h2>
                 <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                   <Clock className="h-3.5 w-3.5" />
@@ -745,9 +739,7 @@ export default function LeadsAdminPage() {
 
             <div className="flex-1 space-y-5 overflow-y-auto px-5 py-5">
               <section>
-                <h3 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Contact
-                </h3>
+                <SectionLabel>Contact</SectionLabel>
                 <div className="mt-3 space-y-2 text-sm">
                   <a
                     href={`mailto:${selected.email}`}
@@ -772,19 +764,15 @@ export default function LeadsAdminPage() {
               </section>
 
               <section className="grid grid-cols-2 gap-3">
-                <div className="rounded-xl border border-border bg-muted/30 p-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Interest
-                  </p>
+                <div className="rounded-xl border border-violet-500/15 bg-violet-500/5 p-3">
+                  <SectionLabel>Interest</SectionLabel>
                   <p className="mt-1.5 text-sm font-medium leading-snug">
                     {selected.subject || selected.kind || "General enquiry"}
                   </p>
                   {selected.kind && <p className="mt-1 text-[11px] text-muted-foreground">{selected.kind}</p>}
                 </div>
-                <div className="rounded-xl border border-border bg-muted/30 p-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Reference
-                  </p>
+                <div className="rounded-xl border border-violet-500/15 bg-violet-500/5 p-3">
+                  <SectionLabel>Reference</SectionLabel>
                   <p className="mt-1.5 break-all font-mono text-xs font-medium">
                     {selected.reference || "—"}
                   </p>
@@ -795,48 +783,40 @@ export default function LeadsAdminPage() {
               </section>
 
               <section>
-                <h3 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Message
-                </h3>
+                <SectionLabel>Message</SectionLabel>
                 <p className="mt-2 whitespace-pre-wrap rounded-xl border border-border bg-muted/30 p-3 text-sm leading-relaxed">
                   {selected.message || "—"}
                 </p>
               </section>
 
               <section>
-                <label
-                  htmlFor="lead-status"
-                  className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground"
-                >
-                  Pipeline status
-                </label>
-                <select
-                  id="lead-status"
+                <SectionLabel>Pipeline status</SectionLabel>
+                <Select
                   value={draft.status}
-                  onChange={(event) => setDraft((current) => ({
-                    ...current,
-                    status: event.target.value as LeadStatus,
-                  }))}
-                  className="mt-2 h-10 w-full rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  onValueChange={(value) =>
+                    setDraft((current) => ({ ...current, status: value as LeadStatus }))
+                  }
                 >
-                  {STATUS_OPTIONS.filter((option) => option.key !== "all").map((option) => (
-                    <option key={option.key} value={option.key}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger id="lead-status" className="mt-2 h-10 w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {STATUS_OPTIONS.filter((option) => option.key !== "all").map((option) => (
+                      <SelectItem key={option.key} value={option.key}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </section>
 
               <section>
-                <label
-                  htmlFor="lead-notes"
-                  className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground"
-                >
+                <SectionLabel>
                   Internal notes
-                  <span className="ml-1 font-normal normal-case tracking-normal">
+                  <span className="ml-1 font-normal normal-case tracking-normal text-muted-foreground">
                     (not visible to visitors)
                   </span>
-                </label>
+                </SectionLabel>
                 <textarea
                   id="lead-notes"
                   value={draft.notes}
@@ -859,7 +839,7 @@ export default function LeadsAdminPage() {
                 onClick={() => void remove(selected)}
                 disabled={saving}
               >
-                <Trash2 className="mr-1.5 h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
                 Delete
               </Button>
               <div className="flex items-center gap-2">
@@ -867,7 +847,7 @@ export default function LeadsAdminPage() {
                   Cancel
                 </Button>
                 <Button size="sm" onClick={() => void save()} disabled={saving}>
-                  {saving ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : null}
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                   Save changes
                 </Button>
               </div>
